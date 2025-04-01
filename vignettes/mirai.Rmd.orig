@@ -587,7 +587,7 @@ daemons(0, .compute = "polars")
 ```
 The 'vec' argument to `serialization()` may be specified as `TRUE` if the serialization functions are vectorized and take lists of objects, as is the case for [`safetensors`](https://mlverse.github.io/safetensors/), used for serialization in [`torch`](https://torch.mlverse.org/).
 
-Please refer to the [torch vignette](https://shikokuchuo.net/mirai/articles/torch.html) for further examples.
+Please refer to the [torch vignette](https://rlib.github.io/mirai/articles/torch.html) for further examples.
 
 [&laquo; Back to ToC](#table-of-contents)
 
