@@ -1,19 +1,11 @@
-url: https://shikokuchuo.net/mirai/
+url: https://r-lib.github.io/mirai/
 template:
+  package: tidytemplate
   bootstrap: 5
-  bslib:
-    primary: "#0043ce"
-    base_font: {google: {family: "Source Sans Pro", wght: [400, 600], ital: [0, 1]}}
-    code_font: {google: "Source Code Pro"}
   light-switch: true
 navbar:
   structure:
-    right: [search, github, home, lightswitch]
-  components:
-    home:
-      icon: fa-cube
-      href: https://shikokuchuo.net/
-      aria-label: shikokuchuo
+    right: [search, github, lightswitch]
 reference:
 - contents:
   - mirai-package
