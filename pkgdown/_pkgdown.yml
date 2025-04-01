@@ -2,10 +2,6 @@ url: https://r-lib.github.io/mirai/
 template:
   package: tidytemplate
   bootstrap: 5
-  light-switch: true
-navbar:
-  structure:
-    right: [search, github, lightswitch]
 reference:
 - contents:
   - mirai-package
