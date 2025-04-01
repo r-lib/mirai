@@ -23,9 +23,9 @@ Authors@R:
              family = "Cheng",
              role = "ctb",
              email = "joe@posit.co"),
-      person(given = "Hibiki AI Limited",
-             role = "cph"),
       person(given = "Posit Software, PBC",
+             role = c("cph", "fnd")),
+      person(given = "Hibiki AI Limited",
              role = "cph"))
 License: GPL (>= 3)
 BugReports: https://github.com/shikokuchuo/mirai/issues
@@ -44,4 +44,5 @@ Suggests:
 VignetteBuilder: litedown
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
-Remotes: shikokuchuo/nanonext
+Config/Needs/website: tidyverse/tidytemplate
+Remotes: r-lib/nanonext
