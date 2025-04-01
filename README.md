@@ -76,7 +76,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 7.400099 7.086972 6.395876 7.714056 8.092909
+#> [1] 7.619489 5.881044 7.474796 7.554871 6.858426
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -90,7 +90,7 @@ while (unresolved(m)) {
 m
 #> < mirai [$data] >
 m$data
-#> [1] 7.400099 7.086972 6.395876 7.714056 8.092909
+#> [1] 7.619489 5.881044 7.474796 7.554871 6.858426
 ```
 
 #### Daemons
@@ -184,7 +184,7 @@ new parallel cluster type, a feature request by R-Core at R Project
 Sprint 2023. ‘miraiCluster’ may also be used with ‘foreach’ via
 ‘doParallel’.
 
-[<img alt="promises" src="https://docs.posit.co/images/posit-ball.png" width="40" height="36" />](https://r-lib.github.io/mirai/articles/promises.html)
+[<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://r-lib.github.io/mirai/articles/promises.html)
   Implements the next generation of completely event-driven, non-polling
 promises. ‘mirai’ and ‘mirai_map’ objects may be used interchageably
 with ‘promises’, including with the promise pipe `%...>%`.
