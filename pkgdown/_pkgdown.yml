@@ -1,7 +1,12 @@
-url: https://r-lib.github.io/mirai/
+url: https://mirai.r-lib.org
 template:
   package: tidytemplate
   bootstrap: 5
+
+  includes:
+    in_header: |
+      <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
 reference:
 - contents:
   - mirai-package

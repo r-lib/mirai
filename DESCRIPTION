@@ -29,7 +29,7 @@ Authors@R:
              role = "cph"))
 License: GPL (>= 3)
 BugReports: https://github.com/r-lib/mirai/issues
-URL: https://r-lib.github.io/mirai/, https://github.com/r-lib/mirai
+URL: https://mirai.r-lib.org, https://github.com/r-lib/mirai
 Encoding: UTF-8
 Depends: 
     R (>= 3.6)
