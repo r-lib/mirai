@@ -27,7 +27,7 @@ Authors@R:
              role = c("cph", "fnd")),
       person(given = "Hibiki AI Limited",
              role = "cph"))
-License: GPL (>= 3)
+License: MIT + file LICENSE
 BugReports: https://github.com/r-lib/mirai/issues
 URL: https://mirai.r-lib.org, https://github.com/r-lib/mirai
 Encoding: UTF-8
