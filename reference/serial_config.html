@@ -9,7 +9,7 @@ serialization and unserialization of normally non-exportable reference
 objects, allowing these to be used seamlessly between different R sessions.
 This feature utilises the 'refhook' system of R native serialization. Once
 set, the functions apply to all mirai requests for a specific compute
-profile."><meta property="og:image" content="https://r-lib.github.io/mirai/logo.png"></head><body>
+profile."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -109,7 +109,7 @@ TRUE, they should accept and return a list of reference objects, e.g.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> serialize(x, NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55eca5310d48&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x558d51b8ac98&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (connection, refhook = NULL) </span>
@@ -119,7 +119,7 @@ TRUE, they should accept and return a list of reference objects, e.g.
 <span class="r-out co"><span class="r-pr">#&gt;</span>         stop("'connection' must be a connection")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .Internal(unserialize(connection, refhook))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55eca531abf8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x558d51b98a30&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[4]]</span>

@@ -19,6 +19,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - Databases and Arrow">
+<script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
@@ -90,7 +91,7 @@ daemons, and then opens a connection to the same SQLite file database in
 each daemon.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-lib.github.io/mirai/">mirai</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2</span></span>
 <span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="op">{</span></span>
@@ -135,7 +136,7 @@ from the <code>arrow</code> package as part of the
 ‘nanoarrow_array_stream’ as <code>nanoarrow</code> is the backend for
 all queries made by the DBI <code>db*Arrow()</code> functions.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-lib.github.io/mirai/">mirai</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span></span>
 <span>  class <span class="op">=</span> <span class="st">"nanoarrow_array_stream"</span>,</span>
@@ -253,7 +254,7 @@ session uses only one daemon anyway).</p>
 <code><a href="../reference/mirai.html">mirai()</a></code> call, using the session-specific compute
 profile.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-lib.github.io/mirai/">mirai</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/" class="external-link">secretbase</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/bslib/" class="external-link">bslib</a></span><span class="op">)</span></span>
@@ -292,7 +293,7 @@ profile.</p>
 <span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co"># create unique session id by hashing current time with a random key</span></span>
-<span>  <span class="va">id</span> <span class="op">&lt;-</span> <span class="fu">secretbase</span><span class="fu">::</span><span class="fu">siphash13</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, key <span class="op">=</span> <span class="fu">nanonext</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/nanonext/reference/random.html" class="external-link">random</a></span><span class="op">(</span><span class="fl">4L</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">id</span> <span class="op">&lt;-</span> <span class="fu">secretbase</span><span class="fu">::</span><span class="fu">siphash13</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, key <span class="op">=</span> <span class="fu">nanonext</span><span class="fu">::</span><span class="fu"><a href="https://nanonext.r-lib.org/reference/random.html" class="external-link">random</a></span><span class="op">(</span><span class="fl">4L</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># create new daemon for each session</span></span>
 <span>  <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1L</span>, serial <span class="op">=</span> <span class="va">cfg</span>, .compute <span class="op">=</span> <span class="va">id</span><span class="op">)</span></span>
