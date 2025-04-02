@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mirai <a href="https://r-lib.github.io/mirai/" alt="mirai"><img src="man/figures/logo.png" alt="mirai logo" align="right" width="120"/></a>
+# mirai <a href="https://mirai.r-lib.org/" alt="mirai"><img src="man/figures/logo.png" alt="mirai logo" align="right" width="120"/></a>
 
 <!-- badges: start -->
 
@@ -76,7 +76,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 7.619489 5.881044 7.474796 7.554871 6.858426
+#> [1] 6.652687 8.895718 5.771767 7.655453 4.704791
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -90,7 +90,7 @@ while (unresolved(m)) {
 m
 #> < mirai [$data] >
 m$data
-#> [1] 7.619489 5.881044 7.474796 7.554871 6.858426
+#> [1] 6.652687 8.895718 5.771767 7.655453 4.704791
 ```
 
 #### Daemons
@@ -104,14 +104,14 @@ daemons(4)
 ```
 
 Daemons may also be deployed
-[remotely](https://r-lib.github.io/mirai/articles/mirai.html#distributed-computing-remote-daemons)
+[remotely](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons)
 for distributed computing and
 [launchers](https://shikokuchuo.net/mirai/articles/mirai.html#distributed-computing-launching-daemons)
 can start daemons across the network via (tunnelled) SSH or a cluster
 resource manager.
 
 [Secure TLS
-connections](https://r-lib.github.io/mirai/articles/mirai.html#distributed-computing-tls-secure-connections)
+connections](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-tls-secure-connections)
 can be used for remote daemon connections, with zero configuration
 required.
 
@@ -144,7 +144,7 @@ m[.flat]
 
 All errors are returned as ‘errorValues’, facilitating recovery from
 partial failure. There are further
-[advantages](https://r-lib.github.io/mirai/articles/mirai.html#asynchronous-parallel-map)
+[advantages](https://mirai.r-lib.org/articles/mirai.html#asynchronous-parallel-map)
 over alternative map implementations.
 
 ### Design Concepts
@@ -178,31 +178,31 @@ experience.
 mirai features the following core integrations, with usage examples in
 the linked vignettes:
 
-[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://r-lib.github.io/mirai/articles/parallel.html)
+[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/parallel.html)
   Provides an alternative communications backend for R, implementing a
 new parallel cluster type, a feature request by R-Core at R Project
 Sprint 2023. ‘miraiCluster’ may also be used with ‘foreach’ via
 ‘doParallel’.
 
-[<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://r-lib.github.io/mirai/articles/promises.html)
+[<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/promises.html)
   Implements the next generation of completely event-driven, non-polling
 promises. ‘mirai’ and ‘mirai_map’ objects may be used interchageably
 with ‘promises’, including with the promise pipe `%...>%`.
 
-[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://r-lib.github.io/mirai/articles/shiny.html)
+[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/shiny.html)
   Asynchronous parallel / distributed backend, supporting the next level
 of responsiveness and scalability within Shiny, with native support for
 ExtendedTask.
 
-[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://r-lib.github.io/mirai/articles/plumber.html)
+[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/plumber.html)
   Asynchronous parallel / distributed backend for scaling Plumber
 applications in production.
 
-[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://r-lib.github.io/mirai/articles/databases.html)
+[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/databases.html)
   Allows queries using the Apache Arrow format to be handled seamlessly
 over ADBC database connections hosted in background processes.
 
-[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://r-lib.github.io/mirai/articles/torch.html)
+[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/torch.html)
   Allows Torch tensors and complex objects such as models and optimizers
 to be used seamlessly across parallel processes.
 
@@ -273,8 +273,8 @@ install.packages("mirai", repos = "https://r-lib.r-universe.dev")
 
 ### Links & References
 
-◈ mirai R package: <https://r-lib.github.io/mirai/> <br /> ◈ nanonext R
-package: <https://r-lib.github.io/nanonext/>
+◈ mirai R package: <https://mirai.r-lib.org/> <br /> ◈ nanonext R
+package: <https://nanonext.r-lib.org/>
 
 mirai is listed in CRAN High Performance Computing Task View: <br />
 <https://cran.r-project.org/view=HighPerformanceComputing>
@@ -282,5 +282,5 @@ mirai is listed in CRAN High Performance Computing Task View: <br />
 –
 
 Please note that this project is released with a [Contributor Code of
-Conduct](https://r-lib.github.io/mirai/CODE_OF_CONDUCT.html). By
-participating in this project you agree to abide by its terms.
+Conduct](https://mirai.r-lib.org/CODE_OF_CONDUCT.html). By participating
+in this project you agree to abide by its terms.

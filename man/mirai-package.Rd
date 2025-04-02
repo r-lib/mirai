@@ -39,7 +39,7 @@ This may be overriden, if desired, by specifying 'url' in the
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://r-lib.github.io/mirai/}
+  \item \url{https://mirai.r-lib.org}
   \item \url{https://github.com/r-lib/mirai}
   \item Report bugs at \url{https://github.com/r-lib/mirai/issues}
 }
