@@ -21,8 +21,8 @@ jobs:
           - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'oldrel-1'}
-          - {os: ubuntu-latest, r: 'oldrel-2'}
           - {os: macOS-latest,  r: 'release'}
+          - {os: macOS-14, r: 'oldrel-2'}
           - {os: macOS-latest,  r: 'oldrel-3'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: 'oldrel-4'}
