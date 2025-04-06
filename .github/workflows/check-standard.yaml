@@ -18,14 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'oldrel-1'}
-          - {os: macOS-latest,  r: 'release'}
-          - {os: macOS-14, r: 'oldrel-2'}
-          - {os: macOS-latest,  r: 'oldrel-3'}
-          - {os: windows-latest, r: 'release'}
-          - {os: windows-latest, r: 'oldrel-4'}
+          - {os: ubuntu-24.04-arm, r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,    r: 'release'}
+          - {os: ubuntu-latest,    r: 'oldrel-1'}
+          - {os: ubuntu-22.04,     r: 'oldrel-2'}
+          - {os: macOS-latest,     r: 'release'}
+          - {os: macOS-13,         r: 'oldrel-3'}
+          - {os: windows-latest,   r: 'release'}
+          - {os: windows-latest,   r: 'oldrel-4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
