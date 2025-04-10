@@ -160,8 +160,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = "defau
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
-  r <- request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]])
-  `attr<-`(`attr<-`(r, "msgid", next_msgid(envir)), "profile", .compute)
+  r <- request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
+  `attr<-`(r, "profile", .compute)
 
 }
 
