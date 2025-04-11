@@ -61,8 +61,11 @@
 #' @section Timeouts:
 #'
 #' Specifying the `.timeout` argument ensures that the mirai always resolves.
-#' However, the task may not have completed and still be ongoing in the daemon
-#' process. Use [stop_mirai()] instead to explicitly stop and interrupt a task.
+#' When using dispatcher, the mirai will be cancelled after it times out (as if
+#' [stop_mirai()] had been called). As in that case, there is no guarantee that
+#' any cancellation will be successful, if the code cannot be interrupted for
+#' instance. When not using dispatcher, the mirai task will continue to
+#' completion in the daemon process, even if it times out in the host process.
 #'
 #' @section Errors:
 #'
@@ -160,8 +163,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = "defau
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
-  r <- request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]])
-  `attr<-`(`attr<-`(r, "msgid", next_msgid(envir)), "profile", .compute)
+  r <- request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
+  `attr<-`(r, "profile", .compute)
 
 }
 

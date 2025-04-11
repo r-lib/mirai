@@ -1,9 +1,13 @@
 # mirai (development version)
 
+#### New Features
+
+`mirai()` argument `.timeout` is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks @be-marc, @sebffischer #251).
+
 #### Updates
 
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms (thanks @LennardLux, #240).
-* Requires nanonext >= [1.5.2.9000].
+* Requires nanonext >= [1.5.2.9001].
 * Package is re-licensed under the MIT license.
 
 # mirai 2.2.0
