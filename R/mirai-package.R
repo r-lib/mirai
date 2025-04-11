@@ -18,9 +18,8 @@
 #'  Unix domain sockets on MacOS, Solaris and other POSIX platforms, and named
 #'  pipes on Windows.
 #'
-#'  This may be overriden, if desired, by specifying 'url' in the
-#'  [daemons()] interface and launching daemons using
-#'  [launch_local()].
+#'  This may be overriden, if desired, by specifying 'url' in the [daemons()]
+#'  interface and launching daemons using [launch_local()].
 #'
 #' @section Reference Manual:
 #'
