@@ -76,8 +76,11 @@ being found.
 
 
 Specifying the \code{.timeout} argument ensures that the mirai always resolves.
-However, the task may not have completed and still be ongoing in the daemon
-process. Use \code{\link[=stop_mirai]{stop_mirai()}} instead to explicitly stop and interrupt a task.
+When using dispatcher, the mirai will be cancelled after it times out (as if
+\code{\link[=stop_mirai]{stop_mirai()}} had been called). As in that case, there is no guarantee that
+any cancellation will be successful, if the code cannot be interrupted for
+instance. When not using dispatcher, the mirai task will continue to
+completion in the daemon process, even if it times out in the host process.
 }
 
 \section{Errors}{
