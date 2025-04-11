@@ -45,8 +45,11 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<p><code><a href="../reference/mirai.html">mirai()</a></code> argument <code>.timeout</code> is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks <a href="https://github.com/be-marc" class="external-link">@be-marc</a>, <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a> <a href="https://github.com/r-lib/mirai/issues/251" class="external-link">#251</a>).</p>
-</div>
+<ul><li>
+<code><a href="../reference/mirai.html">mirai()</a></code> argument <code>.timeout</code> is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks <a href="https://github.com/be-marc" class="external-link">@be-marc</a>, <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a> <a href="https://github.com/r-lib/mirai/issues/251" class="external-link">#251</a>).</li>
+<li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value whether or not evaluation is taking place within a mirai call on a daemon.</li>
+<li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value whether or not daemons are set for a given compute profile.</li>
+</ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
 <ul><li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
