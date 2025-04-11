@@ -87,11 +87,12 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit(reap(sock))
-  `[[<-`(., "sock", sock)
   autoexit && pipe_notify(sock, cv = cv, remove = TRUE, flag = autoexit)
   if (length(tls)) tls <- tls_config(client = tls)
   dial_and_sync_socket(sock, url, asyncdial = asyncdial, tls = tls)
 
+  `[[<-`(., "sock", sock)
+  on.exit(`[[<-`(., "sock", NULL), add = TRUE)
   if (is.numeric(rs)) `[[<-`(.GlobalEnv, ".Random.seed", as.integer(rs))
   if (!output) {
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
@@ -184,6 +185,7 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
   on.exit(reap(sock))
   pipe_notify(sock, cv = cv, remove = TRUE)
   dial(sock, url = url, autostart = NA, error = TRUE)
+  `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
   send(sock, data, mode = 1L, block = TRUE) || until(cv, .limit_short)
 

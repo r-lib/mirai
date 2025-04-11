@@ -495,6 +495,23 @@ is_mirai_interrupt <- function(x) inherits(x, "miraiInterrupt")
 #'
 is_error_value <- is_error_value
 
+#' On a daemon
+#'
+#' Returns a logical value, whether evaluation is taking place within a mirai
+#' call on a daemon.
+#'
+#' @return Logical `TRUE` or `FALSE`.
+#'
+#' @examplesIf interactive()
+#' on_daemon()
+#' mirai(mirai::on_daemon())[]
+#'
+#' @export
+#'
+on_daemon <- function() !is.null(.[["sock"]])
+
+# methods ----------------------------------------------------------------------
+
 #' @export
 #'
 `[.mirai` <- function(x, i) collect_aio_(x)
