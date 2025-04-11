@@ -30,6 +30,7 @@ test_error(daemons(url = local_url(), dispatcher = "t"), "should be either TRUE 
 test_error(dispatcher(client = "URL"), "must be 1 or greater")
 test_error(daemon("URL"), "Invalid argument")
 test_error(launch_local(1L), "daemons must be set")
+test_true(!daemons_set())
 test_type("character", host_url())
 test_true(startsWith(host_url(tls = TRUE), "tls"))
 test_true(grepl("5555", host_url(port = 5555), fixed = TRUE))
@@ -75,6 +76,7 @@ connection && {
   test_equal(1L, d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
   test_print(d)
   test_error(daemons(1L), "daemons already set")
+  test_true(daemons_set())
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
   if (!is_mirai_error(me)) test_true(is_error_value(me))
   if (is_mirai_error(me)) test_type("list", me$stack.trace)
@@ -311,6 +313,7 @@ connection && requireNamespace("promises", quietly = TRUE) && Sys.getenv("NOT_CR
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   test_equal(daemons(1, cleanup = FALSE, maxtasks = 2L, id = 125L), 1L)
+  test_true(daemons_set())
   test_equal(mirai(1)[], mirai(1)[])
   m <- mirai(0L)
   Sys.sleep(1L)

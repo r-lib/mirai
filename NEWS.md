@@ -3,7 +3,8 @@
 #### New Features
 
 * `mirai()` argument `.timeout` is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks @be-marc, @sebffischer #251).
-* Adds `on_daemon()` which returns a logical value whether evaluation is taking place within a mirai on a daemon.
+* Adds `on_daemon()` which returns a logical value whether or not evaluation is taking place within a mirai call on a daemon.
+* Adds `daemons_set()` which returns a logical value whether or not daemons are set for a given compute profile.
 
 #### Updates
 

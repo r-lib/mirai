@@ -497,8 +497,8 @@ is_error_value <- is_error_value
 
 #' On a daemon
 #'
-#' Returns a logical value, whether evaluation is taking place within a mirai
-#' call on a daemon.
+#' Returns a logical value, whether or not evaluation is taking place within a
+#' mirai call on a daemon.
 #'
 #' @return Logical `TRUE` or `FALSE`.
 #'

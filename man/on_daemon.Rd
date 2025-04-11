@@ -10,8 +10,8 @@ on_daemon()
 Logical \code{TRUE} or \code{FALSE}.
 }
 \description{
-Returns a logical value, whether evaluation is taking place within a mirai
-call on a daemon.
+Returns a logical value, whether or not evaluation is taking place within a
+mirai call on a daemon.
 }
 \examples{
 \dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}

@@ -25,9 +25,8 @@ communications is platform-dependent: abstract Unix domain sockets on Linux,
 Unix domain sockets on MacOS, Solaris and other POSIX platforms, and named
 pipes on Windows.
 
-This may be overriden, if desired, by specifying 'url' in the
-\code{\link[=daemons]{daemons()}} interface and launching daemons using
-\code{\link[=launch_local]{launch_local()}}.
+This may be overriden, if desired, by specifying 'url' in the \code{\link[=daemons]{daemons()}}
+interface and launching daemons using \code{\link[=launch_local]{launch_local()}}.
 }
 
 \section{Reference Manual}{

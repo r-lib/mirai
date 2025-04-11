@@ -396,6 +396,28 @@ status <- function(.compute = "default") {
 
 }
 
+#' Daemons set
+#'
+#' Returns a logical value, whether or not daemons have been set for a given
+#' compute profile.
+#'
+#' @inheritParams status
+#'
+#' @return Logical `TRUE` or `FALSE`.
+#'
+#' @examplesIf interactive()
+#' daemons_set()
+#' daemons(1)
+#' daemons_set()
+#' daemons(0)
+#'
+#' @export
+#'
+daemons_set <- function(.compute = "default") {
+  if (missing(.compute)) .compute <- .[["cp"]]
+  !is.null(..[[.compute]])
+}
+
 #' Create Serialization Configuration
 #'
 #' Returns a serialization configuration, which may be set to perform custom
