@@ -134,8 +134,11 @@ being found.</p>
 
 
 <p>Specifying the <code>.timeout</code> argument ensures that the mirai always resolves.
-However, the task may not have completed and still be ongoing in the daemon
-process. Use <code><a href="stop_mirai.html">stop_mirai()</a></code> instead to explicitly stop and interrupt a task.</p>
+When using dispatcher, the mirai will be cancelled after it times out (as if
+<code><a href="stop_mirai.html">stop_mirai()</a></code> had been called). As in that case, there is no guarantee that
+any cancellation will be successful, if the code cannot be interrupted for
+instance. When not using dispatcher, the mirai task will continue to
+completion in the daemon process, even if it times out in the host process.</p>
     </div>
     <div class="section level2">
     <h2 id="errors">Errors<a class="anchor" aria-label="anchor" href="#errors"></a></h2>
