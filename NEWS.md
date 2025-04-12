@@ -9,7 +9,7 @@
 #### Updates
 
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms (thanks @LennardLux, #240).
-* Requires nanonext >= [1.5.2.9002].
+* Requires nanonext >= [1.5.2.9004].
 * Package is re-licensed under the MIT license.
 
 # mirai 2.2.0
