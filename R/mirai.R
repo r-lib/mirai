@@ -163,8 +163,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = "defau
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
-  r <- request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
-  `attr<-`(r, "profile", .compute)
+  request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
 
 }
 
@@ -382,11 +381,9 @@ collect_mirai <- function(x, options = NULL) {
 stop_mirai <- function(x) {
 
   is.list(x) && return(invisible(rev(as.logical(lapply(rev(unclass(x)), stop_mirai)))))
-
-  .compute <- attr(x, "profile")
-  envir <- if (is.character(.compute)) ..[[.compute]]
   stop_aio(x)
-  invisible(length(envir[["msgid"]]) && query_dispatcher(envir[["sock"]], c(0L, attr(x, "msgid"))))
+  msgid <- .subset2(x, "msgid")
+  msgid > 0 && query_dispatcher(.subset2(x, "context"), c(0L, msgid))
 
 }
 
