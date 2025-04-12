@@ -382,8 +382,8 @@ stop_mirai <- function(x) {
 
   is.list(x) && return(invisible(rev(as.logical(lapply(rev(unclass(x)), stop_mirai)))))
   stop_aio(x)
-  msgid <- .subset2(x, "msgid")
-  msgid > 0 && query_dispatcher(.subset2(x, "context"), c(0L, msgid))
+  aio <- .subset2(x, "aio")
+  !is.integer(aio) && attr(aio, "msgid") > 0 && query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "msgid")))
 
 }
 
