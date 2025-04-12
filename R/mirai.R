@@ -163,7 +163,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = "defau
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
-  request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
+  request(envir[["sock"]], data, send_mode = 1L, recv_mode = 1L, timeout = .timeout, cv = envir[["cv"]], msgid = next_msgid(envir))
 
 }
 
@@ -383,7 +383,7 @@ stop_mirai <- function(x) {
   is.list(x) && return(invisible(rev(as.logical(lapply(rev(unclass(x)), stop_mirai)))))
   stop_aio(x)
   aio <- .subset2(x, "aio")
-  !is.integer(aio) && attr(aio, "msgid") > 0 && query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "msgid")))
+  !is.integer(aio) && attr(aio, "msgid") > 0 && query_dispatcher(attr(aio, "socket"), c(0L, attr(aio, "msgid")))
 
 }
 
@@ -556,9 +556,7 @@ ephemeral_daemon <- function(data, timeout) {
   url <- local_url()
   sock <- req_socket(url)
   system2(.command, args = c("-e", shQuote(sprintf("mirai:::.daemon(\"%s\")", url))), stdout = FALSE, stderr = FALSE, wait = FALSE)
-  aio <- request(.context(sock), data, send_mode = 1L, recv_mode = 1L, timeout = timeout, cv = NA)
-  `attr<-`(.subset2(aio, "aio"), "sock", sock)
-  aio
+  request(sock, data, send_mode = 1L, recv_mode = 1L, timeout = timeout, cv = NA)
 }
 
 deparse_safe <- function(x) if (length(x))
