@@ -80,7 +80,10 @@ next_stream <- function(envir) {
 }
 
 next_msgid <- function(envir) {
-  msgid <- envir[["msgid"]] + 1L
-  `[[<-`(envir, "msgid", msgid)
-  msgid
+  prev <- envir[["msgid"]]
+  if (is.integer(prev)) {
+    msgid <- prev + 1L
+    `[[<-`(envir, "msgid", msgid)
+    msgid
+  }
 }
