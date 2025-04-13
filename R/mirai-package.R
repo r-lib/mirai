@@ -25,10 +25,6 @@
 #'
 #' `vignette("mirai", package = "mirai")`
 #'
-#' @encoding UTF-8
-#' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
-#'   ([ORCID](https://orcid.org/0000-0002-0750-061X))
-#'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
 #'   .context cv cv_signal cv_value dial .interrupt is_error_value .keep listen
 #'   .mark mclock monitor msleep nng_error opt opt<- parse_url pipe_notify
