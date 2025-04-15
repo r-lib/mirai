@@ -479,7 +479,7 @@ req_socket <- function(url, tls = NULL, resend = 0L)
   `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", resend)
 
 parse_dispatcher <- function(x)
-  if (is.logical(x)) 1L + (!is.na(x) && x) else if (x == "process" || x == "thread") 2L else if (x == "none") 1L else 3L
+  if (is.logical(x)) 1L + (!is.na(x) && x) else if (x == "none") 1L else 3L
 
 parse_dots <- function(...) {
   ...length() || return("")
