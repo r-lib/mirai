@@ -548,9 +548,9 @@ This configuration may then be passed to the 'serial' argument of a `daemons()` 
 
 ```{r arrowpass}
 cfg <- serial_config(
-  class = "ArrowTabular",
-  sfunc = arrow::write_to_raw,
-  ufunc = function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
+  "ArrowTabular",
+  arrow::write_to_raw,
+  function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
 )
 
 daemons(1, serial = cfg)
@@ -565,27 +565,25 @@ daemons(0)
 It can be seen that this time, the arrow table is seamlessly handled in the 'mirai' process.
 This is the case even when the object is deeply nested inside lists or other structures.
 
-Different serialization functions may be registered for different compute profiles.
-As an example, the 'polars' profile can be set up to use [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4).
+Multiple serialization functions may be registered to handle different object classes.
+As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
 ```{r polars}
 daemons(
   n = 1,
   serial = serial_config(
-    class = "RPolarsDataFrame",
-    sfunc = function(x) polars::as_polars_df(x)$to_raw_ipc(),
-    ufunc = polars::pl$read_ipc
-  ),
-  .compute = "polars"
+    c("ArrowTabular", "RPolarsDataFrame"),
+    list(arrow::write_to_raw, function(x) polars::as_polars_df(x)$to_raw_ipc()),
+    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
+  )
 )
 
 x <- polars::as_polars_df(iris)
 
-m <- mirai(list(a = head(x), b = "some text"), x = x, .compute = "polars")
+m <- mirai(list(a = head(x), b = "some text"), x = x)
 m[]
 
-daemons(0, .compute = "polars")
+daemons(0)
 ```
-The 'vec' argument to `serialization()` may be specified as `TRUE` if the serialization functions are vectorized and take lists of objects, as is the case for [`safetensors`](https://mlverse.github.io/safetensors/), used for serialization in [`torch`](https://torch.mlverse.org/).
 
 Please refer to the [torch vignette](https://mirai.r-lib.org/articles/torch.html) for further examples.
 
