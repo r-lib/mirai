@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,18 +44,23 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
-<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
 <ul><li>
 <code><a href="../reference/mirai.html">mirai()</a></code> argument <code>.timeout</code> is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks <a href="https://github.com/be-marc" class="external-link">@be-marc</a>, <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a> <a href="https://github.com/r-lib/mirai/issues/251" class="external-link">#251</a>).</li>
-<li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value whether or not evaluation is taking place within a mirai call on a daemon.</li>
-<li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value whether or not daemons are set for a given compute profile.</li>
+<li>
+<code><a href="../reference/serial_config.html">serial_config()</a></code> now accepts vector arguments to register multiple custom serialization configurations. Argument <code>vec</code> is dropped as internal optimizations mean this option no longer needs to be set.</li>
+</ul></div>
+<div class="section level5">
+<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<ul><li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
+<li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value, whether or not daemons are set for a given compute profile.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
 <ul><li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘process’, deprecated in mirai v2.1.0, is removed.</li>
-<li>Requires nanonext &gt;= [1.5.2.9004].</li>
+<li>Requires nanonext &gt;= [1.5.2.9005].</li>
 <li>Package is re-licensed under the MIT license.</li>
 </ul></div>
 </div>
