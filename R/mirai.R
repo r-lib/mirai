@@ -492,7 +492,7 @@ is_mirai_interrupt <- function(x) inherits(x, "miraiInterrupt")
 #'
 is_error_value <- is_error_value
 
-#' On a daemon
+#' On Daemon
 #'
 #' Returns a logical value, whether or not evaluation is taking place within a
 #' mirai call on a daemon.

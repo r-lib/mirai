@@ -2,7 +2,7 @@
 % Please edit documentation in R/mirai.R
 \name{on_daemon}
 \alias{on_daemon}
-\title{On a daemon}
+\title{On Daemon}
 \usage{
 on_daemon()
 }

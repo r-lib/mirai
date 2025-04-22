@@ -396,7 +396,7 @@ status <- function(.compute = "default") {
 
 }
 
-#' Daemons set
+#' Daemons Set
 #'
 #' Returns a logical value, whether or not daemons have been set for a given
 #' compute profile.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/daemons.R
 \name{daemons_set}
 \alias{daemons_set}
-\title{Daemons set}
+\title{Daemons Set}
 \usage{
 daemons_set(.compute = "default")
 }
