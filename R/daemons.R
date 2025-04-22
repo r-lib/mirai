@@ -427,17 +427,13 @@ daemons_set <- function(.compute = "default") {
 #' set, the functions apply to all mirai requests for a specific compute
 #' profile.
 #'
-#' @param class character string of the class of object custom serialization
-#'   functions are applied to, e.g. 'ArrowTabular' or 'torch_tensor'.
-#' @param sfunc a function that accepts a reference object inheriting from
-#'   `class` (or a list of such objects) and returns a raw vector.
-#' @param ufunc a function that accepts a raw vector and returns a reference
-#'   object (or list of such objects).
-#' @param vec \[default FALSE\] whether or not the serialization functions are
-#'   vectorized. If FALSE, they should accept and return reference objects
-#'   individually e.g. `arrow::write_to_raw` and `arrow::read_ipc_stream`. If
-#'   TRUE, they should accept and return a list of reference objects, e.g.
-#'   `torch::torch_serialize` and `torch::torch_load`.
+#' @param class a character string (or vector) of the class of object custom
+#'   serialization functions are applied to, e.g. `'ArrowTabular'` or
+#'   `c('torch_tensor', 'ArrowTabular')`.
+#' @param sfunc a function (or list of functions) that accepts a reference
+#'   object inheriting from `class` and returns a raw vector.
+#' @param ufunc a function (or list of functions) that accepts a raw vector and
+#'   returns a reference object.
 #'
 #' @return A list comprising the configuration. This should be passed to the
 #'   `serial` argument of [daemons()].
@@ -446,9 +442,17 @@ daemons_set <- function(.compute = "default") {
 #' cfg <- serial_config("test_cls", function(x) serialize(x, NULL), unserialize)
 #' cfg
 #'
+#' cfg2 <- serial_config(
+#'   c("class_one", "class_two"),
+#'   list(function(x) serialize(x, NULL), function(x) serialize(x, NULL)),
+#'   list(unserialize, unserialize)
+#' )
+#' cfg2
+#'
 #' @export
 #'
-serial_config <- serial_config
+serial_config <- function(class, sfunc, ufunc)
+  nanonext::serial_config(class, sfunc, ufunc)
 
 # internals --------------------------------------------------------------------
 

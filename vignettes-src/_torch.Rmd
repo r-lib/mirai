@@ -21,7 +21,7 @@ This allows tensors from the [`torch`](https://torch.mlverse.org/) package to be
 
 #### Setup Steps
 
-1. Create the serialization configuration, specifying 'class' as 'torch_tensor' and 'vec' as TRUE.
+1. Create the serialization configuration, specifying 'class' as 'torch_tensor'.
 1. Set up daemons, supplying the configuration to the 'serial' argument.
 1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
 
@@ -32,8 +32,7 @@ library(torch)
 cfg <- serial_config(
   class = "torch_tensor",
   sfunc = torch::torch_serialize,
-  ufunc = torch::torch_load,
-  vec = TRUE
+  ufunc = torch::torch_load
 )
 
 daemons(1, serial = cfg)
