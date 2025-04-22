@@ -1,10 +1,14 @@
 # mirai (development version)
 
-#### New Features
+#### Behavioural Changes
 
 * `mirai()` argument `.timeout` is upgraded to automatically cancel ongoing mirai upon timeout when using dispatcher (thanks @be-marc, @sebffischer #251).
-* Adds `on_daemon()` which returns a logical value whether or not evaluation is taking place within a mirai call on a daemon.
-* Adds `daemons_set()` which returns a logical value whether or not daemons are set for a given compute profile.
+* `serial_config()` now accepts vector arguments to register multiple custom serialization configurations. Argument `vec` is dropped as internal optimizations mean this option no longer needs to be set.
+
+#### New Features
+
+* Adds `on_daemon()` which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.
+* Adds `daemons_set()` which returns a logical value, whether or not daemons are set for a given compute profile.
 
 #### Updates
 
