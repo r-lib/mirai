@@ -6,7 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include=FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -20,7 +21,8 @@ knitr::opts_chunk$set(
 
 The following represents a simple example, which sets up 2 local daemons, and then opens a connection to the same SQLite file database in each daemon.
 
-```{r db1}
+```{r}
+#| label: db1
 file <- tempfile()
 library(mirai)
 daemons(2)
@@ -30,7 +32,8 @@ everywhere({
 }, file = file)
 ```
 `mirai()` calls may then be used to write to or query the database, and may be executed on either daemon.
-```{r db2}
+```{r}
+#| label: db2
 m <- mirai(dbWriteTable(con, "iris", iris))
 m[]
 m <- mirai(dbListTables(con))
@@ -39,7 +42,8 @@ m <- mirai(dbGetQuery(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6'))
 m[]
 ```
 `everywhere()` can be used again to cleanly tear down the databases, before resetting daemons.
-```{r db3}
+```{r}
+#| label: db3
 everywhere(dbDisconnect(con))
 daemons(0)
 ```
@@ -52,7 +56,8 @@ The example below creates an in-memory SQLite connection using the `adbcsqlite` 
 
 Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `everywhere()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
 
-```{r arrow1}
+```{r}
+#| label: arrow1
 library(mirai)
 
 cfg <- serial_config(
@@ -72,7 +77,8 @@ everywhere(
 
 ```
 `mirai()` calls may then be used to write to or query the database all in the Arrow format.
-```{r arrow2}
+```{r}
+#| label: arrow2
 m <- mirai(dbWriteTableArrow(con, "iris", iris))
 m[]
 m <- mirai(dbReadTableArrow(con, "iris"))
@@ -81,7 +87,8 @@ m <- mirai(dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
 m[]
 ```
 Due to the tight integration of the `mirai` serialization mechanism with R's 'refhook' system, we can easily return complex / nested objects containing multiple queries in the Arrow format:
-```{r arrow3}
+```{r}
+#| label: arrow3
 m <- mirai({
   a <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
   b <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Width" < 2.6')
@@ -92,7 +99,8 @@ m <- mirai({
 m[]
 ```
 As before, `everywhere()` can be used again to cleanly tear down the databases, before resetting daemons.
-```{r arrow4}
+```{r}
+#| label: arrow4
 everywhere(dbDisconnect(con))
 daemons(0)
 ```
@@ -109,7 +117,9 @@ Non-dispatcher daemons are created as scheduling is not required (all queries ex
 
 Shiny ExtendedTask is then used to perform each query via a `mirai()` call, using the session-specific compute profile.
 
-```{r demo, eval=FALSE}
+```{r}
+#| label: demo
+#| eval: false
 library(mirai)
 library(secretbase)
 library(shiny)

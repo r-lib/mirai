@@ -6,7 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -25,7 +26,8 @@ The plumber router code is run in a daemon process itself so that it does not bl
 
 The /echo endpoint takes a GET request, sleeps for 1 second (simulating an expensive computation) and simply returns the 'msg' request header together with a timestamp and the process ID of the process it is run on.
 
-```{r get}
+```{r}
+#| label: get
 library(mirai)
 
 # supply SIGINT so the plumber server is interrupted and exits cleanly when finished
@@ -63,13 +65,16 @@ m <- mirai({
     pr_run(host = "127.0.0.1", port = 8985)
 })
 ```
-```{r sleep2, echo=FALSE}
+```{r}
+#| label: sleep2
+#| echo: false
 Sys.sleep(2)
 ```
 The API can be queried using an async HTTP client such as `nanonext::ncurl_aio()`.
 
 Here, all 8 requests are submitted at once, but we note that that responses have differing timestamps as only 4 can be processed at any one time (limited by the number of daemons set).
-```{r queryapi}
+```{r}
+#| label: queryapi
 library(nanonext)
 res <- lapply(
   1:8,
@@ -88,7 +93,8 @@ daemons(0)
 Below is a demonstration of the equivalent using a POST endpoint, accepting a JSON instruction sent as request data.
 
 Note that `req$postBody` should always be accessed in the router process and passed in as an argument to the 'mirai', as this is retrieved using a connection that is not serializable.
-```{r post}
+```{r}
+#| label: post
 library(mirai)
 
 # supply SIGINT so the plumber server is interrupted and exits cleanly when finished
@@ -128,11 +134,14 @@ m <- mirai({
     pr_run(host = "127.0.0.1", port = 8986)
 })
 ```
-```{r sleep2post, echo=FALSE}
+```{r}
+#| label: sleep2post
+#| echo: false
 Sys.sleep(2)
 ```
 Querying the endpoint produces the same set of outputs as the previous example.
-```{r queryapipost}
+```{r}
+#| label: queryapipost
 library(nanonext)
 res <- lapply(
   1:8,

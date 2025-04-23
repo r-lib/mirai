@@ -6,7 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -25,7 +26,8 @@ This allows tensors from the [`torch`](https://torch.mlverse.org/) package to be
 1. Set up daemons, supplying the configuration to the 'serial' argument.
 1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
 
-```{r tensors}
+```{r}
+#| label: tensors
 library(mirai)
 library(torch)
 
@@ -47,7 +49,8 @@ A set of model parameters is also specified.
 
 The model specification and parameters are then passed to and initialized within a 'mirai'.
 
-```{r tensors2}
+```{r}
+#| label: tensors2
 model <- nn_module(
   initialize = function(in_size, out_size) {
     self$conv1 <- nn_conv2d(in_size, out_size, 5)
@@ -69,13 +72,15 @@ m <- mirai(do.call(model, params), model = model, params = params)
 m[]
 ```
 The returned model is an object containing many tensor elements.
-```{r tensors3}
+```{r}
+#| label: tensors3
 m$data$parameters$conv1.weight
 ```
 It is usual for model parameters to then be passed to an optimiser.
 
 This can also be initialized within a 'mirai' process.
-```{r tensors4}
+```{r}
+#| label: tensors4
 optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
 
 optim[]

@@ -6,7 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include=FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -38,7 +39,8 @@ Use `mirai()` to evaluate an expression asynchronously in a separate, clean R pr
 
 The following mimics an expensive calculation that eventually returns a random value.
 
-```{r exec}
+```{r}
+#| label: exec
 library(mirai)
 
 x <- list(time = 2L, mean = 4)
@@ -51,28 +53,33 @@ Above, the variables `time` and `mean` are passed as part of the `mirai()` call.
 A 'mirai' object is returned immediately - creating a mirai never blocks the session.
 
 Whilst the async operation is ongoing, attempting to access a mirai's data yields an 'unresolved' logical NA.
-```{r do}
+```{r}
+#| label: do
 m
 m$data
 ```
 To check whether a mirai remains unresolved (yet to complete):
-```{r unres}
+```{r}
+#| label: unres
 unresolved(m)
 ```
 To wait for and collect the return value, use the mirai's `[]` method:
-```{r call}
+```{r}
+#| label: call
 m[]
 ```
 As a mirai represents an async operation, it is never necessary to wait for it - other code can continue to be run.
 Once it completes, the return value automatically becomes available at `$data`.
-```{r resolv}
+```{r}
+#| label: resolv
 m
 m$data
 ```
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
 So, the following would be equivalent to the above:
 
-```{r equiv}
+```{r}
+#| label: equiv
 expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
 
 args <- list(time = x$time, mean = x$mean)
@@ -93,10 +100,13 @@ Cache data in memory and use `mirai()` to perform periodic write operations conc
 
 Below, '.args' is used to pass `environment()`, which is the calling environment.
 This provides a convenient method of passing in existing objects.
-```{r cleanglobalenv, include=FALSE}
+```{r}
+#| label: cleanglobalenv
+#| include: false
 rm(list = ls())
 ```
-```{r exec2}
+```{r}
+#| label: exec2
 library(mirai)
 
 x <- rnorm(1e6)
@@ -109,7 +119,8 @@ A 'mirai' object is returned immediately.
 `unresolved()` may be used in control flow statements to perform actions which depend on resolution of the 'mirai', both before and after.
 
 This means there is no need to actually wait (block) for a 'mirai' to resolve, as the example below demonstrates.
-```{r call2}
+```{r}
+#| label: call2
 # unresolved() queries for resolution itself so no need to use it again within the while loop
 while (unresolved(m)) {
   cat("while unresolved\n")
@@ -130,7 +141,8 @@ Use case: isolating code that can potentially fail in a separate process to ensu
 As part of a data science / machine learning pipeline, iterations of model training may periodically fail for stochastic and uncontrollable reasons (e.g. buggy memory management on graphics cards).
 
 Running each iteration in a 'mirai' isolates this potentially-problematic code such that even if it does fail, it does not bring down the entire pipeline.
-```{r exec3r}
+```{r}
+#| label: exec3r
 library(mirai)
 
 run_iteration <- function(i) {
@@ -171,10 +183,13 @@ To instead only load the `base` package (which cuts out more than half of R's st
 #### With Dispatcher (default)
 
 Call `daemons()` specifying the number of daemons to launch.
-```{r daemons}
+```{r}
+#| label: daemons
 daemons(6)
 ```
-```{r daemons2, include=FALSE}
+```{r}
+#| label: daemons2
+#| include: false
 Sys.sleep(1L)
 ```
 To view the current status, `status()` provides the number of active connections, the URL daemons connect to, and a named vector showing the number of awaiting, executing and completed tasks:
@@ -182,7 +197,8 @@ To view the current status, `status()` provides the number of active connections
 - `assigned` number of tasks sent to a daemon for execution
 - `complete` number of tasks for which the result has been received (either completed or cancelled)
 
-```{r daemons3}
+```{r}
+#| label: daemons3
 status()
 ```
 The default `dispatcher = TRUE` creates a `dispatcher()` background process that connects to individual daemon processes on the local machine.
@@ -191,7 +207,8 @@ Tasks are queued at dispatcher and sent to a daemon as soon as it can accept the
 
 Dispatcher uses synchronisation primitives from [`nanonext`](https://doi.org/10.5281/zenodo.7903429), waiting upon rather than polling at intervals for tasks, which is efficient both in terms of consuming no resources while waiting, and also being fully synchronised with events (having no latency).
 
-```{r daemons4}
+```{r}
+#| label: daemons4
 daemons(0)
 ```
 Set the number of daemons to zero to reset.
@@ -200,14 +217,18 @@ This reverts to the default of creating a new background process for each 'mirai
 #### Without Dispatcher
 
 Alternatively, specifying `dispatcher = FALSE`, the background daemons connect directly to the host process.
-```{r daemonsq}
+```{r}
+#| label: daemonsq
 daemons(6, dispatcher = FALSE)
 ```
-```{r daemonsq2, include=FALSE}
+```{r}
+#| label: daemonsq2
+#| include: false
 Sys.sleep(0.5)
 ```
 Requesting the status now shows 6 connections, along with the host URL at `$daemons`.
-```{r daemonsqv}
+```{r}
+#| label: daemonsqv
 status()
 ```
 This implementation sends tasks immediately, and ensures that tasks are evenly-distributed amongst daemons.
@@ -220,26 +241,30 @@ It is well-suited to working with similar-length tasks, or where the number of c
 #### Everywhere
 
 `everywhere()` may be used to evaluate an expression on all connected daemons and persist the resultant state, regardless of a daemon's 'cleanup' setting.
-```{r everywhere}
+```{r}
+#| label: everywhere
 everywhere(library(DBI))
 ```
 The above keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded for all evaluations.
 Other types of setup task may also be performed, including making a common resource available, such as a database connection:
 
-```{r everywhere2}
+```{r}
+#| label: everywhere2
 file <- tempfile()
 everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = file)
 ```
 By super-assignment, the conenction 'con' will be available in the global environment of all daemon instances.
 Subsequent mirai calls may then make use of 'con'.
 
-```{r everywhere3}
+```{r}
+#| label: everywhere3
 m <- mirai(capture.output(str(con)))
 m[]
 ```
 Disconnect from the database everywhere:
 
-```{r everywhere4}
+```{r}
+#| label: everywhere4
 everywhere(dbDisconnect(con))
 
 ```
@@ -247,7 +272,8 @@ Sometimes it may be necessary to evaluate an expression in the global environmen
 As mirai evaluation does not occur in the global environment itself, but one inheriting from it, an explicit call to `evalq(envir = .GlobalEnv)` achieves this.
 An example use case is `box::use()` to import a module or package:
 
-```{r everywhere5}
+```{r}
+#| label: everywhere5
 everywhere(
   evalq(
     box::use(dplyr[select], mirai[...]),
@@ -263,7 +289,9 @@ daemons(0)
 `daemons()` has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion.
 It was designed for the use case of running a Shiny app with the desired number of daemons.
 
-```{r withshiny, eval=FALSE}
+```{r}
+#| label: withshiny
+#| eval: false
 with(daemons(4), shiny::runApp(app))
 ```
 Note: in the above case, it is assumed the app is already created.
@@ -289,18 +317,21 @@ For options on actually launching the daemons, please see the next section.
 
 Below, calling `host_url()` without a port value uses the default of '0'.
 This is a wildcard value that will automatically cause a free ephemeral port to be assigned:
-```{r localqueue}
+```{r}
+#| label: localqueue
 daemons(url = host_url())
 ```
 The actual assigned port may be queried at any time via `status()`:
-```{r remotev2}
+```{r}
+#| label: remotev2
 status()
 ```
 Dispatcher automatically adjusts to the number of daemons actually connected.
 Hence it is possible to dynamically scale up or down the number of daemons according to requirements.
 
 To reset all connections and revert to default behaviour:
-```{r reset2}
+```{r}
+#| label: reset2
 daemons(0)
 ```
 Closing the connection causes the dispatcher to exit automatically, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
@@ -322,7 +353,9 @@ In the examples below, the remote daemons connect back directly to port 5555 on 
 In these cases, using TLS is often desirable to provide additional security to the connections.
 
 The first example below launches 4 daemons on the machine 10.75.32.90 (using the default SSH port of 22 as this was not specified), connecting back to the host URL:
-```{r ldmn, eval=FALSE}
+```{r}
+#| label: ldmn
+#| eval: false
 daemons(
   n = 4,
   url = host_url(tls = TRUE, port = 5555),
@@ -330,7 +363,9 @@ daemons(
 )
 ```
 The second example below launches one daemon on each of 10.75.32.90 and 10.75.32.91 using the custom SSH port of 222:
-```{r ldmnd, eval=FALSE}
+```{r}
+#| label: ldmnd
+#| eval: false
 daemons(
   n = 1,
   url = host_url(tls = TRUE, port = 5555),
@@ -359,7 +394,9 @@ For example, if `local_url(tcp = TRUE, port = 5555)` is specified, the tunnel is
 The host listens to `127.0.0.1:5555` on its side, and the daemons each dial into `127.0.0.1:5555` on their own respective machines.
 
 The below example launches 2 daemons on the remote machine 10.75.32.90 using SSH tunnelling:
-```{r sshrevtun, eval=FALSE}
+```{r}
+#| label: sshrevtun
+#| eval: false
 daemons(
   n = 2,
   url = local_url(tcp = TRUE),
@@ -389,7 +426,8 @@ daemons(
 
 As an alternative to automated launches, calling `launch_remote()` without specifying 'remote' may be used to return the shell commands for deploying daemons manually.
 The printed return values may be copy / pasted directly to a remote machine.
-```{r launchremotereal}
+```{r}
+#| label: launchremotereal
 daemons(url = host_url())
 launch_remote(2)
 daemons(0)
@@ -405,7 +443,8 @@ TLS is available as an option to secure communications from the local machine to
 
 An automatic zero-configuration default is implemented.
 Simply specify a secure URL using the scheme `tls+tcp://` when setting daemons, or use `host_url(tls = TRUE)`, for example:
-```{r tlsremote}
+```{r}
+#| label: tlsremote
 daemons(url = host_url(tls = TRUE))
 ```
 Single-use keys and certificates are automatically generated and configured, without requiring any further intervention.
@@ -413,11 +452,14 @@ The private key is always retained on the host machine and never transmitted.
 
 The generated self-signed certificate is available via `launch_remote()`.
 This function conveniently constructs the full shell command to launch a daemon, including the correctly specified 'tls' argument to `daemon()`.
-```{r launch_remote}
+```{r}
+#| label: launch_remote
 launch_remote(1)
 ```
 The printed value may be deployed directly on a remote machine.
-```{r tlsclose, include=FALSE}
+```{r}
+#| label: tlsclose
+#| include: false
 daemons(0)
 ```
 
@@ -473,7 +515,8 @@ Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` s
 
 If execution in a mirai fails, the error message is returned as a character string of class 'miraiError' and 'errorValue' to facilitate debugging.
 `is_mirai_error()` may be used to test for mirai execution errors.
-```{r errorexample}
+```{r}
+#| label: errorexample
 m1 <- mirai(stop("occurred with a custom message", call. = FALSE))
 m1[]
 
@@ -484,7 +527,8 @@ is_mirai_error(m2$data)
 is_error_value(m2$data)
 ```
 A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object.
-```{r stackexample}
+```{r}
+#| label: stackexample
 f <- function(x) if (x > 0) stop("positive")
 
 m3 <- mirai({f(-1); f(1)}, f = f)
@@ -494,7 +538,8 @@ m3$data$stack.trace
 ```
 Elements of the original error condition are also accessible via `$` on the error object.
 For example, additional metadata recorded by `rlang::abort()` is preserved:
-```{r metaexample}
+```{r}
+#| label: metaexample
 f <- function(x) if (x > 0) stop("positive")
 
 m4 <- mirai(rlang::abort("aborted", meta_uid = "UID001"))
@@ -504,13 +549,15 @@ m4$data$meta_uid
 ```
 If a daemon instance is sent a user interrupt, the mirai will resolve to an object of class 'miraiInterrupt' and 'errorValue'.
 `is_mirai_interrupt()` may be used to test for such interrupts.
-```{r interruptexample}
+```{r}
+#| label: interruptexample
 m4 <- mirai(rlang::interrupt()) # simulates a user interrupt
 is_mirai_interrupt(m4[])
 ```
 If execution of a mirai surpasses the timeout set via the '.timeout' argument, the mirai will resolve to an 'errorValue' of 5L (timed out).
 This can, amongst other things, guard against mirai processes that have the potential to hang and never return.
-```{r timeouts}
+```{r}
+#| label: timeouts
 m5 <- mirai(nanonext::msleep(1000), .timeout = 500)
 m5[]
 
@@ -530,7 +577,8 @@ In these cases, performing 'mirai' operations on them would normally error.
 
 Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
 
-```{r arrowfail}
+```{r}
+#| label: arrowfail
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
 everywhere(library(arrow))
@@ -546,7 +594,8 @@ However, `serial_config()` can be used to create custom serialization configurat
 
 This configuration may then be passed to the 'serial' argument of a `daemons()` call.
 
-```{r arrowpass}
+```{r}
+#| label: arrowpass
 cfg <- serial_config(
   "ArrowTabular",
   arrow::write_to_raw,
@@ -567,7 +616,8 @@ This is the case even when the object is deeply nested inside lists or other str
 
 Multiple serialization functions may be registered to handle different object classes.
 As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
-```{r polars}
+```{r}
+#| label: polars
 daemons(
   n = 1,
   serial = serial_config(
@@ -605,7 +655,8 @@ This waits for all asynchronous operations to complete if still in progress.
 1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects.
 1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire operation to fail. This allows more efficient recovery from partial failure.
 1. Does not rely on a 'chunking' algorithm that attempts to split work into batches according to the number of available daemons, as implemented for example in the `parallel` package. Chunking cannot take into account varying or unpredictable compute times over the indices. It can be optimal to rely on `mirai` for scheduling instead. This is demonstrated in the example below.
-```{r chunk}
+```{r}
+#| label: chunk
 library(mirai)
 library(parallel)
 cl <- make_cluster(4)
@@ -616,14 +667,16 @@ system.time(parLapply(cl, vec, Sys.sleep))
 daemons(0)
 ```
 `.args` is used to specify further constant arguments to `.f` - the 'mean' and 'sd' in the example below:
-```{r mmap}
+```{r}
+#| label: mmap
 with(
   daemons(3, dispatcher = FALSE),
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
-```{r mmap2}
+```{r}
+#| label: mmap2
 daemons(4)
 ml <- mirai_map(
   c(a = 1, b = 2, c = 3),
@@ -644,7 +697,9 @@ When collecting the results, optionally specify arguments to `[]`:
 - `x[.stop]` collects the results applying early stopping, which stops at the first failure and cancels remaining computations. If the `cli` package is available, it will be used for displaying the error message.
 
 Combinations of the above may be supplied in the fashion of `x[.stop, .progress]`.
-```{r mmapadv, error=TRUE}
+```{r}
+#| label: mmapadv
+#| error: true
 mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
 
 with(
@@ -664,7 +719,8 @@ One of those may be an index value for indexed map.
 
 The function `.f` must take as many arguments as there are columns, either explicitly or via `...`.
 
-```{r mmapmulti}
+```{r}
+#| label: mmapmulti
 fruit <- c("melon", "grapes", "coconut")
 
 # create a dataframe for indexed map:

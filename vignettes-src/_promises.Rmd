@@ -6,7 +6,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -28,7 +29,8 @@ A 'mirai' may be piped directly using the promise pipe `%...>%`, which implicitl
 Alternatively, a 'mirai' may be explicitly converted into a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc.
 
 The following example outputs "hello" to the console after one second when the 'mirai' resolves.
-```{r promises}
+```{r}
+#| label: promises
 library(mirai)
 library(promises)
 
@@ -36,7 +38,8 @@ p <- mirai({Sys.sleep(1); "hello"}) %...>% cat()
 p
 ```
 It is possible to both access a 'mirai' value at `$data` and to use a promise for enacting a side effect (assigning the value to an environment in the example below).
-```{r promisesalt}
+```{r}
+#| label: promisesalt
 env <- new.env()
 
 m <- mirai({
@@ -50,7 +53,8 @@ m[]
 ```
 After returning to the top level prompt:
 
-```{r promisesaltcont}
+```{r}
+#| label: promisesaltcont
 env$res
 ```
 ### mirai_map Promises Integration
@@ -61,7 +65,8 @@ The implementation uses `promises::promise_all()`, and will resolve when the ent
 
 The following example prints the list 1, 2, 3 to the console after the flatmap returns a vector of the same values.
 
-```{r promisesmap}
+```{r}
+#| label: promisesmap
 library(mirai)
 library(promises)
 
@@ -76,7 +81,8 @@ with(daemons(2), {
 
 The code below is taken from the challenge to launch and collect one million promises. For illustration, the example is scaled down to ten thousand.
 
-```{r promiseschallenge}
+```{r}
+#| label: promiseschallenge
 library(mirai)
 daemons(8, dispatcher = FALSE)
 r <- 0
