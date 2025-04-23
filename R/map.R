@@ -139,8 +139,14 @@
 #'
 #' @export
 #'
-mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = "default") {
-
+mirai_map <- function(
+  .x,
+  .f,
+  ...,
+  .args = list(),
+  .promise = NULL,
+  .compute = "default"
+) {
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["requires_daemons"]])
@@ -197,32 +203,30 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = "
   if (length(.promise))
     if (is.list(.promise))
       lapply(vec, promises::then, .promise[[1L]], .promise[2L][[1L]]) else
-        lapply(vec, promises::then, .promise)
+      lapply(vec, promises::then, .promise)
 
   `class<-`(vec, "mirai_map")
-
 }
 
 #' @export
 #'
 `[.mirai_map` <- function(x, ...) {
-
   missing(..1) && return(collect_aio_(x))
 
   ensure_cli_initialized()
   dots <- eval(`[[<-`(substitute(alist(...)), 1L, quote(list)), envir = .)
   map(x, dots)
-
 }
 
 #' @export
 #'
 print.mirai_map <- function(x, ...) {
-
   xlen <- length(x)
-  cat(sprintf("< mirai map [%d/%d] >\n", xlen - .unresolved(x), xlen), file = stdout())
+  cat(
+    sprintf("< mirai map [%d/%d] >\n", xlen - .unresolved(x), xlen),
+    file = stdout()
+  )
   invisible(x)
-
 }
 
 #' mirai Map Options
@@ -236,18 +240,30 @@ print.mirai_map <- function(x, ...) {
 #'
 .flat <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else
-      if (i == 1L) typ <<- typeof(xi) else
-        if (i <= xlen) {
-          is_error_value(xi) && {
-            stop_mirai(x)
-            stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
-          }
-          typeof(xi) != typ && {
-            stop_mirai(x)
-            stop(sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)), call. = FALSE)
-          }
+    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
+      i <= xlen
+    ) {
+      is_error_value(xi) &&
+        {
+          stop_mirai(x)
+          stop(
+            sprintf("In index %d:\n%s", i, attr(xi, "message")),
+            call. = FALSE
+          )
         }
+      typeof(xi) != typ &&
+        {
+          stop_mirai(x)
+          stop(
+            sprintf(
+              "Cannot flatten outputs of differing type: %s / %s",
+              typ,
+              typeof(xi)
+            ),
+            call. = FALSE
+          )
+        }
+    }
   )
 )
 
@@ -256,9 +272,14 @@ print.mirai_map <- function(x, ...) {
 #'
 .progress <- compiler::compile(
   quote(
-    if (i == 0L) cat(sprintf("\r[ 0 / %d .... ]", xlen), file = stderr()) else
-      if (i < xlen) cat(sprintf("\r[ %d / %d .... ]", i, xlen), file = stderr()) else
-        if (i == xlen) cat(sprintf("\r[ %d / %d done ]\n", i, xlen), file = stderr())
+    if (i == 0L)
+      cat(sprintf("\r[ 0 / %d .... ]", xlen), file = stderr()) else if (
+      i < xlen
+    )
+      cat(sprintf("\r[ %d / %d .... ]", i, xlen), file = stderr()) else if (
+      i == xlen
+    )
+      cat(sprintf("\r[ %d / %d done ]\n", i, xlen), file = stderr())
   )
 )
 
@@ -266,7 +287,12 @@ print.mirai_map <- function(x, ...) {
 #' @export
 #'
 .stop <- compiler::compile(
-  quote(if (is_error_value(xi)) { stop_mirai(x); stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE) })
+  quote(
+    if (is_error_value(xi)) {
+      stop_mirai(x)
+      stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
+    }
+  )
 )
 
 # internals --------------------------------------------------------------------
@@ -274,11 +300,18 @@ print.mirai_map <- function(x, ...) {
 ensure_cli_initialized <- function()
   if (is.null(.[[".flat"]])) {
     cli <- requireNamespace("cli", quietly = TRUE)
-    `[[<-`(`[[<-`(`[[<-`(., ".flat", if (cli) flat_cli else .flat), ".progress", if (cli) progress_cli else .progress), ".stop", if (cli) stop_cli else .stop)
+    `[[<-`(
+      `[[<-`(
+        `[[<-`(., ".flat", if (cli) flat_cli else .flat),
+        ".progress",
+        if (cli) progress_cli else .progress
+      ),
+      ".stop",
+      if (cli) stop_cli else .stop
+    )
   }
 
 map <- function(x, dots) {
-
   expr <- if (length(dots) > 1L) do.call(expression, dots) else dots[[1L]]
   xlen <- length(x)
   i <- 0L
@@ -292,45 +325,54 @@ map <- function(x, dots) {
   out <- `names<-`(lapply(seq_len(xlen), collect_map), names(x))
   xi && return(unlist(out, recursive = FALSE))
   out
-
 }
 
 flat_cli <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else
-      if (i == 1L) typ <<- typeof(xi) else
-        if (i <= xlen) {
-          is_error_value(xi) && {
-            stop_mirai(x)
-            iname <- names(x)[i]
-            cli::cli_abort(
-              c(i = "In index: {i}.",
-                i = if (length(iname) && nzchar(iname)) "With name: {iname}."),
-              location = i,
-              name = iname,
-              parent = `class<-`(attributes(xi), c("error", "condition")),
-              call = quote(mirai_map())
-            )
-          }
-          typeof(xi) != typ && {
-            stop_mirai(x)
-            iname <- names(x)[i]
-            cli::cli_abort(
-              c(`!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"),
-              location = i,
-              name = iname,
-              call = quote(mirai_map())
-            )
-          }
+    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
+      i <= xlen
+    ) {
+      is_error_value(xi) &&
+        {
+          stop_mirai(x)
+          iname <- names(x)[i]
+          cli::cli_abort(
+            c(
+              i = "In index: {i}.",
+              i = if (length(iname) && nzchar(iname)) "With name: {iname}."
+            ),
+            location = i,
+            name = iname,
+            parent = `class<-`(attributes(xi), c("error", "condition")),
+            call = quote(mirai_map())
+          )
         }
-
+      typeof(xi) != typ &&
+        {
+          stop_mirai(x)
+          iname <- names(x)[i]
+          cli::cli_abort(
+            c(
+              `!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"
+            ),
+            location = i,
+            name = iname,
+            call = quote(mirai_map())
+          )
+        }
+    }
   )
 )
 
 progress_cli <- compiler::compile(
   quote(
-    if (i == 0L) cli::cli_progress_bar(type = NULL, total = xlen, auto_terminate = TRUE, .envir = .) else
-      if (i <= xlen) cli::cli_progress_update(.envir = .)
+    if (i == 0L)
+      cli::cli_progress_bar(
+        type = NULL,
+        total = xlen,
+        auto_terminate = TRUE,
+        .envir = .
+      ) else if (i <= xlen) cli::cli_progress_update(.envir = .)
   )
 )
 
@@ -340,8 +382,10 @@ stop_cli <- compiler::compile(
       stop_mirai(x)
       iname <- names(x)[i]
       cli::cli_abort(
-        c(i = "In index: {i}.",
-          i = if (length(iname) && nzchar(iname)) "With name: {iname}."),
+        c(
+          i = "In index: {i}.",
+          i = if (length(iname) && nzchar(iname)) "With name: {iname}."
+        ),
         location = i,
         name = iname,
         parent = `class<-`(attributes(xi), c("error", "condition")),

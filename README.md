@@ -9,8 +9,9 @@
 status](https://www.r-pkg.org/badges/version/mirai)](https://CRAN.R-project.org/package=mirai)
 [![R-universe
 status](https://r-lib.r-universe.dev/badges/mirai)](https://r-lib.r-universe.dev/mirai)
-[![R-CMD-check](https://github.com/r-lib/mirai/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/mirai/actions)
-[![codecov](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
+[![R-CMD-check](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
 [![DOI](https://zenodo.org/badge/459341940.svg)](https://zenodo.org/badge/latestdoi/459341940)
 <!-- badges: end -->
 
@@ -76,7 +77,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 6.652687 8.895718 5.771767 7.655453 4.704791
+#> [1] 5.787644 6.462923 7.999113 7.217859 7.485651
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -90,7 +91,7 @@ while (unresolved(m)) {
 m
 #> < mirai [$data] >
 m$data
-#> [1] 6.652687 8.895718 5.771767 7.655453 4.704791
+#> [1] 5.787644 6.462923 7.999113 7.217859 7.485651
 ```
 
 #### Daemons

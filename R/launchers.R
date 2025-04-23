@@ -51,7 +51,6 @@
 #' @export
 #'
 launch_local <- function(n = 1L, ..., tls = NULL, .compute = "default") {
-
   if (missing(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
@@ -63,7 +62,6 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = "default") {
   for (i in seq_len(n))
     launch_daemon(write_args(url, dots, next_stream(envir), tls), output)
   n
-
 }
 
 #' Launch Daemon
@@ -85,8 +83,13 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = "default") {
 #' @rdname launch_local
 #' @export
 #'
-launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .compute = "default") {
-
+launch_remote <- function(
+  n = 1L,
+  remote = remote_config(),
+  ...,
+  tls = NULL,
+  .compute = "default"
+) {
   if (missing(.compute)) .compute <- .[["cp"]]
   if (!is.numeric(n) && inherits(n, c("miraiCluster", "miraiNode"))) {
     .compute <- attr(n, "id")
@@ -105,11 +108,9 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   quote <- remote[["quote"]]
 
   if (length(command)) {
-
     args <- remote[["args"]]
 
     if (is.list(args)) {
-
       tunnel <- remote[["tunnel"]]
 
       if (tunnel) {
@@ -122,35 +123,50 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
 
       if (length(args) == 1L) {
         args <- args[[1L]]
-
       } else if (n == 1L || n == length(args)) {
-
         cmds <- character(length(args))
         for (i in seq_along(args))
-          cmds[i] <- sprintf("%s -e %s", rscript, write_args(url, dots, next_stream(envir), tls))
+          cmds[i] <- sprintf(
+            "%s -e %s",
+            rscript,
+            write_args(url, dots, next_stream(envir), tls)
+          )
 
         for (i in seq_along(args))
-          system2(command, args = `[<-`(args[[i]], find_dot(args[[i]]), if (quote) shQuote(cmds[i]) else cmds[i]), wait = FALSE)
+          system2(
+            command,
+            args = `[<-`(
+              args[[i]],
+              find_dot(args[[i]]),
+              if (quote) shQuote(cmds[i]) else cmds[i]
+            ),
+            wait = FALSE
+          )
 
         return(`class<-`(cmds, "miraiLaunchCmd"))
-
       } else {
         stop(._[["arglen"]])
       }
-
     }
   }
 
   cmds <- character(n)
   for (i in seq_len(n))
-    cmds[i] <- sprintf("%s -e %s", rscript, write_args(url, dots, next_stream(envir), tls))
+    cmds[i] <- sprintf(
+      "%s -e %s",
+      rscript,
+      write_args(url, dots, next_stream(envir), tls)
+    )
 
   if (length(command))
     for (cmd in cmds)
-      system2(command, args = `[<-`(args, find_dot(args), if (quote) shQuote(cmd) else cmd), wait = FALSE)
+      system2(
+        command,
+        args = `[<-`(args, find_dot(args), if (quote) shQuote(cmd) else cmd),
+        wait = FALSE
+      )
 
   `class<-`(cmds, "miraiLaunchCmd")
-
 }
 
 #' Generic and SSH Remote Launch Configuration
@@ -210,11 +226,20 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
 #'
 #' @export
 #'
-remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript", quote = FALSE) {
-
+remote_config <- function(
+  command = NULL,
+  args = c("", "."),
+  rscript = "Rscript",
+  quote = FALSE
+) {
   if (is.list(args)) lapply(args, find_dot) else find_dot(args)
-  list(command = command, args = args, rscript = rscript, quote = quote, tunnel = FALSE)
-
+  list(
+    command = command,
+    args = args,
+    rscript = rscript,
+    quote = quote,
+    tunnel = FALSE
+  )
 }
 
 #' SSH Remote Launch Configuration
@@ -291,8 +316,13 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #' @rdname remote_config
 #' @export
 #'
-ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", rscript = "Rscript") {
-
+ssh_config <- function(
+  remotes,
+  tunnel = FALSE,
+  timeout = 10,
+  command = "ssh",
+  rscript = "Rscript"
+) {
   premotes <- lapply(remotes, parse_url)
   hostnames <- lapply(premotes, .subset2, "hostname")
   ports <- lapply(premotes, .subset2, "port")
@@ -300,14 +330,23 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
   args <- vector(mode = "list", length = length(remotes))
   for (i in seq_along(args)) {
     args[[i]] <- c(
-      sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports[[i]]),
+      sprintf(
+        "-o ConnectTimeout=%s -fTp %s",
+        as.character(timeout),
+        ports[[i]]
+      ),
       hostnames[[i]],
       "."
     )
   }
 
-  list(command = command, args = args, rscript = rscript, quote = TRUE, tunnel = isTRUE(tunnel))
-
+  list(
+    command = command,
+    args = args,
+    rscript = rscript,
+    quote = TRUE,
+    tunnel = isTRUE(tunnel)
+  )
 }
 
 #' URL Constructors
@@ -344,7 +383,12 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
 #' @export
 #'
 host_url <- function(tls = FALSE, port = 0)
-  sprintf("%s://%s:%s", if (tls) "tls+tcp" else "tcp", Sys.info()[["nodename"]], as.character(port))
+  sprintf(
+    "%s://%s:%s",
+    if (tls) "tls+tcp" else "tcp",
+    Sys.info()[["nodename"]],
+    as.character(port)
+  )
 
 #' URL Constructors
 #'
@@ -364,18 +408,14 @@ host_url <- function(tls = FALSE, port = 0)
 #' @export
 #'
 local_url <- function(tcp = FALSE, port = 0)
-  if (tcp)
-    sprintf("tcp://127.0.0.1:%d", as.integer(port)) else
-      sprintf("%s%s", .urlscheme, random(12L))
+  if (tcp) sprintf("tcp://127.0.0.1:%d", as.integer(port)) else
+    sprintf("%s%s", .urlscheme, random(12L))
 
 #' @export
 #'
 print.miraiLaunchCmd <- function(x, ...) {
-
-  for (i in seq_along(x))
-    cat(sprintf("[%d]\n%s\n\n", i, x[i]), file = stdout())
+  for (i in seq_along(x)) cat(sprintf("[%d]\n%s\n\n", i, x[i]), file = stdout())
   invisible(x)
-
 }
 
 # internals --------------------------------------------------------------------

@@ -80,10 +80,21 @@
 #'
 #' @export
 #'
-daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = TRUE,
-                   cleanup = TRUE, output = FALSE, idletime = Inf, walltime = Inf,
-                   maxtasks = Inf, id = NULL, tls = NULL, rs = NULL) {
-
+daemon <- function(
+  url,
+  dispatcher = FALSE,
+  ...,
+  asyncdial = FALSE,
+  autoexit = TRUE,
+  cleanup = TRUE,
+  output = FALSE,
+  idletime = Inf,
+  walltime = Inf,
+  maxtasks = Inf,
+  id = NULL,
+  tls = NULL,
+  rs = NULL
+) {
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit(reap(sock))
@@ -98,11 +109,14 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
     sink(file = devnull)
     sink(file = devnull, type = "message")
-    on.exit({
-      sink(type = "message")
-      sink()
-      close(devnull)
-    }, add = TRUE)
+    on.exit(
+      {
+        sink(type = "message")
+        sink()
+        close(devnull)
+      },
+      add = TRUE
+    )
   }
   snapshot()
   xc <- 0L
@@ -116,28 +130,31 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
       send(sock, c(.intmax, as.integer(id)), mode = 2L, block = TRUE)
     wait(cv) || return(invisible(xc))
     serial <- collect_aio(aio)
-    if (is.list(serial))
-      `opt<-`(sock, "serial", serial)
+    if (is.list(serial)) `opt<-`(sock, "serial", serial)
     repeat {
       aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
       wait(cv) || break
       m <- collect_aio(aio)
-      is.integer(m) && {
-        m == 5L || next
-        xc <- 1L
-        break
-      }
+      is.integer(m) &&
+        {
+          m == 5L || next
+          xc <- 1L
+          break
+        }
       cancel <- recv_aio(sock, mode = 8L, cv = NA)
       data <- eval_mirai(m)
       stop_aio(cancel)
-      { task >= maxtasks || maxtime && mclock() >= maxtime } && {
-        .mark()
-        send(sock, data, mode = 1L, block = TRUE)
-        aio <- recv_aio(sock, mode = 8L, cv = cv)
-        xc <- 2L + (task >= maxtasks)
-        wait(cv)
-        break
-      }
+      {
+        task >= maxtasks || maxtime && mclock() >= maxtime
+      } &&
+        {
+          .mark()
+          send(sock, data, mode = 1L, block = TRUE)
+          aio <- recv_aio(sock, mode = 8L, cv = cv)
+          xc <- 2L + (task >= maxtasks)
+          wait(cv)
+          break
+        }
       send(sock, data, mode = 1L, block = TRUE)
       if (cleanup) do_cleanup()
       task <- task + 1L
@@ -148,23 +165,26 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
       aio <- recv_aio(ctx, mode = 1L, timeout = timeout, cv = cv)
       wait(cv) || break
       m <- collect_aio(aio)
-      is.integer(m) && {
-        xc <- 1L
-        break
-      }
+      is.integer(m) &&
+        {
+          xc <- 1L
+          break
+        }
       data <- eval_mirai(m)
       send(ctx, data, mode = 1L, block = TRUE)
       if (cleanup) do_cleanup()
-      { task >= maxtasks || maxtime && mclock() >= maxtime } && {
-        xc <- 2L + (task >= maxtasks)
-        break
-      }
+      {
+        task >= maxtasks || maxtime && mclock() >= maxtime
+      } &&
+        {
+          xc <- 2L + (task >= maxtasks)
+          break
+        }
       task <- task + 1L
     }
   }
 
   invisible(xc)
-
 }
 
 #' dot Daemon
@@ -179,7 +199,6 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
 #' @noRd
 #'
 .daemon <- function(url) {
-
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
@@ -188,12 +207,12 @@ daemon <- function(url, dispatcher = FALSE, ..., asyncdial = FALSE, autoexit = T
   `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
   send(sock, data, mode = 1L, block = TRUE) || until(cv, .limit_short)
-
 }
 
 # internals --------------------------------------------------------------------
 
-handle_mirai_error <- function(cnd) invokeRestart("mirai_error", cnd, sys.calls())
+handle_mirai_error <- function(cnd)
+  invokeRestart("mirai_error", cnd, sys.calls())
 
 handle_mirai_interrupt <- function(cnd) invokeRestart("mirai_interrupt")
 
@@ -223,9 +242,12 @@ dial_and_sync_socket <- function(sock, url, asyncdial = FALSE, tls = NULL) {
 }
 
 do_cleanup <- function() {
-  rm(list = (vars <- names(.GlobalEnv))[!vars %in% .[["vars"]]], envir = .GlobalEnv)
-  lapply((new <- search())[!new %in% .[["se"]]], detach, character.only = TRUE)
+  vars <- names(.GlobalEnv)
+  rm(list = vars[!vars %in% .[["vars"]]], envir = .GlobalEnv)
+  new <- search()
+  lapply(new[!new %in% .[["se"]]], detach, character.only = TRUE)
   options(.[["op"]])
 }
 
-snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
+snapshot <- function()
+  `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
