@@ -4,7 +4,8 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -18,8 +19,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/mirai)](https://CRAN.R-project.org/package=mirai)
 [![R-universe status](https://r-lib.r-universe.dev/badges/mirai)](https://r-lib.r-universe.dev/mirai)
-[![R-CMD-check](https://github.com/r-lib/mirai/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/mirai/actions)
-[![codecov](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
+[![R-CMD-check](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
 [![DOI](https://zenodo.org/badge/459341940.svg)](https://zenodo.org/badge/latestdoi/459341940)
 <!-- badges: end -->
 
@@ -41,7 +42,8 @@ An inherently queued architecture handles many more tasks than available process
 Use `mirai()` to evaluate an expression asynchronously in a separate, clean R process.
 
 The following mimics an expensive calculation that eventually returns a vector of random values.
-```{r exec}
+```{r}
+#| label: exec
 library(mirai)
 
 m <- mirai({Sys.sleep(n); rnorm(n, mean)}, n = 5L, mean = 7)
@@ -51,20 +53,24 @@ The mirai expression is evaluated in another process and hence must be self-cont
 A 'mirai' object is returned immediately - creating a mirai never blocks the session.
 
 Whilst the async operation is ongoing, attempting to access a mirai's data yields an 'unresolved' logical NA.
-```{r do}
+```{r}
+#| label: do
 m
 m$data
 ```
 To check whether a mirai remains unresolved (yet to complete):
-```{r unres}
+```{r}
+#| label: unres
 unresolved(m)
 ```
 To wait for and collect the return value, use the mirai's `[]` method:
-```{r call}
+```{r}
+#| label: call
 m[]
 ```
 As a mirai represents an async operation, it is never necessary to wait for it. Other code can continue to run. Once it completes, the return value automatically becomes available at `$data`.
-```{r resolv}
+```{r}
+#| label: resolv
 while (unresolved(m)) {
   # do work here that does not depend on 'm'
 }
@@ -76,7 +82,8 @@ m$data
 
 Daemons are persistent background processes for receiving mirai requests, and are created as easily as:
 
-```{r daemons}
+```{r}
+#| label: daemons
 daemons(4)
 ```
 
@@ -88,7 +95,8 @@ Daemons may also be deployed [remotely](https://mirai.r-lib.org/articles/mirai.h
 
 `mirai_map()` maps a function over a list or vector, with each element processed in a separate parallel process. It also performs multiple map over the rows of a dataframe or matrix.
 
-```{r map}
+```{r}
+#| label: map
 df <- data.frame(
   fruit = c("melon", "grapes", "coconut"),
   price = c(3L, 5L, 2L)
@@ -96,7 +104,8 @@ df <- data.frame(
 m <- mirai_map(df, \(...) sprintf("%s: $%d", ...))
 ```
 A 'mirai_map' object is returned immediately. Other code can continue to run at this point. Its value may be retrieved at any time using its `[]` method to return a list, just like `purrr::map()` or `base::lapply()`. The `[]` method also provides options for flatmap, early stopping and/or progress indicators. 
-```{r mapvalue}
+```{r}
+#| label: mapvalue
 m
 m[.flat]
 ```
@@ -171,13 +180,17 @@ We would like to thank in particular:
 
 Install the latest release from CRAN:
 
-```{r cran, eval=FALSE}
+```{r}
+#| label: cran
+#| eval: false
 install.packages("mirai")
 ```
 
 The current development version is available from R-universe:
 
-```{r universe, eval=FALSE}
+```{r}
+#| label: universe
+#| eval: false
 install.packages("mirai", repos = "https://r-lib.r-universe.dev")
 ```
 
