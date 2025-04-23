@@ -8,3 +8,5 @@
 ^pkgdown$
 ^codecov\.yml$
 ^vignettes-src$
+^[\.]?air\.toml$
+^\.vscode$

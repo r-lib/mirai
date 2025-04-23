@@ -69,7 +69,17 @@ nextget <- function(x, .compute = "default") ..[[.compute]][[x]]
 #' @export
 #'
 nextcode <- function(xc)
-  sprintf("%d | Daemon %s", xc, switch(xc + 1L, "connection terminated", "idletime limit reached", "walltime limit reached", "task limit reached"))
+  sprintf(
+    "%d | Daemon %s",
+    xc,
+    switch(
+      xc + 1L,
+      "connection terminated",
+      "idletime limit reached",
+      "walltime limit reached",
+      "task limit reached"
+    )
+  )
 
 # internals --------------------------------------------------------------------
 

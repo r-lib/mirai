@@ -4,3 +4,5 @@
 .Ruserdata
 docs
 inst/doc
+.vscode
+air.toml

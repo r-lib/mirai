@@ -43,11 +43,9 @@
 #' @exportS3Method promises::as.promise
 #'
 as.promise.mirai <- function(x) {
-
   promise <- .subset2(x, "promise")
 
   if (is.null(promise)) {
-
     promise <- if (unresolved(x)) {
       promises::promise(
         function(resolve, reject) .keep(x, environment())
@@ -71,11 +69,9 @@ as.promise.mirai <- function(x) {
     }
 
     `[[<-`(x, "promise", promise)
-
   }
 
   promise
-
 }
 
 #' Make mirai_map Promise
@@ -113,14 +109,12 @@ as.promise.mirai <- function(x) {
 #' @exportS3Method promises::as.promise
 #'
 as.promise.mirai_map <- function(x) {
-
   promise <- attr(x, "promise")
 
   if (is.null(promise))
     attr(x, "promise") <- promise <- promises::promise_all(.list = x)
 
   promise
-
 }
 
 #' @exportS3Method promises::is.promising

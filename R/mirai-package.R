@@ -37,7 +37,6 @@
 # tested implicitly
 
 .onLoad <- function(libname, pkgname) {
-
   switch(
     Sys.info()[["sysname"]],
     Linux = {
@@ -53,7 +52,6 @@
       .urlscheme <<- "ipc:///tmp/"
     }
   )
-
 }
 
 # nocov end
