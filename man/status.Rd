@@ -39,7 +39,7 @@ status query are returned.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 status()
 daemons(url = "tcp://[::1]:0")
 status()

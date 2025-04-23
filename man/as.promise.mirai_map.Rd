@@ -30,7 +30,7 @@ promise values; if any promise fails, the first error to be encountered will
 be used to reject the returned promise.
 }
 \examples{
-\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(promises)
 
 with(daemons(1), {

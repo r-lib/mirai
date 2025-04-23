@@ -91,7 +91,7 @@ transpose a matrix using \code{\link[=t]{t()}}.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(4)
 
 # perform and collect mirai map
@@ -144,7 +144,7 @@ tryCatch(mirai_map(list(1, "a", 3), sum)[.stop], error = identity)
 
 daemons(0)
 \dontshow{\}) # examplesIf}
-\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 # promises example that outputs the results, including errors, to the console
 daemons(1, dispatcher = FALSE)
 ml <- mirai_map(

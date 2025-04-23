@@ -64,7 +64,7 @@ being found.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(1)
 # export common data by a super-assignment expression:
 everywhere(y <<- 3)

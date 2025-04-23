@@ -25,7 +25,7 @@ Allows a 'mirai' to be used with the promise pipe \verb{\%...>\%}, which schedul
 function to run upon resolution of the 'mirai'.
 }
 \examples{
-\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(promises)
 
 p <- as.promise(mirai("example"))

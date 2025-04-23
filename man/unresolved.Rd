@@ -25,7 +25,7 @@ Note: querying resolution may cause a previously unresolved 'mirai' to
 resolve.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 m <- mirai(Sys.sleep(0.1))
 unresolved(m)
 Sys.sleep(0.3)

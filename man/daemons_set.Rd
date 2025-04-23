@@ -20,7 +20,7 @@ Returns a logical value, whether or not daemons have been set for a given
 compute profile.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons_set()
 daemons(1)
 daemons_set()

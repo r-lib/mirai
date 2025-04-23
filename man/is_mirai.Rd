@@ -20,7 +20,7 @@ FALSE otherwise.
 Is the object a 'mirai' or 'mirai_map'.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(1, dispatcher = FALSE)
 df <- data.frame()
 m <- mirai(as.matrix(df), df = df)

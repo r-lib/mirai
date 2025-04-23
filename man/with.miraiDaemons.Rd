@@ -27,7 +27,7 @@ This function is an S3 method for the generic \code{\link[=with]{with()}} for cl
 'miraiDaemons'.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 with(
   daemons(2, dispatcher = FALSE),
   {

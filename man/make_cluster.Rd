@@ -88,7 +88,7 @@ usual 'miraiError' being returned.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 cl <- make_cluster(2)
 cl
 cl[[1L]]

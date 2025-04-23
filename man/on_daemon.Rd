@@ -14,7 +14,7 @@ Returns a logical value, whether or not evaluation is taking place within a
 mirai call on a daemon.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 on_daemon()
 mirai(mirai::on_daemon())[]
 \dontshow{\}) # examplesIf}

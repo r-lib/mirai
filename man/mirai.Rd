@@ -100,7 +100,7 @@ interrupts, and timeouts.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # specifying objects via '...'
 n <- 3
 m <- mirai(x + y + 2, x = 2, y = n)

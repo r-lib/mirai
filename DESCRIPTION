@@ -42,7 +42,7 @@ Suggests:
     cli,
     litedown
 VignetteBuilder: litedown
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
 Roxygen: list(markdown = TRUE)
 Config/Needs/website: tidyverse/tidytemplate
 Remotes: r-lib/nanonext

@@ -51,7 +51,7 @@ advancing the stream stored within the compute profile. This ensures that the
 next recursive stream is returned when the function is called again.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(1L)
 nextstream()
 nextstream()

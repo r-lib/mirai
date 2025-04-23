@@ -36,7 +36,7 @@ Is the object an 'errorValue', such as a 'mirai' timeout, a 'miraiError' or a
 error values.
 }
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 m <- mirai(stop())
 call_mirai(m)
 is_mirai_error(m$data)
