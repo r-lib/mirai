@@ -107,7 +107,7 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 6.652687 8.895718 5.771767 7.655453 4.704791</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.787644 6.462923 7.999113 7.217859 7.485651</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Other code can continue to run. Once it completes, the return value automatically becomes available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -116,7 +116,7 @@
 <span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai [$data] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 6.652687 8.895718 5.771767 7.655453 4.704791</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.787644 6.462923 7.999113 7.217859 7.485651</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -272,8 +272,8 @@
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=mirai" class="external-link"><img src="https://www.r-pkg.org/badges/version/mirai" alt="CRAN status"></a></li>
 <li><a href="https://r-lib.r-universe.dev/mirai" class="external-link"><img src="https://r-lib.r-universe.dev/badges/mirai" alt="R-universe status"></a></li>
-<li><a href="https://github.com/r-lib/mirai/actions" class="external-link"><img src="https://github.com/r-lib/mirai/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/r-lib/mirai" class="external-link"><img src="https://codecov.io/gh/r-lib/mirai/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/r-lib/mirai" class="external-link"><img src="https://codecov.io/gh/r-lib/mirai/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/459341940" class="external-link"><img src="https://zenodo.org/badge/459341940.svg" alt="DOI"></a></li>
 </ul>
 </div>
