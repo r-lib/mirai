@@ -374,7 +374,7 @@ progress_cli <- compiler::compile(
 
 stop_cli <- compiler::compile(
   quote(
-    if (is_error_value(xi)) {
+    is_error_value(xi) && {
       stop_mirai(x)
       iname <- names(x)[i]
       cli::cli_abort(
