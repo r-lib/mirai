@@ -14,7 +14,7 @@
 
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms (thanks @LennardLux, #240).
 * `daemons()` dispatcher argument 'process', deprecated in mirai v2.1.0, is removed.
-* Requires nanonext >= [1.5.2.9005].
+* Requires nanonext >= [1.5.2.9006].
 * Package is re-licensed under the MIT license.
 
 # mirai 2.2.0

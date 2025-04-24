@@ -196,23 +196,22 @@ dispatcher <- function(
           cv_signal(cv)
           next
         }
-        if (value[4L]) {
-          if (value[4L] == 1L) {
+        .read_marker(value) && {
             send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
             send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
             if (length(outq[[id]][["dmnid"]]))
               events <- c(events, outq[[id]][["dmnid"]])
             outq[[id]] <- NULL
-          } else {
-            dmnid <- readBin(value, "integer", n = 2L)[2L]
-            events <- c(events, dmnid)
-            `[[<-`(outq[[id]], "dmnid", -dmnid)
-          }
           next
-        } else {
-          send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
-          `[[<-`(outq[[id]], "msgid", 0L)
         }
+        as.logical(value[1L]) || {
+          dmnid <- readBin(value, "integer", n = 2L)[2L]
+          events <- c(events, dmnid)
+          `[[<-`(outq[[id]], "dmnid", -dmnid)
+          next
+        }
+        send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
+        `[[<-`(outq[[id]], "msgid", 0L)
       }
 
       if (length(inq))
