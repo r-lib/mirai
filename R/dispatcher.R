@@ -95,15 +95,14 @@ dispatcher <- function(
 
     changes <- read_monitor(m)
     for (item in changes)
-      item > 0 &&
-        {
-          outq[[as.character(item)]] <- as.environment(list(
-            pipe = item,
-            msgid = 0L,
-            ctx = NULL
-          ))
-          send(psock, serial, mode = 1L, block = TRUE, pipe = item)
-        }
+      item > 0 && {
+        outq[[as.character(item)]] <- as.environment(list(
+          pipe = item,
+          msgid = 0L,
+          ctx = NULL
+        ))
+        send(psock, serial, mode = 1L, block = TRUE, pipe = item)
+      }
   } else {
     listener <- attr(psock, "listener")[[1L]]
     url <- opt(listener, "url")
@@ -122,35 +121,34 @@ dispatcher <- function(
       wait(cv) || break
 
       changes <- read_monitor(m)
-      length(changes) &&
-        {
-          for (item in changes) {
-            if (item > 0) {
-              outq[[as.character(item)]] <- as.environment(list(
-                pipe = item,
-                msgid = 0L,
-                ctx = NULL
-              ))
-              send(psock, serial, mode = 1L, block = TRUE, pipe = item)
-              cv_signal(cv)
-            } else {
-              id <- as.character(-item)
-              if (length(outq[[id]])) {
-                outq[[id]][["msgid"]] &&
-                  send(
-                    outq[[id]][["ctx"]],
-                    .connectionReset,
-                    mode = 1L,
-                    block = TRUE
-                  )
-                if (length(outq[[id]][["dmnid"]]))
-                  events <- c(events, outq[[id]][["dmnid"]])
-                outq[[id]] <- NULL
-              }
+      length(changes) && {
+        for (item in changes) {
+          if (item > 0) {
+            outq[[as.character(item)]] <- as.environment(list(
+              pipe = item,
+              msgid = 0L,
+              ctx = NULL
+            ))
+            send(psock, serial, mode = 1L, block = TRUE, pipe = item)
+            cv_signal(cv)
+          } else {
+            id <- as.character(-item)
+            if (length(outq[[id]])) {
+              outq[[id]][["msgid"]] &&
+                send(
+                  outq[[id]][["ctx"]],
+                  .connectionReset,
+                  mode = 1L,
+                  block = TRUE
+                )
+              if (length(outq[[id]][["dmnid"]]))
+                events <- c(events, outq[[id]][["dmnid"]])
+              outq[[id]] <- NULL
             }
           }
-          next
         }
+        next
+      }
 
       if (!unresolved(req)) {
         value <- .subset2(req, "value")
@@ -168,21 +166,19 @@ dispatcher <- function(
           } else {
             found <- FALSE
             for (item in outq)
-              item[["msgid"]] == id &&
-                {
-                  send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
-                  `[[<-`(item, "msgid", -1L)
+              item[["msgid"]] == id && {
+                send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
+                `[[<-`(item, "msgid", -1L)
+                found <- TRUE
+                break
+              }
+            if (!found)
+              for (i in seq_along(inq))
+                inq[[i]][["msgid"]] == id && {
+                  inq[[i]] <- NULL
                   found <- TRUE
                   break
                 }
-            if (!found)
-              for (i in seq_along(inq))
-                inq[[i]][["msgid"]] == id &&
-                  {
-                    inq[[i]] <- NULL
-                    found <- TRUE
-                    break
-                  }
           }
           send(ctx, found, mode = 2L, block = TRUE)
         } else {
@@ -195,12 +191,11 @@ dispatcher <- function(
         value <- .subset2(res, "value")
         id <- as.character(.subset2(res, "aio"))
         res <- recv_aio(psock, mode = 8L, cv = cv)
-        outq[[id]][["msgid"]] < 0 &&
-          {
-            `[[<-`(outq[[id]], "msgid", 0L)
-            cv_signal(cv)
-            next
-          }
+        outq[[id]][["msgid"]] < 0 && {
+          `[[<-`(outq[[id]], "msgid", 0L)
+          cv_signal(cv)
+          next
+        }
         if (value[4L]) {
           if (value[4L] == 1L) {
             send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
@@ -222,14 +217,13 @@ dispatcher <- function(
 
       if (length(inq))
         for (item in outq)
-          item[["msgid"]] ||
-            {
-              send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
-              `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
-              `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
-              inq[[1L]] <- NULL
-              break
-            }
+          item[["msgid"]] || {
+            send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
+            `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
+            `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
+            inq[[1L]] <- NULL
+            break
+          }
     }
   )
 }

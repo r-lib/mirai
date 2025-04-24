@@ -243,26 +243,24 @@ print.mirai_map <- function(x, ...) {
     if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
       i <= xlen
     ) {
-      is_error_value(xi) &&
-        {
-          stop_mirai(x)
-          stop(
-            sprintf("In index %d:\n%s", i, attr(xi, "message")),
-            call. = FALSE
-          )
-        }
-      typeof(xi) != typ &&
-        {
-          stop_mirai(x)
-          stop(
-            sprintf(
-              "Cannot flatten outputs of differing type: %s / %s",
-              typ,
-              typeof(xi)
-            ),
-            call. = FALSE
-          )
-        }
+      is_error_value(xi) && {
+        stop_mirai(x)
+        stop(
+          sprintf("In index %d:\n%s", i, attr(xi, "message")),
+          call. = FALSE
+        )
+      }
+      typeof(xi) != typ && {
+        stop_mirai(x)
+        stop(
+          sprintf(
+            "Cannot flatten outputs of differing type: %s / %s",
+            typ,
+            typeof(xi)
+          ),
+          call. = FALSE
+        )
+      }
     }
   )
 )
@@ -332,34 +330,32 @@ flat_cli <- compiler::compile(
     if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
       i <= xlen
     ) {
-      is_error_value(xi) &&
-        {
-          stop_mirai(x)
-          iname <- names(x)[i]
-          cli::cli_abort(
-            c(
-              i = "In index: {i}.",
-              i = if (length(iname) && nzchar(iname)) "With name: {iname}."
-            ),
-            location = i,
-            name = iname,
-            parent = `class<-`(attributes(xi), c("error", "condition")),
-            call = quote(mirai_map())
-          )
-        }
-      typeof(xi) != typ &&
-        {
-          stop_mirai(x)
-          iname <- names(x)[i]
-          cli::cli_abort(
-            c(
-              `!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"
-            ),
-            location = i,
-            name = iname,
-            call = quote(mirai_map())
-          )
-        }
+      is_error_value(xi) && {
+        stop_mirai(x)
+        iname <- names(x)[i]
+        cli::cli_abort(
+          c(
+            i = "In index: {i}.",
+            i = if (length(iname) && nzchar(iname)) "With name: {iname}."
+          ),
+          location = i,
+          name = iname,
+          parent = `class<-`(attributes(xi), c("error", "condition")),
+          call = quote(mirai_map())
+        )
+      }
+      typeof(xi) != typ && {
+        stop_mirai(x)
+        iname <- names(x)[i]
+        cli::cli_abort(
+          c(
+            `!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"
+          ),
+          location = i,
+          name = iname,
+          call = quote(mirai_map())
+        )
+      }
     }
   )
 )
