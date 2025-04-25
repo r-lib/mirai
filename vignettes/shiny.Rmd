@@ -20,7 +20,7 @@ For use with Shiny, mirai implements truly event-driven promises, developed in c
 
 mirai natively supports Shiny ExtendedTask to create scalable Shiny apps, which remain responsive intra-session for each user, as well as inter-session for multiple concurrent users.
 
-'mirai' may be used anywhere a 'promise' or 'future_promise' would be accepted (with the promises package versions >= 1.3.0).
+'mirai' may be used anywhere a 'promise' or 'future_promise' would be accepted (with promises >= 1.3.0).
 
 ### Shiny ExtendedTask: Introduction
 
@@ -469,3 +469,38 @@ app <- shinyApp(ui, server)
 with(daemons(8), runApp(app))
 ```
 *This example adapts a contribution from Davide Magno.*
+
+### Migration from future_promise
+
+It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
+
+The most important difference is that a `future_promise()` tries to infer all the global variables that are required. However this can easily run into edge cases, or behave in a way that you would not expect. As the behaviour is not transparent, you will not know until something has gone wrong and you are trying to debug it.
+
+A mirai on the other hand, requires that the expression must be self-contained, hence any variables or helper functions need to be passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means you can easily reason about your code, and is designed to save you time in the long run.
+
+#### Special Case: `...` Example
+
+A Shiny app may use the following `future_promise()` code within the server component:
+
+```r
+func <- function(x, y){
+  Sys.sleep(y)
+  runif(x)
+}
+
+task <- ExtendedTask$new(
+  function(...) future_promise(func(...))
+) |> bind_task_button("btn")
+
+observeEvent(input$btn, task$invoke(input$n, input$delay))
+```
+The equivalent may be achieved in `mirai()` in the following way:
+```r
+task <- ExtendedTask$new(
+  function(...) mirai(func(...), environment(), .args = list(func = func))
+) |> bind_task_button("btn")
+```
+1. `environment()` captures the `...` to be used by the function within the mirai expression,
+2. `.args` may then be used to pass through the definition for `func`.
+
+*This example comes from a question raised by Simon Smart.*
