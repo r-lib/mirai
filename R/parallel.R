@@ -169,7 +169,7 @@ print.miraiCluster <- function(x, ...) {
       "< miraiCluster | ID: %s nodes: %d active: %s >\n",
       id,
       length(x),
-      as.logical(length(..[[id]]))
+      !is.null(..[[id]])
     ),
     file = stdout()
   )

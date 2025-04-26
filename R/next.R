@@ -85,15 +85,12 @@ nextcode <- function(xc)
 
 next_stream <- function(envir) {
   stream <- envir[["stream"]]
-  if (length(stream)) `[[<-`(envir, "stream", parallel::nextRNGStream(stream))
+  if (is.integer(stream)) `[[<-`(envir, "stream", parallel::nextRNGStream(stream))
   stream
 }
 
 next_msgid <- function(envir) {
   prev <- envir[["msgid"]]
-  if (is.integer(prev)) {
-    msgid <- prev + 1L
-    `[[<-`(envir, "msgid", msgid)
-    msgid
-  }
+  is.null(prev) && return()
+  envir[["msgid"]] <- prev + 1L
 }

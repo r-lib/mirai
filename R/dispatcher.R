@@ -121,7 +121,7 @@ dispatcher <- function(
       wait(cv) || break
 
       changes <- read_monitor(m)
-      length(changes) && {
+      is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
             outq[[as.character(item)]] <- as.environment(list(

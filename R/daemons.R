@@ -403,7 +403,7 @@ status <- function(.compute = "default") {
   is.list(.compute) && return(status(attr(.compute, "id")))
   envir <- ..[[.compute]]
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
-  length(envir[["msgid"]]) && return(dispatcher_status(envir))
+  is.null(envir[["msgid"]]) || return(dispatcher_status(envir))
   list(
     connections = as.integer(stat(envir[["sock"]], "pipes")),
     daemons = envir[["urls"]]

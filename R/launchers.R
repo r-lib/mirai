@@ -55,7 +55,7 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = "default") {
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["urls"]]
-  write_args <- if (length(envir[["msgid"]])) wa3 else wa2
+  write_args <- if (is.null(envir[["msgid"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(...)
   output <- attr(dots, "output")
   if (is.null(tls)) tls <- envir[["tls"]]
@@ -99,7 +99,7 @@ launch_remote <- function(
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["urls"]]
-  write_args <- if (length(envir[["msgid"]])) wa3 else wa2
+  write_args <- if (is.null(envir[["msgid"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(...)
   if (is.null(tls)) tls <- envir[["tls"]]
 
