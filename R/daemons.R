@@ -225,6 +225,7 @@ daemons <- function(
 
   if (is.character(url)) {
     if (is.null(envir)) {
+      url <- url[1L]
       envir <- init_envir_stream(seed)
       launches <- 0L
       dots <- parse_dots(...)
