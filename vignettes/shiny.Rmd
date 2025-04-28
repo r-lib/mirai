@@ -474,9 +474,9 @@ with(daemons(8), runApp(app))
 
 It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
 
-The most important difference is that a `future_promise()` tries to infer all the global variables that are required. However this can easily run into edge cases, or behave in a way that you would not expect. As the behaviour is not transparent, you will not know until something has gone wrong and you are trying to debug it.
+The most important difference is that a `future_promise()` tries to infer all the global variables that are required by the expression. However this can easily run into edge cases, or behave in a way that you would not expect. As this behaviour is not transparent, in the best case you will know something has gone wrong, but in the worst case could silently produce the wrong result. In both cases, you would not know until you are trying to debug the situation.
 
-A mirai on the other hand, requires that the expression must be self-contained, hence any variables or helper functions need to be passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means you can easily reason about your code, and is designed to save you time in the long run.
+A mirai on the other hand, requires that the expression be self-contained, hence any variables or helper functions are passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means that you can easily reason about your code, and is designed to save you time in the long run.
 
 #### Special Case: `...` Example
 
@@ -497,10 +497,10 @@ observeEvent(input$btn, task$invoke(input$n, input$delay))
 The equivalent may be achieved in `mirai()` in the following way:
 ```r
 task <- ExtendedTask$new(
-  function(...) mirai(func(...), environment(), .args = list(func = func))
+  function(...) mirai(func(...), func = func, .args = environment())
 ) |> bind_task_button("btn")
 ```
-1. `environment()` captures the `...` to be used by the function within the mirai expression,
-2. `.args` may then be used to pass through the definition for `func`.
+1. `environment()` captures the `...` to be used by the function within the mirai expression, and can be supplied via `.args`.
+2. The definition for `func` is passed through in the usual way.
 
 *This example comes from a question raised by Simon Smart.*
