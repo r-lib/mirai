@@ -570,16 +570,18 @@ to update a reactive value once the entire map operation has completed
 that was originally written for use with a
 <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
 <p>The most important difference is that a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>
-tries to infer all the global variables that are required. However this
-can easily run into edge cases, or behave in a way that you would not
-expect. As the behaviour is not transparent, you will not know until
-something has gone wrong and you are trying to debug it.</p>
-<p>A mirai on the other hand, requires that the expression must be
-self-contained, hence any variables or helper functions need to be
-passed in via the <code>...</code> of <code><a href="../reference/mirai.html">mirai()</a></code>. This simple
+tries to infer all the global variables that are required by the
+expression. However this can easily run into edge cases, or behave in a
+way that you would not expect. As this behaviour is not transparent, in
+the best case you will know something has gone wrong, but in the worst
+case could silently produce the wrong result. In both cases, you would
+not know until you are trying to debug the situation.</p>
+<p>A mirai on the other hand, requires that the expression be
+self-contained, hence any variables or helper functions are passed in
+via the <code>...</code> of <code><a href="../reference/mirai.html">mirai()</a></code>. This simple
 requirement allows for transparent and reliable behaviour that remains
-completely robust over time. It also means you can easily reason about
-your code, and is designed to save you time in the long run.</p>
+completely robust over time. It also means that you can easily reason
+about your code, and is designed to save you time in the long run.</p>
 <div class="section level4">
 <h4 id="special-case-----example">Special Case: <code>...</code> Example<a class="anchor" aria-label="anchor" href="#special-case-----example"></a>
 </h4>
@@ -600,15 +602,15 @@ within the server component:</p>
 following way:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">task</span> <span class="op">&lt;-</span> <span class="va">ExtendedTask</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">func</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>func <span class="op">=</span> <span class="va">func</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">func</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, func <span class="op">=</span> <span class="va">func</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/bind_task_button.html" class="external-link">bind_task_button</a></span><span class="op">(</span><span class="st">"btn"</span><span class="op">)</span></span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> captures the <code>...</code> to be used
-by the function within the mirai expression,</li>
-<li>
-<code>.args</code> may then be used to pass through the definition
-for <code>func</code>.</li>
+by the function within the mirai expression, and can be supplied via
+<code>.args</code>.</li>
+<li>The definition for <code>func</code> is passed through in the usual
+way.</li>
 </ol>
 <p><em>This example comes from a question raised by Simon
 Smart.</em></p>

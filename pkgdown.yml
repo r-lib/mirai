@@ -9,7 +9,7 @@ articles:
   promises: promises.html
   shiny: shiny.html
   torch: torch.html
-last_built: 2025-04-28T10:42Z
+last_built: 2025-04-28T11:14Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles
