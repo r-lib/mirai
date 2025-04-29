@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,10 +57,12 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
+<ul><li>
+<code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to use the local network IP address, which is typically more robust than using a hostname.</li>
+<li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘process’, deprecated in mirai v2.1.0, is removed.</li>
-<li>Requires nanonext &gt;= [1.5.2.9008].</li>
+<li>Requires nanonext &gt;= [1.5.2.9009].</li>
 <li>Package is re-licensed under the MIT license.</li>
 </ul></div>
 </div>
