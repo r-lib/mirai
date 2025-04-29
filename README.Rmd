@@ -87,7 +87,7 @@ Daemons are persistent background processes for receiving mirai requests, and ar
 daemons(4)
 ```
 
-Daemons may also be deployed [remotely](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons) for distributed computing and [launchers](https://shikokuchuo.net/mirai/articles/mirai.html#distributed-computing-launching-daemons) can start daemons across the network via (tunnelled) SSH or a cluster resource manager.
+Daemons may also be deployed [remotely](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons) for distributed computing and [launchers](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-launching-daemons) can start daemons across the network via (tunnelled) SSH or a cluster resource manager.
 
 [Secure TLS connections](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-tls-secure-connections) can be used for remote daemon connections, with zero configuration required.
 

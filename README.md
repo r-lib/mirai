@@ -77,7 +77,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 5.787644 6.462923 7.999113 7.217859 7.485651
+#> [1] 7.273223 7.557381 6.589631 8.570415 6.011193
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -91,7 +91,7 @@ while (unresolved(m)) {
 m
 #> < mirai [$data] >
 m$data
-#> [1] 5.787644 6.462923 7.999113 7.217859 7.485651
+#> [1] 7.273223 7.557381 6.589631 8.570415 6.011193
 ```
 
 #### Daemons
@@ -107,7 +107,7 @@ daemons(4)
 Daemons may also be deployed
 [remotely](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons)
 for distributed computing and
-[launchers](https://shikokuchuo.net/mirai/articles/mirai.html#distributed-computing-launching-daemons)
+[launchers](https://mirai.r-lib.org/articles/mirai.html#distributed-computing-launching-daemons)
 can start daemons across the network via (tunnelled) SSH or a cluster
 resource manager.
 
