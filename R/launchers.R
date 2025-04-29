@@ -351,14 +351,14 @@ ssh_config <- function(
 
 #' URL Constructors
 #'
-#' `host_url` constructs a valid host URL (at which daemons may connect)
-#' based on the computer's hostname. This may be supplied directly to the `url`
+#' `host_url` constructs a valid host URL (at which daemons may connect) based
+#' on the computer's IP address. This may be supplied directly to the `url`
 #' argument of [daemons()].
 #'
-#' `host_url` relies on using the host name of the computer rather than an IP
-#' address and typically works on local networks, although this is not always
-#' guaranteed. If unsuccessful, substitute an IPv4 or IPv6 address in place of
-#' the hostname.
+#' `host_url` uses the first local network IP address detected (falls back to
+#' the computer's host name if none are detected). This may not always be the
+#' correct IP address if multiple network adapters are in use. In these cases,
+#' substitute in the appropriate IPv4 or IPv6 address.
 #'
 #' `local_url` generates a random URL for the platform's default inter-process
 #' communications transport: abstract Unix domain sockets on Linux, Unix domain
@@ -382,13 +382,15 @@ ssh_config <- function(
 #'
 #' @export
 #'
-host_url <- function(tls = FALSE, port = 0)
+host_url <- function(tls = FALSE, port = 0) {
+  ip <- ip_addr()
   sprintf(
-    "%s://%s:%s",
+    "%s://%s:%d",
     if (tls) "tls+tcp" else "tcp",
-    Sys.info()[["nodename"]],
-    as.character(port)
+    if (nzchar(ip)) ip else Sys.info()[["nodename"]],
+    as.integer(port)
   )
+}
 
 #' URL Constructors
 #'

@@ -263,7 +263,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
-  test_zero(daemons(url = local_url(tcp = TRUE), pass = "test", serial = cfg))
+  test_zero(daemons(url = host_url(), pass = "test", serial = cfg))
   test_equal(launch_local(1L), 1L)
   Sys.sleep(1L)
   q <- quote({ list2env(list(b = 2), envir = .GlobalEnv); 0L})
