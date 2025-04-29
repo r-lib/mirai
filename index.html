@@ -107,7 +107,7 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.787644 6.462923 7.999113 7.217859 7.485651</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7.273223 7.557381 6.589631 8.570415 6.011193</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Other code can continue to run. Once it completes, the return value automatically becomes available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -116,7 +116,7 @@
 <span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai [$data] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 5.787644 6.462923 7.999113 7.217859 7.485651</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7.273223 7.557381 6.589631 8.570415 6.011193</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -124,7 +124,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 4</span></span></code></pre></div>
-<p>Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons">remotely</a> for distributed computing and <a href="https://shikokuchuo.net/mirai/articles/mirai.html#distributed-computing-launching-daemons" class="external-link">launchers</a> can start daemons across the network via (tunnelled) SSH or a cluster resource manager.</p>
+<p>Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/mirai.html#distributed-computing-remote-daemons">remotely</a> for distributed computing and <a href="https://mirai.r-lib.org/articles/mirai.html#distributed-computing-launching-daemons">launchers</a> can start daemons across the network via (tunnelled) SSH or a cluster resource manager.</p>
 <p><a href="https://mirai.r-lib.org/articles/mirai.html#distributed-computing-tls-secure-connections">Secure TLS connections</a> can be used for remote daemon connections, with zero configuration required.</p>
 </div>
 <div class="section level4">
