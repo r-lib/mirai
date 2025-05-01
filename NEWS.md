@@ -12,10 +12,10 @@
 
 #### Updates
 
-* `host_url()` is upgraded to use the local network IP address, which is typically more robust than using a hostname.
+* `host_url()` is upgraded to return all local network IP addresses, which is more robust than just using a hostname.
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms (thanks @LennardLux, #240).
 * `daemons()` dispatcher argument 'process', deprecated in mirai v2.1.0, is removed.
-* Requires nanonext >= [1.5.2.9009].
+* Requires nanonext >= [1.5.2.9011].
 * Package is re-licensed under the MIT license.
 
 # mirai 2.2.0

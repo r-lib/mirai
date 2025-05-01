@@ -355,10 +355,10 @@ ssh_config <- function(
 #' on the computer's IP address. This may be supplied directly to the `url`
 #' argument of [daemons()].
 #'
-#' `host_url` uses the first local network IP address detected (falls back to
-#' the computer's host name if none are detected). This may not always be the
-#' correct IP address if multiple network adapters are in use. In these cases,
-#' substitute in the appropriate IPv4 or IPv6 address.
+#' `host_url` may return a vector of URLs if e.g. multiple network adapters are
+#' in use. If this entire vector is passed to the `url` argument of functions
+#' such as `daemons()`, the first URL is used. If no suitable IP addresses are
+#' detected, the computer's hostname will be used as a fallback.
 #'
 #' `local_url` generates a random URL for the platform's default inter-process
 #' communications transport: abstract Unix domain sockets on Linux, Unix domain
@@ -373,7 +373,7 @@ ssh_config <- function(
 #'   connecting from. For `local_url`, is only taken into account if
 #'   `tcp = TRUE`.
 #'
-#' @return A character string comprising a valid URL.
+#' @return A character vector (comprising a valid URL or URLs).
 #'
 #' @examples
 #' host_url()

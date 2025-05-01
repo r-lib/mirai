@@ -23,11 +23,11 @@ connecting from. For \code{local_url}, is only taken into account if
 This must be used for SSH tunnelling.}
 }
 \value{
-A character string comprising a valid URL.
+A character vector (comprising a valid URL or URLs).
 }
 \description{
-\code{host_url} constructs a valid host URL (at which daemons may connect)
-based on the computer's hostname. This may be supplied directly to the \code{url}
+\code{host_url} constructs a valid host URL (at which daemons may connect) based
+on the computer's IP address. This may be supplied directly to the \code{url}
 argument of \code{\link[=daemons]{daemons()}}.
 
 \code{local_url} constructs a URL suitable for local daemons, or for use with
@@ -35,10 +35,10 @@ SSH tunnelling. This may be supplied directly to the \code{url} argument of
 \code{\link[=daemons]{daemons()}}.
 }
 \details{
-\code{host_url} relies on using the host name of the computer rather than an IP
-address and typically works on local networks, although this is not always
-guaranteed. If unsuccessful, substitute an IPv4 or IPv6 address in place of
-the hostname.
+\code{host_url} may return a vector of URLs if e.g. multiple network adapters are
+in use. If this entire vector is passed to the \code{url} argument of functions
+such as \code{daemons()}, the first URL is used. If no suitable IP addresses are
+detected, the computer's hostname will be used as a fallback.
 
 \code{local_url} generates a random URL for the platform's default inter-process
 communications transport: abstract Unix domain sockets on Linux, Unix domain
