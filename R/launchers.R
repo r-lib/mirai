@@ -351,16 +351,17 @@ ssh_config <- function(
 
 #' URL Constructors
 #'
-#' `host_url` constructs a valid host URL (at which daemons may connect) based
+#' `host_url()` constructs a valid host URL (at which daemons may connect) based
 #' on the computer's IP address. This may be supplied directly to the `url`
 #' argument of [daemons()].
 #'
-#' `host_url` may return a vector of URLs if e.g. multiple network adapters are
-#' in use. If this entire vector is passed to the `url` argument of functions
+#' `host_url()` will return a vector of URLs if multiple network adapters are in
+#' use, and each will be named by the interface name (adapter friendly name on
+#' Windows). If this entire vector is passed to the `url` argument of functions
 #' such as `daemons()`, the first URL is used. If no suitable IP addresses are
 #' detected, the computer's hostname will be used as a fallback.
 #'
-#' `local_url` generates a random URL for the platform's default inter-process
+#' `local_url()` generates a random URL for the platform's default inter-process
 #' communications transport: abstract Unix domain sockets on Linux, Unix domain
 #' sockets on MacOS, Solaris and other POSIX platforms, and named pipes on
 #' Windows.
@@ -373,7 +374,8 @@ ssh_config <- function(
 #'   connecting from. For `local_url`, is only taken into account if
 #'   `tcp = TRUE`.
 #'
-#' @return A character vector (comprising a valid URL or URLs).
+#' @return A character vector (comprising a valid URL or URLs), named for
+#'   `host_url()`.
 #'
 #' @examples
 #' host_url()
@@ -384,17 +386,20 @@ ssh_config <- function(
 #'
 host_url <- function(tls = FALSE, port = 0) {
   ip <- ip_addr()
-  sprintf(
-    "%s://%s:%d",
-    if (tls) "tls+tcp" else "tcp",
-    if (length(ip) > 1L || nzchar(ip)) ip else Sys.info()[["nodename"]],
-    as.integer(port)
+  `names<-`(
+    sprintf(
+      "%s://%s:%d",
+      if (tls) "tls+tcp" else "tcp",
+      if (length(ip) > 1L || nzchar(ip)) ip else Sys.info()[["nodename"]],
+      as.integer(port)
+    ),
+    names(ip)
   )
 }
 
 #' URL Constructors
 #'
-#' `local_url` constructs a URL suitable for local daemons, or for use with
+#' `local_url()` constructs a URL suitable for local daemons, or for use with
 #' SSH tunnelling. This may be supplied directly to the `url` argument of
 #' [daemons()].
 #'
