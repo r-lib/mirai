@@ -6,30 +6,30 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>mirai - Torch Integration • mirai</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - Torch Integration">
 <meta name="robots" content="noindex">
+<script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
-    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-none" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9026</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,22 +57,13 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/shikokuchuo/mirai/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://shikokuchuo.net/" aria-label="shikokuchuo"><span class="fa fa-cube"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
-<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/r-lib/mirai/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
 
   </div>
-</nav><div class="container template-article">
+</nav><div class="container template-article" id="container">
 
 
 
@@ -82,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Torch Integration</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/shikokuchuo/mirai/blob/main/vignettes/torch.Rmd" class="external-link"><code>vignettes/torch.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/torch.Rmd" class="external-link"><code>vignettes/torch.Rmd</code></a></small>
       <div class="d-none name"><code>torch.Rmd</code></div>
     </div>
 
@@ -99,28 +90,28 @@ used seamlessly in ‘mirai’ computations.</p>
 <h4 id="setup-steps">Setup Steps<a class="anchor" aria-label="anchor" href="#setup-steps"></a>
 </h4>
 <ol style="list-style-type: decimal">
-<li><p>Set up dameons.</p></li>
-<li><p>Create the serialization configuration, specifying ‘class’ as
-‘torch_tensor’ and ‘vec’ as TRUE.</p></li>
-<li><p>Use <code><a href="../reference/everywhere.html">everywhere()</a></code>, supplying the configuration to the
-‘.serial’ argument, and (optionally) making the <code>torch</code>
-package available on all daemons for convenience.</p></li>
+<li>Create the serialization configuration, specifying ‘class’ as
+‘torch_tensor’.</li>
+<li>Set up daemons, supplying the configuration to the ‘serial’
+argument.</li>
+<li>(Optional) Use <code><a href="../reference/everywhere.html">everywhere()</a></code> to make the
+<code>torch</code> package available on all daemons for
+convenience.</li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/mirai/">mirai</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://torch.mlverse.org/docs" class="external-link">torch</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
 <span></span>
 <span><span class="va">cfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span></span>
 <span>  class <span class="op">=</span> <span class="st">"torch_tensor"</span>,</span>
-<span>  sfunc <span class="op">=</span> <span class="fu">torch</span><span class="fu">:::</span><span class="va">torch_serialize</span>,</span>
-<span>  ufunc <span class="op">=</span> <span class="fu">torch</span><span class="fu">::</span><span class="va">torch_load</span>,</span>
-<span>  vec <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  sfunc <span class="op">=</span> <span class="fu">torch</span><span class="fu">::</span><span class="va">torch_serialize</span>,</span>
+<span>  ufunc <span class="op">=</span> <span class="fu">torch</span><span class="fu">::</span><span class="va">torch_load</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://torch.mlverse.org/docs" class="external-link">torch</a></span><span class="op">)</span>, .serial <span class="op">=</span> <span class="va">cfg</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, serial <span class="op">=</span> <span class="va">cfg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://torch.mlverse.org/docs" class="external-link">torch</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
@@ -152,7 +143,7 @@ initialized within a ‘mirai’.</p>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; An `nn_module` containing 1,040 parameters.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; ── Modules ───────────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; • conv1: &lt;nn_conv2d&gt; #520 parameters</span></span>
 <span><span class="co">#&gt; • conv2: &lt;nn_conv2d&gt; #520 parameters</span></span></code></pre></div>
 <p>The returned model is an object containing many tensor elements.</p>
@@ -160,35 +151,35 @@ initialized within a ‘mirai’.</p>
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">conv1.weight</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
 <span><span class="co">#&gt; (1,1,.,.) = </span></span>
-<span><span class="co">#&gt;   0.1090  0.0691 -0.0591 -0.0461 -0.0532</span></span>
-<span><span class="co">#&gt;  -0.0153  0.1228  0.1182 -0.0665  0.0505</span></span>
-<span><span class="co">#&gt;  -0.0303  0.0163 -0.0647 -0.1798 -0.0441</span></span>
-<span><span class="co">#&gt;  -0.0588  0.0846  0.0857  0.0327  0.1972</span></span>
-<span><span class="co">#&gt;   0.1442  0.0955 -0.1682 -0.0183  0.0960</span></span>
+<span><span class="co">#&gt;   0.0189 -0.1506  0.0023  0.1501 -0.1757</span></span>
+<span><span class="co">#&gt;   0.0669  0.1206  0.0427 -0.0692 -0.1349</span></span>
+<span><span class="co">#&gt;  -0.0065 -0.0556 -0.0857  0.0048  0.0862</span></span>
+<span><span class="co">#&gt;   0.1897  0.0019 -0.1310 -0.1794 -0.0409</span></span>
+<span><span class="co">#&gt;   0.1583 -0.0258 -0.0067 -0.0810  0.1182</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (2,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0650  0.0633  0.0921 -0.0372  0.1392</span></span>
-<span><span class="co">#&gt;  -0.0493 -0.0742 -0.1552 -0.0638 -0.0708</span></span>
-<span><span class="co">#&gt;  -0.0113 -0.1114 -0.0013 -0.0260 -0.0838</span></span>
-<span><span class="co">#&gt;  -0.0292  0.0165 -0.1340 -0.0556  0.0925</span></span>
-<span><span class="co">#&gt;  -0.0394  0.0905  0.1140 -0.1017  0.0363</span></span>
+<span><span class="co">#&gt;   0.0262 -0.0232 -0.0513  0.1181  0.0831</span></span>
+<span><span class="co">#&gt;   0.1551  0.0901  0.1161  0.0168 -0.0372</span></span>
+<span><span class="co">#&gt;   0.1400 -0.1008 -0.1285  0.0256 -0.0831</span></span>
+<span><span class="co">#&gt;   0.0687 -0.1620 -0.1690 -0.1126 -0.0406</span></span>
+<span><span class="co">#&gt;  -0.1019 -0.0887 -0.1805  0.1355  0.1608</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (3,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.1762  0.0509 -0.1795  0.1617 -0.1282</span></span>
-<span><span class="co">#&gt;   0.1735 -0.1951 -0.1044  0.1623 -0.1978</span></span>
-<span><span class="co">#&gt;   0.1982 -0.1127 -0.1133 -0.0947 -0.0160</span></span>
-<span><span class="co">#&gt;   0.1135  0.0198 -0.0254  0.0281 -0.0520</span></span>
-<span><span class="co">#&gt;   0.0794 -0.0114 -0.1520  0.0267 -0.1980</span></span>
+<span><span class="co">#&gt;   0.0861  0.1421  0.0784  0.1231  0.0367</span></span>
+<span><span class="co">#&gt;   0.1372  0.0882  0.0409  0.0859  0.0878</span></span>
+<span><span class="co">#&gt;  -0.0310 -0.1844  0.0546  0.1130  0.1927</span></span>
+<span><span class="co">#&gt;   0.1482  0.1607  0.0243 -0.1358  0.1823</span></span>
+<span><span class="co">#&gt;  -0.0085  0.1374  0.0963 -0.1537  0.0415</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (4,1,.,.) = </span></span>
-<span><span class="co">#&gt;   0.0412  0.0476  0.1843 -0.0444  0.0996</span></span>
-<span><span class="co">#&gt;   0.0813  0.1186  0.1490 -0.1211 -0.0169</span></span>
-<span><span class="co">#&gt;   0.0239  0.0793 -0.0484  0.0478  0.1343</span></span>
-<span><span class="co">#&gt;   0.1461  0.1949  0.0382  0.0634  0.1292</span></span>
-<span><span class="co">#&gt;   0.0958  0.0273  0.1933  0.0691  0.0905</span></span>
+<span><span class="co">#&gt;  -0.0550  0.1675 -0.1112 -0.0962  0.0674</span></span>
+<span><span class="co">#&gt;  -0.1366 -0.1604 -0.0022  0.0933  0.0907</span></span>
+<span><span class="co">#&gt;   0.0208  0.1882 -0.0011 -0.1908 -0.1540</span></span>
+<span><span class="co">#&gt;  -0.1022 -0.1659  0.0245  0.0262  0.0059</span></span>
+<span><span class="co">#&gt;  -0.1806  0.0408 -0.0881 -0.1467 -0.1563</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (5,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0724  0.1578 -0.0650 -0.0328  0.1338</span></span>
+<span><span class="co">#&gt;   0.0079 -0.0660  0.1558  0.0976  0.0000</span></span>
 <span><span class="co">#&gt; ... [the output was truncated (use n=-1 to disable)]</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]</span></span></code></pre></div>
 <p>It is usual for model parameters to then be passed to an
@@ -210,8 +201,9 @@ optimiser.</p>
 <span><span class="co">#&gt;     state: State, R6</span></span>
 <span><span class="co">#&gt;     state_dict: function () </span></span>
 <span><span class="co">#&gt;     step: function (closure = NULL) </span></span>
-<span><span class="co">#&gt;     zero_grad: function () </span></span>
+<span><span class="co">#&gt;     zero_grad: function (set_to_none = FALSE) </span></span>
 <span><span class="co">#&gt;   Private:</span></span>
+<span><span class="co">#&gt;     deep_clone: function (name, value) </span></span>
 <span><span class="co">#&gt;     step_helper: function (closure, loop_fun)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
@@ -232,20 +224,16 @@ used directly.</p>
 
 
 
-    <footer><div class="pkgdown-footer-left">
-  <p>Developed by Charlie Gao.</p>
+   </div>
+  <footer><div class="container">
+  <div class="pkgdown-footer-left">
+  <p>Developed by Charlie Gao, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
-    </footer>
-</div>
-
-
-
-
-
-  </body>
+  </div></footer>
+</body>
 </html>
