@@ -11,3 +11,5 @@ reference:
 - contents:
   - mirai-package
   - matches("^[a-zA-Z]*")
+development:
+  mode: auto
