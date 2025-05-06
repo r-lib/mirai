@@ -748,7 +748,7 @@ There are hence few requirements of package authors, but a few important points 
 
 1. `daemons()` settings should almost always be left to end-users.
   Consider re-exporting `daemons()` in your package as a convenience.
-- Do not include a call to `daemons()` if you use `mirai_map()` or a function that wraps it such as `purrr::map(.paralellel = TRUE)`.
+- Do not include a call to `daemons()` if you use `mirai_map()` or a function that wraps it such as `purrr::map(.parallel = TRUE)`.
   This is important to ensure that there is no unintentional recursive creation of daemons on the same machine.
 - Where a `daemons()` call may be appropriate is for async operation using only one dedicated daemon.
   A representative examaple of this usage pattern is `logger::appender_async()`, where the logger package's 'namespace' concept maps directly to mirai's 'compute profile'.
