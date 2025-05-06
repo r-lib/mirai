@@ -1097,7 +1097,7 @@ as a convenience.</li>
 <ul>
 <li>Do not include a call to <code><a href="../reference/daemons.html">daemons()</a></code> if you use
 <code><a href="../reference/mirai_map.html">mirai_map()</a></code> or a function that wraps it such as
-<code>purrr::map(.paralellel = TRUE)</code>. This is important to ensure
+<code>purrr::map(.parallel = TRUE)</code>. This is important to ensure
 that there is no unintentional recursive creation of daemons on the same
 machine.</li>
 <li>Where a <code><a href="../reference/daemons.html">daemons()</a></code> call may be appropriate is for async
