@@ -59,7 +59,7 @@
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
 <ul><li>
 <code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which is more robust than just using a hostname.</li>
-<li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
+<li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms, and more robust interruption if <code><a href="https://rdrr.io/r/tools/pskill.html" class="external-link">tools::SIGINT</a></code> is supplied or passed through to the <code>autoexit</code> argument of <code><a href="../reference/daemon.html">daemon()</a></code> (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘process’, deprecated in mirai v2.1.0, is removed.</li>
 <li>Requires nanonext &gt;= [1.5.2.9014].</li>
