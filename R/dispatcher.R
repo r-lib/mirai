@@ -117,8 +117,7 @@ dispatcher <- function(
   res <- recv_aio(psock, mode = 8L, cv = cv)
 
   suspendInterrupts(
-    repeat {
-      wait(cv) || break
+    while (wait(cv)) {
 
       changes <- read_monitor(m)
       is.null(changes) || {
