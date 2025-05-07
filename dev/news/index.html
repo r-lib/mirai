@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,13 +52,14 @@
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
+<ul><li>
+<code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which provides a more comprehensive solution than just using a hostname.</li>
+<li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
 <li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value, whether or not daemons are set for a given compute profile.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>
-<code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which is more robust than just using a hostname.</li>
+<ul><li>For all functions that use <code>.compute</code>, this argument has a new default of <code>NULL</code>, which continues to use the <code>default</code> profile (and hence should not result in any change in behaviour).</li>
 <li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms, and more robust interruption if <code><a href="https://rdrr.io/r/tools/pskill.html" class="external-link">tools::SIGINT</a></code> is supplied or passed through to the <code>autoexit</code> argument of <code><a href="../reference/daemon.html">daemon()</a></code> (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘process’, deprecated in mirai v2.1.0, is removed.</li>

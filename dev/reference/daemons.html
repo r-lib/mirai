@@ -17,7 +17,7 @@ scheduling."><meta property="og:image" content="https://mirai.r-lib.org/logo.png
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ scheduling.</p>
 <span>  serial <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pass <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .compute <span class="op">=</span> <span class="st">"default"</span></span>
+<span>  .compute <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -146,8 +146,9 @@ through a function that returns this value, rather than directly.</p></dd>
 
 
 <dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>[default 'default'] character value for the compute profile
-to use (each compute profile has its own independent set of daemons).</p></dd>
+<dd><p>[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -237,9 +238,9 @@ generate the shell commands to deploy daemons manually on remote resources.</p>
 
 
 
-<p>By default, the <code>"default"</code> compute profile is used. Providing a character
-value for <code>.compute</code> creates a new compute profile with the name specified.
-Each compute profile retains its own daemons settings, and may be operated
+<p>If <code>NULL</code>, the <code>"default"</code> compute profile is used. Providing a character value
+for <code>.compute</code> creates a new compute profile with the name specified. Each
+compute profile retains its own daemons settings, and may be operated
 independently of each other. Some usage examples follow:</p>
 <p><strong>local / remote</strong> daemons may be set with a host URL and specifying
 <code>.compute</code> as <code>"remote"</code>, which creates a new compute profile. Subsequent

@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -728,13 +728,12 @@ appropriate specifications (in terms of CPUs / memory / GPU /
 accelerators etc.)</li>
 <li>split tasks between local and remote computation</li>
 </ul>
-<p>Simply specify the argument <code>.compute</code> when calling
-<code><a href="../reference/daemons.html">daemons()</a></code> with a profile name (which is ‘default’ for the
-default profile). The daemons settings are saved under the named
-profile.</p>
+<p>Simply specify the argument <code>.compute</code> with a character
+profile name (which, if <code>NULL</code>, is ‘default’). The daemons
+settings are saved under the named profile.</p>
 <p>To create a ‘mirai’ task using a specific compute profile, specify
-the ‘.compute’ argument to <code><a href="../reference/mirai.html">mirai()</a></code>, which defaults to the
-‘default’ compute profile.</p>
+the ‘.compute’ argument to <code><a href="../reference/mirai.html">mirai()</a></code>, which uses the
+‘default’ compute profile if this is <code>NULL</code>.</p>
 <p>Similarly, functions such as <code><a href="../reference/status.html">status()</a></code>,
 <code><a href="../reference/launch_local.html">launch_local()</a></code> or <code><a href="../reference/launch_local.html">launch_remote()</a></code> should be
 specified with the desired ‘.compute’ argument.</p>
