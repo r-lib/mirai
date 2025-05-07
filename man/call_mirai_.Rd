@@ -13,3 +13,4 @@ call_mirai_(x)
 \code{call_mirai_} is deprecated and exported for historical compatibility only.
 It will be removed in a future package version. Use \code{\link[=call_mirai]{call_mirai()}} instead.
 }
+\keyword{internal}

@@ -99,6 +99,7 @@
 #'
 #' @inheritParams call_mirai
 #'
+#' @keywords internal
 #' @export
 #'
 call_mirai_ <- call_aio_
