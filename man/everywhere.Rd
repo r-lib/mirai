@@ -4,7 +4,7 @@
 \alias{everywhere}
 \title{Evaluate Everywhere}
 \usage{
-everywhere(.expr, ..., .args = list(), .compute = "default")
+everywhere(.expr, ..., .args = list(), .compute = NULL)
 }
 \arguments{
 \item{.expr}{an expression to evaluate asynchronously (of arbitrary length,
@@ -21,8 +21,9 @@ such objects. These objects will remain local to the evaluation environment
 as opposed to those supplied in \code{...} above - see 'evaluation' section
 below.}
 
-\item{.compute}{[default 'default'] character value for the compute profile
-to use (each compute profile has its own independent set of daemons).}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 A list of mirai executed on each daemon. This may be waited for and

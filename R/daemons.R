@@ -130,9 +130,9 @@
 #'
 #' @section Compute Profiles:
 #'
-#' By default, the `"default"` compute profile is used. Providing a character
-#' value for `.compute` creates a new compute profile with the name specified.
-#' Each compute profile retains its own daemons settings, and may be operated
+#' If `NULL`, the `"default"` compute profile is used. Providing a character value
+#' for `.compute` creates a new compute profile with the name specified. Each
+#' compute profile retains its own daemons settings, and may be operated
 #' independently of each other. Some usage examples follow:
 #'
 #' **local / remote** daemons may be set with a host URL and specifying
@@ -216,9 +216,9 @@ daemons <- function(
   serial = NULL,
   tls = NULL,
   pass = NULL,
-  .compute = "default"
+  .compute = NULL
 ) {
-  if (missing(.compute)) .compute <- .[["cp"]]
+  if (is.null(.compute)) .compute <- .[["cp"]]
   missing(n) && missing(url) && return(status(.compute))
 
   envir <- ..[[.compute]]
@@ -367,8 +367,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #' Retrieve status information for the specified compute profile, comprising
 #' current connections and daemons status.
 #'
-#' @param .compute \[default 'default'\] character compute profile (each compute
-#'   profile has its own set of daemons for connecting to different resources).
+#' @param .compute \[default NULL\] character value for the compute profile to
+#'   query, or NULL to query the 'default' profile.
 #'
 #'   **or** a 'miraiCluster' to obtain its status.
 #'
@@ -399,8 +399,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'
 #' @export
 #'
-status <- function(.compute = "default") {
-  if (missing(.compute)) .compute <- .[["cp"]]
+status <- function(.compute = NULL) {
+  if (is.null(.compute)) .compute <- .[["cp"]]
   is.list(.compute) && return(status(attr(.compute, "id")))
   envir <- ..[[.compute]]
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
@@ -428,8 +428,8 @@ status <- function(.compute = "default") {
 #'
 #' @export
 #'
-daemons_set <- function(.compute = "default") {
-  if (missing(.compute)) .compute <- .[["cp"]]
+daemons_set <- function(.compute = NULL) {
+  if (is.null(.compute)) .compute <- .[["cp"]]
   !is.null(..[[.compute]])
 }
 

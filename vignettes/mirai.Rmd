@@ -574,10 +574,10 @@ The `daemons()` interface also allows the specification of compute profiles for 
 - send tasks to different daemons or clusters of daemons with the appropriate specifications (in terms of CPUs / memory / GPU / accelerators etc.)
 - split tasks between local and remote computation
 
-Simply specify the argument `.compute` when calling `daemons()` with a profile name (which is 'default' for the default profile).
+Simply specify the argument `.compute` with a character profile name (which, if `NULL`, is 'default').
 The daemons settings are saved under the named profile.
 
-To create a 'mirai' task using a specific compute profile, specify the '.compute' argument to `mirai()`, which defaults to the 'default' compute profile.
+To create a 'mirai' task using a specific compute profile, specify the '.compute' argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired '.compute' argument.
 
