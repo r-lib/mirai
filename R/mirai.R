@@ -35,8 +35,9 @@
 #' @param .timeout \[default NULL\] for no timeout, or an integer value in
 #'   milliseconds. A mirai will resolve to an 'errorValue' 5 (timed out) if
 #'   evaluation exceeds this limit.
-#' @param .compute \[default 'default'\] character value for the compute profile
-#'   to use (each compute profile has its own independent set of daemons).
+#' @param .compute \[default NULL\] character value for the compute profile
+#'   to use (each has its own independent set of daemons), or NULL to use the
+#'   'default' profile.
 #'
 #' @return A 'mirai' object.
 #'
@@ -139,7 +140,7 @@ mirai <- function(
   ...,
   .args = list(),
   .timeout = NULL,
-  .compute = "default"
+  .compute = NULL
 ) {
   missing(.expr) && stop(._[["missing_expression"]])
 
@@ -171,9 +172,10 @@ mirai <- function(
     data <- c(.args, data)
   }
 
-  if (missing(.compute)) .compute <- .[["cp"]]
+  if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
+
   request(
     envir[["sock"]],
     data,
@@ -232,8 +234,8 @@ mirai <- function(
 #'
 #' @export
 #'
-everywhere <- function(.expr, ..., .args = list(), .compute = "default") {
-  if (missing(.compute)) .compute <- .[["cp"]]
+everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
+  if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && stop(sprintf(._[["not_found"]], .compute))
 

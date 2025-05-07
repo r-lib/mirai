@@ -14,7 +14,7 @@ daemons(
   serial = NULL,
   tls = NULL,
   pass = NULL,
-  .compute = "default"
+  .compute = NULL
 )
 }
 \arguments{
@@ -64,8 +64,9 @@ comprising [i] the TLS certificate (optionally certificate chain) and
 \code{tls} is encrypted with a password) For security, should be provided
 through a function that returns this value, rather than directly.}
 
-\item{.compute}{[default 'default'] character value for the compute profile
-to use (each compute profile has its own independent set of daemons).}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 The integer number of daemons launched locally (zero if specifying
@@ -168,9 +169,9 @@ generate the shell commands to deploy daemons manually on remote resources.
 \section{Compute Profiles}{
 
 
-By default, the \code{"default"} compute profile is used. Providing a character
-value for \code{.compute} creates a new compute profile with the name specified.
-Each compute profile retains its own daemons settings, and may be operated
+If \code{NULL}, the \code{"default"} compute profile is used. Providing a character value
+for \code{.compute} creates a new compute profile with the name specified. Each
+compute profile retains its own daemons settings, and may be operated
 independently of each other. Some usage examples follow:
 
 \strong{local / remote} daemons may be set with a host URL and specifying

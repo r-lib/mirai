@@ -4,7 +4,7 @@
 \alias{mirai_map}
 \title{mirai Map}
 \usage{
-mirai_map(.x, .f, ..., .args = list(), .promise = NULL, .compute = "default")
+mirai_map(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL)
 }
 \arguments{
 \item{.x}{a list or atomic vector. Also accepts a matrix or dataframe, in
@@ -25,8 +25,9 @@ mirai. Either a function, supplied to the \code{onFulfilled} argument of
 \code{onFulfilled} and \code{onRejected} of \code{promises::then()}. Using this argument
 requires the \CRANpkg{promises} package.}
 
-\item{.compute}{[default 'default'] character value for the compute profile
-to use (each compute profile has its own independent set of daemons).}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 A 'mirai_map' (list of 'mirai' objects).

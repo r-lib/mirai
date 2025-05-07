@@ -4,11 +4,11 @@
 \alias{daemons_set}
 \title{Daemons Set}
 \usage{
-daemons_set(.compute = "default")
+daemons_set(.compute = NULL)
 }
 \arguments{
-\item{.compute}{[default 'default'] character compute profile (each compute
-profile has its own set of daemons for connecting to different resources).
+\item{.compute}{[default NULL] character value for the compute profile to
+query, or NULL to query the 'default' profile.
 
 \strong{or} a 'miraiCluster' to obtain its status.}
 }

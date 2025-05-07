@@ -7,12 +7,13 @@
 
 #### New Features
 
+* `host_url()` is upgraded to return all local IP addresses (named by network interface), which provides a more comprehensive solution than just using a hostname.
 * Adds `on_daemon()` which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.
 * Adds `daemons_set()` which returns a logical value, whether or not daemons are set for a given compute profile.
 
 #### Updates
 
-* `host_url()` is upgraded to return all local IP addresses (named by network interface), which is more robust than just using a hostname.
+* For all functions that use `.compute`, this argument has a new default of `NULL`, which continues to use the `default` profile (and hence should not result in any change in behaviour).
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms, and more robust interruption if `tools::SIGINT` is supplied or passed through to the `autoexit` argument of `daemon()` (thanks @LennardLux, #240).
 * `daemons()` dispatcher argument 'process', deprecated in mirai v2.1.0, is removed.
 * Requires nanonext >= [1.5.2.9016].

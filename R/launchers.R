@@ -50,8 +50,8 @@
 #'
 #' @export
 #'
-launch_local <- function(n = 1L, ..., tls = NULL, .compute = "default") {
-  if (missing(.compute)) .compute <- .[["cp"]]
+launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
+  if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["urls"]]
@@ -88,9 +88,9 @@ launch_remote <- function(
   remote = remote_config(),
   ...,
   tls = NULL,
-  .compute = "default"
+  .compute = NULL
 ) {
-  if (missing(.compute)) .compute <- .[["cp"]]
+  if (is.null(.compute)) .compute <- .[["cp"]]
   if (!is.numeric(n) && inherits(n, c("miraiCluster", "miraiNode"))) {
     .compute <- attr(n, "id")
     n <- max(length(n), 1L)

@@ -4,7 +4,7 @@
 \alias{mirai}
 \title{mirai (Evaluate Async)}
 \usage{
-mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = "default")
+mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 }
 \arguments{
 \item{.expr}{an expression to evaluate asynchronously (of arbitrary length,
@@ -25,8 +25,9 @@ below.}
 milliseconds. A mirai will resolve to an 'errorValue' 5 (timed out) if
 evaluation exceeds this limit.}
 
-\item{.compute}{[default 'default'] character value for the compute profile
-to use (each compute profile has its own independent set of daemons).}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 A 'mirai' object.
