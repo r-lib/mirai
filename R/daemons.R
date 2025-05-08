@@ -242,7 +242,7 @@ daemons <- function(
           cv <- cv()
           urld <- local_url()
           sock <- req_socket(urld)
-          res <- launch_dispatcher(sock, wa5(urld, dots, url), output, tls, pass, serial)
+          res <- launch_dispatcher(sock, wa5(urld, dots, url), output, serial, tls = tls, pass = pass)
           is.object(res) && stop(._[["sync_dispatcher"]])
           store_dispatcher(sock, res, cv, envir)
           `[[<-`(envir, "msgid", 0L)
@@ -296,7 +296,7 @@ daemons <- function(
         {
           cv <- cv()
           sock <- req_socket(urld)
-          res <- launch_dispatcher(sock, wa4(urld, dots, envir[["stream"]], n), output, serial = serial)
+          res <- launch_dispatcher(sock, wa4(urld, dots, envir[["stream"]], n), output, serial)
           is.object(res) && stop(._[["sync_dispatcher"]])
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
@@ -588,9 +588,9 @@ launch_dispatcher <- function(
   sock,
   args,
   output,
+  serial,
   tls = NULL,
-  pass = NULL,
-  serial = NULL
+  pass = NULL
 ) {
   pkgs <- Sys.getenv("R_DEFAULT_PACKAGES")
   system2(
