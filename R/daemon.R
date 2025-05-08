@@ -195,8 +195,7 @@ daemon <- function(
   sock <- socket("rep")
   on.exit(reap(sock))
   pipe_notify(sock, cv = cv, remove = TRUE)
-  xc <- dial(sock, url = url, autostart = NA)
-  xc && stop(nng_error(xc))
+  dial(sock, url = url, autostart = NA, fail = "error")
   `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
   send(sock, data, mode = 1L, block = TRUE) || until(cv, .limit_short)
@@ -229,8 +228,7 @@ eval_mirai <- function(._mirai_.) {
 dial_and_sync_socket <- function(sock, url, asyncdial = FALSE, tls = NULL) {
   cv <- cv()
   pipe_notify(sock, cv = cv, add = TRUE)
-  xc <- dial(sock, url = url, autostart = asyncdial || NA, tls = tls)
-  xc && stop(nng_error(xc))
+  dial(sock, url = url, autostart = asyncdial || NA, tls = tls, fail = "error")
   wait(cv)
   pipe_notify(sock, cv = NULL, add = TRUE)
 }
