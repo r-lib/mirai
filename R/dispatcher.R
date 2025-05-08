@@ -79,7 +79,8 @@ dispatcher <- function(
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)
   m <- monitor(psock, cv)
-  listen(psock, url = url, tls = tls, error = TRUE)
+  xc <- listen(psock, url = url, tls = tls)
+  xc && stop(nng_error(xc))
 
   msgid <- 0L
   inq <- outq <- list()
