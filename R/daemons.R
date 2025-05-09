@@ -61,7 +61,8 @@
 #' @param serial \[default NULL\] (optional, requires dispatcher) a
 #'   configuration created by [serial_config()] to register serialization and
 #'   unserialization functions for normally non-exportable reference objects,
-#'   such as Arrow Tables or torch tensors.
+#'   such as Arrow Tables or torch tensors. If `NULL`, configurations registered
+#'   with [register_serial()] are automatically applied.
 #' @param tls \[default NULL\] (optional for secure TLS connections) if not
 #'   supplied, zero-configuration single-use keys and certificates are
 #'   automatically generated. If supplied, **either** the character path to
@@ -238,6 +239,7 @@ daemons <- function(
           check_store_url(sock, envir)
         },
         {
+          if (is.null(serial)) serial <- .[["serial"]]
           tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
           cv <- cv()
           urld <- local_url()
@@ -294,6 +296,7 @@ daemons <- function(
           `[[<-`(envir, "urls", urld)
         },
         {
+          if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
           sock <- req_socket(urld)
           res <- launch_dispatcher(sock, wa4(urld, dots, envir[["stream"]], n), output, serial)
@@ -438,9 +441,10 @@ daemons_set <- function(.compute = NULL) {
 #' Returns a serialization configuration, which may be set to perform custom
 #' serialization and unserialization of normally non-exportable reference
 #' objects, allowing these to be used seamlessly between different R sessions.
-#' This feature utilises the 'refhook' system of R native serialization. Once
-#' set, the functions apply to all mirai requests for a specific compute
-#' profile.
+#' Once set by passing to the `serial` argument of [daemons()], the functions
+#' apply to all mirai requests for that compute profile.
+#'
+#' This feature utilises the 'refhook' system of R native serialization.
 #'
 #' @param class a character string (or vector) of the class of object custom
 #'   serialization functions are applied to, e.g. `'ArrowTabular'` or
@@ -468,6 +472,27 @@ daemons_set <- function(.compute = NULL) {
 #'
 serial_config <- function(class, sfunc, ufunc)
   nanonext::serial_config(class, sfunc, ufunc)
+
+#' Register Serialization Configuration
+#'
+#' Registers a serialization configuration, which may be set to perform custom
+#' serialization and unserialization of normally non-exportable reference
+#' objects, allowing these to be used seamlessly between different R sessions.
+#' Once registered, the functions apply to all [daemons()] calls where the
+#' `serial` argument is `NULL`.
+#'
+#' @inheritParams serial_config
+#'
+#' @return Invisible NULL.
+#'
+#' @export
+#'
+register_serial <- function(class, sfunc, ufunc) {
+  cfg <- serial_config(class, sfunc, ufunc)
+  reg <- .[["serial"]]
+  `[[<-`(., "serial", lapply(1:3, function(i) c(reg[[i]], cfg[[i]])))
+  invisible()
+}
 
 # internals --------------------------------------------------------------------
 

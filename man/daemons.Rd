@@ -49,7 +49,8 @@ which tasks are sent is not deterministic.}
 \item{serial}{[default NULL] (optional, requires dispatcher) a
 configuration created by \code{\link[=serial_config]{serial_config()}} to register serialization and
 unserialization functions for normally non-exportable reference objects,
-such as Arrow Tables or torch tensors.}
+such as Arrow Tables or torch tensors. If \code{NULL}, configurations registered
+with \code{\link[=register_serial]{register_serial()}} are automatically applied.}
 
 \item{tls}{[default NULL] (optional for secure TLS connections) if not
 supplied, zero-configuration single-use keys and certificates are
