@@ -27,7 +27,7 @@ BugReports: https://github.com/r-lib/mirai/issues
 Depends: 
     R (>= 3.6)
 Imports: 
-    nanonext (>= 1.5.2.9018)
+    nanonext (>= 1.5.2.9019)
 Suggests: 
     cli,
     litedown
