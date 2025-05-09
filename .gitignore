@@ -6,3 +6,4 @@ docs
 inst/doc
 .vscode
 air.toml
+revdep/

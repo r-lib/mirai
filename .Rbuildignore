@@ -6,6 +6,7 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^revdep$
 ^codecov\.yml$
 ^vignettes-src$
 ^[\.]?air\.toml$
