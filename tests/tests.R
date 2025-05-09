@@ -53,6 +53,9 @@ test_null(nextstream())
 test_null(nextget("pid"))
 for (i in 0:4)
   test_type("character", nextcode(i))
+test_null(register_serial("test_klass1", serialize, unserialize))
+test_null(register_serial(c("test_klass2", "test_klass3"), list(serialize, serialize), list(unserialize, unserialize)))
+test_equal(length(mirai:::.[["serial"]][[3L]]), 3L)
 # mirai and daemons tests
 connection && {
   Sys.sleep(1L)

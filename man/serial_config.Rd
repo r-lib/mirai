@@ -25,9 +25,11 @@ A list comprising the configuration. This should be passed to the
 Returns a serialization configuration, which may be set to perform custom
 serialization and unserialization of normally non-exportable reference
 objects, allowing these to be used seamlessly between different R sessions.
-This feature utilises the 'refhook' system of R native serialization. Once
-set, the functions apply to all mirai requests for a specific compute
-profile.
+Once set by passing to the \code{serial} argument of \code{\link[=daemons]{daemons()}}, the functions
+apply to all mirai requests for that compute profile.
+}
+\details{
+This feature utilises the 'refhook' system of R native serialization.
 }
 \examples{
 cfg <- serial_config("test_cls", function(x) serialize(x, NULL), unserialize)
