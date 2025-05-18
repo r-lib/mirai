@@ -177,7 +177,7 @@ mirai <- function(
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
   request(
-    envir[["sock"]],
+    .context(envir[["sock"]]),
     data,
     send_mode = 1L,
     recv_mode = 1L,
@@ -588,7 +588,7 @@ ephemeral_daemon <- function(data, timeout) {
     stderr = FALSE,
     wait = FALSE
   )
-  request(sock, data, send_mode = 1L, recv_mode = 1L, timeout = timeout, cv = NA)
+  request(.context(sock), data, send_mode = 1L, recv_mode = 1L, timeout = timeout, cv = NA)
 }
 
 deparse_safe <- function(x)
