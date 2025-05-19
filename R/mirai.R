@@ -183,7 +183,7 @@ mirai <- function(
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    msgid = next_msgid(envir)
+    id = next_msgid(envir)
   )
 }
 
@@ -413,8 +413,8 @@ stop_mirai <- function(x) {
   stop_aio(x)
   aio <- .subset2(x, "aio")
   !is.integer(aio) &&
-    attr(aio, "msgid") > 0 &&
-    query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "msgid")))
+    attr(aio, "id") > 0 &&
+    query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "id")))
 }
 
 #' Query if a mirai is Unresolved
