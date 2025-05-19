@@ -605,9 +605,11 @@ query_dispatcher <- function(
   send_mode = 2L,
   recv_mode = 5L,
   block = .limit_short
-)
-  if (r <- send(sock, command, mode = send_mode, block = block)) r else
-    recv(sock, mode = recv_mode, block = block)
+) {
+  r <- send(sock, command, mode = send_mode, block = block)
+  r && return(r)
+  recv(sock, mode = recv_mode, block = block)
+}
 
 launch_dispatcher <- function(
   sock,
