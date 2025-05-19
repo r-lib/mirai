@@ -390,7 +390,7 @@ host_url <- function(tls = FALSE, port = 0) {
     sprintf(
       "%s://%s:%d",
       if (tls) "tls+tcp" else "tcp",
-      if (length(ip) > 1L || nzchar(ip)) ip else Sys.info()[["nodename"]],
+      if (any(nzchar(ip))) ip else Sys.info()[["nodename"]],
       as.integer(port)
     ),
     names(ip)
