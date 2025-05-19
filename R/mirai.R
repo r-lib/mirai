@@ -414,7 +414,7 @@ stop_mirai <- function(x) {
   aio <- .subset2(x, "aio")
   !is.integer(aio) &&
     attr(aio, "msgid") > 0 &&
-    query_dispatcher(attr(aio, "socket"), c(0L, attr(aio, "msgid")))
+    query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "msgid")))
 }
 
 #' Query if a mirai is Unresolved
