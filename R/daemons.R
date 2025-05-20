@@ -254,7 +254,7 @@ daemons <- function(
             tls = tls,
             pass = pass
           )
-          is.object(res) && stop(._[["sync_dispatcher"]])
+          is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
           store_dispatcher(sock, res, cv, envir)
           `[[<-`(envir, "msgid", 0L)
         },
@@ -310,7 +310,7 @@ daemons <- function(
             output,
             sync
           ) ||
-            stop(._[["sync_daemons"]])
+            stop(sprintf(._[["sync_daemons"]], sync))
           `[[<-`(envir, "urls", urld)
         },
         {
@@ -324,7 +324,7 @@ daemons <- function(
             serial,
             sync
           )
-          is.object(res) && stop(._[["sync_dispatcher"]])
+          is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
           `[[<-`(envir, "msgid", 0L)

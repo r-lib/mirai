@@ -64,7 +64,7 @@ dispatcher <- function(
 
   ctx <- .context(sock)
   res <- recv(ctx, mode = 1L, block = sync)
-  is.object(res) && stop(._[["sync_dispatcher"]])
+  is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
@@ -96,7 +96,7 @@ dispatcher <- function(
     output <- attr(dots, "output")
     for (i in seq_len(n))
       launch_daemon(wa3(url, dots, next_stream(envir)), output)
-    for (i in seq_len(n)) until(cv, sync) || stop(._[["sync_daemons"]])
+    for (i in seq_len(n)) until(cv, sync) || stop(sprintf(._[["sync_daemons"]], sync))
 
     changes <- read_monitor(m)
     for (item in changes)
