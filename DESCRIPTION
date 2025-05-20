@@ -40,4 +40,4 @@ Config/Needs/website: tidyverse/tidytemplate
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000

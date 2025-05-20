@@ -213,6 +213,7 @@ daemons <- function(
   remote = NULL,
   dispatcher = TRUE,
   ...,
+  sync = 10000L,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -244,7 +245,15 @@ daemons <- function(
           cv <- cv()
           urld <- local_url()
           sock <- req_socket(urld)
-          res <- launch_dispatcher(sock, wa5(urld, dots, url), output, serial, tls = tls, pass = pass)
+          res <- launch_dispatcher(
+            sock,
+            wa5(urld, url, sync, dots),
+            output,
+            serial,
+            sync,
+            tls = tls,
+            pass = pass
+          )
           is.object(res) && stop(._[["sync_dispatcher"]])
           store_dispatcher(sock, res, cv, envir)
           `[[<-`(envir, "msgid", 0L)
@@ -292,14 +301,29 @@ daemons <- function(
         parse_dispatcher(dispatcher),
         {
           sock <- req_socket(urld)
-          launch_daemons(seq_len(n), sock, urld, dots, envir, output) || stop(._[["sync_daemons"]])
+          launch_daemons(
+            seq_len(n),
+            sock,
+            urld,
+            dots,
+            envir,
+            output,
+            sync
+          ) ||
+            stop(._[["sync_daemons"]])
           `[[<-`(envir, "urls", urld)
         },
         {
           if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
           sock <- req_socket(urld)
-          res <- launch_dispatcher(sock, wa4(urld, dots, envir[["stream"]], n), output, serial)
+          res <- launch_dispatcher(
+            sock,
+            wa4(urld, n, sync, envir[["stream"]], dots),
+            output,
+            serial,
+            sync
+          )
           is.object(res) && stop(._[["sync_dispatcher"]])
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
@@ -571,22 +595,24 @@ wa3 <- function(url, dots, rs, tls = NULL)
     paste0(rs, collapse = ",")
   ))
 
-wa4 <- function(urld, dots, rs, n)
+wa4 <- function(urld, n, sync, rs, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,rs=c(%s)%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,sync=%d,rs=c(%s)%s)",
     libp(),
     urld,
     n,
+    sync,
     paste0(rs, collapse = ","),
     dots
   ))
 
-wa5 <- function(urld, dots, url)
+wa5 <- function(urld, url, sync, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",sync=%d%s)",
     libp(),
     urld,
     url,
+    sync,
     dots
   ))
 
@@ -616,6 +642,7 @@ launch_dispatcher <- function(
   args,
   output,
   serial,
+  sync,
   tls = NULL,
   pass = NULL
 ) {
@@ -633,16 +660,16 @@ launch_dispatcher <- function(
     list(pkgs, tls, pass, serial),
     send_mode = 1L,
     recv_mode = 2L,
-    block = .limit_long
+    block = sync
   )
 }
 
-launch_daemons <- function(seq, sock, urld, dots, envir, output) {
+launch_daemons <- function(seq, sock, urld, dots, envir, output, sync) {
   cv <- cv()
   pipe_notify(sock, cv = cv, add = TRUE)
   for (i in seq) launch_daemon(wa2(urld, dots, next_stream(envir)), output)
   for (i in seq)
-    until(cv, .limit_long) || return(pipe_notify(sock, cv = NULL, add = TRUE))
+    until(cv, sync) || return(pipe_notify(sock, cv = NULL, add = TRUE))
   !pipe_notify(sock, cv = NULL, add = TRUE)
 }
 

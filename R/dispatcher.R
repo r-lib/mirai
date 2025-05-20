@@ -25,6 +25,10 @@
 #'   this case, a local url is automatically generated.
 #' @param ... (optional) additional arguments passed through to [daemon()].
 #'   These include `asyncdial`, `autoexit`, and `cleanup`.
+#' @param sync \[default 10000L\] maximum time in milliseconds to allow for
+#'   synchronization between the host and dispatcher, and (when launching local
+#'   daemons) for each daemon to dispatcher. Set to a higher value if the
+#'   default times out, as may be the case for certain HPC setups.
 #' @param tls \[default NULL\] (required for secure TLS connections) **either**
 #'   the character path to a file containing the PEM-encoded TLS certificate and
 #'   associated private key (may contain additional certificates leading to a
@@ -44,6 +48,7 @@ dispatcher <- function(
   url = NULL,
   n = NULL,
   ...,
+  sync = 10000L,
   tls = NULL,
   pass = NULL,
   rs = NULL
@@ -58,23 +63,23 @@ dispatcher <- function(
   dial_and_sync_socket(sock, host)
 
   ctx <- .context(sock)
-  sync <- recv(ctx, mode = 1L, block = .limit_long)
-  is.object(sync) && stop(._[["sync_dispatcher"]])
-  if (nzchar(sync[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = sync[[1L]]) else
+  res <- recv(ctx, mode = 1L, block = sync)
+  is.object(res) && stop(._[["sync_dispatcher"]])
+  if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
   auto <- is.null(url)
   if (auto) {
     url <- local_url()
   } else {
-    if (is.character(sync[[2L]]) && is.null(tls)) {
-      tls <- sync[[2L]]
-      pass <- sync[[3L]]
+    if (is.character(res[[2L]]) && is.null(tls)) {
+      tls <- res[[2L]]
+      pass <- res[[3L]]
     }
     if (length(tls)) tls <- tls_config(server = tls, pass = pass)
   }
   pass <- NULL
-  serial <- sync[[4L]]
+  serial <- res[[4L]]
 
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)
@@ -91,7 +96,7 @@ dispatcher <- function(
     output <- attr(dots, "output")
     for (i in seq_len(n))
       launch_daemon(wa3(url, dots, next_stream(envir)), output)
-    for (i in seq_len(n)) until(cv, .limit_long) || stop(._[["sync_daemons"]])
+    for (i in seq_len(n)) until(cv, sync) || stop(._[["sync_daemons"]])
 
     changes <- read_monitor(m)
     for (item in changes)
