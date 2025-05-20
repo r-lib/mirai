@@ -198,7 +198,7 @@ daemon <- function(
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
-  send(sock, data, mode = 1L, block = TRUE) || until(cv, .limit_short)
+  send(sock, data, mode = 1L, block = TRUE) || until(cv, 5000L)
 }
 
 # internals --------------------------------------------------------------------

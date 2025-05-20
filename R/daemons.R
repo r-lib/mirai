@@ -630,7 +630,7 @@ query_dispatcher <- function(
   command,
   send_mode = 2L,
   recv_mode = 5L,
-  block = .limit_short
+  block = 5000L
 ) {
   r <- send(sock, command, mode = send_mode, block = block)
   r && return(r)
