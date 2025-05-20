@@ -17,7 +17,7 @@ scheduling."><meta property="og:image" content="https://mirai.r-lib.org/logo.png
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9014</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9015</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,6 @@ scheduling.</p>
 <span>  remote <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dispatcher <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  sync <span class="op">=</span> <span class="fl">10000L</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  serial <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tls <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -110,13 +109,6 @@ and should normally be kept on (for details see Dispatcher section below).</p></
 <dd><p>(optional) additional arguments passed through to
 <code><a href="daemon.html">daemon()</a></code> if launching daemons. These include <code>asyncdial</code>, <code>autoexit</code>,
 <code>cleanup</code>, <code>output</code>, <code>maxtasks</code>, <code>idletime</code> and <code>walltime</code>.</p></dd>
-
-
-<dt id="arg-sync">sync<a class="anchor" aria-label="anchor" href="#arg-sync"></a></dt>
-<dd><p>[default 10000L] maximum time in milliseconds to allow for
-synchronization between the host and dispatcher, and (when launching local
-daemons) for each daemon to dispatcher. Set to a higher value if the
-default times out, as may be the case for certain HPC setups.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
