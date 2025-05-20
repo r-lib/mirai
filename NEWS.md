@@ -8,9 +8,9 @@
 #### New Features
 
 * `host_url()` is upgraded to return all local IP addresses (named by network interface), which provides a more comprehensive solution than just using a hostname.
+* Adds `register_serial()` to register serialization configurations for all `daemons()` calls (may be used by package authors as a convenience).
 * Adds `on_daemon()` which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.
 * Adds `daemons_set()` which returns a logical value, whether or not daemons are set for a given compute profile.
-* Adds `register_serial()` to register serialization configurations for all `daemons()` calls (may be used by package authors as a convenience).
 * `daemons()` gains a `sync` argument to set the max time to allow for synchronization between host / dispatcher and dispatcher / daemons (previously fixed at 10s). This is particularly relevant for HPC setups (thanks @sebffischer, #275).
 
 #### Updates
