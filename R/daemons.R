@@ -666,11 +666,11 @@ launch_dispatcher <- function(
 
 launch_daemons <- function(seq, sock, urld, dots, envir, output, sync) {
   cv <- cv()
-  pipe_notify(sock, cv = cv, add = TRUE)
+  pipe_notify(sock, cv, add = TRUE)
   for (i in seq) launch_daemon(wa2(urld, dots, next_stream(envir)), output)
   for (i in seq)
-    until(cv, sync) || return(pipe_notify(sock, cv = NULL, add = TRUE))
-  !pipe_notify(sock, cv = NULL, add = TRUE)
+    until(cv, sync) || return(pipe_notify(sock, NULL, add = TRUE))
+  !pipe_notify(sock, NULL, add = TRUE)
 }
 
 store_dispatcher <- function(sock, res, cv, envir)

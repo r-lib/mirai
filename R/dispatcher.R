@@ -59,7 +59,7 @@ dispatcher <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv = cv, remove = TRUE, flag = TRUE)
+  pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
   dial_and_sync_socket(sock, host)
 
   ctx <- .context(sock)
