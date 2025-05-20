@@ -639,11 +639,12 @@ launch_dispatcher <- function(
   )
   if (is.list(serial)) `opt<-`(sock, "serial", serial)
   cv <- cv()
+  sync <- 0L
   while(send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = .limit_long))
-    message(._[["sync_dispatcher"]])
+    message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   res <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
-    message(._[["sync_dispatcher"]])
+    message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   collect_aio(res)
 }
 
@@ -652,9 +653,10 @@ launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   pipe_notify(sock, cv, add = TRUE)
   for (i in seq)
     launch_daemon(wa2(urld, dots, next_stream(envir)), output)
+  sync <- 0L
   for (i in seq)
     while(!until(cv, .limit_long))
-      message(._[["sync_daemons"]])
+      message(sprintf(._[["sync_daemons"]], sync <- sync + .limit_long_secs))
   pipe_notify(sock, NULL, add = TRUE)
 }
 
