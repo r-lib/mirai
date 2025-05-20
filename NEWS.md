@@ -17,7 +17,7 @@
 * For all functions that use `.compute`, this argument has a new default of `NULL`, which continues to use the `default` profile (and hence should not result in any change in behaviour).
 * Fixes `stop_mirai()` failing to interrupt in certain cases on non-Windows platforms, and more robust interruption if `tools::SIGINT` is supplied or passed through to the `autoexit` argument of `daemon()` (thanks @LennardLux, #240).
 * `daemons()` dispatcher argument 'process', deprecated in mirai v2.1.0, is removed.
-* Requires nanonext >= [1.5.2.9020].
+* Requires nanonext >= 1.6.0.
 * Package is re-licensed under the MIT license.
 
 # mirai 2.2.0
