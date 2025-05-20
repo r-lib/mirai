@@ -61,6 +61,8 @@
 .. <- new.env()
 .command <- NULL
 .urlscheme <- NULL
+.limit_long <- 10000L
+.limit_short <- 5000L
 
 ._ <- list2env(
   list(
@@ -81,8 +83,8 @@
     not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     requires_daemons = "daemons must be set prior to a map operation",
-    sync_daemons = "initial sync with daemon(s) timed out after %d ms",
-    sync_dispatcher = "initial sync with dispatcher timed out after %d ms"
+    sync_daemons = "mirai: initial sync with daemon(s) [10s elapsed]",
+    sync_dispatcher = "mirai: initial sync with dispatcher [10s elapsed]"
   ),
   hash = TRUE
 )

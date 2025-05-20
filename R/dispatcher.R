@@ -55,6 +55,7 @@ dispatcher <- function(
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
   n > 0L || stop(._[["missing_url"]])
+  sync <- as.integer(sync)
 
   cv <- cv()
   sock <- socket("rep")
@@ -63,8 +64,11 @@ dispatcher <- function(
   dial_and_sync_socket(sock, host)
 
   ctx <- .context(sock)
-  res <- recv(ctx, mode = 1L, block = sync)
-  is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
+  res <- recv_aio(ctx, mode = 1L, cv = cv)
+  while(!until(cv, sync))
+    cv_signal(cv) || wait(cv) || return()
+  res <- .subset2(res, "data")
+
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
@@ -96,7 +100,9 @@ dispatcher <- function(
     output <- attr(dots, "output")
     for (i in seq_len(n))
       launch_daemon(wa3(url, dots, next_stream(envir)), output)
-    for (i in seq_len(n)) until(cv, sync) || stop(sprintf(._[["sync_daemons"]], sync))
+    for (i in seq_len(n))
+      while(!until(cv, sync))
+        cv_signal(cv) || wait(cv) || return()
 
     changes <- read_monitor(m)
     for (item in changes)

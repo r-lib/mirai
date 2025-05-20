@@ -254,7 +254,6 @@ daemons <- function(
             tls = tls,
             pass = pass
           )
-          is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
           store_dispatcher(sock, res, cv, envir)
           `[[<-`(envir, "msgid", 0L)
         },
@@ -301,16 +300,7 @@ daemons <- function(
         parse_dispatcher(dispatcher),
         {
           sock <- req_socket(urld)
-          launch_daemons(
-            seq_len(n),
-            sock,
-            urld,
-            dots,
-            envir,
-            output,
-            sync
-          ) ||
-            stop(sprintf(._[["sync_daemons"]], sync))
+          launch_daemons(seq_len(n), sock, urld, dots, envir, output)
           `[[<-`(envir, "urls", urld)
         },
         {
@@ -324,7 +314,6 @@ daemons <- function(
             serial,
             sync
           )
-          is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
           `[[<-`(envir, "msgid", 0L)
@@ -630,7 +619,7 @@ query_dispatcher <- function(
   command,
   send_mode = 2L,
   recv_mode = 5L,
-  block = 5000L
+  block = .limit_short
 ) {
   r <- send(sock, command, mode = send_mode, block = block)
   r && return(r)
@@ -655,22 +644,24 @@ launch_dispatcher <- function(
     wait = FALSE
   )
   if (is.list(serial)) `opt<-`(sock, "serial", serial)
-  query_dispatcher(
-    sock,
-    list(pkgs, tls, pass, serial),
-    send_mode = 1L,
-    recv_mode = 2L,
-    block = sync
-  )
+
+  cv <- cv()
+  send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = .limit_long)
+  res <- recv_aio(sock, mode = 2L, cv = cv)
+  while(!until(cv, sync))
+    message(._[["sync_dispatcher"]])
+  .subset2(res, "data")
 }
 
-launch_daemons <- function(seq, sock, urld, dots, envir, output, sync) {
+launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
-  for (i in seq) launch_daemon(wa2(urld, dots, next_stream(envir)), output)
   for (i in seq)
-    until(cv, sync) || return(pipe_notify(sock, NULL, add = TRUE))
-  !pipe_notify(sock, NULL, add = TRUE)
+    launch_daemon(wa2(urld, dots, next_stream(envir)), output)
+  for (i in seq)
+    while(!until(cv, .limit_long))
+      message(._[["sync_daemons"]])
+  pipe_notify(sock, NULL, add = TRUE)
 }
 
 store_dispatcher <- function(sock, res, cv, envir)
