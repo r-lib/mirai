@@ -644,7 +644,7 @@ launch_dispatcher <- function(
   res <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(._[["sync_dispatcher"]])
-  .subset2(res, "data")
+  collect_aio(res)
 }
 
 launch_daemons <- function(seq, sock, urld, dots, envir, output) {

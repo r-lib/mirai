@@ -58,10 +58,10 @@ dispatcher <- function(
   dial_and_sync_socket(sock, host)
 
   ctx <- .context(sock)
-  res <- recv_aio(ctx, mode = 1L, cv = cv)
+  req <- recv_aio(ctx, mode = 1L, cv = cv)
   while(!until(cv, .limit_long))
     cv_signal(cv) || wait(cv) || return()
-  res <- .subset2(res, "data")
+  res <- collect_aio(req)
 
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
@@ -193,7 +193,7 @@ dispatcher <- function(
         req <- recv_aio(ctx, mode = 8L, cv = cv)
       } else if (!unresolved(res)) {
         value <- .subset2(res, "value")
-        id <- as.character(.subset2(res, "aio"))
+        id <- as.character(pipe_id(res))
         res <- recv_aio(psock, mode = 8L, cv = cv)
         outq[[id]][["msgid"]] < 0 && {
           `[[<-`(outq[[id]], "msgid", 0L)
