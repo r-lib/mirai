@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9013</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.2.0.9014</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,9 +54,11 @@
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>
 <code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which provides a more comprehensive solution than just using a hostname.</li>
+<li>Adds <code><a href="../reference/register_serial.html">register_serial()</a></code> to register serialization configurations for all <code><a href="../reference/daemons.html">daemons()</a></code> calls (may be used by package authors as a convenience).</li>
 <li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
 <li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value, whether or not daemons are set for a given compute profile.</li>
-<li>Adds <code><a href="../reference/register_serial.html">register_serial()</a></code> to register serialization configurations for all <code><a href="../reference/daemons.html">daemons()</a></code> calls (may be used by package authors as a convenience).</li>
+<li>
+<code><a href="../reference/daemons.html">daemons()</a></code> gains a <code>sync</code> argument to set the max time to allow for synchronization between host / dispatcher and dispatcher / daemons (previously fixed at 10s). This is particularly relevant for HPC setups (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/275" class="external-link">#275</a>).</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
