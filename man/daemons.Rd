@@ -10,6 +10,7 @@ daemons(
   remote = NULL,
   dispatcher = TRUE,
   ...,
+  sync = 10000L,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -37,6 +38,11 @@ and should normally be kept on (for details see Dispatcher section below).}
 \item{...}{(optional) additional arguments passed through to
 \code{\link[=daemon]{daemon()}} if launching daemons. These include \code{asyncdial}, \code{autoexit},
 \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime} and \code{walltime}.}
+
+\item{sync}{[default 10000L] maximum time in milliseconds to allow for
+synchronization between the host and dispatcher, and (when launching local
+daemons) for each daemon to dispatcher. Set to a higher value if the
+default times out, as may be the case for certain HPC setups.}
 
 \item{seed}{[default NULL] (optional) supply a random seed (single value,
 interpreted as an integer). This is used to inititalise the L'Ecuyer-CMRG

@@ -81,14 +81,11 @@
     not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     requires_daemons = "daemons must be set prior to a map operation",
-    sync_daemons = "initial sync with daemon(s) timed out after 10s",
-    sync_dispatcher = "initial sync with dispatcher timed out after 10s"
+    sync_daemons = "initial sync with daemon(s) timed out after %d ms",
+    sync_dispatcher = "initial sync with dispatcher timed out after %d ms"
   ),
   hash = TRUE
 )
-
-.limit_short <- 5000L
-.limit_long <- 10000L
 
 # Deprecated  ------------------------------------------------------------------
 
