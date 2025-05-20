@@ -213,7 +213,6 @@ daemons <- function(
   remote = NULL,
   dispatcher = TRUE,
   ...,
-  sync = 10000L,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -247,10 +246,9 @@ daemons <- function(
           sock <- req_socket(urld)
           res <- launch_dispatcher(
             sock,
-            wa5(urld, url, sync, dots),
+            wa5(urld, url, dots),
             output,
             serial,
-            sync,
             tls = tls,
             pass = pass
           )
@@ -309,10 +307,9 @@ daemons <- function(
           sock <- req_socket(urld)
           res <- launch_dispatcher(
             sock,
-            wa4(urld, n, sync, envir[["stream"]], dots),
+            wa4(urld, n, envir[["stream"]], dots),
             output,
-            serial,
-            sync
+            serial
           )
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
@@ -584,24 +581,22 @@ wa3 <- function(url, dots, rs, tls = NULL)
     paste0(rs, collapse = ",")
   ))
 
-wa4 <- function(urld, n, sync, rs, dots)
+wa4 <- function(urld, n, rs, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,sync=%d,rs=c(%s)%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,rs=c(%s)%s)",
     libp(),
     urld,
     n,
-    sync,
     paste0(rs, collapse = ","),
     dots
   ))
 
-wa5 <- function(urld, url, sync, dots)
+wa5 <- function(urld, url, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",sync=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
     libp(),
     urld,
     url,
-    sync,
     dots
   ))
 
@@ -631,7 +626,6 @@ launch_dispatcher <- function(
   args,
   output,
   serial,
-  sync,
   tls = NULL,
   pass = NULL
 ) {
@@ -644,11 +638,10 @@ launch_dispatcher <- function(
     wait = FALSE
   )
   if (is.list(serial)) `opt<-`(sock, "serial", serial)
-
   cv <- cv()
   send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = .limit_long)
   res <- recv_aio(sock, mode = 2L, cv = cv)
-  while(!until(cv, sync))
+  while(!until(cv, .limit_long))
     message(._[["sync_dispatcher"]])
   .subset2(res, "data")
 }

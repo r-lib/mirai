@@ -25,10 +25,6 @@
 #'   this case, a local url is automatically generated.
 #' @param ... (optional) additional arguments passed through to [daemon()].
 #'   These include `asyncdial`, `autoexit`, and `cleanup`.
-#' @param sync \[default 10000L\] maximum time in milliseconds to allow for
-#'   synchronization between the host and dispatcher, and (when launching local
-#'   daemons) for each daemon to dispatcher. Set to a higher value if the
-#'   default times out, as may be the case for certain HPC setups.
 #' @param tls \[default NULL\] (required for secure TLS connections) **either**
 #'   the character path to a file containing the PEM-encoded TLS certificate and
 #'   associated private key (may contain additional certificates leading to a
@@ -48,14 +44,12 @@ dispatcher <- function(
   url = NULL,
   n = NULL,
   ...,
-  sync = 10000L,
   tls = NULL,
   pass = NULL,
   rs = NULL
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
   n > 0L || stop(._[["missing_url"]])
-  sync <- as.integer(sync)
 
   cv <- cv()
   sock <- socket("rep")
@@ -65,7 +59,7 @@ dispatcher <- function(
 
   ctx <- .context(sock)
   res <- recv_aio(ctx, mode = 1L, cv = cv)
-  while(!until(cv, sync))
+  while(!until(cv, .limit_long))
     cv_signal(cv) || wait(cv) || return()
   res <- .subset2(res, "data")
 
@@ -101,7 +95,7 @@ dispatcher <- function(
     for (i in seq_len(n))
       launch_daemon(wa3(url, dots, next_stream(envir)), output)
     for (i in seq_len(n))
-      while(!until(cv, sync))
+      while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
 
     changes <- read_monitor(m)
