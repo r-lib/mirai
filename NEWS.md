@@ -11,7 +11,7 @@
 * Adds `register_serial()` to register serialization configurations for all `daemons()` calls (may be used by package authors as a convenience).
 * Adds `on_daemon()` which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.
 * Adds `daemons_set()` which returns a logical value, whether or not daemons are set for a given compute profile.
-* `daemons()` gains a `sync` argument to set the max time to allow for synchronization between host / dispatcher and dispatcher / daemons (previously fixed at 10s). This is particularly relevant for HPC setups (thanks @sebffischer, #275).
+* `daemons()` now supports initial synchronization exceeding 10s (between host/dispatcher/daemons). This is particularly relevant for HPC setups (thanks @sebffischer, #275).
 
 #### Updates
 

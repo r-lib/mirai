@@ -25,10 +25,6 @@
 #'   this case, a local url is automatically generated.
 #' @param ... (optional) additional arguments passed through to [daemon()].
 #'   These include `asyncdial`, `autoexit`, and `cleanup`.
-#' @param sync \[default 10000L\] maximum time in milliseconds to allow for
-#'   synchronization between the host and dispatcher, and (when launching local
-#'   daemons) for each daemon to dispatcher. Set to a higher value if the
-#'   default times out, as may be the case for certain HPC setups.
 #' @param tls \[default NULL\] (required for secure TLS connections) **either**
 #'   the character path to a file containing the PEM-encoded TLS certificate and
 #'   associated private key (may contain additional certificates leading to a
@@ -48,7 +44,6 @@ dispatcher <- function(
   url = NULL,
   n = NULL,
   ...,
-  sync = 10000L,
   tls = NULL,
   pass = NULL,
   rs = NULL
@@ -59,12 +54,15 @@ dispatcher <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv = cv, remove = TRUE, flag = TRUE)
+  pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
   dial_and_sync_socket(sock, host)
 
   ctx <- .context(sock)
-  res <- recv(ctx, mode = 1L, block = sync)
-  is.object(res) && stop(sprintf(._[["sync_dispatcher"]], sync))
+  req <- recv_aio(ctx, mode = 1L, cv = cv)
+  while(!until(cv, .limit_long))
+    cv_signal(cv) || wait(cv) || return()
+  res <- collect_aio(req)
+
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
@@ -96,7 +94,9 @@ dispatcher <- function(
     output <- attr(dots, "output")
     for (i in seq_len(n))
       launch_daemon(wa3(url, dots, next_stream(envir)), output)
-    for (i in seq_len(n)) until(cv, sync) || stop(sprintf(._[["sync_daemons"]], sync))
+    for (i in seq_len(n))
+      while(!until(cv, .limit_long))
+        cv_signal(cv) || wait(cv) || return()
 
     changes <- read_monitor(m)
     for (item in changes)
@@ -193,7 +193,7 @@ dispatcher <- function(
         req <- recv_aio(ctx, mode = 8L, cv = cv)
       } else if (!unresolved(res)) {
         value <- .subset2(res, "value")
-        id <- as.character(.subset2(res, "aio"))
+        id <- as.character(pipe_id(res))
         res <- recv_aio(psock, mode = 8L, cv = cv)
         outq[[id]][["msgid"]] < 0 && {
           `[[<-`(outq[[id]], "msgid", 0L)

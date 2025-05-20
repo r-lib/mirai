@@ -4,16 +4,7 @@
 \alias{dispatcher}
 \title{Dispatcher}
 \usage{
-dispatcher(
-  host,
-  url = NULL,
-  n = NULL,
-  ...,
-  sync = 10000L,
-  tls = NULL,
-  pass = NULL,
-  rs = NULL
-)
+dispatcher(host, url = NULL, n = NULL, ..., tls = NULL, pass = NULL, rs = NULL)
 }
 \arguments{
 \item{host}{the character host URL to dial (where tasks are sent from),
@@ -30,11 +21,6 @@ this case, a local url is automatically generated.}
 
 \item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}}.
 These include \code{asyncdial}, \code{autoexit}, and \code{cleanup}.}
-
-\item{sync}{[default 10000L] maximum time in milliseconds to allow for
-synchronization between the host and dispatcher, and (when launching local
-daemons) for each daemon to dispatcher. Set to a higher value if the
-default times out, as may be the case for certain HPC setups.}
 
 \item{tls}{[default NULL] (required for secure TLS connections) \strong{either}
 the character path to a file containing the PEM-encoded TLS certificate and

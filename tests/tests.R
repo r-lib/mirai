@@ -371,7 +371,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   q <- vector(mode = "list", length = 10000L)
   Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
-  test_equal(daemons(4, sync = 20000L), 4L)
+  test_equal(daemons(4), 4L)
   Sys.unsetenv("R_DEFAULT_PACKAGES")
   for (i in seq_len(10000L)) {q[[i]] <- mirai(1L); attr(q[[i]], "status") <- status()}
   test_equal(sum(unlist(collect_mirai(q))), 10000L)

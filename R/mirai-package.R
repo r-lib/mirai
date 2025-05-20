@@ -27,7 +27,7 @@
 #'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
 #'   .context cv cv_signal cv_value dial .interrupt ip_addr is_error_value .keep
-#'   listen .mark mclock monitor msleep nng_error opt opt<- parse_url
+#'   listen .mark mclock monitor msleep nng_error opt opt<- parse_url pipe_id
 #'   pipe_notify random .read_marker read_monitor reap recv recv_aio request
 #'   send socket stat stop_aio tls_config unresolved .unresolved until wait
 #'   write_cert
@@ -61,6 +61,9 @@
 .. <- new.env()
 .command <- NULL
 .urlscheme <- NULL
+.limit_long <- 10000L
+.limit_long_secs <- 10L
+.limit_short <- 5000L
 
 ._ <- list2env(
   list(
@@ -81,8 +84,8 @@
     not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     requires_daemons = "daemons must be set prior to a map operation",
-    sync_daemons = "initial sync with daemon(s) timed out after %d ms",
-    sync_dispatcher = "initial sync with dispatcher timed out after %d ms"
+    sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
+    sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]"
   ),
   hash = TRUE
 )
