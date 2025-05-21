@@ -1,0 +1,148 @@
+---
+title: "Use in Packages"
+vignette: >
+  %\VignetteIndexEntry{Use in Packages}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+### Table of Contents
+
+2. [Asynchronous Parallel Map](#asynchronous-parallel-map)
+3. [Using mirai in a Package](#using-mirai-in-a-package)
+
+### Asynchronous Parallel Map
+
+`mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
+
+This function is similar to `purrr::map()`, but returns a 'mirai_map' object.
+It is also more advanced as it allows multiple map over the rows of a dataframe or matrix - and can in fact be used to implement all map variations from that package.
+
+The results of a mirai_map `x` may be collected using `x[]`.
+This waits for all asynchronous operations to complete if still in progress.
+
+#### Key advantages:
+
+1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
+1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects.
+1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire operation to fail. This allows more efficient recovery from partial failure.
+1. Does not rely on a 'chunking' algorithm that attempts to split work into batches according to the number of available daemons, as implemented for example in the `parallel` package. Chunking cannot take into account varying or unpredictable compute times over the indices. It can be optimal to rely on `mirai` for scheduling instead. This is demonstrated in the example below.
+```{r}
+#| label: chunk
+library(mirai)
+library(parallel)
+cl <- make_cluster(4)
+daemons(4)
+vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
+system.time(mirai_map(vec, Sys.sleep)[])
+system.time(parLapply(cl, vec, Sys.sleep))
+daemons(0)
+```
+`.args` is used to specify further constant arguments to `.f` - the 'mean' and 'sd' in the example below:
+```{r}
+#| label: mmap
+with(
+  daemons(3, dispatcher = FALSE),
+  mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
+)
+```
+Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
+```{r}
+#| label: mmap2
+daemons(4)
+ml <- mirai_map(
+  c(a = 1, b = 2, c = 3),
+  function(x) do(x, as.logical(x %% 2)),
+  do = nanonext::random
+)
+ml
+ml[]
+```
+Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if not.
+
+#### Collecting Results
+
+When collecting the results, optionally specify arguments to `[]`:
+
+- `x[.flat]` collects and flattens the results, checking that they are of the same type to avoid coercion.
+- `x[.progress]` collects results using a `cli` progress bar, if available, showing completion percentage and ETA, or else a simple text progress indicator of parts completed of the total. If the map operation completes quickly, the `cli` progress bar may not show at all, and this is by design.
+- `x[.stop]` collects the results applying early stopping, which stops at the first failure and cancels remaining computations. If the `cli` package is available, it will be used for displaying the error message.
+
+Combinations of the above may be supplied in the fashion of `x[.stop, .progress]`.
+```{r}
+#| label: mmapadv
+#| error: true
+mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
+
+with(
+  daemons(4, dispatcher = FALSE, .compute = "sleep"),
+  mirai_map(c(0.1, 0.2, 0.3), Sys.sleep, .compute = "sleep")[.progress, .flat]
+)
+
+daemons(0)
+```
+
+#### Multiple Map
+
+Multiple map is performed over the **rows** of a dataframe or matrix, as this is most often the desired behaviour.
+
+This allows map over 2 or more arguments by specifying a dataframe.
+One of those may be an index value for indexed map.
+
+The function `.f` must take as many arguments as there are columns, either explicitly or via `...`.
+
+```{r}
+#| label: mmapmulti
+fruit <- c("melon", "grapes", "coconut")
+
+# create a dataframe for indexed map:
+df <- data.frame(i = seq_along(fruit), fruit = fruit)
+
+with(
+  daemons(3, dispatcher = FALSE),
+  mirai_map(df, sprintf, .args = list(fmt = "%d. %s"))[.flat]
+)
+```
+As a dataframe often contains columns of differing type, it is unusual to want to map over the **columns**, however this is possible by simply transforming it beforehand into a list using `as.list()`.
+
+Similarly, the behaviour of `lapply()` or `purrr::map()` on a matrix is the same as that for a vector.
+`mirai_map()` on the other hand does take into account the fact that the matrix has dimensions, and maps over its **rows**, consistent with the behaviour for dataframes.
+If instead, mapping over the columns is desired, simply take the transpose of the matrix beforehand using `t()`.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Using mirai in a Package
+
+mirai as a framework is designed to support completely transparent and inter-operable use within packages.
+A core design precept of not relying on global options or environment variables minimises the likelihood of conflict between use by different packages.
+
+There are hence few requirements of package authors, but a few important points to note nevertheless:
+
+1. `daemons()` settings should almost always be left to end-users.
+  Consider re-exporting `daemons()` in your package as a convenience.
+- Do not include a call to `daemons()` if you use `mirai_map()` or a function that wraps it such as `purrr::map(.parallel = TRUE)`.
+  This is important to ensure that there is no unintentional recursive creation of daemons on the same machine.
+- Where a `daemons()` call may be appropriate is for async operation using only one dedicated daemon.
+  A representative examaple of this usage pattern is `logger::appender_async()`, where the logger package's 'namespace' concept maps directly to mirai's 'compute profile'.
+
+2. The shape and contents of a `status()` call must not be relied upon, as this user interface is subject to change at any time.
+- There is a developer interface `nextget()`, for querying values such as 'urls' described in the function documentation.
+  Note: only the specifically-documented values are supported interfaces.
+
+3. The functions `unresolved()`, `is_error_value()`, `is_mirai_error()`, and `is_mirai_interrupt()` should be used to test for the relevant state of a mirai or its value.
+- The characteristics of how they are currently implemented, e.g. as a logical NA for an 'unresolvedValue', should not be relied upon, as these are subject to change at any time.
+
+4. Testing on CRAN should respect it's 2-core usage limit.
+  These limits apply only to tests on CRAN, and more complex tests may be run elsewhere.
+- This practically means limiting tests to using one daemon (with `dispatcher = FALSE`) to ensure that only one additional process is used.
+- Always reset daemons when done and then allow at least a one-second sleep to ensure all background processes have properly exited.
+
+[&laquo; Back to ToC](#table-of-contents)

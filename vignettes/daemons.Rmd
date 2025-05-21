@@ -1,0 +1,417 @@
+---
+title: "Daemons"
+vignette: >
+  %\VignetteIndexEntry{Daemons}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+### Table of Contents
+
+1. [Local Daemons](#local-daemons)
+2. [Remote Daemons](#remote-daemons)
+3. [Launching Remote Daemons](#launching-remote-daemons)
+4. [TLS Secure Connections](#tls-secure-connections)
+5. [Compute Profiles](#compute-profiles)
+
+### Local Daemons
+
+Daemons, or persistent background processes, may be set to receive 'mirai' requests.
+
+This is typically going to be more efficient as new processes no longer need to be created on an *ad hoc* basis.
+
+> Daemons inherit the default system configuration and read in the relevant '.Renviron' and '.Rprofile' etc. on startup.
+They also load the default packages.
+To instead only load the `base` package (which cuts out more than half of R's startup time), the environment variable `R_SCRIPT_DEFAULT_PACKAGES=NULL` may be set prior to launching daemons.
+
+#### With Dispatcher (default)
+
+Call `daemons()` specifying the number of daemons to launch.
+
+``` r
+daemons(6)
+#> [1] 6
+```
+
+The default `dispatcher = TRUE` creates a `dispatcher()` background process that connects to individual daemon processes on the local machine.
+This ensures that tasks are dispatched efficiently on a first-in first-out (FIFO) basis to daemons for processing.
+Tasks are queued at dispatcher and sent to a daemon as soon as it can accept the task for immediate execution.
+
+Dispatcher uses synchronisation primitives from [`nanonext`](https://nanonext.r-lib.org), waiting upon tasks rather than polling for them at intervals.
+This event-driven approach is efficient both in consuming no resources while waiting, whilst also having no latency being fully synchronised with events.
+
+To view the current status, `status()` provides:
+
+1. The number of active connections,
+2. The URL daemons connect to, and
+3. A task summary:
+  - `waiting` number of tasks queued for execution at dispatcher
+  - `assigned` number of tasks sent to a daemon for execution
+  - `complete` number of tasks for which the result has been received (either completed or cancelled)
+
+
+``` r
+status()
+#> $connections
+#> [1] 6
+#> 
+#> $daemons
+#> [1] "abstract://13b52e37fbad0b77bf316ca6"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
+```
+
+
+``` r
+daemons(0)
+#> [1] 0
+```
+Set the number of daemons to zero to reset.
+This reverts to the default of creating a new background process for each 'mirai' request.
+
+#### Without Dispatcher
+
+Alternatively, specifying `dispatcher = FALSE`, the background daemons connect directly to the host process.
+
+``` r
+daemons(6, dispatcher = FALSE)
+#> [1] 6
+```
+
+
+This means that tasks are sent immediately in a round-robin fashion, which ensures that they are evenly-distributed amongst daemons.
+This does not however guarantee optimal scheduling, as the duration of tasks cannot be known *a priori*.
+As an example, tasks could be queued at a daemon behind a long-running task, whilst other daemons are idle having already completed their tasks.
+
+The advantage of this approach is that it is resource-light and does not require an additional dispatcher process.
+It is suited to working with similar-length tasks, or where concurrent tasks typically do not exceed available daemons.
+
+Requesting the status now shows 6 connections, along with the host URL:
+
+``` r
+status()
+#> $connections
+#> [1] 6
+#> 
+#> $daemons
+#> [1] "abstract://4896193e2baa566c507fba0f"
+```
+
+#### Everywhere
+
+`everywhere()` may be used to evaluate an expression on all connected daemons and persist the resultant state, regardless of a daemon's 'cleanup' setting.
+
+``` r
+everywhere(library(DBI))
+```
+The above keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded for all evaluations.
+Other types of setup task may also be performed, including making a common resource available, such as a database connection:
+
+
+``` r
+everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = tempfile())
+```
+By super-assignment, the conenction 'con' will be available in the global environment of all daemon instances.
+Subsequent mirai calls may then make use of 'con'.
+
+
+``` r
+mirai(exists("con"))[]
+#> [1] TRUE
+```
+Disconnect from the database everywhere:
+
+
+``` r
+everywhere(dbDisconnect(con))
+```
+
+> Sometimes it may be necessary to evaluate an expression in the global environment of each daemon.
+As mirai evaluation does not occur in the global environment itself, but one inheriting from it, an explicit call to `evalq(envir = .GlobalEnv)` achieves this.
+An example use case is `box::use()` to import a module or package:
+
+
+``` r
+everywhere(
+  evalq(
+    box::use(dplyr[select], mirai[...]),
+    envir = .GlobalEnv
+  )
+)
+
+daemons(0)
+#> [1] 0
+```
+
+#### With Method
+
+`daemons()` has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion.
+
+It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
+
+
+``` r
+with(daemons(4), shiny::runApp(app))
+```
+
+> Note: it is assumed the app is already created.
+Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitly called when the app is printed, however printing occurs only after `with()` has returned, hence the app would run outside of the scope of the `with()` statement.
+
+In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
+In the case of other expressions, be sure to call the results (or collect the values) of all mirai within the expression to ensure that they all complete before the daemons are torn down.
+
+If specifying a compute profile for the `daemons()` call (see below), all calls with `.compute = NULL` within the `with()` clause will default to this compute profile.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Remote Daemons
+
+The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
+
+Call `daemons()` specifying 'url' as a character string such as: 'tcp://10.75.32.70:5555' at which daemon processes should connect.
+Alternatively, use `host_url()` to automatically construct a valid URL.
+The host (or dispatcher) listens at this address, utilising a single port.
+
+> IPv6 addresses are also supported and must be enclosed in square brackets `[]` to avoid confusion with the final colon separating the port.
+For example, port 5555 on the IPv6 address `::ffff:a6f:50d` would be specified as `tcp://[::ffff:a6f:50d]:5555`.
+
+For options on actually launching the daemons, please see the next section.
+
+Below, calling `host_url()` without a port value uses the default of '0'.
+This is a wildcard value that will automatically assigns a free ephemeral port:
+
+``` r
+daemons(url = host_url())
+#> [1] 0
+```
+The actual assigned port may be queried at any time via `status()`:
+
+``` r
+status()
+#> $connections
+#> [1] 0
+#> 
+#> $daemons
+#> [1] "tcp://192.168.1.71:42069"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
+```
+The number of daemons connected at any time may be dynamically scaled up or down, according to requirements.
+
+To reset all connections and revert to default behaviour:
+
+``` r
+daemons(0)
+#> [1] 0
+```
+Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Launching Remote Daemons
+
+To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
+
+There are currently two options for generating remote launch configurations:
+
+1. `ssh_config()` if there is SSH access to the remote machine.
+2. `remote_config()` provides a flexible method for using cluster resource managers, or a custom launcher.
+
+#### SSH Direct Connection
+
+This method is appropriate for internal networks and in trusted, properly-configured environments where it is safe for your machine to accept incoming connections on certain ports.
+In the examples below, the remote daemons connect back directly to port 5555 on the local machine.
+
+In these cases, using TLS is often desirable to provide additional security to the connections.
+
+The first example below launches 4 daemons on the machine 10.75.32.90 (using the default SSH port of 22 as this was not specified), connecting back to the host URL:
+
+``` r
+daemons(
+  n = 4,
+  url = host_url(tls = TRUE, port = 5555),
+  remote = ssh_config("ssh://10.75.32.90")
+)
+```
+The second example below launches one daemon on each of 10.75.32.90 and 10.75.32.91 using the custom SSH port of 222:
+
+``` r
+daemons(
+  n = 1,
+  url = host_url(tls = TRUE, port = 5555),
+  remote = ssh_config(c("ssh://10.75.32.90:222", "ssh://10.75.32.91:222"))
+)
+```
+
+#### SSH Tunnelling
+
+Use SSH tunnelling to launch daemons on any machine you are able to access via SSH, whether on the local network or the cloud.
+SSH key-based authentication must already be in place, but no other configuration is required.
+
+This provides a convenient way to launch remote daemons without them needing to directly access the host.
+Firewall configurations or security policies often prevent opening a port to accept outside connections.
+In these cases, SSH tunnelling creates a tunnel once the initial SSH connection is made.
+For simplicity, the implementation in mirai uses the same tunnel port on both the host and daemon.
+
+To use tunnelling, supply a URL with hostname of '127.0.0.1' to 'url' for the `daemons()` call.
+
+- `local_url(tcp = TRUE)` does this for you.
+- The default uses the wildcard port of '0', which assigns a free ephemeral port.
+- Whilst convenient, there is a small possibility that this port may not be available on all daemons.
+- It is hence preferable to specify a specific port that has been whitelisted for use, where possible.
+
+For example, if `local_url(tcp = TRUE, port = 5555)` is specified, the tunnel is created using port 5555 on each machine.
+The host listens to `127.0.0.1:5555` on its side, and the daemons each dial into `127.0.0.1:5555` on their own respective machines.
+
+The below example launches 2 daemons on the remote machine 10.75.32.90 using SSH tunnelling:
+
+``` r
+daemons(
+  n = 2,
+  url = local_url(tcp = TRUE),
+  remote = ssh_config("ssh://10.75.32.90", tunnel = TRUE)
+)
+```
+
+#### Cluster Resource Managers
+
+`remote_config()` may be used to run a command to deploy daemons using a resource manager.
+
+Taking Slurm as an example, the following uses `sbatch` to launch a daemon on the cluster, with some additional arguments to `sbatch` specifying the resource allocation:
+``` r
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = remote_config(
+    command = "sbatch",
+    args = c("--mem 512", "-n 1", "--wrap", "."),
+    rscript = file.path(R.home("bin"), "Rscript"),
+    quote = TRUE
+  )
+)
+```
+
+#### Manual Deployment
+
+As an alternative to automated launches, calling `launch_remote()` without specifying 'remote' may be used to return the shell commands for deploying daemons manually.
+
+The printed return values may then be copy / pasted directly to a remote machine e.g. via a terminal session.
+
+``` r
+daemons(url = host_url())
+#> [1] 0
+launch_remote(2)
+#> [1]
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:38167",dispatcher=TRUE,rs=c(10407,-46202452,3543741,-50488742,306523155,1353990712,166584025))'
+#> 
+#> [2]
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:38167",dispatcher=TRUE,rs=c(10407,-464317646,-295792335,-1535614219,473075378,-454354610,-1569643304))'
+daemons(0)
+#> [1] 0
+```
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### TLS Secure Connections
+
+TLS provides a robust solution for securing communications from the local machine to remote daemons.
+
+#### Automatic Zero-configuration Default
+
+Simply specify a secure URL using the scheme `tls+tcp://` when setting daemons, or use `host_url(tls = TRUE)`, for example:
+
+``` r
+daemons(url = host_url(tls = TRUE))
+#> [1] 0
+```
+Single-use keys and certificates are automatically generated and configured, without requiring any further intervention.
+The private key is always retained on the host machine and never transmitted.
+
+The generated self-signed certificate is available via `launch_remote()`, where it is included as part of the shell command for manually launching a daemon on a remote machine.
+
+``` r
+launch_remote(1)
+#> [1]
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:38115",dispatcher=TRUE,tls=c("-----BEGIN CERTIFICATE-----
+#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
+#> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
+#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
+#> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
+#> AQEFAAOCAg8AMIICCgKCAgEA0JYbF7Qf+vrR2zGcYTRqhe2qzA9pi7yClj1ovHeN
+#> +4OwNjoF0sUugZORyyUGtGlT0suCgSzDrnHEVGhViG9QjoU7CopgPGcxhaXmAxhY
+#> QIyIrXFX5Md8wLUyMRn8Dl0mYnvaNVCySxvDyPrp/SwUce1fEn2Ev+ljdMZwpiU5
+#> hlCei2bUiOJDbRuUp8cSxWB/oFU5JF4fUN+bbN03orCwF91XxV/YiYxw2bSVOYBu
+#> HzzSWsA0TWUrEm54NbaSPlF1LXTmkUWGHpn07q7XsrBhiU0il35eugl/ebOkr4xb
+#> IWQxsehJ4BfJcweuPQfJ8ki0g+IuUIC+5oirHPJfLsu1TBJcn1YcuSZqBXTsR4Lq
+#> DzreKo4DUzoRb6jEblBwzksuSI7Gh9bMJaaCWBEGHwHZcmcXgoytWpaA1QX/CWwS
+#> rk89Hw/DdRtqcYGAZCBqrqJ+l2pRcXhHqA3Kj+GisST6/Xn8r3o7CpRUNS7CTX7Q
+#> 7CjzixBVq9jM3qdMLO4qo2aGkQU2318lHLFdajHht+T9dslMzDbeUO/73kHogBxu
+#> obXeum2yAA1oEeeGDFMTKoYu6XQY5YAuc/W1Y3eiUvQw3F+ElNYiYVcQ70OU+NFh
+#> vYv03mKH14yJml3L9BWeukKERkBr1SUUmQMPaPBuvtj0xGXA7FpokegNjjITyv8b
+#> 9ZUCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUllLX5HMl
+#> aHp5CELY3RLNaLOOkn4wHwYDVR0jBBgwFoAUllLX5HMlaHp5CELY3RLNaLOOkn4w
+#> DQYJKoZIhvcNAQELBQADggIBALw5CbEr1HEn+ux2Fd1Dt5p7dLehPrKjmoktwn8Y
+#> P6dP0+/E28eOqB1aaFvhnJiwcIJw9miLheR+7lgzfcEbGgJ8o7UboNkQ4jWtxvQ4
+#> XsWsZL8IcduhMbbBwesVkSsu5zBBn2kLlpgMsoHg+VHSH06GVABws4UN4KzrlH7p
+#> ZQD/N3R3bxmgkyvCLauuSDcrsGcLoJD6Ku6c8uWewhedJGSArz4T6HEkE0tr35aj
+#> ws2VbMGrytXNX7DnKdomOwCqXXsZHG0MTxDY0QDOk0RpnY5/jE2bF3Gfyn5qaJYW
+#> JwdAB+ebyR283O2fxqab7UZ1MJfJbGooE3edqlBm20iwBZE5B3+sPYp5cgk0bDRL
+#> WYBqAr7ItOfDO/TvR9G53Q4wnFGpOY07Znsgwh6U/7lu9hssm8zRpfLr5LHSrOnA
+#> rc1IPN6dExvlbEsQtPrxrDGYMa5bokSKYBvIwjrYgxsmeONVPPh95fctN4rruBxR
+#> XMVN9+byivzwLRlvdt+2nHgxa+AihxZ/DYc/gofZy+5t5zdDyUjMemhGLIE9sOys
+#> uOe3OU1K/nd1kHcpGo4SkoCUf9IsEDwWc/nKVdRtIlhFXT7AM2W3ah8k3nnOdG8l
+#> o5tZs2smyUSV3tEPjglP61eRSqYYxly7XuFYd+SBgYYPTa0bPattx0/ARGFZutpJ
+#> 7jG9
+#> -----END CERTIFICATE-----
+#> ",""),rs=c(10407,1350470269,1826242330,2131941843,-1862589192,-17485159,-796636794))'
+```
+
+
+[&laquo; Back to ToC](#table-of-contents)
+
+#### CA Signed Certificates
+
+As an alternative to the zero-configuration default, a certificate may also be generated via a Certificate Signing Request (CSR) to a Certificate Authority (CA).
+The CA may be a public CA or internal to an organisation.
+
+1. Generate a private key and CSR. The following resources describe how to do so:
+  - using Mbed TLS: <https://mbed-tls.readthedocs.io/en/latest/kb/how-to/generate-a-certificate-request-csr/>
+  - using OpenSSL: <https://www.feistyduck.com/library/openssl-cookbook/online/> (Chapter 1.2 Key and Certificate Management)
+
+2. Provide the generated CSR to the CA for it to sign a new TLS certificate.
+  - The common name (CN) of the certificate must be identical to the hostname or IP address actually used for the connection. As this is verified, it will fail if not the same.
+  - The received certificate should comprise a block of cipher text between the markers `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`. Make sure to request the certificate in the PEM format. If only available in other formats, the TLS library used should usually provide conversion utilities.
+  - Check also that the private key is a block of cipher text between the markers `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`.
+
+3. When setting daemons, the TLS certificate and private key should be provided to the 'tls' argument of `daemons()`.
+  - If the certificate and private key have been imported as character strings `cert` and `key` respectively, then the 'tls' argument may be specified as the character vector `c(cert, key)`.
+  - Alternatively, the certificate may be copied to a new text file, with the private key appended, in which case the path/filename of this file may be provided to the 'tls' argument.
+
+4. When launching daemons, the certificate chain to the CA should be supplied to the 'tls' argument of `daemon()` or `launch_remote()`.
+  - The certificate chain should comprise multiple certificates, each between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` markers. The first one should be the newly-generated TLS certificate, the same supplied to `daemons()`, and the final one should be a CA root certificate.
+  - These are the only certificates required if the certificate was signed directly by a CA. If not, then the intermediate certificates should be included in a certificate chain that starts with the TLS certificate and ends with the certificate of the CA.
+  - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to the relevant 'tls' argument.
+  - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tls' argument may also be specified as a path/filename (assuming these are the same on each machine).
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Compute Profiles
+
+The `daemons()` interface also allows the specification of compute profiles for managing tasks with heterogeneous compute requirements:
+
+- send tasks to different daemons or clusters of daemons with the appropriate specifications (in terms of CPUs / memory / GPU / accelerators etc.)
+- split tasks between local and remote computation
+
+Simply specify the argument `.compute` with a character profile name (which, if `NULL`, is 'default').
+The daemons settings are saved under the named profile.
+
+To create a 'mirai' task using a specific compute profile, specify the '.compute' argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
+
+Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired '.compute' argument.
+
+[&laquo; Back to ToC](#table-of-contents)
