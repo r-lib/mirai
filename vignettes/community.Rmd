@@ -1,0 +1,50 @@
+---
+title: "Community FAQs"
+vignette: >
+  %\VignetteIndexEntry{Community FAQs}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+### Table of Contents
+
+1. [Migration from future_promise](#migration-from-future-promise)
+
+### 1. Migration from future_promise
+
+It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
+
+The most important difference is that a `future_promise()` tries to infer all the global variables that are required by the expression. However this can easily run into edge cases, or behave in a way that you would not expect. As this behaviour is not transparent, in the best case you will know something has gone wrong, but in the worst case could silently produce the wrong result. In both cases, you would not know until you are trying to debug the situation.
+
+A mirai on the other hand, requires that the expression be self-contained, hence any variables or helper functions are passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means that you can easily reason about your code, and is designed to save you time in the long run.
+
+#### Special Case: `...` Example
+
+A Shiny app may use the following `future_promise()` code within the server component:
+
+```r
+func <- function(x, y){
+  Sys.sleep(y)
+  runif(x)
+}
+
+task <- ExtendedTask$new(
+  function(...) future_promise(func(...))
+) |> bind_task_button("btn")
+
+observeEvent(input$btn, task$invoke(input$n, input$delay))
+```
+The equivalent may be achieved in `mirai()` in the following way:
+```r
+task <- ExtendedTask$new(
+  function(...) mirai(func(...), func = func, .args = environment())
+) |> bind_task_button("btn")
+```
+1. `environment()` captures the `...` to be used by the function within the mirai expression, and can be supplied via `.args`.
+2. The definition for `func` is passed through in the usual way.
+
+*This example comes from a question raised by Simon Smart.*
+
+[&laquo; Back to ToC](#table-of-contents)

@@ -1,5 +1,6 @@
 # Vignettes precompiled as require connecting to remote resources
 knitr::knit("vignettes-src/_mirai.Rmd", "vignettes/mirai.Rmd")
+knitr::knit("vignettes-src/_community.Rmd", "vignettes/community.Rmd")
 knitr::knit("vignettes-src/_daemons.Rmd", "vignettes/daemons.Rmd")
 knitr::knit("vignettes-src/_map.Rmd", "vignettes/map.Rmd")
 knitr::knit("vignettes-src/_packages.Rmd", "vignettes/packages.Rmd")
