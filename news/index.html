@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,12 +19,13 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/databases.html">mirai - Databases and Arrow</a></li>
-    <li><a class="dropdown-item" href="../articles/parallel.html">mirai - Parallel Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/plumber.html">mirai - Plumber Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/promises.html">mirai - Promises Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/shiny.html">mirai - Shiny Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/torch.html">mirai - Torch Integration</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
+    <li><a class="dropdown-item" href="../articles/v6-packages.html">6. Guidance for Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v7-community.html">7. Community FAQs</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -38,7 +39,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/dev/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -52,17 +53,21 @@
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
+<ul><li>
+<code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which provides a more comprehensive solution than just using a hostname.</li>
+<li>Adds <code><a href="../reference/register_serial.html">register_serial()</a></code> to register serialization configurations for all <code><a href="../reference/daemons.html">daemons()</a></code> calls (may be used by package authors as a convenience).</li>
+<li>Adds <code><a href="../reference/on_daemon.html">on_daemon()</a></code> which returns a logical value, whether or not evaluation is taking place within a mirai call on a daemon.</li>
 <li>Adds <code><a href="../reference/daemons_set.html">daemons_set()</a></code> which returns a logical value, whether or not daemons are set for a given compute profile.</li>
+<li>
+<code><a href="../reference/daemons.html">daemons()</a></code> now supports initial synchronization exceeding 10s (between host/dispatcher/daemons). This is particularly relevant for HPC setups (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/275" class="external-link">#275</a>).</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>
-<code><a href="../reference/host_url.html">host_url()</a></code> is upgraded to return all local IP addresses (named by network interface), which is more robust than just using a hostname.</li>
-<li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
+<ul><li>For all functions that use <code>.compute</code>, this argument has a new default of <code>NULL</code>, which continues to use the <code>default</code> profile (and hence should not result in any change in behaviour).</li>
+<li>Fixes <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> failing to interrupt in certain cases on non-Windows platforms, and more robust interruption if <code><a href="https://rdrr.io/r/tools/pskill.html" class="external-link">tools::SIGINT</a></code> is supplied or passed through to the <code>autoexit</code> argument of <code><a href="../reference/daemon.html">daemon()</a></code> (thanks <a href="https://github.com/LennardLux" class="external-link">@LennardLux</a>, <a href="https://github.com/r-lib/mirai/issues/240" class="external-link">#240</a>).</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘process’, deprecated in mirai v2.1.0, is removed.</li>
-<li>Requires nanonext &gt;= [1.5.2.9014].</li>
+<li>Requires nanonext &gt;= 1.6.0.</li>
 <li>Package is re-licensed under the MIT license.</li>
 </ul></div>
 </div>

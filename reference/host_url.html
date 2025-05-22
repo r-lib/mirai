@@ -17,7 +17,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,12 +29,13 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/databases.html">mirai - Databases and Arrow</a></li>
-    <li><a class="dropdown-item" href="../articles/parallel.html">mirai - Parallel Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/plumber.html">mirai - Plumber Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/promises.html">mirai - Promises Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/shiny.html">mirai - Shiny Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/torch.html">mirai - Torch Integration</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
+    <li><a class="dropdown-item" href="../articles/v6-packages.html">6. Guidance for Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v7-community.html">7. Community FAQs</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -48,7 +49,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>URL Constructors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/dev/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>host_url.Rd</code></div>
     </div>
 
@@ -112,16 +113,16 @@ Windows.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 eth0              docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tcp://10.1.0.16:0" "tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.214:0" "tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     eth0                  docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.0.16:0" "tls+tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.214:0" "tls+tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        eth0                     docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.0.16:5555" "tls+tcp://172.17.0.1:5555" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.214:5555" "tls+tcp://172.17.0.1:5555" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://8162e46813b1de2bb59077f2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://b9511860f4aa344915bb15a0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tcp://127.0.0.1:0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
