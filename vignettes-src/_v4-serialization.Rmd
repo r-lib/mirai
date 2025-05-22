@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ### Table of Contents
 
 1. [Serialization: Arrow, polars and beyond](#serialization-arrow-polars-and-beyond)
-2. [Torch Integration](#torch-integration)
+2. [Serialization: Torch](#serialization-torch)
 3. [Database Hosting using Arrow Database Connectivity](#database-hosting-using-arrow-database-connectivity)
 4. [Shiny / mirai / DBI / ADBC Integrated Example](#shiny-mirai-dbi-adbc-integrated-example)
 
@@ -31,6 +31,7 @@ Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
 
 ```{r}
 #| label: arrowfail
+library(mirai)
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
 everywhere(library(arrow))
@@ -89,7 +90,7 @@ daemons(0)
 
 [&laquo; Back to ToC](#table-of-contents)
 
-### Torch Integration
+### Serialization: Torch
 
 Tensors from the [`torch`](https://torch.mlverse.org/) package may be used seamlessly in 'mirai' computations.
 
