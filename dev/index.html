@@ -111,14 +111,14 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.181397 7.911430 7.267798 6.759124 6.963060</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 6.288799 7.337810 6.767335 7.435713 7.628763</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># do work here that does not depend on `m`</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 5.181397 7.911430 7.267798 6.759124 6.963060</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 6.288799 7.337810 6.767335 7.435713 7.628763</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -156,18 +156,18 @@
 <h3 id="design-concepts">Design Concepts<a class="anchor" aria-label="anchor" href="#design-concepts"></a>
 </h3>
 <p>mirai is designed from the ground up to provide a production-grade experience.</p>
-<p>🚀 Fast</p>
+<p>→ Fast</p>
 <ul>
 <li>1,000x more responsive vs. common alternatives <a href="https://github.com/r-lib/mirai/pull/142#issuecomment-2457589563" class="external-link"><sup>[1]</sup></a>
 </li>
 <li>Built for low-latency applications e.g. real time inference &amp; Shiny apps</li>
 </ul>
-<p>✨ Reliable</p>
+<p>→ Reliable</p>
 <ul>
-<li>No reliance on global options or variables -&gt; consistent behaviour</li>
-<li>Explicit evaluation -&gt; transparent and predictable results</li>
+<li>No reliance on global options or variables for consistent behaviour</li>
+<li>Explicit evaluation for transparent and predictable results</li>
 </ul>
-<p>📈 Scalable</p>
+<p>→ Scalable</p>
 <ul>
 <li>Launch millions of tasks over thousands of connections</li>
 <li>Proven track record for heavy-duty workloads in the life sciences industry</li>
