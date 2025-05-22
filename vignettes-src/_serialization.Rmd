@@ -1,7 +1,7 @@
 ---
-title: "Serialization - Arrow, polars and torch"
+title: "Serialization - Arrow, polars, ADBC and torch"
 vignette: >
-  %\VignetteIndexEntry{Serialization - Arrow, polars and torch}
+  %\VignetteIndexEntry{Serialization - Arrow, polars, ADBC and torch}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
