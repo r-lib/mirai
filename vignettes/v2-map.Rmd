@@ -1,7 +1,7 @@
 ---
-title: "2. Async Map"
+title: "2. Async Parallel Map"
 vignette: >
-  %\VignetteIndexEntry{2. Async Map}
+  %\VignetteIndexEntry{2. Async Parallel Map}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -9,9 +9,12 @@ vignette: >
 
 ### Table of Contents
 
-1. [Asynchronous Map](#asynchronous-map)
+1. [Introduction](#introduction)
+1. [Key Advantages](#key-advantages)
+1. [Collecting Results](#collecting-results)
+1. [Multiple Map](#multiple-map)
 
-### Asynchronous Map
+### Introduction
 
 `mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
 
@@ -21,7 +24,9 @@ It is also more advanced as it allows multiple map over the rows of a dataframe 
 The results of a mirai_map `x` may be collected using `x[]`.
 This waits for all asynchronous operations to complete if still in progress.
 
-#### Key advantages:
+[&laquo; Back to ToC](#table-of-contents)
+
+### Key advantages
 
 1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
 1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects (such as checkpointing or sending a progress update).
@@ -38,10 +43,10 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.002   0.005   4.007
+#>   0.004   0.013   4.007
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.004   0.007   8.011
+#>   0.005   0.024   8.007
 daemons(0)
 #> [1] 0
 ```
@@ -53,13 +58,13 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 16.2074
+#> [1] 18.27694
 #> 
 #> [[2]]
-#> [1] 18.81434 24.33911
+#> [1] 22.55081 14.33640
 #> 
 #> [[3]]
-#> [1] 18.58115 18.52851 18.69780
+#> [1] 19.21533 17.55937 23.35903
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
 
@@ -75,17 +80,19 @@ ml
 #> < mirai map [0/3] >
 ml[]
 #> $a
-#> [1] "6b"
+#> [1] "24"
 #> 
 #> $b
-#> [1] 2a 8b
+#> [1] ce a9
 #> 
 #> $c
-#> [1] "d022f7"
+#> [1] "4c83b5"
 ```
 Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if not.
 
-#### Collecting Results
+[&laquo; Back to ToC](#table-of-contents)
+
+### Collecting Results
 
 When collecting the results, optionally specify arguments to `[]`:
 
@@ -110,7 +117,9 @@ with(
 #> NULL
 ```
 
-#### Multiple Map
+[&laquo; Back to ToC](#table-of-contents)
+
+### Multiple Map
 
 Multiple map is performed over the **rows** of a dataframe or matrix, as this is most often the desired behaviour.
 
