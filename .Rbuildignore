@@ -11,3 +11,4 @@
 ^vignettes-src$
 ^[\.]?air\.toml$
 ^\.vscode$
+^cran-comments\.md$
