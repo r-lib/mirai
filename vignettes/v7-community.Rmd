@@ -11,6 +11,7 @@ vignette: >
 ### Table of Contents
 
 1. [Migration from future_promise](#migration-from-future_promise)
+2. [Setting the Random Seed](setting-the-random-seed)
 
 ### Migration from future_promise
 
@@ -46,5 +47,61 @@ task <- ExtendedTask$new(
 2. The definition for `func` is passed through in the usual way.
 
 *This example comes from a question raised by Simon Smart.*
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Setting the Random Seed
+
+The following example was raised as being potentially counter-intuitive, given that default 'cleanup' settings at each daemon ensures that variables in the global environment, of which `.Random.seed` is one, do not carry over to subsequent runs.
+
+
+``` r
+library(mirai)
+daemons(4)
+#> [1] 4
+
+vec <- 1:3
+vec2 <- 4:6
+
+# Returns different values: good
+mirai_map(list(vec, vec2), \(x) rnorm(x))[]
+#> [[1]]
+#> [1] -0.3674240 -0.5417164 -0.4386993
+#> 
+#> [[2]]
+#> [1] -1.624104 -2.084964  1.662856
+
+# Set the seed in the function
+mirai_map(list(vec, vec2), \(x) {
+  set.seed(123)
+  rnorm(x)
+})[]
+#> [[1]]
+#> [1] -0.9685927  0.7061091  1.4890213
+#> 
+#> [[2]]
+#> [1] -0.9685927  0.7061091  1.4890213
+
+# Do not set the seed in the function: still identical results?
+mirai_map(list(vec, vec2), \(x) rnorm(x))[]
+#> [[1]]
+#> [1] -1.8150926  0.3304096 -1.1421557
+#> 
+#> [[2]]
+#> [1] -1.8150926  0.3304096 -1.1421557
+
+daemons(0)
+#> [1] 0
+```
+
+The reason the change in random seed persists in all circumstances is due to this being a special case, arising from the use of L'Ecuyer CMRG streams to provide parallel-safe random numbers.
+
+Streams can be thought of as entry points far away from each other to ensure that random results in each daemon are independent from one another. The random seed is not reset after each mirai call to ensure that however many random draws are made in any mirai call, the next random draw follows on in the stream, and hence have the desired statistical properties.
+
+Hence normally, the random seed should be set once on the host process when daemons are created, rather than in each daemon.
+
+If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required. It is also possible to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
+
+*This example comes from a question raised by Etienne Bacher.*
 
 [&laquo; Back to ToC](#table-of-contents)
