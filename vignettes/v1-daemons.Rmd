@@ -1,19 +1,12 @@
 ---
-title: "Daemons"
+title: "1. Daemons"
 vignette: >
-  %\VignetteIndexEntry{Daemons}
+  %\VignetteIndexEntry{1. Daemons}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r}
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  out.width = "100%"
-)
-```
+
 ### Table of Contents
 
 1. [Local Daemons](#local-daemons)
@@ -35,9 +28,10 @@ To instead only load the `base` package (which cuts out more than half of R's st
 #### With Dispatcher (default)
 
 Call `daemons()` specifying the number of daemons to launch.
-```{r}
-#| label: daemons
+
+``` r
 daemons(6)
+#> [1] 6
 ```
 
 The default `dispatcher = TRUE` creates a `dispatcher()` background process that connects to individual daemon processes on the local machine.
@@ -56,14 +50,24 @@ To view the current status, `status()` provides:
   - `assigned` number of tasks sent to a daemon for execution
   - `complete` number of tasks for which the result has been received (either completed or cancelled)
 
-```{r}
-#| label: daemons3
+
+``` r
 status()
+#> $connections
+#> [1] 6
+#> 
+#> $daemons
+#> [1] "ipc:///tmp/c2c44fbab84c2abdc1dcec50"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
 ```
 
-```{r}
-#| label: daemons4
+
+``` r
 daemons(0)
+#> [1] 0
 ```
 Set the number of daemons to zero to reset.
 This reverts to the default of creating a new background process for each 'mirai' request.
@@ -71,15 +75,12 @@ This reverts to the default of creating a new background process for each 'mirai
 #### Without Dispatcher
 
 Alternatively, specifying `dispatcher = FALSE`, the background daemons connect directly to the host process.
-```{r}
-#| label: daemonsq
+
+``` r
 daemons(6, dispatcher = FALSE)
+#> [1] 6
 ```
-```{r}
-#| label: daemonsq2
-#| include: false
-Sys.sleep(0.5)
-```
+
 
 This means that tasks are sent immediately in a round-robin fashion, which ensures that they are evenly-distributed amongst daemons.
 This does not however guarantee optimal scheduling, as the duration of tasks cannot be known *a priori*.
@@ -89,36 +90,42 @@ The advantage of this approach is that it is resource-light and does not require
 It is suited to working with similar-length tasks, or where concurrent tasks typically do not exceed available daemons.
 
 Requesting the status now shows 6 connections, along with the host URL:
-```{r}
-#| label: daemonsqv
+
+``` r
 status()
+#> $connections
+#> [1] 6
+#> 
+#> $daemons
+#> [1] "ipc:///tmp/092bfa33b8c79e58a666b322"
 ```
 
 #### Everywhere
 
 `everywhere()` may be used to evaluate an expression on all connected daemons and persist the resultant state, regardless of a daemon's 'cleanup' setting.
-```{r}
-#| label: everywhere
+
+``` r
 everywhere(library(DBI))
 ```
 The above keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded for all evaluations.
 Other types of setup task may also be performed, including making a common resource available, such as a database connection:
 
-```{r}
-#| label: everywhere2
+
+``` r
 everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = tempfile())
 ```
 By super-assignment, the conenction 'con' will be available in the global environment of all daemon instances.
 Subsequent mirai calls may then make use of 'con'.
 
-```{r}
-#| label: everywhere3
+
+``` r
 mirai(exists("con"))[]
+#> [1] TRUE
 ```
 Disconnect from the database everywhere:
 
-```{r}
-#| label: everywhere4
+
+``` r
 everywhere(dbDisconnect(con))
 ```
 
@@ -126,8 +133,8 @@ everywhere(dbDisconnect(con))
 As mirai evaluation does not occur in the global environment itself, but one inheriting from it, an explicit call to `evalq(envir = .GlobalEnv)` achieves this.
 An example use case is `box::use()` to import a module or package:
 
-```{r}
-#| label: everywhere5
+
+``` r
 everywhere(
   evalq(
     box::use(dplyr[select], mirai[...]),
@@ -136,6 +143,7 @@ everywhere(
 )
 
 daemons(0)
+#> [1] 0
 ```
 
 #### With Method
@@ -144,9 +152,8 @@ daemons(0)
 
 It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
 
-```{r}
-#| label: withshiny
-#| eval: false
+
+``` r
 with(daemons(4), shiny::runApp(app))
 ```
 
@@ -175,21 +182,32 @@ For options on actually launching the daemons, please see the next section.
 
 Below, calling `host_url()` without a port value uses the default of '0'.
 This is a wildcard value that will automatically assigns a free ephemeral port:
-```{r}
-#| label: localqueue
+
+``` r
 daemons(url = host_url())
+#> [1] 0
 ```
 The actual assigned port may be queried at any time via `status()`:
-```{r}
-#| label: remotev2
+
+``` r
 status()
+#> $connections
+#> [1] 0
+#> 
+#> $daemons
+#> [1] "tcp://192.168.2.179:61815"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
 ```
 The number of daemons connected at any time may be dynamically scaled up or down, according to requirements.
 
 To reset all connections and revert to default behaviour:
-```{r}
-#| label: reset2
+
+``` r
 daemons(0)
+#> [1] 0
 ```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
@@ -212,9 +230,8 @@ In the examples below, the remote daemons connect back directly to port 5555 on 
 In these cases, using TLS is often desirable to provide additional security to the connections.
 
 The first example below launches 4 daemons on the machine 10.75.32.90 (using the default SSH port of 22 as this was not specified), connecting back to the host URL:
-```{r}
-#| label: ldmn
-#| eval: false
+
+``` r
 daemons(
   n = 4,
   url = host_url(tls = TRUE, port = 5555),
@@ -222,9 +239,8 @@ daemons(
 )
 ```
 The second example below launches one daemon on each of 10.75.32.90 and 10.75.32.91 using the custom SSH port of 222:
-```{r}
-#| label: ldmnd
-#| eval: false
+
+``` r
 daemons(
   n = 1,
   url = host_url(tls = TRUE, port = 5555),
@@ -253,9 +269,8 @@ For example, if `local_url(tcp = TRUE, port = 5555)` is specified, the tunnel is
 The host listens to `127.0.0.1:5555` on its side, and the daemons each dial into `127.0.0.1:5555` on their own respective machines.
 
 The below example launches 2 daemons on the remote machine 10.75.32.90 using SSH tunnelling:
-```{r}
-#| label: sshrevtun
-#| eval: false
+
+``` r
 daemons(
   n = 2,
   url = local_url(tcp = TRUE),
@@ -286,11 +301,18 @@ daemons(
 As an alternative to automated launches, calling `launch_remote()` without specifying 'remote' may be used to return the shell commands for deploying daemons manually.
 
 The printed return values may then be copy / pasted directly to a remote machine e.g. via a terminal session.
-```{r}
-#| label: launchremotereal
+
+``` r
 daemons(url = host_url())
+#> [1] 0
 launch_remote(2)
+#> [1]
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,91257334,-1959188481,-1949566412,1212153765,450893858,-19985093))'
+#> 
+#> [2]
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,-1946146075,-207229660,280621307,1679686356,-432010903,1372300061))'
 daemons(0)
+#> [1] 0
 ```
 
 [&laquo; Back to ToC](#table-of-contents)
@@ -302,22 +324,56 @@ TLS provides a robust solution for securing communications from the local machin
 #### Automatic Zero-configuration Default
 
 Simply specify a secure URL using the scheme `tls+tcp://` when setting daemons, or use `host_url(tls = TRUE)`, for example:
-```{r}
-#| label: tlsremote
+
+``` r
 daemons(url = host_url(tls = TRUE))
+#> [1] 0
 ```
 Single-use keys and certificates are automatically generated and configured, without requiring any further intervention.
 The private key is always retained on the host machine and never transmitted.
 
 The generated self-signed certificate is available via `launch_remote()`, where it is included as part of the shell command for manually launching a daemon on a remote machine.
-```{r}
-#| label: launch_remote
+
+``` r
 launch_remote(1)
+#> [1]
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.2.179:61823",dispatcher=TRUE,tls=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
+#> MTY4LjIuMTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjIu
+#> MTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQC1rQfohQMGO1G/nJfPXKwRIyTOh0+YN3rPb8Fq
+#> 9YQisNJsZSAYWOCBZtcvfkhp6H3T8PkpHQpRvMqJRscvwBIGj5Q0wt9YlOiUL0nL
+#> lKgrc06HpzTCMDkd+gDXFFzpIkC9kywycou5EJCbHPX35G1DWUnk5EFljq/Rphgt
+#> oqF8orky7uxvV0okEN0/G4owdutIu7oj1bDDkyeAv2YwnQXhqd7qAtRlwBF25EMN
+#> sHb7CEdW9L8W0W0delwdey0HjgNZulq5FE7Jhzh9w0fjSQU+bz+T2lxFZhdMa8AB
+#> jwvOTFu+ruDd0H0N19u8yjc2hTjDLGSme4YoHsc0r8sFW2ebDSelPLiY4i+6RDud
+#> m2DPve12LYd6L/qOPayE/IFOm3+L0DZeicy5e+qhmbnkQMy83wX4MXcxFME4e+oR
+#> HiJjpR7VsmaCaDkWPQOA8K9+CMwhrCE1TJ8TNL6lQVf/jCwLFH11K24j2xFJd3xr
+#> qqNaeSeTo7J+e9hgX+UCgT9Y01fzwaZIo9xmXtd7VwLlvh6MtJXhH6G47OiqqPVT
+#> JDlQpqEilrxQgeOtvpzpVAafwUqeyTELwo6vovrOXZd++3v4ofPVYmZdLH+/fC1h
+#> vyoflaga5LmkJqXvfNFUl/qW9VqsZJtD+ugMesWaFvISWLcmTw+fpxibaucX1mC+
+#> QA/+aQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBTx8Dh/
+#> y5xUx7oDd91v+d4RGDKiNDAfBgNVHSMEGDAWgBTx8Dh/y5xUx7oDd91v+d4RGDKi
+#> NDANBgkqhkiG9w0BAQsFAAOCAgEAWd25sLJY/CCuHO4+AhT3PHJms9M9FkMrlfbA
+#> ZXh/40UaNjFgFBYbJprPrQWZgH55Me29badP4OMcGpP+Jwfb1mE9CGq7iTIPEkoN
+#> bQ12OQJIjj7CQZaEsukrnQPwj6aXZjHnDVA8GiMizEmEzEEj54qaEOCb+N1OsobI
+#> vvFZGcHi2ktVMugGnCgIf1R5/2ojul+lArbPeItbOBf1EzEyIObVWG6NeFU9pcQ3
+#> 18zSoBS3qhL44yxbmxponMf/Izw5AGtI6Ue1rLTab3lNp0eC8qt6buhs5Nef2gar
+#> iTWjqhrChzdwc6a1rFkdpzA5xZqp6hE7Q3x0XSK5qZkixdOt6Y4yHcWkKXaKLOVN
+#> o7M4UVw0b37oDXJc1lMoupUj8i+On34BpqU1A7EMNeSA64tSus15wUi8laIExpjc
+#> UpfBLeSU5tayz43EXX1wZAXRLLOYGE4z4jmRcFzhwzLFKOZZJayD8uXWAN58wR0E
+#> H4Y3RGWtINvz/H/k9lGYSYjXkQNnzpdBXxGD2TigCuINMpAzlhmlef72G3Cmv0+K
+#> yxZwaM1h216NGGn4JXYbExwMJ2Ea1lFK57jLCidBeDJtKOu//0YBAZI+GUia8QdU
+#> WqTluR6AP275Z7EG7oet2PYRrwvX30+OmFKDTrPFVupSTcnGAOlhAPAGtweFsrwo
+#> zLI1mR8=
+#> -----END CERTIFICATE-----
+#> ",""),rs=c(10407,-1505249000,-2064814023,-250690906,-1957016337,2049359460,-2028631531))'
 ```
-```{r}
-#| label: tlsclose
-#| include: false
+
+``` r
 daemons(0)
+#> [1] 0
 ```
 
 [&laquo; Back to ToC](#table-of-contents)

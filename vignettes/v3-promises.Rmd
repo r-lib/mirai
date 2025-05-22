@@ -1,7 +1,7 @@
 ---
-title: "Event-driven Promises and Shiny"
+title: "3. Promises - Shiny and Plumber"
 vignette: >
-  %\VignetteIndexEntry{Event-driven Promises and Shiny}
+  %\VignetteIndexEntry{3. Promises - Shiny and Plumber}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,8 +16,10 @@ vignette: >
 4. [Shiny ExtendedTask: Cancellation](#shiny-extendedtask-cancellation)
 5. [Shiny ExtendedTask: Generative Art](#shiny-extendedtask-generative-art)
 6. [Shiny ExtendedTask: mirai map](#shiny-extendedtask-mirai-map)
-7. [Advanced Promises: Coin Flips](#advanced-promises-coin-flips)
-7. [Advanced Promises: Progress Bar](#advanced-promises-progress-bar)
+7. [Shiny Async: Coin Flips](#shiny-async-coin-flips)
+8. [Shiny Async: Progress Bar](#shiny-async-progress-bar)
+9. [Plumber GET Endpoint](#plumber-get-endpoint)
+10. [Plumber POST Endpoint](#plumber-post-endpoint)
 
 ### Event-driven promises
 
@@ -82,7 +84,7 @@ r <- 0
 start <- Sys.time()
 m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
 Sys.time() - start
-#> Time difference of 1.980129 secs
+#> Time difference of 2.327623 secs
 later::run_now()
 r
 #> [1] 50005000
@@ -417,7 +419,7 @@ with(daemons(4), runApp(app))
 
 [&laquo; Back to ToC](#table-of-contents)
 
-### Advanced Promises: Coin Flips
+### Shiny Async: Coin Flips
 
 The below example demonstrates how to integrate a `mirai_map()` operation into a Shiny app in an observer, without using ExtendedTask.
 
@@ -486,7 +488,7 @@ with(daemons(8, dispatcher = FALSE), {
 
 [&laquo; Back to ToC](#table-of-contents)
 
-### Advanced Promises: Progress Bar
+### Shiny Async: Progress Bar
 
 The below example uses a `mirai_map()` operation in an observer to update a Shiny progress bar with custom messages, and also to update a reactive value once the entire map operation has completed (asynchronously).
 
@@ -549,5 +551,189 @@ app <- shinyApp(ui, server)
 with(daemons(8), runApp(app))
 ```
 *This example adapts a contribution from Davide Magno.*
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Plumber GET Endpoint
+
+mirai may be used as an asynchronous backend for [`plumber`](https://www.rplumber.io/) pipelines.
+
+In this example, the plumber router code is run in a daemon process itself so that it does not block the interactive process.
+
+The /echo endpoint takes a GET request, sleeps for 1 second (simulating an expensive computation) and simply returns the 'msg' request header together with a timestamp and the process ID of the process it is run on.
+
+
+``` r
+library(mirai)
+
+# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
+daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
+#> [1] 1
+
+m <- mirai({
+  library(plumber)
+  library(promises) # to provide the promise pipe
+  library(mirai)
+
+  # more efficient not to use dispatcher if all requests are similar length
+  daemons(4L, dispatcher = FALSE) # handles 4 requests simultaneously
+
+  pr() |>
+    pr_get(
+      "/echo",
+      function(req, res) {
+        mirai(
+          {
+            Sys.sleep(1L)
+            list(
+              status = 200L,
+              body = list(
+                time = format(Sys.time()), msg = msg, pid = Sys.getpid()
+              )
+            )
+          },
+          msg = req[["HEADERS"]][["msg"]]
+        ) %...>% (function(x) {
+          res$status <- x$status
+          res$body <- x$body
+        })
+      }
+    ) |>
+    pr_run(host = "127.0.0.1", port = 8985)
+})
+```
+
+The API can be queried using an async HTTP client such as `nanonext::ncurl_aio()`.
+
+Here, all 8 requests are submitted at once, but we note that that responses have differing timestamps as only 4 can be processed at any one time (limited by the number of daemons set).
+
+``` r
+library(nanonext)
+res <- lapply(
+  1:8,
+  function(i) ncurl_aio(
+    "http://127.0.0.1:8985/echo",
+    headers = c(msg = as.character(i))
+  )
+)
+collect_aio(res)
+#> [[1]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"1\"],\"pid\":[24581]}"
+#> 
+#> [[2]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"2\"],\"pid\":[24583]}"
+#> 
+#> [[3]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"3\"],\"pid\":[24593]}"
+#> 
+#> [[4]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"4\"],\"pid\":[24583]}"
+#> 
+#> [[5]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"5\"],\"pid\":[24599]}"
+#> 
+#> [[6]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"6\"],\"pid\":[24593]}"
+#> 
+#> [[7]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"7\"],\"pid\":[24581]}"
+#> 
+#> [[8]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"8\"],\"pid\":[24599]}"
+
+daemons(0)
+#> [1] 0
+```
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Plumber POST Endpoint
+
+This is the equivalent using a POST endpoint, accepting a JSON instruction sent as request data.
+
+Note that `req$postBody` should always be accessed in the router process and passed in as an argument to the 'mirai', as this is retrieved using a connection that is not serializable.
+
+``` r
+library(mirai)
+
+# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
+daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
+#> [1] 1
+
+m <- mirai({
+  library(plumber)
+  library(promises) # to provide the promise pipe
+  library(mirai)
+
+  # uses dispatcher - suitable when requests take differing times to complete
+  daemons(4L) # handles 4 requests simultaneously
+
+  pr() |>
+    pr_post(
+      "/echo",
+      function(req, res) {
+        mirai(
+          {
+            Sys.sleep(1L) # simulate expensive computation
+            list(
+              status = 200L,
+              body = list(
+                time = format(Sys.time()),
+                msg = jsonlite::fromJSON(data)[["msg"]],
+                pid = Sys.getpid()
+              )
+            )
+          },
+          data = req$postBody
+        ) %...>% (function(x) {
+          res$status <- x$status
+          res$body <- x$body
+        })
+      }
+    ) |>
+    pr_run(host = "127.0.0.1", port = 8986)
+})
+```
+
+Querying the endpoint produces the same set of outputs as the previous example.
+
+``` r
+library(nanonext)
+res <- lapply(
+  1:8,
+  function(i) ncurl_aio(
+    "http://127.0.0.1:8986/echo",
+    method = "POST",
+    data = sprintf('{"msg":"%d"}', i)
+  )
+)
+collect_aio(res)
+#> [[1]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"1\"],\"pid\":[24656]}"
+#> 
+#> [[2]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"2\"],\"pid\":[24658]}"
+#> 
+#> [[3]]
+#> [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"3\"],\"pid\":[24656]}"
+#> 
+#> [[4]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"4\"],\"pid\":[24664]}"
+#> 
+#> [[5]]
+#> [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"5\"],\"pid\":[24664]}"
+#> 
+#> [[6]]
+#> [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"6\"],\"pid\":[24674]}"
+#> 
+#> [[7]]
+#> [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"7\"],\"pid\":[24674]}"
+#> 
+#> [[8]]
+#> [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"8\"],\"pid\":[24658]}"
+
+daemons(0)
+#> [1] 0
+```
 
 [&laquo; Back to ToC](#table-of-contents)

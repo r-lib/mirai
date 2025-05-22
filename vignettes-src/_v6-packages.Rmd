@@ -1,12 +1,19 @@
 ---
-title: "For Package Authors"
+title: "6. Guidance for Package Authors"
 vignette: >
-  %\VignetteIndexEntry{For Package Authors}
+  %\VignetteIndexEntry{6. Guidance for Package Authors}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 ### Table of Contents
 
 1. [Using mirai in a Package](#using-mirai-in-a-package)
@@ -19,7 +26,7 @@ A core design precept of not relying on global options or environment variables 
 There are hence only a few important points to note:
 
 1. `daemons()` settings should wherever possible be left to end-users.
-> This means that as a package author, you should just consider that mirai are run on whatever resources are available to the user at the time the code is run.
+This means that as a package author, you should just consider that mirai are run on whatever resources are available to the user at the time the code is run.
 You do not need to anticipate whether an end-user will run the code on their own machine, distributed over the network, or a mixture of both.
 
 - Consider pointing to the documentation for `mirai::daemons()`, or re-exporting `daemons()` in your package as a convenience.

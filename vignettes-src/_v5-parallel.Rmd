@@ -1,7 +1,7 @@
 ---
-title: "mirai - Parallel Integration"
+title: "5. Mirai Clusters - Base R"
 vignette: >
-  %\VignetteIndexEntry{mirai - Parallel Integration}
+  %\VignetteIndexEntry{5. Mirai Clusters - Base R}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,13 +14,19 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-### Parallel Integration
 
-`mirai` provides an alternative communications backend for R.
+### Table of Contents
+
+1. [Alternative Communications Backend for R](#alternative-communications-backend-for-r)
+2. [Foreach Support](#foreach-support)
+
+### Alternative Communications Backend for R
+
+mirai provides an alternative communications backend for R.
 This functionality was developed to fulfil a request by R Core at R Project Sprint 2023.
 
-`make_cluster()` creates a cluster object of class 'miraiCluster', which is fully-compatible with `parallel` cluster types.
-From R 4.5 onwards, mirai is recognised as one of the official cluster types and can also be created by `parallel::makeCluster(type = "MIRAI")`.
+A 'miraiCluster' is recognised as one of the official cluster types, and may be created by `parallel::makeCluster(type = "MIRAI")` from R 4.5 onwards.
+This function calls `make_cluster()`, which may also be used to directly create a 'miraiCluster'.
 
   + Specify 'n' to launch nodes on the local machine.
   + Specify 'url' for receiving connections from remote nodes.
@@ -29,11 +35,12 @@ From R 4.5 onwards, mirai is recognised as one of the official cluster types and
 Created clusters may be used for any function in the `parallel` base package such as `parallel::clusterApply()` or `parallel::parLapply()`, or the load-balanced versions such as `parallel::parLapplyLB()`.
 ```{r}
 #| label: cluster
+library(parallel)
 library(mirai)
 
-cl <- make_cluster(4)
+cl <- makeCluster(6, type = "MIRAI")
 cl
-parallel::parLapply(cl, iris, mean)
+parLapply(cl, iris, mean)
 ```
 ```{r}
 #| label: sleep
@@ -44,8 +51,9 @@ Sys.sleep(1L)
 ```{r}
 #| label: cluster2
 status(cl)
-stop_cluster(cl)
+stopCluster(cl)
 ```
+
 Making a cluster specifying 'url' without 'remote' causes the shell commands for manual deployment of nodes to be printed to the console.
 ```{r}
 #| label: cluster3
@@ -53,7 +61,9 @@ cl <- make_cluster(n = 2, url = host_url())
 stop_cluster(cl)
 ```
 
-### Foreach Integration
+[&laquo; Back to ToC](#table-of-contents)
+
+### Foreach Support
 
 A 'miraiCluster' may also be registered by [`doParallel`](https://cran.r-project.org/package=doParallel) for use with the [`foreach`](https://cran.r-project.org/package=foreach) package.
 
@@ -61,11 +71,11 @@ Running some parallel examples for the `foreach()` function:
 
 ```{r}
 #| label: foreach
+library(doParallel)
 library(foreach)
-library(iterators)
 
-cl <- make_cluster(4)
-doParallel::registerDoParallel(cl)
+cl <- makeCluster(6, type = "MIRAI")
+registerDoParallel(cl)
 
 # normalize the rows of a matrix
 m <- matrix(rnorm(9), 3, 3)
@@ -74,6 +84,10 @@ foreach(i = 1:nrow(m), .combine = rbind) %dopar%
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)
 b <- t(a)
-foreach(b = iter(b, by='col'), .combine = cbind) %dopar%
+foreach(b = iterators::iter(b, by='col'), .combine = cbind) %dopar%
   (a %*% b)
+
+stopCluster(cl)
 ```
+
+[&laquo; Back to ToC](#table-of-contents)

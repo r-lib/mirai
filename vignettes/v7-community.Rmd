@@ -1,25 +1,18 @@
 ---
-title: "Community FAQs"
+title: "7. Community FAQs"
 vignette: >
-  %\VignetteIndexEntry{Community FAQs}
+  %\VignetteIndexEntry{7. Community FAQs}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r}
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  out.width = "100%"
-)
-```
+
 
 ### Table of Contents
 
-1. [Migration from future_promise](#migration-from-future-promise)
+1. [Migration from future_promise](#migration-from-future_promise)
 
-### 1. Migration from future_promise
+### Migration from future_promise
 
 It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
 

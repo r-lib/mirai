@@ -1,7 +1,7 @@
 ---
-title: "Async Parallel Map"
+title: "2. Async Map"
 vignette: >
-  %\VignetteIndexEntry{Async Parallel Map}
+  %\VignetteIndexEntry{2. Async Map}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,9 +16,9 @@ knitr::opts_chunk$set(
 ```
 ### Table of Contents
 
-1. [Asynchronous Parallel Map](#asynchronous-parallel-map)
+1. [Asynchronous Map](#asynchronous-map)
 
-### Asynchronous Parallel Map
+### Asynchronous Map
 
 `mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
 

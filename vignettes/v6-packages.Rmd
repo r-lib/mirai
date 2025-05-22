@@ -1,19 +1,12 @@
 ---
-title: "For Package Authors"
+title: "6. Guidance for Package Authors"
 vignette: >
-  %\VignetteIndexEntry{For Package Authors}
+  %\VignetteIndexEntry{6. Guidance for Package Authors}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r}
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  out.width = "100%"
-)
-```
+
 ### Table of Contents
 
 1. [Using mirai in a Package](#using-mirai-in-a-package)

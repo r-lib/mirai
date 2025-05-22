@@ -1,12 +1,19 @@
 ---
-title: "Serialization - Arrow, polars, ADBC and torch"
+title: "4. Serialization - Arrow, ADBC, polars, torch"
 vignette: >
-  %\VignetteIndexEntry{Serialization - Arrow, polars, ADBC and torch}
+  %\VignetteIndexEntry{4. Serialization - Arrow, ADBC, polars, torch}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 ### Table of Contents
 
 1. [Serialization: Arrow, polars and beyond](#serialization-arrow-polars-and-beyond)
@@ -22,58 +29,47 @@ In these cases, performing 'mirai' operations on them would normally error.
 
 Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
 
-
-``` r
+```{r}
+#| label: arrowfail
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
-#> Error in daemons(1): could not find function "daemons"
 everywhere(library(arrow))
-#> Error in everywhere(library(arrow)): could not find function "everywhere"
 
 x <- as_arrow_table(iris)
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
-#> Error in mirai(list(a = head(x), b = "some text"), x = x): could not find function "mirai"
 m[]
-#> Error: object 'm' not found
 
 daemons(0)
-#> Error in daemons(0): could not find function "daemons"
 ```
 However, `serial_config()` can be used to create custom serialization configurations, specifying functions that hook into R's native serialization mechanism for reference objects ('refhooks').
 
 This configuration may then be passed to the 'serial' argument of a `daemons()` call.
 
-
-``` r
+```{r}
+#| label: arrowpass
 cfg <- serial_config(
   "ArrowTabular",
   arrow::write_to_raw,
   function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
 )
-#> Error in serial_config("ArrowTabular", arrow::write_to_raw, function(x) arrow::read_ipc_stream(x, : could not find function "serial_config"
 
 daemons(1, serial = cfg)
-#> Error in daemons(1, serial = cfg): could not find function "daemons"
 
 everywhere(library(arrow))
-#> Error in everywhere(library(arrow)): could not find function "everywhere"
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
-#> Error in mirai(list(a = head(x), b = "some text"), x = x): could not find function "mirai"
 m[]
-#> Error: object 'm' not found
 
 daemons(0)
-#> Error in daemons(0): could not find function "daemons"
 ```
 It can be seen that this time, the arrow table is seamlessly handled in the 'mirai' process.
 This is the case even when the object is deeply nested inside lists or other structures.
 
 Multiple serialization functions may be registered to handle different object classes.
 As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
-
-``` r
+```{r}
+#| label: polars
 daemons(
   n = 1,
   serial = serial_config(
@@ -82,17 +78,13 @@ daemons(
     list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
   )
 )
-#> Error in daemons(n = 1, serial = serial_config(c("ArrowTabular", "RPolarsDataFrame"), : could not find function "daemons"
 
 x <- polars::as_polars_df(iris)
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
-#> Error in mirai(list(a = head(x), b = "some text"), x = x): could not find function "mirai"
 m[]
-#> Error: object 'm' not found
 
 daemons(0)
-#> Error in daemons(0): could not find function "daemons"
 ```
 
 [&laquo; Back to ToC](#table-of-contents)
@@ -107,8 +99,8 @@ Tensors from the [`torch`](https://torch.mlverse.org/) package may be used seaml
 1. Set up daemons, supplying the configuration to the 'serial' argument.
 1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
 
-
-``` r
+```{r}
+#| label: tensors
 library(mirai)
 library(torch)
 
@@ -119,7 +111,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(library(torch))
 ```
@@ -131,8 +122,8 @@ A set of model parameters is also specified.
 
 The model specification and parameters are then passed to and initialized within a 'mirai'.
 
-
-``` r
+```{r}
+#| label: tensors2
 model <- nn_module(
   initialize = function(in_size, out_size) {
     self$conv1 <- nn_conv2d(in_size, out_size, 5)
@@ -152,77 +143,22 @@ params <- list(in_size = 1, out_size = 20)
 m <- mirai(do.call(model, params), model = model, params = params)
 
 m[]
-#> An `nn_module` containing 1,040 parameters.
-#> 
-#> ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────
-#> • conv1: <nn_conv2d> #520 parameters
-#> • conv2: <nn_conv2d> #520 parameters
 ```
 The returned model is an object containing many tensor elements.
-
-``` r
+```{r}
+#| label: tensors3
 m$data$parameters$conv1.weight
-#> torch_tensor
-#> (1,1,.,.) = 
-#>  -0.0998  0.0766 -0.0904  0.0444 -0.1899
-#>  -0.1116 -0.1426  0.1436 -0.0521 -0.1459
-#>  -0.0699 -0.1158  0.1616  0.0032  0.1651
-#>   0.0591  0.0624 -0.1588 -0.0790  0.1479
-#>   0.1356 -0.0866 -0.0340 -0.0752 -0.1247
-#> 
-#> (2,1,.,.) = 
-#>   0.0953  0.0754 -0.0067 -0.0671 -0.0116
-#>   0.1441 -0.0282  0.0454 -0.0739 -0.1008
-#>   0.1876  0.0302  0.0213 -0.1286 -0.0824
-#>  -0.0981  0.0933  0.0915 -0.1830  0.0762
-#>  -0.0084  0.1604  0.1021  0.1904 -0.1452
-#> 
-#> (3,1,.,.) = 
-#>  -0.1287  0.1059  0.1762  0.1417  0.0228
-#>   0.1608  0.0328  0.0704  0.1706  0.1738
-#>  -0.0507 -0.1387  0.0387 -0.1842 -0.1448
-#>  -0.1490 -0.1033 -0.0765  0.1360  0.0706
-#>   0.0464  0.0050  0.1289 -0.1624  0.1443
-#> 
-#> (4,1,.,.) = 
-#>  -0.1471 -0.1453 -0.0498 -0.0955  0.1568
-#>  -0.0159  0.0701  0.1076 -0.1853  0.1883
-#>   0.0102 -0.1490  0.1131  0.0303  0.1994
-#>  -0.0539  0.1748  0.0168  0.1679  0.0859
-#>   0.1161 -0.1593  0.0882  0.1584  0.1726
-#> 
-#> (5,1,.,.) = 
-#>   0.0932  0.0720 -0.1765  0.0657 -0.1945
-#> ... [the output was truncated (use n=-1 to disable)]
-#> [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]
 ```
 It is usual for model parameters to then be passed to an optimiser.
 
 This can also be initialized within a 'mirai' process.
-
-``` r
+```{r}
+#| label: tensors4
 optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
 
 optim[]
-#> <optim_rmsprop>
-#>   Inherits from: <torch_optimizer>
-#>   Public:
-#>     add_param_group: function (param_group) 
-#>     clone: function (deep = FALSE) 
-#>     defaults: list
-#>     initialize: function (params, lr = 0.01, alpha = 0.99, eps = 1e-08, weight_decay = 0, 
-#>     load_state_dict: function (state_dict, ..., .refer_to_state_dict = FALSE) 
-#>     param_groups: list
-#>     state: State, R6
-#>     state_dict: function () 
-#>     step: function (closure = NULL) 
-#>     zero_grad: function (set_to_none = FALSE) 
-#>   Private:
-#>     deep_clone: function (name, value) 
-#>     step_helper: function (closure, loop_fun)
 
 daemons(0)
-#> [1] 0
 ```
 Above, tensors and complex objects containing tensors were passed seamlessly between host and daemon processes, in the same way as any other R object.
 
@@ -238,8 +174,8 @@ The example below creates an in-memory SQLite connection using the `adbcsqlite` 
 
 Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `everywhere()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
 
-
-``` r
+```{r}
+#| label: arrow1
 library(mirai)
 
 cfg <- serial_config(
@@ -249,7 +185,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(
   {
@@ -260,21 +195,18 @@ everywhere(
 
 ```
 `mirai()` calls may then be used to write to or query the database all in the Arrow format.
-
-``` r
+```{r}
+#| label: arrow2
 m <- mirai(dbWriteTableArrow(con, "iris", iris))
 m[]
-#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbWriteTableArrow': object 'con' not found
 m <- mirai(dbReadTableArrow(con, "iris"))
 m[]
-#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbReadTableArrow': object 'con' not found
 m <- mirai(dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6'))
 m[]
-#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbGetQueryArrow': object 'con' not found
 ```
 Due to the tight integration of the `mirai` serialization mechanism with R's 'refhook' system, we can easily return complex / nested objects containing multiple queries in the Arrow format:
-
-``` r
+```{r}
+#| label: arrow3
 m <- mirai({
   a <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
   b <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Width" < 2.6')
@@ -283,14 +215,12 @@ m <- mirai({
   list(sepal = list(length = a, width = b), petal = list(length = x, width = y))
 })
 m[]
-#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbGetQueryArrow': object 'con' not found
 ```
 As before, `everywhere()` can be used again to cleanly tear down the databases, before resetting daemons.
-
-``` r
+```{r}
+#| label: arrow4
 everywhere(dbDisconnect(con))
 daemons(0)
-#> [1] 0
 ```
 
 [&laquo; Back to ToC](#table-of-contents)
@@ -307,8 +237,9 @@ Non-dispatcher daemons are created as scheduling is not required (all queries ex
 
 Shiny ExtendedTask is then used to perform each query via a `mirai()` call, using the session-specific compute profile.
 
-
-``` r
+```{r}
+#| label: demo
+#| eval: false
 library(mirai)
 library(secretbase)
 library(shiny)
