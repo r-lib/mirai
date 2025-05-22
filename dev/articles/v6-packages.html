@@ -84,12 +84,29 @@
 <h3 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><a href="#using-mirai-in-a-package">Using mirai in a
-Package</a></li>
+<li><a href="#developer-interfaces">Developer Interfaces</a></li>
+<li><a href="#points-to-note">Points to Note</a></li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="using-mirai-in-a-package">Using mirai in a Package<a class="anchor" aria-label="anchor" href="#using-mirai-in-a-package"></a>
+<h3 id="developer-interfaces">Developer Interfaces<a class="anchor" aria-label="anchor" href="#developer-interfaces"></a>
+</h3>
+<p>mirai offers the following functions primarily for package authors
+wishing to build on mirai:</p>
+<ol style="list-style-type: decimal">
+<li><p><code><a href="../reference/daemons_set.html">daemons_set()</a></code> may be used to detect if daemons have
+already been set and prompt the user to set daemons if not.</p></li>
+<li><p><code><a href="../reference/on_daemon.html">on_daemon()</a></code> may be used to detect if code is running
+on a daemon, i.e. within a <code><a href="../reference/mirai.html">mirai()</a></code> call.</p></li>
+<li><p><code><a href="../reference/nextstream.html">nextget()</a></code>, for querying values for a compute
+profile, such as ‘urls’, described in the function’s documentation.
+Note: only the specifically-documented values are supported
+interfaces.</p></li>
+</ol>
+<p><a href="#table-of-contents">« Back to ToC</a></p>
+</div>
+<div class="section level3">
+<h3 id="points-to-note">Points to Note<a class="anchor" aria-label="anchor" href="#points-to-note"></a>
 </h3>
 <p>mirai as a framework is designed to support completely transparent
 and inter-operable use within packages. A core design precept of not
@@ -121,33 +138,20 @@ representative example of this usage pattern is
 ‘namespace’ concept maps directly to mirai’s ‘compute profile’.</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li><p>The function <code><a href="../reference/daemons_set.html">daemons_set()</a></code> may be used to detect if
-daemons have already been set and prompt the user to set daemons if
-not.</p></li>
-<li><p>The function <code><a href="../reference/on_daemon.html">on_daemon()</a></code> may be used to detect if
-code is running on a daemon, i.e. within a <code><a href="../reference/mirai.html">mirai()</a></code>
-call.</p></li>
 <li><p>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not
 be used programatically, as this user interface is subject to change at
-any time.</p></li>
-</ol>
-<ul>
-<li>There is a developer interface <code><a href="../reference/nextstream.html">nextget()</a></code>, for querying
-values such as ‘urls’ described in the function’s documentation. Note:
-only the specifically-documented values are supported interfaces.</li>
-</ul>
-<ol start="5" style="list-style-type: decimal">
-<li>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
+any time. Use <code><a href="../reference/nextstream.html">nextget()</a></code> instead.</p></li>
+<li><p>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
 <code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>, <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
 <code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> should be used to test for the
-relevant state of a mirai or its value.</li>
+relevant state of a mirai or its value.</p></li>
 </ol>
 <ul>
 <li>The characteristics of how they are currently implemented, e.g. as a
 logical NA for an ‘unresolvedValue’, should not be relied upon, as these
 are subject to change at any time.</li>
 </ul>
-<ol start="6" style="list-style-type: decimal">
+<ol start="4" style="list-style-type: decimal">
 <li>Testing on CRAN should respect it’s 2-core usage limit.</li>
 </ol>
 <ul>

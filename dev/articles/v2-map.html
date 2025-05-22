@@ -84,29 +84,25 @@
 <h3 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#key-advantages">Key Advantages</a></li>
+<li><a href="#introduction-and-key-advantages">Introduction and Key
+Advantages</a></li>
 <li><a href="#collecting-results">Collecting Results</a></li>
 <li><a href="#multiple-map">Multiple Map</a></li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h3 id="introduction-and-key-advantages">Introduction and Key Advantages<a class="anchor" aria-label="anchor" href="#introduction-and-key-advantages"></a>
 </h3>
 <p><code><a href="../reference/mirai_map.html">mirai_map()</a></code> performs asynchronous parallel/distributed
 map using <code>mirai</code>.</p>
 <p>This function is similar to <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>, but returns a
 ‘mirai_map’ object. It is also more advanced as it allows multiple map
-over the rows of a dataframe or matrix - and can in fact be used to
-implement all map variations from that package.</p>
+over the rows of a dataframe or matrix. It is in fact used to implement
+all parallel map variations from that package.</p>
 <p>The results of a mirai_map <code>x</code> may be collected using
 <code>x[]</code>. This waits for all asynchronous operations to complete
 if still in progress.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level3">
-<h3 id="key-advantages">Key advantages<a class="anchor" aria-label="anchor" href="#key-advantages"></a>
-</h3>
+<p>It offers the following key advantages:</p>
 <ol style="list-style-type: decimal">
 <li>Returns immediately with all evaluations taking place
 asynchronously. Printing a ‘mirai map’ object shows the current
@@ -133,10 +129,10 @@ optimally. This is demonstrated in the example below.</li>
 <span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.004   0.013   4.007</span></span>
+<span><span class="co">#&gt;   0.003   0.009   4.007</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.005   0.024   8.007</span></span>
+<span><span class="co">#&gt;   0.006   0.017   8.004</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><code>.args</code> is used to specify further constant arguments to
@@ -147,13 +143,13 @@ optimally. This is demonstrated in the example below.</li>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 18.27694</span></span>
+<span><span class="co">#&gt; [1] 21.4368</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 22.55081 14.33640</span></span>
+<span><span class="co">#&gt; [1] 18.48262 25.45403</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] 19.21533 17.55937 23.35903</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 19.16141 22.79903 19.24614</span></span></code></pre></div>
 <p>Use <code>...</code> to further specify objects referenced but not
 defined in <code>.f</code> - the ‘do’ in the anonymous function
 below:</p>
@@ -169,15 +165,17 @@ below:</p>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "24"</span></span>
+<span><span class="co">#&gt; [1] "6a"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] ce a9</span></span>
+<span><span class="co">#&gt; [1] 42 b7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "4c83b5"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "08cbc5"</span></span></code></pre></div>
+<blockquote>
 <p>Use of <code><a href="../reference/mirai_map.html">mirai_map()</a></code> requires that <code><a href="../reference/daemons.html">daemons()</a></code>
-have previously been set, and will error if not.</p>
+have previously been set, and will error if this is not the case.</p>
+</blockquote>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 <div class="section level3">
