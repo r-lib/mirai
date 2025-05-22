@@ -43,12 +43,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/databases.html">mirai - Databases and Arrow</a></li>
-    <li><a class="dropdown-item" href="../articles/parallel.html">mirai - Parallel Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/plumber.html">mirai - Plumber Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/promises.html">mirai - Promises Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/shiny.html">mirai - Shiny Integration</a></li>
-    <li><a class="dropdown-item" href="../articles/torch.html">mirai - Torch Integration</a></li>
+<li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
+    <li><a class="dropdown-item" href="../articles/v6-packages.html">6. Guidance for Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v7-community.html">7. Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -79,6 +80,9 @@
 
     
     
+<p>This vignette is a quick introduction to mirai through 3 typical use
+cases. Other package vignettes contain more in-depth information on a
+variety of topics.</p>
 <div class="section level3">
 <h3 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h3>
@@ -89,23 +93,6 @@ Compute-intensive Operations</a></li>
 Operations</a></li>
 <li><a href="#example-3-resilient-pipelines">Example 3: Resilient
 Pipelines</a></li>
-<li><a href="#daemons-local-persistent-processes">Daemons: Local
-Persistent Processes</a></li>
-<li><a href="#distributed-computing-remote-daemons">Distributed
-Computing: Remote Daemons</a></li>
-<li><a href="#distributed-computing-launching-daemons">Distributed
-Computing: Launching Daemons</a></li>
-<li><a href="#distributed-computing-tls-secure-connections">Distributed
-Computing: TLS Secure Connections</a></li>
-<li><a href="#compute-profiles">Compute Profiles</a></li>
-<li><a href="#errors-interrupts-and-timeouts">Errors, Interrupts and
-Timeouts</a></li>
-<li><a href="#serialization-arrow-polars-and-beyond">Serialization -
-Arrow, polars and beyond</a></li>
-<li><a href="#asynchronous-parallel-map">Asynchronous Parallel
-Map</a></li>
-<li><a href="#using-mirai-in-a-package">Using mirai in a
-Package</a></li>
 </ol>
 </div>
 <div class="section level3">
@@ -122,9 +109,16 @@ a random value.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">2L</span>, mean <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fl">2L</span>, mean <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5L</span>, <span class="va">mean</span><span class="op">)</span><span class="op">}</span>, time <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">time</span>, mean <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5L</span>, <span class="va">mean</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  time <span class="op">=</span> <span class="va">args</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>  mean <span class="op">=</span> <span class="va">args</span><span class="op">$</span><span class="va">mean</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The mirai expression is evaluated in another process and hence must
 be self-contained, not referring to variables that do not already exist
 there. Above, the variables <code>time</code> and <code>mean</code> are
@@ -142,11 +136,14 @@ data yields an ‘unresolved’ logical NA.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>To wait for and collect the return value, use the mirai’s
-<code>[]</code> method:</p>
+<p>To wait for and collect the return value, use
+<code><a href="../reference/collect_mirai.html">collect_mirai()</a></code> or equivalently the mirai’s <code>[]</code>
+method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3.755713 4.727127 5.559385 2.677649 3.198113</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5.253834 1.348492 5.729374 4.602484 4.214623</span></span>
+<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 5.253834 1.348492 5.729374 4.602484 4.214623</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to
 wait for it - other code can continue to be run. Once it completes, the
 return value automatically becomes available at <code>$data</code>.</p>
@@ -154,7 +151,7 @@ return value automatically becomes available at <code>$data</code>.</p>
 <code class="sourceCode R"><span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai [$data] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 3.755713 4.727127 5.559385 2.677649 3.198113</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.253834 1.348492 5.729374 4.602484 4.214623</span></span></code></pre></div>
 <p>For easy programmatic use of <code><a href="../reference/mirai.html">mirai()</a></code>, ‘.expr’ accepts a
 pre-constructed language object, and also a list of named arguments
 passed via ‘.args’. So, the following would be equivalent to the
@@ -162,11 +159,9 @@ above:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5L</span>, <span class="va">mean</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">time</span>, mean <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.118164 3.854162 3.053333 5.220416 4.246678</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 4.367623 3.991476 3.968229 3.550863 3.724508</span></span></code></pre></div>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 <div class="section level3">
@@ -195,8 +190,7 @@ and after.</p>
 <p>This means there is no need to actually wait (block) for a ‘mirai’ to
 resolve, as the example below demonstrates.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># unresolved() queries for resolution itself so no need to use it again within the while loop</span></span>
-<span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="../reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="../reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"while unresolved\n"</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -218,14 +212,15 @@ process to ensure continued uptime.</p>
 model training may periodically fail for stochastic and uncontrollable
 reasons (e.g. buggy memory management on graphics cards).</p>
 <p>Running each iteration in a ‘mirai’ isolates this
-potentially-problematic code such that even if it does fail, it does not
-bring down the entire pipeline.</p>
+potentially-problematic code such that it does not bring down the entire
+pipeline, even if it fails.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">run_iteration</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"random error\n"</span>, call. <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># simulates a stochastic error rate</span></span>
+<span>  <span class="co"># simulates a stochastic error rate</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"random error\n"</span>, call. <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"iteration %d successful\n"</span>, <span class="va">i</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">}</span></span>
@@ -233,7 +228,7 @@ bring down the entire pipeline.</p>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">run_iteration</span><span class="op">(</span><span class="va">i</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="../reference/is_mirai_error.html">is_error_value</a></span><span class="op">(</span><span class="fu"><a href="../reference/call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="../reference/is_mirai_error.html">is_error_value</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
 <span>    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">run_iteration</span><span class="op">(</span><span class="va">i</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
@@ -242,511 +237,29 @@ bring down the entire pipeline.</p>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; iteration 1 successful</span></span>
 <span><span class="co">#&gt; iteration 2 successful</span></span>
+<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 3 successful</span></span>
 <span><span class="co">#&gt; iteration 4 successful</span></span>
 <span><span class="co">#&gt; iteration 5 successful</span></span>
 <span><span class="co">#&gt; iteration 6 successful</span></span>
 <span><span class="co">#&gt; iteration 7 successful</span></span>
 <span><span class="co">#&gt; iteration 8 successful</span></span>
-<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 9 successful</span></span>
 <span><span class="co">#&gt; iteration 10 successful</span></span></code></pre></div>
 <p>Further, by testing the return value of each ‘mirai’ for errors,
 error-handling code is then able to automate recovery and re-attempts,
-as in the above example. Further details on <a href="#errors-interrupts-and-timeouts">error handling</a> can be found
-in the section below.</p>
+as in the above example.</p>
 <p>The end result is a resilient and fault-tolerant pipeline that
 minimises downtime by eliminating interruptions of long computes.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level3">
-<h3 id="daemons-local-persistent-processes">Daemons: Local Persistent Processes<a class="anchor" aria-label="anchor" href="#daemons-local-persistent-processes"></a>
-</h3>
-<p>Daemons, or persistent background processes, may be set to receive
-‘mirai’ requests.</p>
-<p>This is potentially more efficient as new processes no longer need to
-be created on an <em>ad hoc</em> basis.</p>
-<p>Daemons inherit the default system configuration and read in the
-relevant ‘.Renviron’ and ‘.Rprofile’ etc. on startup. They also load the
-default packages. To instead only load the <code>base</code> package
-(which cuts out more than half of R’s startup time), the environment
-variable <code>R_SCRIPT_DEFAULT_PACKAGES=NULL</code> may be set prior to
-launching daemons.</p>
 <div class="section level4">
-<h4 id="with-dispatcher-default">With Dispatcher (default)<a class="anchor" aria-label="anchor" href="#with-dispatcher-default"></a>
+<h4 id="further-details-on-error-handling">Further details on error handling<a class="anchor" aria-label="anchor" href="#further-details-on-error-handling"></a>
 </h4>
-<p>Call <code><a href="../reference/daemons.html">daemons()</a></code> specifying the number of daemons to
-launch.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>To view the current status, <code><a href="../reference/status.html">status()</a></code> provides the number
-of active connections, the URL daemons connect to, and a named vector
-showing the number of awaiting, executing and completed tasks: -
-<code>waiting</code> number of tasks queued for execution at dispatcher
-- <code>assigned</code> number of tasks sent to a daemon for execution -
-<code>complete</code> number of tasks for which the result has been
-received (either completed or cancelled)</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/status.html">status</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $connections</span></span>
-<span><span class="co">#&gt; [1] 6</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://76abdc5abf6b9bec69537c23"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $mirai</span></span>
-<span><span class="co">#&gt;  awaiting executing completed </span></span>
-<span><span class="co">#&gt;         0         0         0</span></span></code></pre></div>
-<p>The default <code>dispatcher = TRUE</code> creates a
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> background process that connects to individual
-daemon processes on the local machine. This ensures that tasks are
-dispatched efficiently on a first-in first-out (FIFO) basis to daemons
-for processing. Tasks are queued at dispatcher and sent to a daemon as
-soon as it can accept the task for immediate execution.</p>
-<p>Dispatcher uses synchronisation primitives from <a href="https://doi.org/10.5281/zenodo.7903429" class="external-link"><code>nanonext</code></a>,
-waiting upon rather than polling at intervals for tasks, which is
-efficient both in terms of consuming no resources while waiting, and
-also being fully synchronised with events (having no latency).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>Set the number of daemons to zero to reset. This reverts to the
-default of creating a new background process for each ‘mirai’
-request.</p>
-</div>
-<div class="section level4">
-<h4 id="without-dispatcher">Without Dispatcher<a class="anchor" aria-label="anchor" href="#without-dispatcher"></a>
-</h4>
-<p>Alternatively, specifying <code>dispatcher = FALSE</code>, the
-background daemons connect directly to the host process.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span>, dispatcher <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>Requesting the status now shows 6 connections, along with the host
-URL at <code>$daemons</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/status.html">status</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $connections</span></span>
-<span><span class="co">#&gt; [1] 6</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://d0756ef55237a207eb0315d1"</span></span></code></pre></div>
-<p>This implementation sends tasks immediately, and ensures that tasks
-are evenly-distributed amongst daemons. This means that optimal
-scheduling is not guaranteed as the duration of tasks cannot be known
-<em>a priori</em>. As an example, tasks could be queued at a daemon
-behind a long-running task, whilst other daemons are idle having already
-completed their tasks.</p>
-<p>The advantage of this approach is that it is low-level and does not
-require an additional dispatcher process. It is well-suited to working
-with similar-length tasks, or where the number of concurrent tasks
-typically does not exceed available daemons.</p>
-</div>
-<div class="section level4">
-<h4 id="everywhere">Everywhere<a class="anchor" aria-label="anchor" href="#everywhere"></a>
-</h4>
-<p><code><a href="../reference/everywhere.html">everywhere()</a></code> may be used to evaluate an expression on
-all connected daemons and persist the resultant state, regardless of a
-daemon’s ‘cleanup’ setting.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The above keeps the <a href="https://dbi.r-dbi.org/" class="external-link"><code>DBI</code></a> package loaded for
-all evaluations. Other types of setup task may also be performed,
-including making a common resource available, such as a database
-connection:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="va">con</span> <span class="op">&lt;&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu">SQLite</span><span class="op">(</span><span class="op">)</span>, <span class="va">file</span><span class="op">)</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></code></pre></div>
-<p>By super-assignment, the conenction ‘con’ will be available in the
-global environment of all daemon instances. Subsequent mirai calls may
-then make use of ‘con’.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] "Formal class 'SQLiteConnection' [package \"RSQLite\"] with 8 slots"</span></span>
-<span><span class="co">#&gt; [2] "  ..@ ptr                :&lt;externalptr&gt; "                          </span></span>
-<span><span class="co">#&gt; [3] "  ..@ dbname             : chr \"/tmp/RtmpI87Rnq/file1fb6e276d2\"" </span></span>
-<span><span class="co">#&gt; [4] "  ..@ loadable.extensions: logi TRUE"                              </span></span>
-<span><span class="co">#&gt; [5] "  ..@ flags              : int 70"                                 </span></span>
-<span><span class="co">#&gt; [6] "  ..@ vfs                : chr \"\""                               </span></span>
-<span><span class="co">#&gt; [7] "  ..@ ref                :&lt;environment: 0x634b6e5a0ca0&gt; "          </span></span>
-<span><span class="co">#&gt; [8] "  ..@ bigint             : chr \"integer64\""                      </span></span>
-<span><span class="co">#&gt; [9] "  ..@ extended_types     : logi FALSE"</span></span></code></pre></div>
-<p>Disconnect from the database everywhere:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="fu">dbDisconnect</span><span class="op">(</span><span class="va">con</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Sometimes it may be necessary to evaluate an expression in the global
-environment of each daemon. As mirai evaluation does not occur in the
-global environment itself, but one inheriting from it, an explicit call
-to <code>evalq(envir = .GlobalEnv)</code> achieves this. An example use
-case is <code>box::use()</code> to import a module or package:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">evalq</a></span><span class="op">(</span></span>
-<span>    <span class="fu">box</span><span class="fu">::</span><span class="fu">use</span><span class="op">(</span><span class="va">dplyr</span><span class="op">[</span><span class="va">select</span><span class="op">]</span>, <span class="va">mirai</span><span class="op">[</span><span class="va">...</span><span class="op">]</span><span class="op">)</span>,</span>
-<span>    envir <span class="op">=</span> <span class="va">.GlobalEnv</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="with-method">With Method<a class="anchor" aria-label="anchor" href="#with-method"></a>
-</h4>
-<p><code><a href="../reference/daemons.html">daemons()</a></code> has a <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code> method, which
-evaluates an expression with daemons created for the duration of the
-expression and automatically torn down upon completion. It was designed
-for the use case of running a Shiny app with the desired number of
-daemons.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="va">app</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Note: in the above case, it is assumed the app is already created.
-Wrapping a call to <code>shiny::shinyApp()</code> would not work as
-<code>runApp()</code> is implicitly called when the app is printed,
-however printing occurs only after <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code> has returned,
-hence the app would run outside of the scope of the <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code>
-statement.</p>
-<p>In the case of a Shiny app, all mirai calls will be executed before
-the app returns. In the case of other expressions, be sure to call the
-results (or collect the values) of all mirai within the expression so
-that daemons are not reset before they have all completed.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="distributed-computing-remote-daemons">Distributed Computing: Remote Daemons<a class="anchor" aria-label="anchor" href="#distributed-computing-remote-daemons"></a>
-</h3>
-<p>The daemons interface may also be used to send tasks for computation
-to remote daemon processes on the network.</p>
-<p>Call <code><a href="../reference/daemons.html">daemons()</a></code> specifying ‘url’ as a character string
-such as: ‘tcp://10.75.32.70:5555’ at which daemon processes should
-connect. Alternatively, use <code><a href="../reference/host_url.html">host_url()</a></code> to automatically
-construct a valid URL. The host / dispatcher listens at this address,
-utilising a single port.</p>
-<p>IPv6 addresses are also supported and must be enclosed in square
-brackets <code>[]</code> to avoid confusion with the final colon
-separating the port. For example, port 5555 on the IPv6 address
-<code>::ffff:a6f:50d</code> would be specified as
-<code>tcp://[::ffff:a6f:50d]:5555</code>.</p>
-<p>For options on actually launching the daemons, please see the next
-section.</p>
-<p>Below, calling <code><a href="../reference/host_url.html">host_url()</a></code> without a port value uses the
-default of ‘0’. This is a wildcard value that will automatically cause a
-free ephemeral port to be assigned:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>The actual assigned port may be queried at any time via
-<code><a href="../reference/status.html">status()</a></code>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/status.html">status</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $connections</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "tcp://192.168.1.71:46737"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $mirai</span></span>
-<span><span class="co">#&gt;  awaiting executing completed </span></span>
-<span><span class="co">#&gt;         0         0         0</span></span></code></pre></div>
-<p>Dispatcher automatically adjusts to the number of daemons actually
-connected. Hence it is possible to dynamically scale up or down the
-number of daemons according to requirements.</p>
-<p>To reset all connections and revert to default behaviour:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>Closing the connection causes the dispatcher to exit automatically,
-and in turn all connected daemons when their respective connections with
-the dispatcher are terminated.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level3">
-<h3 id="distributed-computing-launching-daemons">Distributed Computing: Launching Daemons<a class="anchor" aria-label="anchor" href="#distributed-computing-launching-daemons"></a>
-</h3>
-<p>To launch remote daemons, supply a remote launch configuration to the
-‘remote’ argument of <code><a href="../reference/daemons.html">daemons()</a></code> when setting up daemons, or
-<code><a href="../reference/launch_local.html">launch_remote()</a></code> at any time afterwards.</p>
-<p><code><a href="../reference/remote_config.html">ssh_config()</a></code> may be used to generate a remote launch
-configuration if there is SSH access to the remote machine. Otherwise
-<code><a href="../reference/remote_config.html">remote_config()</a></code> provides a flexible method for generating a
-configuration involving a custom resource manager / application.</p>
-<div class="section level4">
-<h4 id="ssh-direct-connection">SSH Direct Connection<a class="anchor" aria-label="anchor" href="#ssh-direct-connection"></a>
-</h4>
-<p>This method is appropriate for internal networks and in trusted,
-properly-configured environments where it is safe for your machine to
-accept incoming connections on certain ports. In the examples below, the
-remote daemons connect back directly to port 5555 on the local
-machine.</p>
-<p>In these cases, using TLS is often desirable to provide additional
-security to the connections.</p>
-<p>The first example below launches 4 daemons on the machine 10.75.32.90
-(using the default SSH port of 22 as this was not specified), connecting
-back to the host URL:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>The second example below launches one daemon on each of 10.75.32.90
-and 10.75.32.91 using the custom SSH port of 222:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://10.75.32.91:222"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="ssh-tunnelling">SSH Tunnelling<a class="anchor" aria-label="anchor" href="#ssh-tunnelling"></a>
-</h4>
-<p>Use SSH tunnelling to launch daemons on any machine you are able to
-access via SSH, whether on the local network or the cloud. SSH key-based
-authentication must already be in place, but no other configuration is
-required.</p>
-<p>This provides a convenient way to launch remote daemons without them
-needing to directly access the host. Firewall configurations or security
-policies often prevent opening a port to accept outside connections. In
-these cases, SSH tunnelling creates a tunnel once the initial SSH
-connection is made. For simplicity, the implementation in mirai uses the
-same tunnel port on both the host and daemon.</p>
-<p>To use tunnelling, supply a URL with hostname of ‘127.0.0.1’ to ‘url’
-for the <code><a href="../reference/daemons.html">daemons()</a></code> call.</p>
-<ul>
-<li>
-<code>local_url(tcp = TRUE)</code> does this for you.</li>
-<li>The default uses the wildcard port of ‘0’, which assigns a free
-ephemeral port.</li>
-<li>Whilst convenient, there is a small possibility that this port may
-not be available on all daemons.</li>
-<li>It is hence preferable to specify a specific port that has been
-whitelisted for use, where possible.</li>
-</ul>
-<p>For example, if <code>local_url(tcp = TRUE, port = 5555)</code> is
-specified, the tunnel is created using port 5555 on each machine. The
-host listens to <code>127.0.0.1:5555</code> on its side, and the daemons
-each dial into <code>127.0.0.1:5555</code> on their own respective
-machines.</p>
-<p>The below example launches 2 daemons on the remote machine
-10.75.32.90 using SSH tunnelling:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="cluster-resource-managers">Cluster Resource Managers<a class="anchor" aria-label="anchor" href="#cluster-resource-managers"></a>
-</h4>
-<p><code><a href="../reference/remote_config.html">remote_config()</a></code> may be used to run a command to deploy
-daemons using a resource manager.</p>
-<p>Taking Slurm as an example, the following uses <code>sbatch</code> to
-launch a daemon on the cluster, with some additional arguments to
-<code>sbatch</code> specifying the resource allocation:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">remote_config</a></span><span class="op">(</span></span>
-<span>    command <span class="op">=</span> <span class="st">"sbatch"</span>,</span>
-<span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--mem 512"</span>, <span class="st">"-n 1"</span>, <span class="st">"--wrap"</span>, <span class="st">"."</span><span class="op">)</span>,</span>
-<span>    rscript <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span>,</span>
-<span>    quote <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="manual-deployment">Manual Deployment<a class="anchor" aria-label="anchor" href="#manual-deployment"></a>
-</h4>
-<p>As an alternative to automated launches, calling
-<code><a href="../reference/launch_local.html">launch_remote()</a></code> without specifying ‘remote’ may be used to
-return the shell commands for deploying daemons manually. The printed
-return values may be copy / pasted directly to a remote machine.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:32949",dispatcher=TRUE,rs=c(10407,-1023089686,1315398755,1833396808,-1931623511,-735165610,-2050143777))'</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [2]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:32949",dispatcher=TRUE,rs=c(10407,262592205,1883855057,2079754486,1834751520,-297263945,-2060389285))'</span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="distributed-computing-tls-secure-connections">Distributed Computing: TLS Secure Connections<a class="anchor" aria-label="anchor" href="#distributed-computing-tls-secure-connections"></a>
-</h3>
-<p>TLS is available as an option to secure communications from the local
-machine to remote daemons.</p>
-<div class="section level4">
-<h4 id="zero-configuration">Zero-configuration<a class="anchor" aria-label="anchor" href="#zero-configuration"></a>
-</h4>
-<p>An automatic zero-configuration default is implemented. Simply
-specify a secure URL using the scheme <code>tls+tcp://</code> when
-setting daemons, or use <code>host_url(tls = TRUE)</code>, for
-example:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>Single-use keys and certificates are automatically generated and
-configured, without requiring any further intervention. The private key
-is always retained on the host machine and never transmitted.</p>
-<p>The generated self-signed certificate is available via
-<code><a href="../reference/launch_local.html">launch_remote()</a></code>. This function conveniently constructs the
-full shell command to launch a daemon, including the correctly specified
-‘tls’ argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:39271",dispatcher=TRUE,tls=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
-<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43</span></span>
-<span><span class="co">#&gt; MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
-<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAkDST3GKOAoGm73OrB/WptiA4Mc+fnl6X+oo8K6dp</span></span>
-<span><span class="co">#&gt; O70Q637lw+x+f+tXlCOh1D/JHL2gcLKGyzyYLUhYM1+q6rfmk6TJjVXw/vaE4LOL</span></span>
-<span><span class="co">#&gt; 8w4eNuTaUhRLG3+EluIDGfm+SIPWFrAhj6V2R+AyK4MALCEtJYuJk1ZRllgbhbFS</span></span>
-<span><span class="co">#&gt; 0YHRCMP7CyT6hKXr20TYDgENie3oD8mNROoq1a81+uq/YdVhvY9nuUrFHrsymxtl</span></span>
-<span><span class="co">#&gt; SiMK2ZzEpGmWeOxzd1yp15O8pqJC51slLKGyLvDKq9s97ibxRIGD/20y22sBJXDz</span></span>
-<span><span class="co">#&gt; CQWKy5+tI6NidQENKVzqRsVI+QFf7pT5ncJxJlI6k/KoqS/AAp3kpfyD20zVydeB</span></span>
-<span><span class="co">#&gt; PmzEZxxZDyAINPUeEAXTUQp8ICRcrk4+nftIwW1AMYgDaMIlClDD1ryxJcxNRis3</span></span>
-<span><span class="co">#&gt; mvIrBCdrxTIe5RZcLzaMcNILkCNAdx2uRy4f5Awd68XiZSH2s6TDd2ejxan2OsrN</span></span>
-<span><span class="co">#&gt; ln2lR/FyD2Z+DUWIB6ykNdUao79vjzyjPCsQOjr8oN3zihAojT0IeAc/Q8jMVxCq</span></span>
-<span><span class="co">#&gt; WryH7rNM9Ls2roNPV52KfE6GIE8HueS1gvao2HDcblyKFhJ7p/pXhhvKyR1ze01C</span></span>
-<span><span class="co">#&gt; uj9Amqn5Sm/eMbxoJNTCrWMXIQ+BfKM/LRhp7sOESVOES5crHnJEzop3XOrhJizK</span></span>
-<span><span class="co">#&gt; 8SkCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUuQgIjMIH</span></span>
-<span><span class="co">#&gt; zvTnmiGbYTK8wj2G9JswHwYDVR0jBBgwFoAUuQgIjMIHzvTnmiGbYTK8wj2G9Jsw</span></span>
-<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBACFdxfirPmmGy+aWvSdeebKMpL64v0+QzzgBHLMa</span></span>
-<span><span class="co">#&gt; 7tJYz2IlenBw+q3pNoH0xo2sS+nCFdu/iwLxU6CkY6bNyqMcIaXn+ZtaiNoelId+</span></span>
-<span><span class="co">#&gt; wcTPIVUZcnJFz/5/OdiJtM+7cUKYUDOUZ8X2blBiDML4+hmsR+xkOk/lKF3w6uzi</span></span>
-<span><span class="co">#&gt; WYWecXswp9mcnG1B2EySqXMPJ/CFMt+0kOdx2jJ8av5Cdp7rn1bqarwX+msOmXhh</span></span>
-<span><span class="co">#&gt; 6tmprqYSWNYfnYLk6Y+Wtme680whFa//BF0k3mHtiEgX3cnUe8oz3fv+Zk57aDcA</span></span>
-<span><span class="co">#&gt; ABZ8EAqViMTp6w2tz0Ftv+pVA8ypE+ZQrWGzGxFPMRJHbW8JWcbQdJ/2/qQC9myt</span></span>
-<span><span class="co">#&gt; NODn5mX2b4LRNTXxrFBqBNDUIRjr06r+Nch2thDNfER7af+/MpAKAR9G98yxS2oF</span></span>
-<span><span class="co">#&gt; MiMzEFgcuyxMxLUErxPHJRzkyl2M+VBOB9C+H6cVyZX/GgKwL7gP7t+qts7uCwih</span></span>
-<span><span class="co">#&gt; naVw8x97t7FeEAX8A9SuvbFbMH3YKsTCUHBkbG11FgqxRUsd4T5kdcwQ3W3s2Co1</span></span>
-<span><span class="co">#&gt; UrH5pUt8KjjhpL/O5boJKtrKHoswS1C/9KA7MSw5erdVRT4shc0p7pqI8xmTf5gW</span></span>
-<span><span class="co">#&gt; F0XK00dfgy/X2lzVMfSG8Hil5smm4Yc1qoW1Xdxu+EeL7hWdJTe4HU3aUzIPNQJO</span></span>
-<span><span class="co">#&gt; GKqG</span></span>
-<span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; ",""),rs=c(10407,-1591818328,1567713673,-4819018,-2132272449,502799860,-1222025115))'</span></span></code></pre></div>
-<p>The printed value may be deployed directly on a remote machine.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level4">
-<h4 id="ca-signed-certificates">CA Signed Certificates<a class="anchor" aria-label="anchor" href="#ca-signed-certificates"></a>
-</h4>
-<p>As an alternative to the zero-configuration default, a certificate
-may also be generated via a Certificate Signing Request (CSR) to a
-Certificate Authority (CA). The CA may be a public CA or internal to an
-organisation.</p>
-<ol style="list-style-type: decimal">
-<li>Generate a private key and CSR. The following resources describe how
-to do so:</li>
-</ol>
-<ul>
-<li>using Mbed TLS: <a href="https://mbed-tls.readthedocs.io/en/latest/kb/how-to/generate-a-certificate-request-csr/" class="external-link uri">https://mbed-tls.readthedocs.io/en/latest/kb/how-to/generate-a-certificate-request-csr/</a>
-</li>
-<li>using OpenSSL: <a href="https://www.feistyduck.com/library/openssl-cookbook/online/" class="external-link uri">https://www.feistyduck.com/library/openssl-cookbook/online/</a>
-(Chapter 1.2 Key and Certificate Management)</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>Provide the generated CSR to the CA for it to sign a new TLS
-certificate.</li>
-</ol>
-<ul>
-<li>The common name (CN) of the certificate must be identical to the
-hostname or IP address actually used for the connection. As this is
-verified, it will fail if not the same.</li>
-<li>The received certificate should comprise a block of cipher text
-between the markers <code>-----BEGIN CERTIFICATE-----</code> and
-<code>-----END CERTIFICATE-----</code>. Make sure to request the
-certificate in the PEM format. If only available in other formats, the
-TLS library used should usually provide conversion utilities.</li>
-<li>Check also that the private key is a block of cipher text between
-the markers <code>-----BEGIN PRIVATE KEY-----</code> and
-<code>-----END PRIVATE KEY-----</code>.</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>When setting daemons, the TLS certificate and private key should be
-provided to the ‘tls’ argument of <code><a href="../reference/daemons.html">daemons()</a></code>.</li>
-</ol>
-<ul>
-<li>If the certificate and private key have been imported as character
-strings <code>cert</code> and <code>key</code> respectively, then the
-‘tls’ argument may be specified as the character vector
-<code>c(cert, key)</code>.</li>
-<li>Alternatively, the certificate may be copied to a new text file,
-with the private key appended, in which case the path/filename of this
-file may be provided to the ‘tls’ argument.</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li>When launching daemons, the certificate chain to the CA should be
-supplied to the ‘tls’ argument of <code><a href="../reference/daemon.html">daemon()</a></code> or
-<code><a href="../reference/launch_local.html">launch_remote()</a></code>.</li>
-</ol>
-<ul>
-<li>The certificate chain should comprise multiple certificates, each
-between <code>-----BEGIN CERTIFICATE-----</code> and
-<code>-----END CERTIFICATE-----</code> markers. The first one should be
-the newly-generated TLS certificate, the same supplied to
-<code><a href="../reference/daemons.html">daemons()</a></code>, and the final one should be a CA root
-certificate.</li>
-<li>These are the only certificates required if the certificate was
-signed directly by a CA. If not, then the intermediate certificates
-should be included in a certificate chain that starts with the TLS
-certificate and ends with the certificate of the CA.</li>
-<li>If these are concatenated together as a single character string
-<code>certchain</code>, then the character vector comprising this and an
-empty character string <code>c(certchain, "")</code> may be supplied to
-the relevant ‘tls’ argument.</li>
-<li>Alternatively, if these are written to a file (and the file
-replicated on the remote machines), then the ‘tls’ argument may also be
-specified as a path/filename (assuming these are the same on each
-machine).</li>
-</ul>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="compute-profiles">Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a>
-</h3>
-<p>The <code><a href="../reference/daemons.html">daemons()</a></code> interface also allows the specification of
-compute profiles for managing tasks with heterogeneous compute
-requirements:</p>
-<ul>
-<li>send tasks to different daemons or clusters of daemons with the
-appropriate specifications (in terms of CPUs / memory / GPU /
-accelerators etc.)</li>
-<li>split tasks between local and remote computation</li>
-</ul>
-<p>Simply specify the argument <code>.compute</code> with a character
-profile name (which, if <code>NULL</code>, is ‘default’). The daemons
-settings are saved under the named profile.</p>
-<p>To create a ‘mirai’ task using a specific compute profile, specify
-the ‘.compute’ argument to <code><a href="../reference/mirai.html">mirai()</a></code>, which uses the
-‘default’ compute profile if this is <code>NULL</code>.</p>
-<p>Similarly, functions such as <code><a href="../reference/status.html">status()</a></code>,
-<code><a href="../reference/launch_local.html">launch_local()</a></code> or <code><a href="../reference/launch_local.html">launch_remote()</a></code> should be
-specified with the desired ‘.compute’ argument.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level3">
-<h3 id="errors-interrupts-and-timeouts">Errors, Interrupts and Timeouts<a class="anchor" aria-label="anchor" href="#errors-interrupts-and-timeouts"></a>
-</h3>
 <p>If execution in a mirai fails, the error message is returned as a
 character string of class ‘miraiError’ and ‘errorValue’ to facilitate
-debugging. <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code> may be used to test for mirai
-execution errors.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+debugging.</p>
+<p><code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code> may be used to test for mirai execution
+errors.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"occurred with a custom message"</span>, call. <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; 'miraiError' chr Error: occurred with a custom message</span></span>
@@ -761,7 +274,7 @@ execution errors.</p>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>A full stack trace of evaluation within the mirai is recorded and
 accessible at <code>$stack.trace</code> on the error object.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"positive"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="op">{</span><span class="fu">f</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>; <span class="fu">f</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">}</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
@@ -777,7 +290,7 @@ accessible at <code>$stack.trace</code> on the error object.</p>
 <p>Elements of the original error condition are also accessible via
 <code>$</code> on the error object. For example, additional metadata
 recorded by <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">rlang::abort()</a></code> is preserved:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"positive"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"aborted"</span>, meta_uid <span class="op">=</span> <span class="st">"UID001"</span><span class="op">)</span><span class="op">)</span></span>
@@ -787,10 +300,10 @@ recorded by <code><a href="https://rlang.r-lib.org/reference/abort.html" class="
 <span><span class="va">m4</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">meta_uid</span></span>
 <span><span class="co">#&gt; [1] "UID001"</span></span></code></pre></div>
 <p>If a daemon instance is sent a user interrupt, the mirai will resolve
-to an object of class ‘miraiInterrupt’ and ‘errorValue’.
-<code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> may be used to test for such
+to an object of class ‘miraiInterrupt’ and ‘errorValue’.</p>
+<p><code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> may be used to test for such
 interrupts.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/interrupt.html" class="external-link">interrupt</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="co"># simulates a user interrupt</span></span>
 <span><span class="fu"><a href="../reference/is_mirai_error.html">is_mirai_interrupt</a></span><span class="op">(</span><span class="va">m4</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -798,7 +311,7 @@ interrupts.</p>
 argument, the mirai will resolve to an ‘errorValue’ of 5L (timed out).
 This can, amongst other things, guard against mirai processes that have
 the potential to hang and never return.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">nanonext</span><span class="fu">::</span><span class="fu"><a href="https://nanonext.r-lib.org/reference/msleep.html" class="external-link">msleep</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
 <span><span class="va">m5</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; 'errorValue' int 5 | Timed out</span></span>
@@ -813,332 +326,6 @@ the potential to hang and never return.</p>
 user interrupts and timeouts.</p>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
-<div class="section level3">
-<h3 id="serialization-arrow-polars-and-beyond">Serialization: Arrow, polars and beyond<a class="anchor" aria-label="anchor" href="#serialization-arrow-polars-and-beyond"></a>
-</h3>
-<p>Native R serialization is used for sending data between host and
-daemons. Some R objects by their nature cannot be serialized, such as
-those accessed via an external pointer. In these cases, performing
-‘mirai’ operations on them would normally error.</p>
-<p>Using the <a href="https://arrow.apache.org/docs/r/" class="external-link"><code>arrow</code></a> package
-as an example:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">as_arrow_table</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, b <span class="op">=</span> <span class="st">"some text"</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; 'miraiError' chr Error: Invalid &lt;Table&gt;, external pointer to null</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>However, <code><a href="../reference/serial_config.html">serial_config()</a></code> can be used to create custom
-serialization configurations, specifying functions that hook into R’s
-native serialization mechanism for reference objects (‘refhooks’).</p>
-<p>This configuration may then be passed to the ‘serial’ argument of a
-<code><a href="../reference/daemons.html">daemons()</a></code> call.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span></span>
-<span>  <span class="st">"ArrowTabular"</span>,</span>
-<span>  <span class="fu">arrow</span><span class="fu">::</span><span class="va">write_to_raw</span>,</span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu">read_ipc_stream</span><span class="op">(</span><span class="va">x</span>, as_data_frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, serial <span class="op">=</span> <span class="va">cfg</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, b <span class="op">=</span> <span class="st">"some text"</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; Table</span></span>
-<span><span class="co">#&gt; 6 rows x 5 columns</span></span>
-<span><span class="co">#&gt; $Sepal.Length &lt;double&gt;</span></span>
-<span><span class="co">#&gt; $Sepal.Width &lt;double&gt;</span></span>
-<span><span class="co">#&gt; $Petal.Length &lt;double&gt;</span></span>
-<span><span class="co">#&gt; $Petal.Width &lt;double&gt;</span></span>
-<span><span class="co">#&gt; $Species &lt;dictionary&lt;values=string, indices=int8&gt;&gt;</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; See $metadata for additional Schema metadata</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] "some text"</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>It can be seen that this time, the arrow table is seamlessly handled
-in the ‘mirai’ process. This is the case even when the object is deeply
-nested inside lists or other structures.</p>
-<p>Multiple serialization functions may be registered to handle
-different object classes. As an example, we can use Arrow in combination
-with <a href="https://pola-rs.github.io/r-polars/" class="external-link"><code>polars</code></a>, a
-‘lightning fast’ dataframe library written in Rust (requires
-<code>polars</code> &gt;= 0.16.4), in the following way:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  serial <span class="op">=</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ArrowTabular"</span>, <span class="st">"RPolarsDataFrame"</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu">arrow</span><span class="fu">::</span><span class="va">write_to_raw</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">polars</span><span class="fu">::</span><span class="fu">as_polars_df</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="fu">to_raw_ipc</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">arrow</span><span class="fu">::</span><span class="fu">read_ipc_stream</span><span class="op">(</span><span class="va">x</span>, as_data_frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="fu">polars</span><span class="fu">::</span><span class="va">pl</span><span class="op">$</span><span class="va">read_ipc</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">polars</span><span class="fu">::</span><span class="fu">as_polars_df</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, b <span class="op">=</span> <span class="st">"some text"</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; shape: (6, 5)</span></span>
-<span><span class="co">#&gt; ┌──────────────┬─────────────┬──────────────┬─────────────┬─────────┐</span></span>
-<span><span class="co">#&gt; │ Sepal.Length ┆ Sepal.Width ┆ Petal.Length ┆ Petal.Width ┆ Species │</span></span>
-<span><span class="co">#&gt; │ ---          ┆ ---         ┆ ---          ┆ ---         ┆ ---     │</span></span>
-<span><span class="co">#&gt; │ f64          ┆ f64         ┆ f64          ┆ f64         ┆ cat     │</span></span>
-<span><span class="co">#&gt; ╞══════════════╪═════════════╪══════════════╪═════════════╪═════════╡</span></span>
-<span><span class="co">#&gt; │ 5.1          ┆ 3.5         ┆ 1.4          ┆ 0.2         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; │ 4.9          ┆ 3.0         ┆ 1.4          ┆ 0.2         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; │ 4.7          ┆ 3.2         ┆ 1.3          ┆ 0.2         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; │ 4.6          ┆ 3.1         ┆ 1.5          ┆ 0.2         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; │ 5.0          ┆ 3.6         ┆ 1.4          ┆ 0.2         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; │ 5.4          ┆ 3.9         ┆ 1.7          ┆ 0.4         ┆ setosa  │</span></span>
-<span><span class="co">#&gt; └──────────────┴─────────────┴──────────────┴─────────────┴─────────┘</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] "some text"</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>Please refer to the <a href="https://mirai.r-lib.org/articles/torch.html">torch vignette</a>
-for further examples.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-<div class="section level3">
-<h3 id="asynchronous-parallel-map">Asynchronous Parallel Map<a class="anchor" aria-label="anchor" href="#asynchronous-parallel-map"></a>
-</h3>
-<p><code><a href="../reference/mirai_map.html">mirai_map()</a></code> performs asynchronous parallel/distributed
-map using <code>mirai</code>.</p>
-<p>This function is similar to <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>, but returns a
-‘mirai_map’ object. It is also more advanced as it allows multiple map
-over the rows of a dataframe or matrix - and can in fact be used to
-implement all map variations from that package.</p>
-<p>The results of a mirai_map <code>x</code> may be collected using
-<code>x[]</code>. This waits for all asynchronous operations to complete
-if still in progress.</p>
-<div class="section level4">
-<h4 id="key-advantages">Key advantages:<a class="anchor" aria-label="anchor" href="#key-advantages"></a>
-</h4>
-<ol style="list-style-type: decimal">
-<li>Returns immediately with all evaluations taking place
-asynchronously. Printing a ‘mirai map’ object shows the current
-completion progress.</li>
-<li>The ‘.promise’ argument allows a promise to registered against each
-mirai, which can be used to perform side-effects.</li>
-<li>Returns evaluation errors as ‘miraiError’ or ‘errorValue’ as the
-case may be, rather than causing the entire operation to fail. This
-allows more efficient recovery from partial failure.</li>
-<li>Does not rely on a ‘chunking’ algorithm that attempts to split work
-into batches according to the number of available daemons, as
-implemented for example in the <code>parallel</code> package. Chunking
-cannot take into account varying or unpredictable compute times over the
-indices. It can be optimal to rely on <code>mirai</code> for scheduling
-instead. This is demonstrated in the example below.</li>
-</ol>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span></span>
-<span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_cluster.html">make_cluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 4</span></span>
-<span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.005   0.002   4.007</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.026   0.102   8.120</span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p><code>.args</code> is used to specify further constant arguments to
-<code>.f</code> - the ‘mean’ and ‘sd’ in the example below:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">3</span>, dispatcher <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 21.41325</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 19.31025 25.45045</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] 22.00164 20.70889 17.19364</span></span></code></pre></div>
-<p>Use <code>...</code> to further specify objects referenced but not
-defined in <code>.f</code> - the ‘do’ in the anonymous function
-below:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 4</span></span>
-<span><span class="va">ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">do</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">as.logical</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  do <span class="op">=</span> <span class="fu">nanonext</span><span class="fu">::</span><span class="va"><a href="https://nanonext.r-lib.org/reference/random.html" class="external-link">random</a></span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">ml</span></span>
-<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
-<span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "b7"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] 21 05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "66f4f4"</span></span></code></pre></div>
-<p>Use of <code><a href="../reference/mirai_map.html">mirai_map()</a></code> requires that <code><a href="../reference/daemons.html">daemons()</a></code>
-have previously been set, and will error if not.</p>
-</div>
-<div class="section level4">
-<h4 id="collecting-results">Collecting Results<a class="anchor" aria-label="anchor" href="#collecting-results"></a>
-</h4>
-<p>When collecting the results, optionally specify arguments to
-<code>[]</code>:</p>
-<ul>
-<li>
-<code>x[.flat]</code> collects and flattens the results, checking
-that they are of the same type to avoid coercion.</li>
-<li>
-<code>x[.progress]</code> collects results using a <code>cli</code>
-progress bar, if available, showing completion percentage and ETA, or
-else a simple text progress indicator of parts completed of the total.
-If the map operation completes quickly, the <code>cli</code> progress
-bar may not show at all, and this is by design.</li>
-<li>
-<code>x[.stop]</code> collects the results applying early stopping,
-which stops at the first failure and cancels remaining computations. If
-the <code>cli</code> package is available, it will be used for
-displaying the error message.</li>
-</ul>
-<p>Combinations of the above may be supplied in the fashion of
-<code>x[.stop, .progress]</code>.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="st">"a"</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">.stop</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Error in `mirai_map()`:</span></span>
-<span><span class="co">#&gt; ℹ In index: 2.</span></span>
-<span><span class="co">#&gt; ℹ With name: b.</span></span>
-<span><span class="co">#&gt; Caused by error in `exp()`:</span></span>
-<span><span class="co">#&gt; ! non-numeric argument to mathematical function</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, dispatcher <span class="op">=</span> <span class="cn">FALSE</span>, .compute <span class="op">=</span> <span class="st">"sleep"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span><span class="op">)</span>, <span class="va">Sys.sleep</span>, .compute <span class="op">=</span> <span class="st">"sleep"</span><span class="op">)</span><span class="op">[</span><span class="va">.progress</span>, <span class="va">.flat</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="multiple-map">Multiple Map<a class="anchor" aria-label="anchor" href="#multiple-map"></a>
-</h4>
-<p>Multiple map is performed over the <strong>rows</strong> of a
-dataframe or matrix, as this is most often the desired behaviour.</p>
-<p>This allows map over 2 or more arguments by specifying a dataframe.
-One of those may be an index value for indexed map.</p>
-<p>The function <code>.f</code> must take as many arguments as there are
-columns, either explicitly or via <code>...</code>.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fruit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># create a dataframe for indexed map:</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">fruit</span><span class="op">)</span>, fruit <span class="op">=</span> <span class="va">fruit</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">3</span>, dispatcher <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">sprintf</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fmt <span class="op">=</span> <span class="st">"%d. %s"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "1. melon"   "2. grapes"  "3. coconut"</span></span></code></pre></div>
-<p>As a dataframe often contains columns of differing type, it is
-unusual to want to map over the <strong>columns</strong>, however this
-is possible by simply transforming it beforehand into a list using
-<code><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list()</a></code>.</p>
-<p>Similarly, the behaviour of <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code> or
-<code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code> on a matrix is the same as that for a vector.
-<code><a href="../reference/mirai_map.html">mirai_map()</a></code> on the other hand does take into account the
-fact that the matrix has dimensions, and maps over its
-<strong>rows</strong>, consistent with the behaviour for dataframes. If
-instead, mapping over the columns is desired, simply take the transpose
-of the matrix beforehand using <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code>.</p>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="using-mirai-in-a-package">Using mirai in a Package<a class="anchor" aria-label="anchor" href="#using-mirai-in-a-package"></a>
-</h3>
-<p>mirai as a framework is designed to support completely transparent
-and inter-operable use within packages. A core design precept of not
-relying on global options or environment variables minimises the
-likelihood of conflict between use by different packages.</p>
-<p>There are hence few requirements of package authors, but a few
-important points to note nevertheless:</p>
-<ol style="list-style-type: decimal">
-<li>
-<code><a href="../reference/daemons.html">daemons()</a></code> settings should almost always be left to
-end-users. Consider re-exporting <code><a href="../reference/daemons.html">daemons()</a></code> in your package
-as a convenience.</li>
-</ol>
-<ul>
-<li>Do not include a call to <code><a href="../reference/daemons.html">daemons()</a></code> if you use
-<code><a href="../reference/mirai_map.html">mirai_map()</a></code> or a function that wraps it such as
-<code>purrr::map(.parallel = TRUE)</code>. This is important to ensure
-that there is no unintentional recursive creation of daemons on the same
-machine.</li>
-<li>Where a <code><a href="../reference/daemons.html">daemons()</a></code> call may be appropriate is for async
-operation using only one dedicated daemon. A representative examaple of
-this usage pattern is <code>logger::appender_async()</code>, where the
-logger package’s ‘namespace’ concept maps directly to mirai’s ‘compute
-profile’.</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not be
-relied upon, as this user interface is subject to change at any
-time.</li>
-</ol>
-<ul>
-<li>There is a developer interface <code><a href="../reference/nextstream.html">nextget()</a></code>, for querying
-values such as ‘urls’ described in the function documentation. Note:
-only the specifically-documented values are supported interfaces.</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
-<code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>, <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
-<code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> should be used to test for the
-relevant state of a mirai or its value.</li>
-</ol>
-<ul>
-<li>The characteristics of how they are currently implemented, e.g. as a
-logical NA for an ‘unresolvedValue’, should not be relied upon, as these
-are subject to change at any time.</li>
-</ul>
-<ol start="4" style="list-style-type: decimal">
-<li>Testing on CRAN should respect it’s 2-core usage limit. These limits
-apply only to tests on CRAN, and more complex tests may be run
-elsewhere.</li>
-</ol>
-<ul>
-<li>This practically means limiting tests to using one daemon (with
-<code>dispatcher = FALSE</code>) to ensure that only one additional
-process is used.</li>
-<li>Always reset daemons when done and then allow at least a one-second
-sleep to ensure all background processes have properly exited.</li>
-</ul>
-<p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
