@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ### Table of Contents
 
 1. [Migration from future_promise](#migration-from-future_promise)
-2. [Setting the Random Seed](setting-the-random-seed)
+2. [Setting the Random Seed](#setting-the-random-seed)
 
 ### Migration from future_promise
 
@@ -85,11 +85,13 @@ daemons(0)
 
 The reason the change in random seed persists in all circumstances is due to this being a special case, arising from the use of L'Ecuyer CMRG streams to provide parallel-safe random numbers.
 
-Streams can be thought of as entry points far away from each other to ensure that random results in each daemon are independent from one another. The random seed is not reset after each mirai call to ensure that however many random draws are made in any mirai call, the next random draw follows on in the stream, and hence have the desired statistical properties.
+Streams can be thought of as entry points to the psuedo random number line far away from each other to ensure that random results in each daemon are independent from one another.
+The random seed is not reset after each mirai call to ensure that however many random draws are made in any mirai call, the next random draw follows on in the stream, and hence have the desired statistical properties.
 
 Hence normally, the random seed should be set once on the host process when daemons are created, rather than in each daemon.
 
-If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required. It is also possible to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
+If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required.
+Another option would be to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
 
 *This example comes from a question raised by Etienne Bacher.*
 
