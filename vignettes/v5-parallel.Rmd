@@ -1,19 +1,25 @@
 ---
-title: "mirai - Parallel Integration"
+title: "5. Mirai Clusters - Base R"
 vignette: >
-  %\VignetteIndexEntry{mirai - Parallel Integration}
+  %\VignetteIndexEntry{5. Mirai Clusters - Base R}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
 
-### Parallel Integration
 
-`mirai` provides an alternative communications backend for R.
+### Table of Contents
+
+1. [Alternative Communications Backend for R](#alternative-communications-backend-for-r)
+2. [Foreach Support](#foreach-support)
+
+### Alternative Communications Backend for R
+
+mirai provides an alternative communications backend for R.
 This functionality was developed to fulfil a request by R Core at R Project Sprint 2023.
 
-`make_cluster()` creates a cluster object of class 'miraiCluster', which is fully-compatible with `parallel` cluster types.
-From R 4.5 onwards, mirai is recognised as one of the official cluster types and can also be created by `parallel::makeCluster(type = "MIRAI")`.
+A 'miraiCluster' is recognised as one of the official cluster types, and may be created by `parallel::makeCluster(type = "MIRAI")` from R 4.5 onwards.
+This function calls `make_cluster()`, which may also be used to directly create a 'miraiCluster'.
 
   + Specify 'n' to launch nodes on the local machine.
   + Specify 'url' for receiving connections from remote nodes.
@@ -22,12 +28,13 @@ From R 4.5 onwards, mirai is recognised as one of the official cluster types and
 Created clusters may be used for any function in the `parallel` base package such as `parallel::clusterApply()` or `parallel::parLapply()`, or the load-balanced versions such as `parallel::parLapplyLB()`.
 
 ``` r
+library(parallel)
 library(mirai)
 
-cl <- make_cluster(4)
+cl <- makeCluster(6, type = "MIRAI")
 cl
-#> < miraiCluster | ID: `0` nodes: 4 active: TRUE >
-parallel::parLapply(cl, iris, mean)
+#> < miraiCluster | ID: `17` nodes: 6 active: TRUE >
+parLapply(cl, iris, mean)
 #> $Sepal.Length
 #> [1] 5.843333
 #> 
@@ -49,12 +56,13 @@ parallel::parLapply(cl, iris, mean)
 ``` r
 status(cl)
 #> $connections
-#> [1] 4
+#> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://b8163969af488f2783f411ba"
-stop_cluster(cl)
+#> [1] "ipc:///tmp/46cf8bbf2c64bde8e197055d"
+stopCluster(cl)
 ```
+
 Making a cluster specifying 'url' without 'remote' causes the shell commands for manual deployment of nodes to be printed to the console.
 
 ``` r
@@ -62,14 +70,16 @@ cl <- make_cluster(n = 2, url = host_url())
 #> Shell commands for deployment on nodes:
 #> 
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:39957",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-21525145,-661555588,1174154573,109719466,1891487011,-1198846968))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:63589",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-280151247,-938810562,-1585439065,-204601668,-1190203251,-474297878))'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:39957",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-1817502444,932019832,-329889616,-1965248410,1885768877,1092262858))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:63589",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-1795872797,798175556,2147471135,874907559,719327722,-451341832))'
 stop_cluster(cl)
 ```
 
-### Foreach Integration
+[&laquo; Back to ToC](#table-of-contents)
+
+### Foreach Support
 
 A 'miraiCluster' may also be registered by [`doParallel`](https://cran.r-project.org/package=doParallel) for use with the [`foreach`](https://cran.r-project.org/package=foreach) package.
 
@@ -77,28 +87,32 @@ Running some parallel examples for the `foreach()` function:
 
 
 ``` r
+library(doParallel)
 library(foreach)
-library(iterators)
 
-cl <- make_cluster(4)
-doParallel::registerDoParallel(cl)
+cl <- makeCluster(6, type = "MIRAI")
+registerDoParallel(cl)
 
 # normalize the rows of a matrix
 m <- matrix(rnorm(9), 3, 3)
 foreach(i = 1:nrow(m), .combine = rbind) %dopar%
   (m[i, ] / mean(m[i, ]))
-#>               [,1]      [,2]       [,3]
-#> result.1  1.137137  2.448800 -0.5859375
-#> result.2 -8.252064 -6.443730 17.6957942
-#> result.3 -2.179046  1.787817  3.3912295
+#>               [,1]      [,2]      [,3]
+#> result.1 0.1898342  2.137246 0.6729202
+#> result.2 3.5909143 -1.151577 0.5606628
+#> result.3 3.1744328 -1.274058 1.0996252
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)
 b <- t(a)
-foreach(b = iter(b, by='col'), .combine = cbind) %dopar%
+foreach(b = iterators::iter(b, by='col'), .combine = cbind) %dopar%
   (a %*% b)
 #>      [,1] [,2] [,3] [,4]
 #> [1,]  276  304  332  360
 #> [2,]  304  336  368  400
 #> [3,]  332  368  404  440
 #> [4,]  360  400  440  480
+
+stopCluster(cl)
 ```
+
+[&laquo; Back to ToC](#table-of-contents)

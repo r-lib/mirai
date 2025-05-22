@@ -52,8 +52,7 @@
 #' completes too quickly then the progress bar may not show at all.
 #'
 #' `x[.stop]` collects map results applying early stopping, which stops at
-#' the first failure and cancels remaining operations. Note: operations already
-#' in progress continue to completion, although their results are not collected.
+#' the first failure and cancels remaining operations.
 #'
 #' The options above may be combined in the manner of: \cr
 #' `x[.stop, .progress]` which applies early stopping together with a
@@ -95,7 +94,7 @@
 #' mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 #'
 #' # named matrix multiple map: arguments passed to function by name
-#' dimnames(mat) <- list(c("a", "b"), c("y", "z"))
+#' mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z")))
 #' mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 #'
 #' # dataframe multiple map: using a function taking '...' arguments

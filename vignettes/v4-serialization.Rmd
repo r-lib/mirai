@@ -1,0 +1,425 @@
+---
+title: "4. Serialization - Arrow, ADBC, polars, torch"
+vignette: >
+  %\VignetteIndexEntry{4. Serialization - Arrow, ADBC, polars, torch}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+### Table of Contents
+
+1. [Serialization: Arrow, polars and beyond](#serialization-arrow-polars-and-beyond)
+2. [Torch Integration](#torch-integration)
+3. [Database Hosting using Arrow Database Connectivity](#database-hosting-using-arrow-database-connectivity)
+4. [Shiny / mirai / DBI / ADBC Integrated Example](#shiny-mirai-dbi-adbc-integrated-example)
+
+### Serialization: Arrow, polars and beyond
+
+Native R serialization is used for sending data between host and daemons.
+Some R objects by their nature cannot be serialized, such as those accessed via an external pointer.
+In these cases, performing 'mirai' operations on them would normally error.
+
+Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
+
+
+``` r
+library(arrow, warn.conflicts = FALSE)
+daemons(1)
+#> [1] 1
+everywhere(library(arrow))
+
+x <- as_arrow_table(iris)
+
+m <- mirai(list(a = head(x), b = "some text"), x = x)
+m[]
+#> 'miraiError' chr Error: Invalid <Table>, external pointer to null
+
+daemons(0)
+#> [1] 0
+```
+However, `serial_config()` can be used to create custom serialization configurations, specifying functions that hook into R's native serialization mechanism for reference objects ('refhooks').
+
+This configuration may then be passed to the 'serial' argument of a `daemons()` call.
+
+
+``` r
+cfg <- serial_config(
+  "ArrowTabular",
+  arrow::write_to_raw,
+  function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
+)
+
+daemons(1, serial = cfg)
+#> [1] 1
+
+everywhere(library(arrow))
+
+m <- mirai(list(a = head(x), b = "some text"), x = x)
+m[]
+#> $a
+#> Table
+#> 6 rows x 5 columns
+#> $Sepal.Length <double>
+#> $Sepal.Width <double>
+#> $Petal.Length <double>
+#> $Petal.Width <double>
+#> $Species <dictionary<values=string, indices=int8>>
+#> 
+#> See $metadata for additional Schema metadata
+#> 
+#> $b
+#> [1] "some text"
+
+daemons(0)
+#> [1] 0
+```
+It can be seen that this time, the arrow table is seamlessly handled in the 'mirai' process.
+This is the case even when the object is deeply nested inside lists or other structures.
+
+Multiple serialization functions may be registered to handle different object classes.
+As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
+
+``` r
+daemons(
+  n = 1,
+  serial = serial_config(
+    c("ArrowTabular", "RPolarsDataFrame"),
+    list(arrow::write_to_raw, function(x) polars::as_polars_df(x)$to_raw_ipc()),
+    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
+  )
+)
+#> [1] 1
+
+x <- polars::as_polars_df(iris)
+
+m <- mirai(list(a = head(x), b = "some text"), x = x)
+m[]
+#> $a
+#> shape: (6, 5)
+#> ┌──────────────┬─────────────┬──────────────┬─────────────┬─────────┐
+#> │ Sepal.Length ┆ Sepal.Width ┆ Petal.Length ┆ Petal.Width ┆ Species │
+#> │ ---          ┆ ---         ┆ ---          ┆ ---         ┆ ---     │
+#> │ f64          ┆ f64         ┆ f64          ┆ f64         ┆ cat     │
+#> ╞══════════════╪═════════════╪══════════════╪═════════════╪═════════╡
+#> │ 5.1          ┆ 3.5         ┆ 1.4          ┆ 0.2         ┆ setosa  │
+#> │ 4.9          ┆ 3.0         ┆ 1.4          ┆ 0.2         ┆ setosa  │
+#> │ 4.7          ┆ 3.2         ┆ 1.3          ┆ 0.2         ┆ setosa  │
+#> │ 4.6          ┆ 3.1         ┆ 1.5          ┆ 0.2         ┆ setosa  │
+#> │ 5.0          ┆ 3.6         ┆ 1.4          ┆ 0.2         ┆ setosa  │
+#> │ 5.4          ┆ 3.9         ┆ 1.7          ┆ 0.4         ┆ setosa  │
+#> └──────────────┴─────────────┴──────────────┴─────────────┴─────────┘
+#> 
+#> $b
+#> [1] "some text"
+
+daemons(0)
+#> [1] 0
+```
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Torch Integration
+
+Tensors from the [`torch`](https://torch.mlverse.org/) package may be used seamlessly in 'mirai' computations.
+
+#### Setup Steps
+
+1. Create the serialization configuration, specifying 'class' as 'torch_tensor'.
+1. Set up daemons, supplying the configuration to the 'serial' argument.
+1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
+
+
+``` r
+library(mirai)
+library(torch)
+
+cfg <- serial_config(
+  class = "torch_tensor",
+  sfunc = torch::torch_serialize,
+  ufunc = torch::torch_load
+)
+
+daemons(1, serial = cfg)
+#> [1] 1
+
+everywhere(library(torch))
+```
+#### Example Usage
+
+The below example creates a convolutional neural network using `torch::nn_module()`.
+
+A set of model parameters is also specified.
+
+The model specification and parameters are then passed to and initialized within a 'mirai'.
+
+
+``` r
+model <- nn_module(
+  initialize = function(in_size, out_size) {
+    self$conv1 <- nn_conv2d(in_size, out_size, 5)
+    self$conv2 <- nn_conv2d(in_size, out_size, 5)
+  },
+  forward = function(x) {
+    x <- self$conv1(x)
+    x <- nnf_relu(x)
+    x <- self$conv2(x)
+    x <- nnf_relu(x)
+    x
+  }
+)
+
+params <- list(in_size = 1, out_size = 20)
+
+m <- mirai(do.call(model, params), model = model, params = params)
+
+m[]
+#> An `nn_module` containing 1,040 parameters.
+#> 
+#> ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────
+#> • conv1: <nn_conv2d> #520 parameters
+#> • conv2: <nn_conv2d> #520 parameters
+```
+The returned model is an object containing many tensor elements.
+
+``` r
+m$data$parameters$conv1.weight
+#> torch_tensor
+#> (1,1,.,.) = 
+#>   0.0180 -0.1920  0.1102  0.0639  0.1679
+#>  -0.0037  0.1501 -0.1862 -0.1891  0.1500
+#>   0.1939  0.1854 -0.1096  0.0136  0.0045
+#>  -0.0070  0.0533 -0.1531 -0.1190  0.0315
+#>  -0.1269  0.0499 -0.0812  0.0920 -0.1358
+#> 
+#> (2,1,.,.) = 
+#>  -0.0212 -0.0731  0.1894  0.1060 -0.0970
+#>   0.1368  0.1442 -0.1965  0.0960 -0.0542
+#>   0.1199 -0.0676  0.0403 -0.0391  0.0826
+#>   0.1373  0.1470 -0.0590 -0.1970  0.0948
+#>   0.1500  0.0139  0.0935  0.1283  0.1788
+#> 
+#> (3,1,.,.) = 
+#>  -0.1146  0.1936  0.1097  0.1469  0.1125
+#>   0.1973  0.0972 -0.0585 -0.1374  0.0981
+#>   0.1880 -0.1006  0.0792 -0.0787  0.1901
+#>   0.1609 -0.1286 -0.0024  0.1441 -0.1245
+#>  -0.1851  0.1854 -0.0864  0.1725 -0.0605
+#> 
+#> (4,1,.,.) = 
+#>   0.1032 -0.1693 -0.0748  0.0240 -0.0484
+#>  -0.0126  0.1168  0.0081 -0.0170 -0.0051
+#>   0.1298 -0.1742 -0.1381  0.0407 -0.0225
+#>  -0.0674 -0.1340 -0.1437 -0.0247 -0.1070
+#>   0.0989 -0.1636  0.0016 -0.1275  0.0814
+#> 
+#> (5,1,.,.) = 
+#>  -0.0407  0.1444  0.0153  0.0682  0.0335
+#> ... [the output was truncated (use n=-1 to disable)]
+#> [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]
+```
+It is usual for model parameters to then be passed to an optimiser.
+
+This can also be initialized within a 'mirai' process.
+
+``` r
+optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
+
+optim[]
+#> <optim_rmsprop>
+#>   Inherits from: <torch_optimizer>
+#>   Public:
+#>     add_param_group: function (param_group) 
+#>     clone: function (deep = FALSE) 
+#>     defaults: list
+#>     initialize: function (params, lr = 0.01, alpha = 0.99, eps = 1e-08, weight_decay = 0, 
+#>     load_state_dict: function (state_dict, ..., .refer_to_state_dict = FALSE) 
+#>     param_groups: list
+#>     state: State, R6
+#>     state_dict: function () 
+#>     step: function (closure = NULL) 
+#>     zero_grad: function (set_to_none = FALSE) 
+#>   Private:
+#>     deep_clone: function (name, value) 
+#>     step_helper: function (closure, loop_fun)
+
+daemons(0)
+#> [1] 0
+```
+Above, tensors and complex objects containing tensors were passed seamlessly between host and daemon processes, in the same way as any other R object.
+
+The custom serialization in `mirai` leverages R's own native 'refhook' mechanism to allow such completely transparent usage. Designed to be fast and efficient, data copies are minimised and the 'official' serialization methods from the `torch` package are used directly.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Database Hosting using Arrow Database Connectivity
+
+It is possible using the `DBI` interface to access and manipulate data in the Apache Arrow data format efficiently through ABDC (Arrow Database Connectivity).
+
+The example below creates an in-memory SQLite connection using the `adbcsqlite` backend.
+
+Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `everywhere()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
+
+
+``` r
+library(mirai)
+
+cfg <- serial_config(
+  class = "nanoarrow_array_stream",
+  sfunc = arrow::write_to_raw,
+  ufunc = function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
+)
+
+daemons(1, serial = cfg)
+#> [1] 1
+
+everywhere(
+  {
+    library(DBI) # `adbi` and `adbcsqlite` packages must also be installed
+    con <<- dbConnect(adbi::adbi("adbcsqlite"), uri = ":memory:")
+  }
+)
+
+```
+`mirai()` calls may then be used to write to or query the database all in the Arrow format.
+
+``` r
+m <- mirai(dbWriteTableArrow(con, "iris", iris))
+m[]
+#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbWriteTableArrow': object 'con' not found
+m <- mirai(dbReadTableArrow(con, "iris"))
+m[]
+#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbReadTableArrow': object 'con' not found
+m <- mirai(dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6'))
+m[]
+#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbGetQueryArrow': object 'con' not found
+```
+Due to the tight integration of the `mirai` serialization mechanism with R's 'refhook' system, we can easily return complex / nested objects containing multiple queries in the Arrow format:
+
+``` r
+m <- mirai({
+  a <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
+  b <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Width" < 2.6')
+  x <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Petal.Length" < 1.5')
+  y <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Petal.Width" < 0.2')
+  list(sepal = list(length = a, width = b), petal = list(length = x, width = y))
+})
+m[]
+#> 'miraiError' chr Error in h(simpleError(msg, call)): error in evaluating the argument 'conn' in selecting a method for function 'dbGetQueryArrow': object 'con' not found
+```
+As before, `everywhere()` can be used again to cleanly tear down the databases, before resetting daemons.
+
+``` r
+everywhere(dbDisconnect(con))
+daemons(0)
+#> [1] 0
+```
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Shiny / mirai / DBI / ADBC Integrated Example
+
+The following is an example of how database connections hosted in mirai daemons may be used to power a Shiny app.
+
+The one-time `serialization()` setup ensures seamless transport of Apache Arrow data, and occurs in the global environment outside of `server()`.
+
+A new database connection is created in a new daemon process for every new Shiny session. The resources are freed when a sesssion ends. This logic is all defined within `server()`. A unique ID is used to identify each session, and is specified as the 'compute profile' for daemons.
+
+Non-dispatcher daemons are created as scheduling is not required (all queries expected to take roughly the same time, and in this case each session uses only one daemon anyway).
+
+Shiny ExtendedTask is then used to perform each query via a `mirai()` call, using the session-specific compute profile.
+
+
+``` r
+library(mirai)
+library(secretbase)
+library(shiny)
+library(bslib)
+
+# create an Arrow serialization configuration
+cfg <- serial_config(
+  class = "nanoarrow_array_stream",
+  sfunc = arrow::write_to_raw,
+  ufunc = nanoarrow::read_nanoarrow
+)
+
+# write 'iris' dataset to temp database file (for this demonstration)
+file <- tempfile()
+con <- DBI::dbConnect(adbi::adbi("adbcsqlite"), uri = file)
+DBI::dbWriteTableArrow(con, "iris", iris)
+DBI::dbDisconnect(con)
+
+# common input parameters
+slmin <- min(iris$Sepal.Length)
+slmax <- max(iris$Sepal.Length)
+
+ui <- page_fluid(
+  p("The time is ", textOutput("current_time", inline = TRUE)),
+  hr(),
+  h3("Shiny / mirai / DBI / ADBC demonstration"),
+  p("New daemon-hosted database connection is created for every Shiny session"),
+  sliderInput(
+    "sl", "Query iris dataset based on Sepal Length", min = slmin, max = slmax,
+    value = c(slmin, slmax), width = "75%"
+  ),
+  input_task_button("btn", "Return query"),
+  tableOutput("table")
+)
+
+# uses Shiny ExtendedTask with mirai
+server <- function(input, output, session) {
+
+  # create unique session id by hashing current time with a random key
+  id <- secretbase::siphash13(Sys.time(), key = nanonext::random(4L))
+
+  # create new daemon for each session
+  daemons(1L, serial = cfg, .compute = id)
+
+  # tear down daemon when session ends
+  session$onEnded(function() daemons(0L, .compute = id))
+
+  # everywhere() loads DBI and creates ADBC connection in each daemon
+  # and sets up serialization
+  everywhere(
+    {
+      library(DBI) # `adbi` and `adbcsqlite` packages must also be installed
+      con <<- dbConnect(adbi::adbi("adbcsqlite"), uri = file)
+    },
+    file = file,
+    .compute = id
+  )
+
+  output$current_time <- renderText({
+    invalidateLater(1000)
+    format(Sys.time(), "%H:%M:%S %p")
+  })
+
+  task <- ExtendedTask$new(
+    function(...) mirai(
+      dbGetQueryArrow(
+        con,
+        sprintf(
+          "SELECT * FROM iris WHERE \"Sepal.Length\" BETWEEN %.2f AND %.2f",
+          sl[1L],
+          sl[2L]
+        )
+      ),
+      ...,
+      .compute = id
+    )
+  ) |> bind_task_button("btn")
+
+  observeEvent(input$btn, task$invoke(sl = input$sl))
+
+  output$table <- renderTable(task$result())
+
+}
+
+# run Shiny app
+shinyApp(ui = ui, server = server)
+
+# deletes temp database file (for this demonstration)
+unlink(file)
+```
+
+[&laquo; Back to ToC](#table-of-contents)

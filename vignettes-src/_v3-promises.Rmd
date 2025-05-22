@@ -1,33 +1,111 @@
 ---
-title: "mirai - Shiny Integration"
+title: "3. Promises - Shiny and Plumber"
 vignette: >
-  %\VignetteIndexEntry{mirai - Shiny Integration}
+  %\VignetteIndexEntry{3. Promises - Shiny and Plumber}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
-### Shiny Integration
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 
-mirai may be used as an asynchronous backend to scale [Shiny](https://shiny.posit.co/) applications.
+### Table of Contents
 
-Depending on the options suppled to `daemons()`, mirai tasks may be distributed across local background processes or networked servers in an efficient and performant manner.
+1. [Event-driven Promises](#event-driven-promises)
+2. [The One Million Promises Challenge](#the-one-million-promises-challenge)
+3. [Shiny ExtendedTask: Introduction](#shiny-extendedtask-introduction)
+4. [Shiny ExtendedTask: Cancellation](#shiny-extendedtask-cancellation)
+5. [Shiny ExtendedTask: Generative Art](#shiny-extendedtask-generative-art)
+6. [Shiny ExtendedTask: mirai map](#shiny-extendedtask-mirai-map)
+7. [Shiny Async: Coin Flips](#shiny-async-coin-flips)
+8. [Shiny Async: Progress Bar](#shiny-async-progress-bar)
+9. [Plumber GET Endpoint](#plumber-get-endpoint)
+10. [Plumber POST Endpoint](#plumber-post-endpoint)
 
-For use with Shiny, mirai implements truly event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
+### Event-driven promises
 
-- Each promise is not polled in a loop for completion (as for other types of promise).
-- Instead, promise actions are triggered for execution as soon as each 'mirai' completes (asynchronously).
-- Allows for much higher responsiveness (lower latency) and massive scalability (thousands of simultaneous promises or more).
+`mirai` supplies its own `as.promise()` method, allowing it to be used as a promise from the [`promises`](https://rstudio.github.io/promises/) package.
 
-mirai natively supports Shiny ExtendedTask to create scalable Shiny apps, which remain responsive intra-session for each user, as well as inter-session for multiple concurrent users.
+These are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
 
-'mirai' may be used anywhere a 'promise' or 'future_promise' would be accepted (with promises >= 1.3.0).
+- Does not require each promise to be polled for completion in a background loop like other promises.
+- Instead, promise actions are automatically triggered as soon as each 'mirai' resolves (asynchronously).
+- Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of promises).
+
+A 'mirai' may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on the 'mirai'. Similarly all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` which take a promise can also take a 'mirai' (using `promises` >= 1.3.0).
+
+Alternatively, a 'mirai' may be explicitly converted into a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly.
+
+The following example outputs "hello" to the console after one second when the 'mirai' resolves.
+```{r}
+#| label: promises
+library(mirai)
+library(promises)
+
+p <- mirai({Sys.sleep(1); "hello"}) %...>% cat()
+p
+```
+It is possible to both access a 'mirai' value at `$data` and to use a promise for enacting a side effect (assigning the value to an environment in the example below).
+```{r}
+#| label: promisesalt
+env <- new.env()
+
+m <- mirai({
+  Sys.sleep(1)
+  "hello"
+})
+
+promises::then(m, function(x) env$res <- x)
+
+m[]
+```
+After returning to the top level prompt:
+
+```r
+env$res
+#> [1] "hello"
+```
+
+A `mirai_map` also has an `as.promise()` method. It will resolve when the entire map operation completes or at least one mirai in the map is rejected.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### The One Million Promises Challenge
+
+The code below is taken from the challenge to launch and collect one million promises. For illustration, the example is scaled down to ten thousand.
+
+```{r}
+#| label: promiseschallenge
+library(mirai)
+daemons(8, dispatcher = FALSE)
+r <- 0
+start <- Sys.time()
+m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
+Sys.time() - start
+later::run_now()
+r
+daemons(0)
+```
+The one million promises challenge took 6 mins 25 secs to complete using an Intel i7 11th gen mobile processor with 16GB RAM.
+
+[&laquo; Back to ToC](#table-of-contents)
 
 ### Shiny ExtendedTask: Introduction
 
+mirai is an asynchronous backend to scale [Shiny](https://shiny.posit.co/) applications.
+Depending on the options supplied to `daemons()`, mirai tasks may be distributed across local background processes or networked servers in an efficient and performant manner.
+
+Shiny ExtendedTask allows the creation of scalable Shiny apps, which remain responsive intra-session for each user, as well as inter-session for multiple concurrent users.
+
 In the example below, the app remains responsive, with the clock continuing to tick whilst the simulated expensive computation is running asynchronously in a parallel process. Also the button is disabled and the plot greyed out until the computation is complete.
 
-The call to `daemons()` is made at the top level, and `onStop()` may be used to automatically shut them down when the app exits.
-
+> The call to `daemons()` is made at the top level, and `onStop()` may be used to automatically shut them down when the app exits.
 
 ``` r
 library(shiny)
@@ -101,6 +179,8 @@ observeEvent(input$btn, task$invoke(x = input$n, y = input$delay))
 output$plot <- renderPlot(hist(task$result()))
 ```
 
+[&laquo; Back to ToC](#table-of-contents)
+
 ### Shiny ExtendedTask: Cancellation
 
 The app below is a demonstration of the cancellation capability added in mirai v2.
@@ -166,6 +246,7 @@ shinyApp(ui = ui, server = server)
 ```
 *Thanks to Joe Cheng for providing examples on which the above is based.*
 
+[&laquo; Back to ToC](#table-of-contents)
 
 ### Shiny ExtendedTask: Generative Art
 
@@ -263,13 +344,11 @@ The key components to using this ExtendedTask example are:
 
 1. In the UI, use `bslib::input_task_button()`. This is a button which is disabled during computation to prevent additional clicks.
 
-
 ``` r
 input_task_button(ns("resample"), "Resample")
 ```
 
 2. In the server, create an ExtendedTask object by calling `ExtendedTask$new()` on an anonymous function passing _named_ arguments to `mirai()`, and bind it to the button created in (1). These are passed through to the mirai by the use of `environment()`.
-
 
 ``` r
 task <- ExtendedTask$new(
@@ -279,18 +358,18 @@ task <- ExtendedTask$new(
 
 3. In the server, create an observer on the input button, which invokes the ExtendedTask, supplying the arguments to the anonymous function above.
 
-
 ``` r
 observeEvent(input$resample, task$invoke(calc_time, run_task))
 ```
 
 4. In the server, create a render function for the output, which consumes the result of the ExtendedTask.
 
-
 ``` r
 output$plot <- renderPlot(plot_result(task$result()))
 ```
 ### Shiny ExtendedTask: mirai map
+
+A `mirai_map` also has an `as.promise()` method, which allows it to be used directly in a Shiny ExtendedTask. It will resolve when the entire map operation completes or at least one mirai in the map is rejected.
 
 This example, uses `mirai_map()` to perform multiple calculations simultaneously in multiple daemons, returning the results asynchronously.
 
@@ -339,7 +418,9 @@ app <- shinyApp(ui, server)
 with(daemons(4), runApp(app))
 ```
 
-### Advanced Promises: Coin Flips
+[&laquo; Back to ToC](#table-of-contents)
+
+### Shiny Async: Coin Flips
 
 The below example demonstrates how to integrate a `mirai_map()` operation into a Shiny app in an observer, without using ExtendedTask.
 
@@ -406,7 +487,9 @@ with(daemons(8, dispatcher = FALSE), {
 
 *This is an adaptation of an original example provided by Will Landau for use of `crew` with Shiny. Please see <https://wlandau.github.io/crew/articles/shiny.html>.*
 
-### Advanced Promises: Progress Bar
+[&laquo; Back to ToC](#table-of-contents)
+
+### Shiny Async: Progress Bar
 
 The below example uses a `mirai_map()` operation in an observer to update a Shiny progress bar with custom messages, and also to update a reactive value once the entire map operation has completed (asynchronously).
 
@@ -470,37 +553,146 @@ with(daemons(8), runApp(app))
 ```
 *This example adapts a contribution from Davide Magno.*
 
-### Migration from future_promise
+[&laquo; Back to ToC](#table-of-contents)
 
-It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
+### Plumber GET Endpoint
 
-The most important difference is that a `future_promise()` tries to infer all the global variables that are required by the expression. However this can easily run into edge cases, or behave in a way that you would not expect. As this behaviour is not transparent, in the best case you will know something has gone wrong, but in the worst case could silently produce the wrong result. In both cases, you would not know until you are trying to debug the situation.
+mirai may be used as an asynchronous backend for [`plumber`](https://www.rplumber.io/) pipelines.
 
-A mirai on the other hand, requires that the expression be self-contained, hence any variables or helper functions are passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means that you can easily reason about your code, and is designed to save you time in the long run.
+In this example, the plumber router code is run in a daemon process itself so that it does not block the interactive process.
 
-#### Special Case: `...` Example
+The /echo endpoint takes a GET request, sleeps for 1 second (simulating an expensive computation) and simply returns the 'msg' request header together with a timestamp and the process ID of the process it is run on.
 
-A Shiny app may use the following `future_promise()` code within the server component:
+```{r}
+#| label: get
+library(mirai)
 
-```r
-func <- function(x, y){
-  Sys.sleep(y)
-  runif(x)
-}
+# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
+daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
 
-task <- ExtendedTask$new(
-  function(...) future_promise(func(...))
-) |> bind_task_button("btn")
+m <- mirai({
+  library(plumber)
+  library(promises) # to provide the promise pipe
+  library(mirai)
 
-observeEvent(input$btn, task$invoke(input$n, input$delay))
+  # more efficient not to use dispatcher if all requests are similar length
+  daemons(4L, dispatcher = FALSE) # handles 4 requests simultaneously
+
+  pr() |>
+    pr_get(
+      "/echo",
+      function(req, res) {
+        mirai(
+          {
+            Sys.sleep(1L)
+            list(
+              status = 200L,
+              body = list(
+                time = format(Sys.time()), msg = msg, pid = Sys.getpid()
+              )
+            )
+          },
+          msg = req[["HEADERS"]][["msg"]]
+        ) %...>% (function(x) {
+          res$status <- x$status
+          res$body <- x$body
+        })
+      }
+    ) |>
+    pr_run(host = "127.0.0.1", port = 8985)
+})
 ```
-The equivalent may be achieved in `mirai()` in the following way:
-```r
-task <- ExtendedTask$new(
-  function(...) mirai(func(...), func = func, .args = environment())
-) |> bind_task_button("btn")
+```{r}
+#| label: sleep2
+#| echo: false
+Sys.sleep(2)
 ```
-1. `environment()` captures the `...` to be used by the function within the mirai expression, and can be supplied via `.args`.
-2. The definition for `func` is passed through in the usual way.
+The API can be queried using an async HTTP client such as `nanonext::ncurl_aio()`.
 
-*This example comes from a question raised by Simon Smart.*
+Here, all 8 requests are submitted at once, but we note that that responses have differing timestamps as only 4 can be processed at any one time (limited by the number of daemons set).
+```{r}
+#| label: queryapi
+library(nanonext)
+res <- lapply(
+  1:8,
+  function(i) ncurl_aio(
+    "http://127.0.0.1:8985/echo",
+    headers = c(msg = as.character(i))
+  )
+)
+collect_aio(res)
+
+daemons(0)
+```
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Plumber POST Endpoint
+
+This is the equivalent using a POST endpoint, accepting a JSON instruction sent as request data.
+
+Note that `req$postBody` should always be accessed in the router process and passed in as an argument to the 'mirai', as this is retrieved using a connection that is not serializable.
+```{r}
+#| label: post
+library(mirai)
+
+# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
+daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
+
+m <- mirai({
+  library(plumber)
+  library(promises) # to provide the promise pipe
+  library(mirai)
+
+  # uses dispatcher - suitable when requests take differing times to complete
+  daemons(4L) # handles 4 requests simultaneously
+
+  pr() |>
+    pr_post(
+      "/echo",
+      function(req, res) {
+        mirai(
+          {
+            Sys.sleep(1L) # simulate expensive computation
+            list(
+              status = 200L,
+              body = list(
+                time = format(Sys.time()),
+                msg = jsonlite::fromJSON(data)[["msg"]],
+                pid = Sys.getpid()
+              )
+            )
+          },
+          data = req$postBody
+        ) %...>% (function(x) {
+          res$status <- x$status
+          res$body <- x$body
+        })
+      }
+    ) |>
+    pr_run(host = "127.0.0.1", port = 8986)
+})
+```
+```{r}
+#| label: sleep2post
+#| echo: false
+Sys.sleep(2)
+```
+Querying the endpoint produces the same set of outputs as the previous example.
+```{r}
+#| label: queryapipost
+library(nanonext)
+res <- lapply(
+  1:8,
+  function(i) ncurl_aio(
+    "http://127.0.0.1:8986/echo",
+    method = "POST",
+    data = sprintf('{"msg":"%d"}', i)
+  )
+)
+collect_aio(res)
+
+daemons(0)
+```
+
+[&laquo; Back to ToC](#table-of-contents)
