@@ -30,11 +30,11 @@ knitr::opts_chunk$set(
 <br /><br />
 Minimalist Async Evaluation Framework for R
 <br /><br />
-Designed for simplicity, a 'mirai' evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion.
+→ Designed for simplicity, a 'mirai' evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion.
 
-Modern networking and concurrency, built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers.
+→ Modern networking and concurrency, built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers.
 
-An inherently queued architecture handles many more tasks than available processes, and requires no storage on the file system. Innovative features include support for otherwise non-exportable reference objects, event-driven promises, and asynchronous parallel map.
+→ A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.
 <br /><br />
 
 ### Quick Start
@@ -196,8 +196,8 @@ install.packages("mirai", repos = "https://r-lib.r-universe.dev")
 
 ### Links & References
 
-◈ mirai R package: <https://mirai.r-lib.org/> <br />
-◈ nanonext R package: <https://nanonext.r-lib.org/>
+📦 mirai R package: <https://mirai.r-lib.org/> <br />
+📦 nanonext R package: <https://nanonext.r-lib.org/>
 
 mirai is listed in CRAN High Performance Computing Task View: <br />
 <https://cran.r-project.org/view=HighPerformanceComputing>

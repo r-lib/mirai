@@ -18,21 +18,22 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 ### ミライ
 
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
-for R <br /><br /> Designed for simplicity, a ‘mirai’ evaluates an R
+for R <br /><br /> → Designed for simplicity, a ‘mirai’ evaluates an R
 expression asynchronously in a parallel process, locally or distributed
 over the network. The result is automatically available upon completion.
 
-Modern networking and concurrency, built on
+→ Modern networking and concurrency, built on
 [nanonext](https://github.com/r-lib/nanonext/) and
 [NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and
 efficient scheduling over fast inter-process communications or TCP/IP
 secured by TLS. Distributed computing can launch remote resources via
 SSH or cluster managers.
 
-An inherently queued architecture handles many more tasks than available
-processes, and requires no storage on the file system. Innovative
-features include support for otherwise non-exportable reference objects,
-event-driven promises, and asynchronous parallel map. <br /><br />
+→ A queued architecture readily handles more tasks than available
+processes, requiring no storage on the file system. Innovative features
+include event-driven promises, asynchronous parallel map, and automatic
+serialization of otherwise non-exportable reference objects.
+<br /><br />
 
 ### Quick Start
 
@@ -80,7 +81,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 5.974919 7.819678 6.149700 7.227810 7.350235
+#> [1] 7.744708 8.563456 7.887419 7.488285 7.024224
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -92,7 +93,7 @@ while (unresolved(m)) {
   # do work here that does not depend on `m`
 }
 m$data
-#> [1] 5.974919 7.819678 6.149700 7.227810 7.350235
+#> [1] 7.744708 8.563456 7.887419 7.488285 7.024224
 ```
 
 #### Daemons
@@ -267,7 +268,7 @@ install.packages("mirai", repos = "https://r-lib.r-universe.dev")
 
 ### Links & References
 
-◈ mirai R package: <https://mirai.r-lib.org/> <br /> ◈ nanonext R
+📦 mirai R package: <https://mirai.r-lib.org/> <br /> 📦 nanonext R
 package: <https://nanonext.r-lib.org/>
 
 mirai is listed in CRAN High Performance Computing Task View: <br />
