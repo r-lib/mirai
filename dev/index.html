@@ -111,14 +111,14 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.367703 6.566552 6.267631 6.196580 8.187586</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.181397 7.911430 7.267798 6.759124 6.963060</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># do work here that does not depend on `m`</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 5.367703 6.566552 6.267631 6.196580 8.187586</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.181397 7.911430 7.267798 6.759124 6.963060</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -211,7 +211,7 @@
 <div class="section level3">
 <h3 id="links--references">Links &amp; References<a class="anchor" aria-label="anchor" href="#links--references"></a>
 </h3>
-<p>📦 mirai R package: <a href="https://mirai.r-lib.org/" class="uri">https://mirai.r-lib.org/</a> <br> 📦 nanonext R package: <a href="https://nanonext.r-lib.org/" class="external-link uri">https://nanonext.r-lib.org/</a></p>
+<p>◈ mirai R package: <a href="https://mirai.r-lib.org/" class="uri">https://mirai.r-lib.org/</a> <br> ◈ nanonext R package: <a href="https://nanonext.r-lib.org/" class="external-link uri">https://nanonext.r-lib.org/</a></p>
 <p>mirai is listed in CRAN High Performance Computing Task View: <br><a href="https://cran.r-project.org/view=HighPerformanceComputing" class="external-link uri">https://cran.r-project.org/view=HighPerformanceComputing</a></p>
 <p>–</p>
 <p>Please note that this project is released with a <a href="https://mirai.r-lib.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
