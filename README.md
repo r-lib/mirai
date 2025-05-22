@@ -77,7 +77,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 7.907648 9.067041 7.443345 7.147706 6.823821
+#> [1] 5.512802 6.910637 7.419166 6.529761 6.267911
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -91,7 +91,7 @@ while (unresolved(m)) {
 m
 #> < mirai [$data] >
 m$data
-#> [1] 7.907648 9.067041 7.443345 7.147706 6.823821
+#> [1] 5.512802 6.910637 7.419166 6.529761 6.267911
 ```
 
 #### Daemons
