@@ -588,14 +588,16 @@ ephemeral_daemon <- function(data, timeout) {
     stderr = FALSE,
     wait = FALSE
   )
-  request(
+  aio <- request(
     .context(sock),
     data,
     send_mode = 1L,
     recv_mode = 1L,
     timeout = timeout,
-    cv = sock
+    cv = NA
   )
+  `attr<-`(.subset2(aio, "aio"), "sock", sock)
+  aio
 }
 
 deparse_safe <- function(x)
