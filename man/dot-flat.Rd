@@ -40,8 +40,7 @@ or else a simple text progress indicator. Note: if the map operation
 completes too quickly then the progress bar may not show at all.
 
 \code{x[.stop]} collects map results applying early stopping, which stops at
-the first failure and cancels remaining operations. Note: operations already
-in progress continue to completion, although their results are not collected.
+the first failure and cancels remaining operations.
 
 The options above may be combined in the manner of: \cr
 \code{x[.stop, .progress]} which applies early stopping together with a
