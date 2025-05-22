@@ -81,7 +81,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 5.367703 6.566552 6.267631 6.196580 8.187586
+#> [1] 6.288799 7.337810 6.767335 7.435713 7.628763
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -93,7 +93,7 @@ while (unresolved(m)) {
   # do work here that does not depend on `m`
 }
 m$data
-#> [1] 5.367703 6.566552 6.267631 6.196580 8.187586
+#> [1] 6.288799 7.337810 6.767335 7.435713 7.628763
 ```
 
 #### Daemons
@@ -159,19 +159,19 @@ m[.flat]
 mirai is designed from the ground up to provide a production-grade
 experience.
 
-🚀 Fast
+→ Fast
 
 - 1,000x more responsive vs. common alternatives
   [<sup>\[1\]</sup>](https://github.com/r-lib/mirai/pull/142#issuecomment-2457589563)
 - Built for low-latency applications e.g. real time inference & Shiny
   apps
 
-✨ Reliable
+→ Reliable
 
-- No reliance on global options or variables -\> consistent behaviour
-- Explicit evaluation -\> transparent and predictable results
+- No reliance on global options or variables for consistent behaviour
+- Explicit evaluation for transparent and predictable results
 
-📈 Scalable
+→ Scalable
 
 - Launch millions of tasks over thousands of connections
 - Proven track record for heavy-duty workloads in the life sciences
@@ -268,7 +268,7 @@ install.packages("mirai", repos = "https://r-lib.r-universe.dev")
 
 ### Links & References
 
-📦 mirai R package: <https://mirai.r-lib.org/> <br /> 📦 nanonext R
+◈ mirai R package: <https://mirai.r-lib.org/> <br /> ◈ nanonext R
 package: <https://nanonext.r-lib.org/>
 
 mirai is listed in CRAN High Performance Computing Task View: <br />
