@@ -16,24 +16,22 @@ knitr::opts_chunk$set(
 ```
 ### Table of Contents
 
-1. [Introduction](#introduction)
-1. [Key Advantages](#key-advantages)
+1. [Introduction and Key Advantages](#introduction-and-key-advantages)
 1. [Collecting Results](#collecting-results)
 1. [Multiple Map](#multiple-map)
 
-### Introduction
+### Introduction and Key Advantages
 
 `mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
 
 This function is similar to `purrr::map()`, but returns a 'mirai_map' object.
-It is also more advanced as it allows multiple map over the rows of a dataframe or matrix - and can in fact be used to implement all map variations from that package.
+It is also more advanced as it allows multiple map over the rows of a dataframe or matrix.
+It is in fact used to implement all parallel map variations from that package.
 
 The results of a mirai_map `x` may be collected using `x[]`.
 This waits for all asynchronous operations to complete if still in progress.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Key advantages
+It offers the following key advantages:
 
 1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
 1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects (such as checkpointing or sending a progress update).
@@ -71,7 +69,8 @@ ml <- mirai_map(
 ml
 ml[]
 ```
-Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if not.
+
+> Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case.
 
 [&laquo; Back to ToC](#table-of-contents)
 
