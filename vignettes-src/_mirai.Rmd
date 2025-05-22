@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette is a quick introduction to mirai through 3 typical use cases. Other package vignettes contain more in-depth information on a variety of topics.
+This vignette provides a quick introduction through 3 typical use cases. Other package vignettes contain more in-depth information on a variety of topics.
 
 ### Table of Contents
 

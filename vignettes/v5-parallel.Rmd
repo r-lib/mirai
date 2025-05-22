@@ -33,7 +33,7 @@ library(mirai)
 
 cl <- makeCluster(6, type = "MIRAI")
 cl
-#> < miraiCluster | ID: `17` nodes: 6 active: TRUE >
+#> < miraiCluster | ID: `0` nodes: 6 active: TRUE >
 parLapply(cl, iris, mean)
 #> $Sepal.Length
 #> [1] 5.843333
@@ -59,7 +59,7 @@ status(cl)
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/46cf8bbf2c64bde8e197055d"
+#> [1] "ipc:///tmp/468d15baad12987297924d3a"
 stopCluster(cl)
 ```
 
@@ -70,10 +70,10 @@ cl <- make_cluster(n = 2, url = host_url())
 #> Shell commands for deployment on nodes:
 #> 
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:63589",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-280151247,-938810562,-1585439065,-204601668,-1190203251,-474297878))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:49947",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1353351353,-1043629786,-29560465,-1602291484,-248192363,-1183841710))'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:63589",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-1795872797,798175556,2147471135,874907559,719327722,-451341832))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:49947",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-440398556,800923107,1329159622,2121404046,1811662990,825393618))'
 stop_cluster(cl)
 ```
 
@@ -88,6 +88,8 @@ Running some parallel examples for the `foreach()` function:
 
 ``` r
 library(doParallel)
+#> Loading required package: foreach
+#> Loading required package: iterators
 library(foreach)
 
 cl <- makeCluster(6, type = "MIRAI")
@@ -97,10 +99,11 @@ registerDoParallel(cl)
 m <- matrix(rnorm(9), 3, 3)
 foreach(i = 1:nrow(m), .combine = rbind) %dopar%
   (m[i, ] / mean(m[i, ]))
-#>               [,1]      [,2]      [,3]
-#> result.1 0.1898342  2.137246 0.6729202
-#> result.2 3.5909143 -1.151577 0.5606628
-#> result.3 3.1744328 -1.274058 1.0996252
+#>                [,1]        [,2]      [,3]
+#> result.1   1.101225   0.4266552  1.472120
+#> result.2  -1.268963   1.0011693  3.267793
+#> result.3 -10.306468 -20.4872993 33.793767
+
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)
 b <- t(a)

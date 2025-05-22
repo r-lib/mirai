@@ -81,6 +81,7 @@ registerDoParallel(cl)
 m <- matrix(rnorm(9), 3, 3)
 foreach(i = 1:nrow(m), .combine = rbind) %dopar%
   (m[i, ] / mean(m[i, ]))
+
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)
 b <- t(a)
