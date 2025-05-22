@@ -20,7 +20,7 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br /> → Designed for simplicity, a ‘mirai’ evaluates an R
 expression asynchronously in a parallel process, locally or distributed
-over the network. The result is automatically available upon completion.
+over the network.
 
 → Modern networking and concurrency, built on
 [nanonext](https://github.com/r-lib/nanonext/) and
@@ -81,7 +81,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 7.744708 8.563456 7.887419 7.488285 7.024224
+#> [1] 5.367703 6.566552 6.267631 6.196580 8.187586
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -93,7 +93,7 @@ while (unresolved(m)) {
   # do work here that does not depend on `m`
 }
 m$data
-#> [1] 7.744708 8.563456 7.887419 7.488285 7.024224
+#> [1] 5.367703 6.566552 6.267631 6.196580 8.187586
 ```
 
 #### Daemons
@@ -108,7 +108,7 @@ daemons(6)
 #> [1] 6
 ```
 
-🌐️️ Daemons may also be deployed
+Daemons may also be deployed
 [remotely](https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons)
 for distributed computing over the network.
 
@@ -159,23 +159,27 @@ m[.flat]
 mirai is designed from the ground up to provide a production-grade
 experience.
 
-- 🚀 Fast
-  - 1,000x more responsive vs. common alternatives
-    [<sup>\[1\]</sup>](https://github.com/r-lib/mirai/pull/142#issuecomment-2457589563)
-  - Built for low-latency applications: real time inference & Shiny apps
-- ✨ Reliable
-  - No reliance on global options or variables -\> consistent behaviour
-  - Explicit evaluation -\> transparent and predictable results
-- 📈 Scalable
-  - Launch millions of tasks over thousands of connections
-  - Proven track record for heavy-duty workloads in the life sciences
-    industry
+🚀 Fast
+
+- 1,000x more responsive vs. common alternatives
+  [<sup>\[1\]</sup>](https://github.com/r-lib/mirai/pull/142#issuecomment-2457589563)
+- Built for low-latency applications e.g. real time inference & Shiny
+  apps
+
+✨ Reliable
+
+- No reliance on global options or variables -\> consistent behaviour
+- Explicit evaluation -\> transparent and predictable results
+
+📈 Scalable
+
+- Launch millions of tasks over thousands of connections
+- Proven track record for heavy-duty workloads in the life sciences
+  industry
 
 [<img alt="Joe Cheng on mirai with Shiny" src="https://img.youtube.com/vi/GhX0PcEm3CY/hqdefault.jpg" width = "300" height="225" />](https://youtu.be/GhX0PcEm3CY?t=1740)
  
 [<img alt="Will Landau on mirai in clinical trials" src="https://img.youtube.com/vi/cyF2dzloVLo/hqdefault.jpg" width = "300" height="225" />](https://youtu.be/cyF2dzloVLo?t=5127)
-
-> *mirai パッケージを試してみたところ、かなり速くて驚きました*
 
 ### Powering the Ecosystem
 
@@ -247,10 +251,6 @@ efficient solution to serialization and transmission of torch tensors.
 
 [Kirill Müller](https://github.com/krlmlr/) for discussion on using
 parallel processes to host Arrow database connections.
-
-[<img alt="R Consortium" src="https://r-consortium.org/images/RConsortium_Horizontal_Pantone.webp" width="100" height="22" />](https://r-consortium.org/) 
-for funding work on the TLS implementation in nanonext, used to provide
-secure connections in mirai.
 
 ### Installation
 
