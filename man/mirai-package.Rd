@@ -11,10 +11,10 @@ automatically available upon completion. Modern networking and concurrency,
 built on 'nanonext' and 'NNG' (Nanomsg Next Gen), ensures reliable and
 efficient scheduling over fast inter-process communications or TCP/IP secured
 by TLS. Distributed computing can launch remote resources via SSH or cluster
-managers. An inherently queued architecture handles many more tasks than
-available processes, and requires no storage on the file system. Innovative
-features include support for otherwise non-exportable reference objects,
-event-driven promises, and asynchronous parallel map.
+managers. A queued architecture handles many more tasks than available
+processes, and requires no storage on the file system. Innovative features
+include event-driven promises, asynchronous parallel map, and serialization
+of otherwise non-exportable reference objects.
 }
 \section{Notes}{
 
