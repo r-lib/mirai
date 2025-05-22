@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Minimalist Async Evaluation Framework for R">
-<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
-<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
+<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
+<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
 <meta property="og:image" content="https://mirai.r-lib.org/logo.png">
 <meta name="robots" content="noindex">
 <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
@@ -80,7 +80,7 @@
 <div class="section level3">
 <h3 id="ミライ">ミライ<a class="anchor" aria-label="anchor" href="#%E3%83%9F%E3%83%A9%E3%82%A4"></a>
 </h3>
-<p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br> → Designed for simplicity, a ‘mirai’ evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. The result is automatically available upon completion.</p>
+<p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br> → Designed for simplicity, a ‘mirai’ evaluates an R expression asynchronously in a parallel process, locally or distributed over the network.</p>
 <p>→ Modern networking and concurrency, built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers.</p>
 <p>→ A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects. <br><br></p>
 </div>
@@ -111,14 +111,14 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 7.744708 8.563456 7.887419 7.488285 7.024224</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.808292 6.678410 8.205624 5.968273 6.668092</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># do work here that does not depend on `m`</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 7.744708 8.563456 7.887419 7.488285 7.024224</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.808292 6.678410 8.205624 5.968273 6.668092</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -126,7 +126,7 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>🌐️️ Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons">remotely</a> for distributed computing over the network.</p>
+<p>Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons">remotely</a> for distributed computing over the network.</p>
 <p>🛰️️ <a href="https://mirai.r-lib.org/articles/v1-daemons.html#launching-remote-daemons">Launchers</a> can start daemons via (tunnelled) SSH or a cluster resource manager.</p>
 <p>🔐 <a href="https://mirai.r-lib.org/articles/v1-daemons.html#tls-secure-connections">Secure TLS connections</a> can be used for remote daemon connections, with zero configuration required.</p>
 </div>
@@ -156,31 +156,23 @@
 <h3 id="design-concepts">Design Concepts<a class="anchor" aria-label="anchor" href="#design-concepts"></a>
 </h3>
 <p>mirai is designed from the ground up to provide a production-grade experience.</p>
-<ul>
-<li>🚀 Fast
+<p>🚀 Fast</p>
 <ul>
 <li>1,000x more responsive vs. common alternatives <a href="https://github.com/r-lib/mirai/pull/142#issuecomment-2457589563" class="external-link"><sup>[1]</sup></a>
 </li>
-<li>Built for low-latency applications: real time inference &amp; Shiny apps</li>
+<li>Built for low-latency applications e.g. real time inference &amp; Shiny apps</li>
 </ul>
-</li>
-<li>✨ Reliable
+<p>✨ Reliable</p>
 <ul>
 <li>No reliance on global options or variables -&gt; consistent behaviour</li>
 <li>Explicit evaluation -&gt; transparent and predictable results</li>
 </ul>
-</li>
-<li>📈 Scalable
+<p>📈 Scalable</p>
 <ul>
 <li>Launch millions of tasks over thousands of connections</li>
 <li>Proven track record for heavy-duty workloads in the life sciences industry</li>
 </ul>
-</li>
-</ul>
 <p><a href="https://youtu.be/GhX0PcEm3CY?t=1740" class="external-link"><img alt="Joe Cheng on mirai with Shiny" src="https://img.youtube.com/vi/GhX0PcEm3CY/hqdefault.jpg" width="300" height="225"></a>   <a href="https://youtu.be/cyF2dzloVLo?t=5127" class="external-link"><img alt="Will Landau on mirai in clinical trials" src="https://img.youtube.com/vi/cyF2dzloVLo/hqdefault.jpg" width="300" height="225"></a></p>
-<blockquote>
-<p><em>mirai パッケージを試してみたところ、かなり速くて驚きました</em></p>
-</blockquote>
 </div>
 <div class="section level3">
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
