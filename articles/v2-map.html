@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>2. Async Map • mirai</title>
+<title>2. Async Parallel Map • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2. Async Map">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2. Async Parallel Map">
 <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
-    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Parallel Map</a></li>
     <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
@@ -70,10 +70,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>2. Async Map</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>2. Async Parallel Map</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/dev/vignettes/v2-map.Rmd" class="external-link"><code>vignettes/v2-map.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v2-map.Rmd" class="external-link"><code>vignettes/v2-map.Rmd</code></a></small>
       <div class="d-none name"><code>v2-map.Rmd</code></div>
     </div>
 
@@ -83,24 +83,25 @@
 <h3 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><a href="#asynchronous-map">Asynchronous Map</a></li>
+<li><a href="#introduction-and-key-advantages">Introduction and Key
+Advantages</a></li>
+<li><a href="#collecting-results">Collecting Results</a></li>
+<li><a href="#multiple-map">Multiple Map</a></li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="asynchronous-map">Asynchronous Map<a class="anchor" aria-label="anchor" href="#asynchronous-map"></a>
+<h3 id="introduction-and-key-advantages">Introduction and Key Advantages<a class="anchor" aria-label="anchor" href="#introduction-and-key-advantages"></a>
 </h3>
 <p><code><a href="../reference/mirai_map.html">mirai_map()</a></code> performs asynchronous parallel/distributed
 map using <code>mirai</code>.</p>
 <p>This function is similar to <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>, but returns a
 ‘mirai_map’ object. It is also more advanced as it allows multiple map
-over the rows of a dataframe or matrix - and can in fact be used to
-implement all map variations from that package.</p>
+over the rows of a dataframe or matrix. It is in fact used to implement
+all parallel map variations from that package.</p>
 <p>The results of a mirai_map <code>x</code> may be collected using
 <code>x[]</code>. This waits for all asynchronous operations to complete
 if still in progress.</p>
-<div class="section level4">
-<h4 id="key-advantages">Key advantages:<a class="anchor" aria-label="anchor" href="#key-advantages"></a>
-</h4>
+<p>It offers the following key advantages:</p>
 <ol style="list-style-type: decimal">
 <li>Returns immediately with all evaluations taking place
 asynchronously. Printing a ‘mirai map’ object shows the current
@@ -127,10 +128,10 @@ optimally. This is demonstrated in the example below.</li>
 <span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.002   0.005   4.007</span></span>
+<span><span class="co">#&gt;   0.003   0.009   4.007</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.004   0.007   8.011</span></span>
+<span><span class="co">#&gt;   0.006   0.017   8.004</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><code>.args</code> is used to specify further constant arguments to
@@ -141,13 +142,13 @@ optimally. This is demonstrated in the example below.</li>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 16.2074</span></span>
+<span><span class="co">#&gt; [1] 21.4368</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 18.81434 24.33911</span></span>
+<span><span class="co">#&gt; [1] 18.48262 25.45403</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] 18.58115 18.52851 18.69780</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 19.16141 22.79903 19.24614</span></span></code></pre></div>
 <p>Use <code>...</code> to further specify objects referenced but not
 defined in <code>.f</code> - the ‘do’ in the anonymous function
 below:</p>
@@ -163,19 +164,22 @@ below:</p>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "6b"</span></span>
+<span><span class="co">#&gt; [1] "6a"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] 2a 8b</span></span>
+<span><span class="co">#&gt; [1] 42 b7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "d022f7"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "08cbc5"</span></span></code></pre></div>
+<blockquote>
 <p>Use of <code><a href="../reference/mirai_map.html">mirai_map()</a></code> requires that <code><a href="../reference/daemons.html">daemons()</a></code>
-have previously been set, and will error if not.</p>
+have previously been set, and will error if this is not the case.</p>
+</blockquote>
+<p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
-<div class="section level4">
-<h4 id="collecting-results">Collecting Results<a class="anchor" aria-label="anchor" href="#collecting-results"></a>
-</h4>
+<div class="section level3">
+<h3 id="collecting-results">Collecting Results<a class="anchor" aria-label="anchor" href="#collecting-results"></a>
+</h3>
 <p>When collecting the results, optionally specify arguments to
 <code>[]</code>:</p>
 <ul>
@@ -209,10 +213,11 @@ displaying the error message.</li>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span><span class="op">)</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="va">.progress</span>, <span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
-<div class="section level4">
-<h4 id="multiple-map">Multiple Map<a class="anchor" aria-label="anchor" href="#multiple-map"></a>
-</h4>
+<div class="section level3">
+<h3 id="multiple-map">Multiple Map<a class="anchor" aria-label="anchor" href="#multiple-map"></a>
+</h3>
 <p>Multiple map is performed over the <strong>rows</strong> of a
 dataframe or matrix, as this is most often the desired behaviour.</p>
 <blockquote>
@@ -254,7 +259,6 @@ transpose of the matrix beforehand using <code><a href="https://rdrr.io/r/base/t
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

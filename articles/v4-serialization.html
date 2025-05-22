@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
-    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Parallel Map</a></li>
     <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>4. Serialization - Arrow, ADBC, polars, torch</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/dev/vignettes/v4-serialization.Rmd" class="external-link"><code>vignettes/v4-serialization.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v4-serialization.Rmd" class="external-link"><code>vignettes/v4-serialization.Rmd</code></a></small>
       <div class="d-none name"><code>v4-serialization.Rmd</code></div>
     </div>
 
@@ -85,7 +85,7 @@
 <ol style="list-style-type: decimal">
 <li><a href="#serialization-arrow-polars-and-beyond">Serialization:
 Arrow, polars and beyond</a></li>
-<li><a href="#torch-integration">Torch Integration</a></li>
+<li><a href="#serialization-torch">Serialization: Torch</a></li>
 <li><a href="#database-hosting-using-arrow-database-connectivity">Database
 Hosting using Arrow Database Connectivity</a></li>
 <li><a href="#shiny-mirai-dbi-adbc-integrated-example">Shiny / mirai /
@@ -102,7 +102,8 @@ those accessed via an external pointer. In these cases, performing
 <p>Using the <a href="https://arrow.apache.org/docs/r/" class="external-link"><code>arrow</code></a> package
 as an example:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
 <span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span><span class="op">)</span><span class="op">)</span></span>
@@ -196,7 +197,7 @@ with <a href="https://pola-rs.github.io/r-polars/" class="external-link"><code>p
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 <div class="section level3">
-<h3 id="torch-integration">Torch Integration<a class="anchor" aria-label="anchor" href="#torch-integration"></a>
+<h3 id="serialization-torch">Serialization: Torch<a class="anchor" aria-label="anchor" href="#serialization-torch"></a>
 </h3>
 <p>Tensors from the <a href="https://torch.mlverse.org/" class="external-link"><code>torch</code></a> package may be
 used seamlessly in ‘mirai’ computations.</p>
@@ -265,35 +266,35 @@ initialized within a ‘mirai’.</p>
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">conv1.weight</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
 <span><span class="co">#&gt; (1,1,.,.) = </span></span>
-<span><span class="co">#&gt;   0.0180 -0.1920  0.1102  0.0639  0.1679</span></span>
-<span><span class="co">#&gt;  -0.0037  0.1501 -0.1862 -0.1891  0.1500</span></span>
-<span><span class="co">#&gt;   0.1939  0.1854 -0.1096  0.0136  0.0045</span></span>
-<span><span class="co">#&gt;  -0.0070  0.0533 -0.1531 -0.1190  0.0315</span></span>
-<span><span class="co">#&gt;  -0.1269  0.0499 -0.0812  0.0920 -0.1358</span></span>
+<span><span class="co">#&gt;   0.0819  0.1133 -0.1414  0.1952 -0.1873</span></span>
+<span><span class="co">#&gt;  -0.0891  0.0270  0.1191 -0.0464 -0.0070</span></span>
+<span><span class="co">#&gt;   0.1356  0.1064  0.1864  0.1305  0.1798</span></span>
+<span><span class="co">#&gt;   0.1298  0.0821  0.0562  0.0589 -0.0959</span></span>
+<span><span class="co">#&gt;  -0.1518  0.1985  0.1805  0.0345 -0.1971</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (2,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0212 -0.0731  0.1894  0.1060 -0.0970</span></span>
-<span><span class="co">#&gt;   0.1368  0.1442 -0.1965  0.0960 -0.0542</span></span>
-<span><span class="co">#&gt;   0.1199 -0.0676  0.0403 -0.0391  0.0826</span></span>
-<span><span class="co">#&gt;   0.1373  0.1470 -0.0590 -0.1970  0.0948</span></span>
-<span><span class="co">#&gt;   0.1500  0.0139  0.0935  0.1283  0.1788</span></span>
+<span><span class="co">#&gt;  -0.1264 -0.0125 -0.0202  0.1182  0.1244</span></span>
+<span><span class="co">#&gt;   0.1154 -0.0031  0.1793 -0.1635 -0.0745</span></span>
+<span><span class="co">#&gt;   0.0472  0.1440 -0.0050  0.1924  0.1731</span></span>
+<span><span class="co">#&gt;  -0.0779  0.0934 -0.1557  0.1600 -0.1897</span></span>
+<span><span class="co">#&gt;   0.0471 -0.1021 -0.1683 -0.0790 -0.1609</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (3,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.1146  0.1936  0.1097  0.1469  0.1125</span></span>
-<span><span class="co">#&gt;   0.1973  0.0972 -0.0585 -0.1374  0.0981</span></span>
-<span><span class="co">#&gt;   0.1880 -0.1006  0.0792 -0.0787  0.1901</span></span>
-<span><span class="co">#&gt;   0.1609 -0.1286 -0.0024  0.1441 -0.1245</span></span>
-<span><span class="co">#&gt;  -0.1851  0.1854 -0.0864  0.1725 -0.0605</span></span>
+<span><span class="co">#&gt;   0.1492  0.0792 -0.1541 -0.1382  0.1055</span></span>
+<span><span class="co">#&gt;  -0.0194  0.1130  0.0035  0.0372 -0.0765</span></span>
+<span><span class="co">#&gt;  -0.0094  0.0892 -0.1291 -0.1263 -0.1995</span></span>
+<span><span class="co">#&gt;  -0.1420  0.1769 -0.1180 -0.1237  0.1703</span></span>
+<span><span class="co">#&gt;  -0.0844 -0.0603 -0.0840  0.1627 -0.0893</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (4,1,.,.) = </span></span>
-<span><span class="co">#&gt;   0.1032 -0.1693 -0.0748  0.0240 -0.0484</span></span>
-<span><span class="co">#&gt;  -0.0126  0.1168  0.0081 -0.0170 -0.0051</span></span>
-<span><span class="co">#&gt;   0.1298 -0.1742 -0.1381  0.0407 -0.0225</span></span>
-<span><span class="co">#&gt;  -0.0674 -0.1340 -0.1437 -0.0247 -0.1070</span></span>
-<span><span class="co">#&gt;   0.0989 -0.1636  0.0016 -0.1275  0.0814</span></span>
+<span><span class="co">#&gt;  -0.0244  0.1084 -0.0833  0.0874 -0.0458</span></span>
+<span><span class="co">#&gt;  -0.1197  0.0395  0.0854  0.1207 -0.0940</span></span>
+<span><span class="co">#&gt;   0.0985  0.0751  0.0837 -0.0775  0.1109</span></span>
+<span><span class="co">#&gt;   0.0663 -0.0570 -0.0031 -0.1076  0.0321</span></span>
+<span><span class="co">#&gt;   0.0204 -0.1927 -0.1126  0.0482  0.1241</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (5,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0407  0.1444  0.0153  0.0682  0.0335</span></span>
+<span><span class="co">#&gt;  -0.1691  0.1692 -0.0388  0.0829 -0.1553</span></span>
 <span><span class="co">#&gt; ... [the output was truncated (use n=-1 to disable)]</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]</span></span></code></pre></div>
 <p>It is usual for model parameters to then be passed to an

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
-    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Parallel Map</a></li>
     <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>7. Community FAQs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/dev/vignettes/v7-community.Rmd" class="external-link"><code>vignettes/v7-community.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v7-community.Rmd" class="external-link"><code>vignettes/v7-community.Rmd</code></a></small>
       <div class="d-none name"><code>v7-community.Rmd</code></div>
     </div>
 
@@ -85,7 +85,7 @@
 <ol style="list-style-type: decimal">
 <li><a href="#migration-from-future_promise">Migration from
 future_promise</a></li>
-<li><a href="setting-the-random-seed">Setting the Random Seed</a></li>
+<li><a href="#setting-the-random-seed">Setting the Random Seed</a></li>
 </ol>
 </div>
 <div class="section level3">
@@ -161,10 +161,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] -0.3674240 -0.5417164 -0.4386993</span></span>
+<span><span class="co">#&gt; [1]  0.4182510 -0.1533799  0.4631808</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] -1.624104 -2.084964  1.662856</span></span>
+<span><span class="co">#&gt; [1]  0.7438234 -1.5495708  1.3562752</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -190,17 +190,17 @@ runs.</p>
 <p>The reason the change in random seed persists in all circumstances is
 due to this being a special case, arising from the use of L’Ecuyer CMRG
 streams to provide parallel-safe random numbers.</p>
-<p>Streams can be thought of as entry points far away from each other to
-ensure that random results in each daemon are independent from one
-another. The random seed is not reset after each mirai call to ensure
-that however many random draws are made in any mirai call, the next
-random draw follows on in the stream, and hence have the desired
-statistical properties.</p>
+<p>Streams can be thought of as entry points to the psuedo random number
+line far away from each other to ensure that random results in each
+daemon are independent from one another. The random seed is not reset
+after each mirai call to ensure that however many random draws are made
+in any mirai call, the next random draw follows on in the stream, and
+hence have the desired statistical properties.</p>
 <p>Hence normally, the random seed should be set once on the host
 process when daemons are created, rather than in each daemon.</p>
 <p>If it is required to set the seed in each daemon, this should be done
 using an independent method and set each time random draws are required.
-It is also possible to set the random seed within a local execution
+Another option would be to set the random seed within a local execution
 scope to prevent the global random seed on each daemon from being
 affected.</p>
 <p><em>This example comes from a question raised by Etienne
