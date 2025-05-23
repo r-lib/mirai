@@ -27,7 +27,9 @@ mirai offers the following functions primarily for package authors wishing to bu
 
 2. `on_daemon()` may be used to detect if code is running on a daemon, i.e. within a `mirai()` call.
 
-3. `nextget()`, for querying values for a compute profile, such as 'urls', described in the function's documentation. Note: only the specifically-documented values are supported interfaces.
+3. `register_serial()` may be used by other packages to register custom serialization functions, which are automatically available for all subsequent `daemons()` calls where the 'serial' argument uses the default of `NULL`.
+
+4. `nextget()`, for querying values for a compute profile, such as 'urls', described in the function's documentation. Note: only the specifically-documented values are supported interfaces.
 
 [&laquo; Back to ToC](#table-of-contents)
 

@@ -173,7 +173,7 @@ It is possible using the `DBI` interface to access and manipulate data in the Ap
 
 The example below creates an in-memory SQLite connection using the `adbcsqlite` backend.
 
-Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `everywhere()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
+Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `daemons()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
 
 ```{r}
 #| label: arrow1

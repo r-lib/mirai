@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-
 ### Table of Contents
 
 1. [Alternative Communications Backend for R](#alternative-communications-backend-for-r)

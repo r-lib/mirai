@@ -7,6 +7,7 @@ vignette: >
 ---
 
 
+This vignette is designed to provide a knowledgebase for questions posed by the community, and will be added to over time.
 
 ### Table of Contents
 
@@ -46,8 +47,6 @@ task <- ExtendedTask$new(
 1. `environment()` captures the `...` to be used by the function within the mirai expression, and can be supplied via `.args`.
 2. The definition for `func` is passed through in the usual way.
 
-*This example comes from a question raised by Simon Smart.*
-
 [&laquo; Back to ToC](#table-of-contents)
 
 ### Setting the Random Seed
@@ -66,10 +65,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1]  0.4182510 -0.1533799  0.4631808
+#> [1]  0.17961967 -1.42086665 -0.09406521
 #> 
 #> [[2]]
-#> [1]  0.7438234 -1.5495708  1.3562752
+#> [1] -1.3584870  0.3060082  0.5150974
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {
@@ -103,7 +102,5 @@ Hence normally, the random seed should be set once on the host process when daem
 
 If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required.
 Another option would be to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
-
-*This example comes from a question raised by Etienne Bacher.*
 
 [&laquo; Back to ToC](#table-of-contents)
