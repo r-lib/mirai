@@ -7,7 +7,6 @@ vignette: >
 ---
 
 
-
 ### Table of Contents
 
 1. [Migration from future_promise](#migration-from-future_promise)
@@ -64,10 +63,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1] -0.5969829  0.9032661 -0.9758338
+#> [1] -0.5494613 -0.6049965  0.7560393
 #> 
 #> [[2]]
-#> [1] -1.0719173 -2.1105766  0.7923227
+#> [1] 0.45075835 0.09531028 1.02593552
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {

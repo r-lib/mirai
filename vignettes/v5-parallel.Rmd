@@ -7,7 +7,6 @@ vignette: >
 ---
 
 
-
 ### Table of Contents
 
 1. [Alternative Communications Backend for R](#alternative-communications-backend-for-r)
@@ -59,7 +58,7 @@ status(cl)
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/468d15baad12987297924d3a"
+#> [1] "ipc:///tmp/bfedbd4df86f88a600784a97"
 stopCluster(cl)
 ```
 
@@ -70,10 +69,10 @@ cl <- make_cluster(n = 2, url = host_url())
 #> Shell commands for deployment on nodes:
 #> 
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:49947",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1353351353,-1043629786,-29560465,-1602291484,-248192363,-1183841710))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.5.16:51320",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-2015301958,704158963,-654244456,-659410247,-973143258,-2088471697))'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:49947",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-440398556,800923107,1329159622,2121404046,1811662990,825393618))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.5.16:51320",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1082798196,919607134,-444405288,1518297735,1358819766,-1098042261))'
 stop_cluster(cl)
 ```
 
@@ -99,10 +98,10 @@ registerDoParallel(cl)
 m <- matrix(rnorm(9), 3, 3)
 foreach(i = 1:nrow(m), .combine = rbind) %dopar%
   (m[i, ] / mean(m[i, ]))
-#>                [,1]        [,2]      [,3]
-#> result.1   1.101225   0.4266552  1.472120
-#> result.2  -1.268963   1.0011693  3.267793
-#> result.3 -10.306468 -20.4872993 33.793767
+#>               [,1]      [,2]       [,3]
+#> result.1 33.042790  7.870983 -37.913773
+#> result.2  2.980121  3.078128  -3.058249
+#> result.3 -2.197490 -2.163921   7.361411
 
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)
