@@ -73,12 +73,14 @@
       <img src="../logo.png" class="logo" alt=""><h1>7. Community FAQs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.3.0/vignettes/v7-community.Rmd" class="external-link"><code>vignettes/v7-community.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v7-community.Rmd" class="external-link"><code>vignettes/v7-community.Rmd</code></a></small>
       <div class="d-none name"><code>v7-community.Rmd</code></div>
     </div>
 
     
     
+<p>This vignette is designed to provide a knowledgebase for questions
+posed by the community, and will be added to over time.</p>
 <div class="section level3">
 <h3 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
 </h3>
@@ -137,8 +139,6 @@ by the function within the mirai expression, and can be supplied via
 <li>The definition for <code>func</code> is passed through in the usual
 way.</li>
 </ol>
-<p><em>This example comes from a question raised by Simon
-Smart.</em></p>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 </div>
@@ -161,10 +161,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1]  0.4182510 -0.1533799  0.4631808</span></span>
+<span><span class="co">#&gt; [1]  0.17961967 -1.42086665 -0.09406521</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1]  0.7438234 -1.5495708  1.3562752</span></span>
+<span><span class="co">#&gt; [1] -1.3584870  0.3060082  0.5150974</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -203,8 +203,6 @@ using an independent method and set each time random draws are required.
 Another option would be to set the random seed within a local execution
 scope to prevent the global random seed on each daemon from being
 affected.</p>
-<p><em>This example comes from a question raised by Etienne
-Bacher.</em></p>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

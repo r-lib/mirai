@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>3. Promises - Shiny and Plumber</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.3.0/vignettes/v3-promises.Rmd" class="external-link"><code>vignettes/v3-promises.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v3-promises.Rmd" class="external-link"><code>vignettes/v3-promises.Rmd</code></a></small>
       <div class="d-none name"><code>v3-promises.Rmd</code></div>
     </div>
 
@@ -173,7 +173,7 @@ thousand.</p>
 <span><span class="va">start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10000</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span>, .promise <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">r</span> <span class="op">&lt;&lt;-</span> <span class="va">r</span> <span class="op">+</span> <span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start</span></span>
-<span><span class="co">#&gt; Time difference of 2.327623 secs</span></span>
+<span><span class="co">#&gt; Time difference of 1.897708 secs</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">r</span></span>
 <span><span class="co">#&gt; [1] 50005000</span></span>
@@ -667,7 +667,9 @@ to update a reactive value once the entire map operation has completed
 </h3>
 <p>mirai may be used as an asynchronous backend for <a href="https://www.rplumber.io/" class="external-link"><code>plumber</code></a> pipelines.</p>
 <p>In this example, the plumber router code is run in a daemon process
-itself so that it does not block the interactive process.</p>
+itself so that it does not block the current process - this is useful in
+interactive sessions, but otherwise just taking the code within the
+outer <code><a href="../reference/mirai.html">mirai()</a></code> call will suffice.</p>
 <p>The /echo endpoint takes a GET request, sleeps for 1 second
 (simulating an expensive computation) and simply returns the ‘msg’
 request header together with a timestamp and the process ID of the
@@ -726,28 +728,28 @@ one time (limited by the number of daemons set).</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"1\"],\"pid\":[24581]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:46\"],\"msg\":[\"1\"],\"pid\":[2395]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"2\"],\"pid\":[24583]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:46\"],\"msg\":[\"2\"],\"pid\":[2397]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"3\"],\"pid\":[24593]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:46\"],\"msg\":[\"3\"],\"pid\":[2407]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"4\"],\"pid\":[24583]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:46\"],\"msg\":[\"4\"],\"pid\":[2413]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:55\"],\"msg\":[\"5\"],\"pid\":[24599]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:47\"],\"msg\":[\"5\"],\"pid\":[2397]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"6\"],\"pid\":[24593]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:47\"],\"msg\":[\"6\"],\"pid\":[2395]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"7\"],\"pid\":[24581]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:47\"],\"msg\":[\"7\"],\"pid\":[2407]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:56\"],\"msg\":[\"8\"],\"pid\":[24599]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:47\"],\"msg\":[\"8\"],\"pid\":[2413]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
@@ -815,28 +817,28 @@ previous example.</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"1\"],\"pid\":[24656]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:50\"],\"msg\":[\"1\"],\"pid\":[2470]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"2\"],\"pid\":[24658]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:50\"],\"msg\":[\"2\"],\"pid\":[2472]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"3\"],\"pid\":[24656]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:50\"],\"msg\":[\"3\"],\"pid\":[2482]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"4\"],\"pid\":[24664]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:51\"],\"msg\":[\"4\"],\"pid\":[2482]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"5\"],\"pid\":[24664]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:50\"],\"msg\":[\"5\"],\"pid\":[2488]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"6\"],\"pid\":[24674]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:51\"],\"msg\":[\"6\"],\"pid\":[2470]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:28:59\"],\"msg\":[\"7\"],\"pid\":[24674]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:51\"],\"msg\":[\"7\"],\"pid\":[2488]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-22 11:29:00\"],\"msg\":[\"8\"],\"pid\":[24658]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-05-23 08:44:51\"],\"msg\":[\"8\"],\"pid\":[2472]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>

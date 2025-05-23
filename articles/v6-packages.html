@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>6. Guidance for Package Authors</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.3.0/vignettes/v6-packages.Rmd" class="external-link"><code>vignettes/v6-packages.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v6-packages.Rmd" class="external-link"><code>vignettes/v6-packages.Rmd</code></a></small>
       <div class="d-none name"><code>v6-packages.Rmd</code></div>
     </div>
 
@@ -97,6 +97,12 @@ wishing to build on mirai:</p>
 already been set and prompt the user to set daemons if not.</p></li>
 <li><p><code><a href="../reference/on_daemon.html">on_daemon()</a></code> may be used to detect if code is running
 on a daemon, i.e. within a <code><a href="../reference/mirai.html">mirai()</a></code> call.</p></li>
+<li><p><code><a href="../reference/register_serial.html">register_serial()</a></code> may be used by other packages to
+register custom serialization functions, which are automatically
+available for all subsequent <code><a href="../reference/daemons.html">daemons()</a></code> calls where the
+‘serial’ argument uses the default of <code>NULL</code>. The effect is
+additive, and does not remove any previously-registered
+functions.</p></li>
 <li><p><code><a href="../reference/nextstream.html">nextget()</a></code>, for querying values for a compute
 profile, such as ‘urls’, described in the function’s documentation.
 Note: only the specifically-documented values are supported
