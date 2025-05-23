@@ -1,5 +1,3 @@
-# mirai (development version)
-
 # mirai 2.3.0
 
 #### Behavioural Changes
