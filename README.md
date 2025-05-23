@@ -46,7 +46,14 @@ vector of random values.
 ``` r
 library(mirai)
 
-m <- mirai({Sys.sleep(n); rnorm(n, mean)}, n = 5L, mean = 7)
+m <- mirai(
+  {
+    Sys.sleep(n)
+    rnorm(n, mean)
+  },
+  n = 3L,
+  mean = 7
+)
 ```
 
 > The mirai expression is evaluated in another process and hence must be
@@ -54,8 +61,7 @@ m <- mirai({Sys.sleep(n); rnorm(n, mean)}, n = 5L, mean = 7)
 > there. Above, the variables `n` and `mean` are passed as part of the
 > `mirai()` call.
 
-A ‘mirai’ object is returned immediately - creating a mirai never blocks
-the session.
+A ‘mirai’ object is returned immediately, and is always non-blocking.
 
 ``` r
 m
@@ -63,7 +69,7 @@ m
 ```
 
 Whilst the async operation is ongoing, attempting to access a mirai’s
-data yields an ‘unresolved’ logical NA.
+`$data` yields an ‘unresolved’ logical NA.
 
 ``` r
 m$data
@@ -81,7 +87,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 6.288799 7.337810 6.767335 7.435713 7.628763
+#> [1] 7.775407 5.847902 5.866847
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -90,10 +96,10 @@ at `$data`.
 
 ``` r
 while (unresolved(m)) {
-  # do work here that does not depend on `m`
+  # do other work
 }
 m$data
-#> [1] 6.288799 7.337810 6.767335 7.435713 7.628763
+#> [1] 7.775407 5.847902 5.866847
 ```
 
 #### Daemons
@@ -124,22 +130,27 @@ required.
 #### Async Parallel Map
 
 `mirai_map()` maps a function over a list or vector, with each element
-processed in a separate parallel process. It also performs multiple map
-over the rows of a dataframe or matrix.
+processed in a separate parallel process.
+
+For a dataframe or matrix, it automatically performs multiple map over
+the rows.
 
 ``` r
 df <- data.frame(
   fruit = c("melon", "grapes", "coconut"),
   price = c(3L, 5L, 2L)
 )
-m <- mirai_map(df, \(...) sprintf("%s: $%d", ...))
+m <- mirai_map(
+  df,
+  \(...) sprintf("%s: $%d", ...)
+)
 ```
 
 A ‘mirai_map’ object is returned immediately, and is always
 non-blocking.
 
-Its value may be retrieved at any time using its `[]` method to return a
-list, just like `purrr::map()`. The `[]` method also provides options
+Its value may be retrieved at any time using its `[]` method, returning
+a list just like `purrr::map()`. The `[]` method also provides options
 for flatmap, early stopping and/or progress indicators.
 
 ``` r
