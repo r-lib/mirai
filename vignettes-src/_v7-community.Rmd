@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
+This vignette is designed to provide a knowledgebase for questions posed by the community, and will be added to over time.
+
 ### Table of Contents
 
 1. [Migration from future_promise](#migration-from-future_promise)
