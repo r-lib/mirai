@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-
 ### Table of Contents
 
 1. [Event-driven Promises](#event-driven-promises)
@@ -559,7 +558,7 @@ with(daemons(8), runApp(app))
 
 mirai may be used as an asynchronous backend for [`plumber`](https://www.rplumber.io/) pipelines.
 
-In this example, the plumber router code is run in a daemon process itself so that it does not block the interactive process.
+In this example, the plumber router code is run in a daemon process itself so that it does not block the current process - this is useful in interactive sessions, but otherwise just taking the code within the outer `mirai()` call will suffice.
 
 The /echo endpoint takes a GET request, sleeps for 1 second (simulating an expensive computation) and simply returns the 'msg' request header together with a timestamp and the process ID of the process it is run on.
 
