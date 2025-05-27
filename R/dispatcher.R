@@ -57,8 +57,7 @@ dispatcher <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
   dial_and_sync_socket(sock, host)
 
-  ctx <- .context(sock)
-  req <- recv_aio(ctx, mode = 1L, cv = cv)
+  req <- recv_aio(sock, mode = 1L, cv = cv)
   while(!until(cv, .limit_long))
     cv_signal(cv) || wait(cv) || return()
   res <- collect_aio(req)
@@ -84,9 +83,9 @@ dispatcher <- function(
   m <- monitor(psock, cv)
   listen(psock, url = url, tls = tls, fail = 2L)
 
-  msgid <- 0L
   inq <- outq <- list()
   events <- integer()
+  count <- 0L
   envir <- new.env(hash = FALSE)
   if (is.numeric(rs)) `[[<-`(envir, "stream", as.integer(rs))
   if (auto) {
@@ -115,7 +114,7 @@ dispatcher <- function(
       url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
   }
 
-  send(ctx, c(Sys.getpid(), url), mode = 2L, block = TRUE)
+  send(sock, c(Sys.getpid(), url), mode = 2L, block = TRUE)
 
   ctx <- .context(sock)
   req <- recv_aio(ctx, mode = 8L, cv = cv)
@@ -164,6 +163,7 @@ dispatcher <- function(
               length(outq),
               length(inq),
               sum(as.logical(unlist(lapply(outq, .subset2, "msgid"), use.names = FALSE))),
+              count,
               events
             )
             events <- integer()
@@ -186,8 +186,8 @@ dispatcher <- function(
           }
           send(ctx, found, mode = 2L, block = TRUE)
         } else {
-          msgid <- msgid + 1L
-          inq[[length(inq) + 1L]] <- list(ctx = ctx, req = value, msgid = msgid)
+          count <- count + 1L
+          inq[[length(inq) + 1L]] <- list(ctx = ctx, req = value, msgid = .read_header(value))
         }
         ctx <- .context(sock)
         req <- recv_aio(ctx, mode = 8L, cv = cv)

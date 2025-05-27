@@ -88,9 +88,3 @@ next_stream <- function(envir) {
   if (is.integer(stream)) `[[<-`(envir, "stream", parallel::nextRNGStream(stream))
   stream
 }
-
-next_msgid <- function(envir) {
-  prev <- envir[["msgid"]]
-  is.null(prev) && return()
-  envir[["msgid"]] <- prev + 1L
-}

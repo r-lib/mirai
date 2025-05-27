@@ -183,7 +183,7 @@ mirai <- function(
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    id = next_msgid(envir)
+    id = envir[["msgid"]]
   )
 }
 

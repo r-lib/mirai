@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.
+
 # mirai 2.3.0
 
 #### Behavioural Changes
