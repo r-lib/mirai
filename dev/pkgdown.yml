@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   mirai: mirai.html
@@ -10,7 +10,7 @@ articles:
   v5-parallel: v5-parallel.html
   v6-packages: v6-packages.html
   v7-community: v7-community.html
-last_built: 2025-05-23T09:02Z
+last_built: 2025-05-27T23:15Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles
