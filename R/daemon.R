@@ -16,9 +16,9 @@
 #' @param url the character host or dispatcher URL to dial into, including the
 #'   port to connect to, e.g. 'tcp://hostname:5555' or
 #'   'tls+tcp://10.75.32.70:5555'.
-#' @param ... reserved but not currently used.
-#' @param dispatcher \[default FALSE\] logical value, which should be set to
+#' @param dispatcher \[default TRUE\] logical value, which should be set to
 #'   TRUE if using dispatcher and FALSE otherwise.
+#' @param ... reserved but not currently used.
 #' @param asyncdial \[default FALSE\] whether to perform dials asynchronously.
 #'   The default FALSE will error if a connection is not immediately possible
 #'   (for instance if [daemons()] has yet to be called on the host, or the
@@ -82,7 +82,7 @@
 #'
 daemon <- function(
   url,
-  dispatcher = FALSE,
+  dispatcher = TRUE,
   ...,
   asyncdial = FALSE,
   autoexit = TRUE,

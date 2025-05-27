@@ -6,7 +6,7 @@
 \usage{
 daemon(
   url,
-  dispatcher = FALSE,
+  dispatcher = TRUE,
   ...,
   asyncdial = FALSE,
   autoexit = TRUE,
@@ -25,7 +25,7 @@ daemon(
 port to connect to, e.g. 'tcp://hostname:5555' or
 'tls+tcp://10.75.32.70:5555'.}
 
-\item{dispatcher}{[default FALSE] logical value, which should be set to
+\item{dispatcher}{[default TRUE] logical value, which should be set to
 TRUE if using dispatcher and FALSE otherwise.}
 
 \item{...}{reserved but not currently used.}

@@ -27,7 +27,7 @@ BugReports: https://github.com/r-lib/mirai/issues
 Depends: 
     R (>= 3.6)
 Imports: 
-    nanonext (>= 1.6.0)
+    nanonext (>= 1.6.0.9000)
 Suggests: 
     cli,
     litedown
@@ -40,4 +40,6 @@ Config/Needs/website: tidyverse/tidytemplate
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
+Remotes:
+    r-lib/nanonext

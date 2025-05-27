@@ -253,7 +253,7 @@ daemons <- function(
             pass = pass
           )
           store_dispatcher(sock, res, cv, envir)
-          `[[<-`(envir, "msgid", 0L)
+          `[[<-`(envir, "msgid", TRUE)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -313,7 +313,7 @@ daemons <- function(
           )
           store_dispatcher(sock, res, cv, envir)
           for (i in seq_len(n)) next_stream(envir)
-          `[[<-`(envir, "msgid", 0L)
+          `[[<-`(envir, "msgid", TRUE)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -574,7 +574,7 @@ wa2 <- function(url, dots, rs, tls = NULL)
 
 wa3 <- function(url, dots, rs, tls = NULL)
   shQuote(sprintf(
-    "mirai::daemon(\"%s\",dispatcher=TRUE%s%s,rs=c(%s))",
+    "mirai::daemon(\"%s\"%s%s,rs=c(%s))",
     url,
     dots,
     parse_tls(tls),
@@ -692,11 +692,11 @@ dispatcher_status <- function(envir) {
     mirai = c(
       awaiting = status[2L],
       executing = status[3L],
-      completed = envir[["msgid"]] - status[2L] - status[3L]
+      completed = status[4L] - status[2L] - status[3L]
     )
   )
-  if (length(status) > 3L)
-    out <- c(out, list(events = status[4:length(status)]))
+  if (length(status) > 4L)
+    out <- c(out, list(events = status[5:length(status)]))
   out
 }
 
