@@ -666,6 +666,7 @@ store_dispatcher <- function(urld, res, cv, envir) {
   `[[<-`(envir, "sock", res[[1L]])
   `[[<-`(envir, "dispatcher", urld)
   `[[<-`(envir, "url", res[[2L]][-1L])
+  `[[<-`(envir, "urls", res[[2L]][-1L]) # compatibility measure
   `[[<-`(envir, "pid", as.integer(res[[2L]][1L]))
   `[[<-`(envir, "cv", cv)
 }
