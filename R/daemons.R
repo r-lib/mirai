@@ -480,8 +480,7 @@ daemons_set <- function(.compute = NULL) {
 #'
 #' @export
 #'
-serial_config <- function(class, sfunc, ufunc)
-  nanonext::serial_config(class, sfunc, ufunc)
+serial_config <- serial_config
 
 #' Register Serialization Configuration
 #'
