@@ -55,7 +55,7 @@ dispatcher <- function(
   sock <- socket("rep")
   on.exit(reap(sock))
   pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
-  dial_and_sync_socket(sock, host)
+  connect_sync_socket(listen, sock, host)
 
   req <- recv_aio(sock, mode = 1L, cv = cv)
   while(!until(cv, .limit_long))
