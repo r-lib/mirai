@@ -183,7 +183,7 @@ mirai <- function(
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    id = envir[["msgid"]]
+    id = envir[["dispatcher"]]
   )
 }
 
@@ -252,7 +252,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
     )
   )
 
-  if (is.null(envir[["msgid"]])) {
+  if (is.null(envir[["dispatcher"]])) {
     vec <- vector(
       mode = "list",
       length = max(stat(envir[["sock"]], "pipes"), envir[["n"]])

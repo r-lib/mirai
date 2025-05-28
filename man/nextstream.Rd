@@ -18,7 +18,7 @@ to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 
 \item{x}{character value of item to retrieve. One of \code{"n"} (number of
-dispatcher daemons), \code{"pid"} (dispatcher process ID), \code{"urls"} (URLs
+dispatcher daemons), \code{"pid"} (dispatcher process ID), \code{"url"} (the URL
 dispatcher is listening at) or \code{"tls"} (the stored client TLS configuration
 for use by daemons).}
 
@@ -58,7 +58,7 @@ nextstream()
 nextstream()
 
 nextget("pid")
-nextget("urls")
+nextget("url")
 
 daemons(0)
 \dontshow{\}) # examplesIf}

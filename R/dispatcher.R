@@ -121,7 +121,12 @@ dispatcher <- function(
   res <- recv_aio(psock, mode = 8L, cv = cv)
 
   suspendInterrupts(
-    while (wait(cv)) {
+    repeat {
+
+      wait(cv) || {
+        stat(sock, "pipes") && !cv_reset(cv) && next
+        break
+      }
 
       changes <- read_monitor(m)
       is.null(changes) || {
