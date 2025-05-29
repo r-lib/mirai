@@ -620,10 +620,11 @@ launch_dispatcher <- function(sock, urld, args, output, serial, tls = NULL, pass
     stderr = output,
     wait = FALSE
   )
+  sync <- 0L
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
+  msleep(100L) # Causes async dial below to succeed faster
   dial(sock, url = urld, fail = 2L)
-  sync <- 0L
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   pipe_notify(sock, NULL, add = TRUE)
