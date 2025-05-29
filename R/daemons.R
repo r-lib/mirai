@@ -219,9 +219,9 @@ daemons <- function(
   pass = NULL,
   .compute = NULL
 ) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
   missing(n) && missing(url) && return(status(.compute))
 
+  if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
 
   if (is.character(url)) {

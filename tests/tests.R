@@ -250,6 +250,10 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
   test_true(res[[1L]] != res[[2L]])
   test_equal(2L, daemons()[["connections"]])
+  with(daemons(url = nextget("dispatcher"), .compute = "pool"), {
+    test_equal(2L, status()[["connections"]])
+    test_zero(mirai(0)[])
+  })
   test_zero(daemons(0L))
   Sys.sleep(1L)
   test_zero(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
