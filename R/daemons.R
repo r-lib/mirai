@@ -638,12 +638,14 @@ launch_dispatcher <- function(
     stderr = output,
     wait = FALSE
   )
-  sock <- req_socket(dial = urld)
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
   cv <- cv()
+  sock <- req_socket(dial = urld)
+  pipe_notify(sock, cv, add = TRUE)
+  if (is.list(serial)) `opt<-`(sock, "serial", serial)
   sync <- 0L
-  while(send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = .limit_long))
+  while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+  send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = TRUE)
   res <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
