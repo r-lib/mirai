@@ -605,27 +605,13 @@ launch_daemon <- function(args, output)
     wait = FALSE
   )
 
-query_dispatcher <- function(
-  sock,
-  command,
-  send_mode = 2L,
-  recv_mode = 5L,
-  block = .limit_short
-) {
+query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
   r <- send(sock, command, mode = send_mode, block = block)
   r && return(r)
   recv(sock, mode = recv_mode, block = block)
 }
 
-launch_dispatcher <- function(
-  sock,
-  urld,
-  args,
-  output,
-  serial,
-  tls = NULL,
-  pass = NULL
-) {
+launch_dispatcher <- function(sock, urld, args, output, serial, tls = NULL, pass = NULL) {
   pkgs <- Sys.getenv("R_DEFAULT_PACKAGES")
   system2(
     .command,
