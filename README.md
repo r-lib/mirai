@@ -87,7 +87,7 @@ To wait for and collect the return value, use the mirai’s `[]` method:
 
 ``` r
 m[]
-#> [1] 7.775407 5.847902 5.866847
+#> [1] 6.486331 5.398450 6.702158
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -99,7 +99,7 @@ while (unresolved(m)) {
   # do other work
 }
 m$data
-#> [1] 7.775407 5.847902 5.866847
+#> [1] 6.486331 5.398450 6.702158
 ```
 
 #### Daemons
@@ -253,6 +253,9 @@ promises.
 on L’Ecuyer-CMRG streams to ensure statistical independence in parallel
 processing, and making it possible for mirai to be the first
 ‘alternative communications backend for R’.
+
+[Travers Ching](https://github.com/traversc) for a novel idea in
+extending the original custom serialization support in the package.
 
 [Henrik Bengtsson](https://github.com/HenrikBengtsson/) for valuable
 insights leading to the interface accepting broader usage patterns.
