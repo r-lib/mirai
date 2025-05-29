@@ -264,9 +264,7 @@ daemons <- function(
         },
         stop(._[["dispatcher_args"]])
       )
-      `[[<-`(envir, "n", launches)
-      `[[<-`(envir, "dots", dots)
-      `[[<-`(.., .compute, envir)
+      create_profile(envir, .compute, launches, dots)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(
@@ -322,9 +320,7 @@ daemons <- function(
         },
         stop(._[["dispatcher_args"]])
       )
-      `[[<-`(envir, "n", n)
-      `[[<-`(envir, "dots", dots)
-      `[[<-`(.., .compute, envir)
+      create_profile(envir, .compute, n, dots)
     } else {
       stop(sprintf(._[["daemons_set"]], .compute))
     }
@@ -523,6 +519,12 @@ configure_tls <- function(purl, tls, pass, envir, returnconfig = TRUE) {
   cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
   returnconfig || return(tls)
   cfg
+}
+
+create_profile <- function(envir, .compute, n, dots) {
+  `[[<-`(envir, "n", n)
+  `[[<-`(envir, "dots", dots)
+  `[[<-`(.., .compute, envir)
 }
 
 init_envir_stream <- function(seed) {

@@ -126,8 +126,7 @@ daemon <- function(
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
-    if (is.numeric(id))
-      send(sock, c(0L, as.integer(id)), mode = 2L, block = TRUE)
+    is.numeric(id) && send(sock, c(0L, as.integer(id)), mode = 2L, block = TRUE)
     wait(cv) || return(invisible(xc))
     serial <- collect_aio(aio)
     if (is.list(serial)) `opt<-`(sock, "serial", serial)
