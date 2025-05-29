@@ -250,15 +250,8 @@ daemons <- function(
           } else {
             tls <- configure_tls(purl, tls, pass, envir, returnconfig = FALSE)
             urld <- local_url()
-            res <- launch_dispatcher(
-              sock,
-              urld,
-              wa5(urld, url, dots),
-              output,
-              serial,
-              tls = tls,
-              pass = pass
-            )
+            args <- wa5(urld, url, dots)
+            res <- launch_dispatcher(sock, urld, args, output, serial, tls = tls, pass = pass)
             store_dispatcher(envir, sock, cv, urld, res)
           }
         },
@@ -308,13 +301,8 @@ daemons <- function(
         {
           cv <- cv()
           apply_serial(sock, serial)
-          res <- launch_dispatcher(
-            sock,
-            urld,
-            wa4(urld, n, envir[["stream"]], dots),
-            output,
-            serial
-          )
+          args <- wa4(urld, n, envir[["stream"]], dots)
+          res <- launch_dispatcher(sock, urld, args, output, serial)
           store_dispatcher(envir, sock, cv, urld, res)
           for (i in seq_len(n)) next_stream(envir)
         },

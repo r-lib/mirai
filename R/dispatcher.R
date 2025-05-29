@@ -103,11 +103,7 @@ dispatcher <- function(
     changes <- read_monitor(m)
     for (item in changes)
       item > 0 && {
-        outq[[as.character(item)]] <- as.environment(list(
-          pipe = item,
-          msgid = 0L,
-          ctx = NULL
-        ))
+        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
         send(psock, serial, mode = 1L, block = TRUE, pipe = item)
       }
   } else {
@@ -131,23 +127,14 @@ dispatcher <- function(
       is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
-            outq[[as.character(item)]] <- as.environment(list(
-              pipe = item,
-              msgid = 0L,
-              ctx = NULL
-            ))
+            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
             send(psock, serial, mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
           } else {
             id <- as.character(-item)
             if (length(outq[[id]])) {
               outq[[id]][["msgid"]] &&
-                send(
-                  outq[[id]][["ctx"]],
-                  .connectionReset,
-                  mode = 1L,
-                  block = TRUE
-                )
+                send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
               if (length(outq[[id]][["dmnid"]]))
                 events <- c(events, outq[[id]][["dmnid"]])
               outq[[id]] <- NULL
