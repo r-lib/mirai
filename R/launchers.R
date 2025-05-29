@@ -233,13 +233,7 @@ remote_config <- function(
   quote = FALSE
 ) {
   if (is.list(args)) lapply(args, find_dot) else find_dot(args)
-  list(
-    command = command,
-    args = args,
-    rscript = rscript,
-    quote = quote,
-    tunnel = FALSE
-  )
+  list(command = command, args = args, rscript = rscript, quote = quote, tunnel = FALSE)
 }
 
 #' SSH Remote Launch Configuration
@@ -330,23 +324,13 @@ ssh_config <- function(
   args <- vector(mode = "list", length = length(remotes))
   for (i in seq_along(args)) {
     args[[i]] <- c(
-      sprintf(
-        "-o ConnectTimeout=%s -fTp %s",
-        as.character(timeout),
-        ports[[i]]
-      ),
+      sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports[[i]]),
       hostnames[[i]],
       "."
     )
   }
 
-  list(
-    command = command,
-    args = args,
-    rscript = rscript,
-    quote = TRUE,
-    tunnel = isTRUE(tunnel)
-  )
+  list(command = command, args = args, rscript = rscript, quote = TRUE, tunnel = isTRUE(tunnel))
 }
 
 #' URL Constructors

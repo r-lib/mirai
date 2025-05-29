@@ -79,15 +79,7 @@ make_cluster <- function(n, url = NULL, remote = NULL, ...) {
   cvs <- cv()
 
   if (is.character(url)) {
-    daemons(
-      n,
-      url = url,
-      remote = remote,
-      dispatcher = FALSE,
-      cleanup = FALSE,
-      ...,
-      .compute = id
-    )
+    daemons(n, url = url, remote = remote, dispatcher = FALSE, cleanup = FALSE, ..., .compute = id)
 
     if (is.null(remote)) {
       if (missing(n)) n <- 1L
