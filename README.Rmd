@@ -186,6 +186,8 @@ We would like to thank in particular:
 
 [Luke Tierney](https://github.com/ltierney/) of R Core, for discussion on L'Ecuyer-CMRG streams to ensure statistical independence in parallel processing, and making it possible for mirai to be the first 'alternative communications backend for R'.
 
+[Travers Ching](https://github.com/traversc) for a novel idea in extending the original custom serialization support in the package.
+
 [Henrik Bengtsson](https://github.com/HenrikBengtsson/) for valuable insights leading to the interface accepting broader usage patterns.
 
 [Daniel Falbel](https://github.com/dfalbel/) for discussion around an efficient solution to serialization and transmission of torch tensors.
