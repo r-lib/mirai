@@ -231,21 +231,22 @@ daemons <- function(
       launches <- 0L
       dots <- parse_dots(...)
       output <- attr(dots, "output")
+      sock <- req_socket()
       switch(
         parse_dispatcher(dispatcher),
         {
           tls <- configure_tls(url, tls, pass, envir)
-          sock <- req_socket(listen = url, tls = tls)
-          store_sock_url(sock, envir)
+          listen(sock, url = url, tls = tls, fail = 2L)
+          check_store_sock_url(envir, sock)
         },
         {
           if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
-          sock <- socket("req")
           if (dial(sock, url = url, autostart = NA, fail = 3L)) {
             tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
             urld <- local_url()
             res <- launch_dispatcher(
+              sock,
               urld,
               wa5(urld, url, dots),
               output,
@@ -253,13 +254,10 @@ daemons <- function(
               tls = tls,
               pass = pass
             )
-            store_dispatcher(urld, res, cv, envir)
+            store_dispatcher(envir, sock, cv, urld, res)
           } else {
-            `opt<-`(sock, "req:resend-time", 0L)
             if (is.list(serial)) `opt<-`(sock, "serial", serial)
-            `[[<-`(envir, "sock", sock)
-            `[[<-`(envir, "cv", cv)
-            `[[<-`(envir, "dispatcher", url)
+            store_dispatcher(envir, sock, cv, url)
           }
         },
         stop(._[["dispatcher_args"]])
@@ -299,24 +297,25 @@ daemons <- function(
       urld <- local_url()
       dots <- parse_dots(...)
       output <- attr(dots, "output")
+      sock <- req_socket()
       switch(
         parse_dispatcher(dispatcher),
         {
-          sock <- req_socket(listen = urld)
+          listen(sock, url = urld, fail = 2L)
           launch_daemons(seq_len(n), sock, urld, dots, envir, output)
-          `[[<-`(envir, "sock", sock)
-          `[[<-`(envir, "url", urld)
+          store_sock_url(envir, sock, urld)
         },
         {
           if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
           res <- launch_dispatcher(
+            sock,
             urld,
             wa4(urld, n, envir[["stream"]], dots),
             output,
             serial
           )
-          store_dispatcher(urld, res, cv, envir)
+          store_dispatcher(envir, sock, cv, urld, res)
           for (i in seq_len(n)) next_stream(envir)
         },
         stop(._[["dispatcher_args"]])
@@ -534,8 +533,8 @@ init_envir_stream <- function(seed) {
   envir
 }
 
-req_socket <- function(listen = NULL, dial = NULL, tls = NULL)
-  `opt<-`(socket("req", listen = listen, dial = dial, tls = tls), "req:resend-time", 0L)
+req_socket <- function(listen = NULL, tls = NULL)
+  `opt<-`(socket("req", listen = listen, tls = tls), "req:resend-time", 0L)
 
 parse_dispatcher <- function(x)
   if (is.logical(x)) 1L + (!is.na(x) && x) else if (is.character(x)) 1L else 3L
@@ -623,6 +622,7 @@ query_dispatcher <- function(
 }
 
 launch_dispatcher <- function(
+  sock,
   urld,
   args,
   output,
@@ -639,17 +639,18 @@ launch_dispatcher <- function(
     wait = FALSE
   )
   cv <- cv()
-  sock <- req_socket(dial = urld)
   pipe_notify(sock, cv, add = TRUE)
+  dial(sock, url = urld, fail = 2L)
   if (is.list(serial)) `opt<-`(sock, "serial", serial)
   sync <- 0L
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+  pipe_notify(sock, NULL, add = TRUE)
   send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = TRUE)
   res <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
-  list(sock, collect_aio(res))
+  collect_aio(res)
 }
 
 launch_daemons <- function(seq, sock, urld, dots, envir, output) {
@@ -664,26 +665,29 @@ launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-store_dispatcher <- function(urld, res, cv, envir) {
-  `[[<-`(envir, "sock", res[[1L]])
+store_dispatcher <- function(envir, sock, cv, urld, res = NULL) {
+  `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
-  `[[<-`(envir, "url", res[[2L]][-1L])
-  `[[<-`(envir, "urls", res[[2L]][-1L]) # compatibility measure
-  `[[<-`(envir, "pid", as.integer(res[[2L]][1L]))
   `[[<-`(envir, "cv", cv)
+  is.null(res) && return()
+  `[[<-`(envir, "url", res[-1L])
+  `[[<-`(envir, "pid", as.integer(res[1L]))
 }
-
 
 sub_real_port <- function(port, url)
   sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
 
-store_sock_url <- function(sock, envir) {
+store_sock_url <- function(envir, sock, url) {
+  `[[<-`(envir, "sock", sock)
+  `[[<-`(envir, "url", url)
+}
+
+check_store_sock_url <- function(envir, sock) {
   listener <- attr(sock, "listener")[[1L]]
   url <- opt(listener, "url")
   if (parse_url(url)[["port"]] == "0")
     url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
-  `[[<-`(envir, "sock", sock)
-  `[[<-`(envir, "url", url)
+  store_sock_url(envir, sock, url)
 }
 
 send_signal <- function(envir) {
