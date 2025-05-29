@@ -100,7 +100,7 @@ daemon <- function(
   on.exit(reap(sock))
   autoexit && pipe_notify(sock, cv, remove = TRUE, flag = autoexit)
   if (length(tls)) tls <- tls_config(client = tls)
-  connect_sync_socket(dial, sock, url, autostart = asyncdial || NA, tls = tls)
+  dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tls)
 
   `[[<-`(., "sock", sock)
   on.exit(`[[<-`(., "sock", NULL), add = TRUE)
@@ -225,10 +225,10 @@ eval_mirai <- function(._mirai_.) {
   )
 }
 
-connect_sync_socket <- function(func, sock, url, autostart = TRUE, tls = NULL) {
+dial_sync_socket <- function(sock, url, autostart, tls) {
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
-  func(sock, url = url, autostart = autostart, tls = tls, fail = 2L)
+  dial(sock, url = url, autostart = autostart, tls = tls, fail = 2L)
   wait(cv)
   pipe_notify(sock, NULL, add = TRUE)
 }

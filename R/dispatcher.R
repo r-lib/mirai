@@ -52,10 +52,13 @@ dispatcher <- function(
   n > 0L || stop(._[["missing_url"]])
 
   cv <- cv()
+  cva <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
   pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
-  connect_sync_socket(listen, sock, host)
+  pipe_notify(sock, cva, add = TRUE)
+  listen(sock, url = host, tls = tls, fail = 2L)
+  wait(cva)
 
   req <- recv_aio(sock, mode = 1L, cv = cv)
   while(!until(cv, .limit_long))
@@ -122,11 +125,7 @@ dispatcher <- function(
 
   suspendInterrupts(
     repeat {
-
-      wait(cv) || {
-        stat(sock, "pipes") && !cv_reset(cv) && next
-        break
-      }
+      wait(cv) || cv_value(cva) && wait(cva) && !cv_reset(cv) && next || break
 
       changes <- read_monitor(m)
       is.null(changes) || {
