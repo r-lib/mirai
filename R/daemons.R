@@ -227,6 +227,7 @@ daemons <- function(
   if (is.character(url)) {
     if (is.null(envir)) {
       url <- url[1L]
+      purl <- parse_url(url)
       envir <- init_envir_stream(seed)
       launches <- 0L
       dots <- parse_dots(...)
@@ -235,15 +236,19 @@ daemons <- function(
       switch(
         parse_dispatcher(dispatcher),
         {
-          tls <- configure_tls(url, tls, pass, envir)
+          tls <- configure_tls(purl, tls, pass, envir)
           listen(sock, url = url, tls = tls, fail = 2L)
           check_store_sock_url(envir, sock)
         },
         {
-          if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
-          if (dial(sock, url = url, autostart = NA, fail = 3L)) {
-            tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
+          apply_serial(sock, serial)
+          sch <- purl[["scheme"]]
+          if (!startsWith(sch, "t") && !startsWith(sch, "w") &&
+              dial(sock, url = url, autostart = NA, fail = 3L) == 0L) {
+            store_dispatcher(envir, sock, cv, url)
+          } else {
+            tls <- configure_tls(purl, tls, pass, envir, returnconfig = FALSE)
             urld <- local_url()
             res <- launch_dispatcher(
               sock,
@@ -255,9 +260,6 @@ daemons <- function(
               pass = pass
             )
             store_dispatcher(envir, sock, cv, urld, res)
-          } else {
-            if (is.list(serial)) `opt<-`(sock, "serial", serial)
-            store_dispatcher(envir, sock, cv, url)
           }
         },
         stop(._[["dispatcher_args"]])
@@ -306,8 +308,8 @@ daemons <- function(
           store_sock_url(envir, sock, urld)
         },
         {
-          if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
+          apply_serial(sock, serial)
           res <- launch_dispatcher(
             sock,
             urld,
@@ -506,8 +508,12 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(url, tls, pass, envir, returnconfig = TRUE) {
-  purl <- parse_url(url)
+apply_serial <- function(sock, serial) {
+  if (is.null(serial)) serial <- .[["serial"]]
+  if (is.list(serial)) `opt<-`(sock, "serial", serial)
+}
+
+configure_tls <- function(purl, tls, pass, envir, returnconfig = TRUE) {
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
@@ -641,7 +647,6 @@ launch_dispatcher <- function(
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
   dial(sock, url = urld, fail = 2L)
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
   sync <- 0L
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
