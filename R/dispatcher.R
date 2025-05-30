@@ -52,10 +52,13 @@ dispatcher <- function(
   n > 0L || stop(._[["missing_url"]])
 
   cv <- cv()
+  cva <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
   pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
-  dial_and_sync_socket(sock, host)
+  pipe_notify(sock, cva, add = TRUE)
+  listen(sock, url = host, tls = tls, fail = 2L)
+  wait(cva)
 
   req <- recv_aio(sock, mode = 1L, cv = cv)
   while(!until(cv, .limit_long))
@@ -100,11 +103,7 @@ dispatcher <- function(
     changes <- read_monitor(m)
     for (item in changes)
       item > 0 && {
-        outq[[as.character(item)]] <- as.environment(list(
-          pipe = item,
-          msgid = 0L,
-          ctx = NULL
-        ))
+        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
         send(psock, serial, mode = 1L, block = TRUE, pipe = item)
       }
   } else {
@@ -121,29 +120,26 @@ dispatcher <- function(
   res <- recv_aio(psock, mode = 8L, cv = cv)
 
   suspendInterrupts(
-    while (wait(cv)) {
+    repeat {
+      wait(cv) || {
+        cv_value(cva) || break
+        cv_reset(cv)
+        wait(cva)
+        next
+      }
 
       changes <- read_monitor(m)
       is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
-            outq[[as.character(item)]] <- as.environment(list(
-              pipe = item,
-              msgid = 0L,
-              ctx = NULL
-            ))
+            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
             send(psock, serial, mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
           } else {
             id <- as.character(-item)
             if (length(outq[[id]])) {
               outq[[id]][["msgid"]] &&
-                send(
-                  outq[[id]][["ctx"]],
-                  .connectionReset,
-                  mode = 1L,
-                  block = TRUE
-                )
+                send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
               if (length(outq[[id]][["dmnid"]]))
                 events <- c(events, outq[[id]][["dmnid"]])
               outq[[id]] <- NULL

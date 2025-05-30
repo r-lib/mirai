@@ -219,49 +219,45 @@ daemons <- function(
   pass = NULL,
   .compute = NULL
 ) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
   missing(n) && missing(url) && return(status(.compute))
 
+  if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
 
   if (is.character(url)) {
     if (is.null(envir)) {
       url <- url[1L]
+      purl <- parse_url(url)
       envir <- init_envir_stream(seed)
       launches <- 0L
       dots <- parse_dots(...)
       output <- attr(dots, "output")
+      sock <- req_socket()
       switch(
         parse_dispatcher(dispatcher),
         {
-          tls <- configure_tls(url, tls, pass, envir)
-          sock <- req_socket(url, tls = tls)
-          check_store_url(sock, envir)
+          tls <- configure_tls(purl, tls, pass, envir)
+          listen(sock, url = url, tls = tls, fail = 2L)
+          check_store_sock_url(envir, sock)
         },
         {
-          if (is.null(serial)) serial <- .[["serial"]]
-          tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
           cv <- cv()
-          urld <- local_url()
-          sock <- req_socket(urld)
-          res <- launch_dispatcher(
-            sock,
-            wa5(urld, url, dots),
-            output,
-            serial,
-            tls = tls,
-            pass = pass
-          )
-          store_dispatcher(sock, res, cv, envir)
-          `[[<-`(envir, "msgid", TRUE)
+          apply_serial(sock, serial)
+          sch <- purl[["scheme"]]
+          if (!startsWith(sch, "t") && !startsWith(sch, "w") &&
+              dial(sock, url = url, autostart = NA, fail = 3L) == 0L) {
+            store_dispatcher(envir, sock, cv, url)
+          } else {
+            tls <- configure_tls(purl, tls, pass, envir, returnconfig = FALSE)
+            urld <- local_url()
+            args <- wa5(urld, url, dots)
+            res <- launch_dispatcher(sock, urld, args, output, serial, tls = tls, pass = pass)
+            store_dispatcher(envir, sock, cv, urld, res)
+          }
         },
         stop(._[["dispatcher_args"]])
       )
-      `[[<-`(
-        ..,
-        .compute,
-        `[[<-`(`[[<-`(`[[<-`(envir, "sock", sock), "n", launches), "dots", dots)
-      )
+      create_profile(envir, .compute, launches, dots)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(
@@ -294,34 +290,25 @@ daemons <- function(
       urld <- local_url()
       dots <- parse_dots(...)
       output <- attr(dots, "output")
+      sock <- req_socket()
       switch(
         parse_dispatcher(dispatcher),
         {
-          sock <- req_socket(urld)
+          listen(sock, url = urld, fail = 2L)
           launch_daemons(seq_len(n), sock, urld, dots, envir, output)
-          `[[<-`(envir, "urls", urld)
+          store_sock_url(envir, sock, urld)
         },
         {
-          if (is.null(serial)) serial <- .[["serial"]]
           cv <- cv()
-          sock <- req_socket(urld)
-          res <- launch_dispatcher(
-            sock,
-            wa4(urld, n, envir[["stream"]], dots),
-            output,
-            serial
-          )
-          store_dispatcher(sock, res, cv, envir)
+          apply_serial(sock, serial)
+          args <- wa4(urld, n, envir[["stream"]], dots)
+          res <- launch_dispatcher(sock, urld, args, output, serial)
+          store_dispatcher(envir, sock, cv, urld, res)
           for (i in seq_len(n)) next_stream(envir)
-          `[[<-`(envir, "msgid", TRUE)
         },
         stop(._[["dispatcher_args"]])
       )
-      `[[<-`(
-        ..,
-        .compute,
-        `[[<-`(`[[<-`(`[[<-`(envir, "sock", sock), "n", n), "dots", dots)
-      )
+      create_profile(envir, .compute, n, dots)
     } else {
       stop(sprintf(._[["daemons_set"]], .compute))
     }
@@ -417,10 +404,10 @@ status <- function(.compute = NULL) {
   is.list(.compute) && return(status(attr(.compute, "id")))
   envir <- ..[[.compute]]
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
-  is.null(envir[["msgid"]]) || return(dispatcher_status(envir))
+  is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
   list(
     connections = as.integer(stat(envir[["sock"]], "pipes")),
-    daemons = envir[["urls"]]
+    daemons = envir[["url"]]
   )
 }
 
@@ -505,8 +492,12 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(url, tls, pass, envir, returnconfig = TRUE) {
-  purl <- parse_url(url)
+apply_serial <- function(sock, serial) {
+  if (is.null(serial)) serial <- .[["serial"]]
+  if (is.list(serial)) `opt<-`(sock, "serial", serial)
+}
+
+configure_tls <- function(purl, tls, pass, envir, returnconfig = TRUE) {
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
@@ -516,6 +507,12 @@ configure_tls <- function(url, tls, pass, envir, returnconfig = TRUE) {
   cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
   returnconfig || return(tls)
   cfg
+}
+
+create_profile <- function(envir, .compute, n, dots) {
+  `[[<-`(envir, "n", n)
+  `[[<-`(envir, "dots", dots)
+  `[[<-`(.., .compute, envir)
 }
 
 init_envir_stream <- function(seed) {
@@ -532,8 +529,8 @@ init_envir_stream <- function(seed) {
   envir
 }
 
-req_socket <- function(url, tls = NULL, resend = 0L)
-  `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", resend)
+req_socket <- function(listen = NULL, tls = NULL)
+  `opt<-`(socket("req", listen = listen, tls = tls), "req:resend-time", 0L)
 
 parse_dispatcher <- function(x)
   if (is.logical(x)) 1L + (!is.na(x) && x) else if (is.character(x)) 1L else 3L
@@ -608,26 +605,13 @@ launch_daemon <- function(args, output)
     wait = FALSE
   )
 
-query_dispatcher <- function(
-  sock,
-  command,
-  send_mode = 2L,
-  recv_mode = 5L,
-  block = .limit_short
-) {
+query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
   r <- send(sock, command, mode = send_mode, block = block)
   r && return(r)
   recv(sock, mode = recv_mode, block = block)
 }
 
-launch_dispatcher <- function(
-  sock,
-  args,
-  output,
-  serial,
-  tls = NULL,
-  pass = NULL
-) {
+launch_dispatcher <- function(sock, urld, args, output, serial, tls = NULL, pass = NULL) {
   pkgs <- Sys.getenv("R_DEFAULT_PACKAGES")
   system2(
     .command,
@@ -636,11 +620,15 @@ launch_dispatcher <- function(
     stderr = output,
     wait = FALSE
   )
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
-  cv <- cv()
   sync <- 0L
-  while(send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = .limit_long))
+  cv <- cv()
+  pipe_notify(sock, cv, add = TRUE)
+  msleep(100L) # Causes async dial below to succeed faster
+  dial(sock, url = urld, fail = 2L)
+  while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+  pipe_notify(sock, NULL, add = TRUE)
+  send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = TRUE)
   res <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
@@ -659,22 +647,33 @@ launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-store_dispatcher <- function(sock, res, cv, envir)
-  `[[<-`(`[[<-`(`[[<-`(`[[<-`(envir, "sock", sock), "urls", res[-1L]), "pid", as.integer(res[1L])), "cv", cv)
+store_dispatcher <- function(envir, sock, cv, urld, res = NULL) {
+  `[[<-`(envir, "sock", sock)
+  `[[<-`(envir, "dispatcher", urld)
+  `[[<-`(envir, "cv", cv)
+  is.null(res) && return()
+  `[[<-`(envir, "url", res[-1L])
+  `[[<-`(envir, "pid", as.integer(res[1L]))
+}
 
 sub_real_port <- function(port, url)
   sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
 
-check_store_url <- function(sock, envir) {
+store_sock_url <- function(envir, sock, url) {
+  `[[<-`(envir, "sock", sock)
+  `[[<-`(envir, "url", url)
+}
+
+check_store_sock_url <- function(envir, sock) {
   listener <- attr(sock, "listener")[[1L]]
   url <- opt(listener, "url")
   if (parse_url(url)[["port"]] == "0")
     url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
-  `[[<-`(envir, "urls", url)
+  store_sock_url(envir, sock, url)
 }
 
 send_signal <- function(envir) {
-  signals <- if (is.null(envir[["msgid"]])) stat(envir[["sock"]], "pipes") else
+  signals <- if (is.null(envir[["dispatcher"]])) stat(envir[["sock"]], "pipes") else
     query_dispatcher(envir[["sock"]], c(0L, 0L))[1L]
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
@@ -687,7 +686,7 @@ dispatcher_status <- function(envir) {
   is.object(status) && return(status)
   out <- list(
     connections = status[1L],
-    daemons = envir[["urls"]],
+    daemons = envir[["url"]],
     mirai = c(
       awaiting = status[2L],
       executing = status[3L],

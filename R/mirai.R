@@ -183,7 +183,7 @@ mirai <- function(
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    id = envir[["msgid"]]
+    id = envir[["dispatcher"]]
   )
 }
 
@@ -252,7 +252,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
     )
   )
 
-  if (is.null(envir[["msgid"]])) {
+  if (is.null(envir[["dispatcher"]])) {
     vec <- vector(
       mode = "list",
       length = max(stat(envir[["sock"]], "pipes"), envir[["n"]])
@@ -580,7 +580,7 @@ print.miraiInterrupt <- function(x, ...) {
 
 ephemeral_daemon <- function(data, timeout) {
   url <- local_url()
-  sock <- req_socket(url)
+  sock <- req_socket(listen = url)
   system2(
     .command,
     args = c("-e", shQuote(sprintf("mirai:::.daemon(\"%s\")", url))),

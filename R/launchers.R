@@ -54,8 +54,8 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
-  url <- envir[["urls"]]
-  write_args <- if (is.null(envir[["msgid"]])) wa2 else wa3
+  url <- envir[["url"]]
+  write_args <- if (is.null(envir[["dispatcher"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(...)
   output <- attr(dots, "output")
   if (is.null(tls)) tls <- envir[["tls"]]
@@ -98,8 +98,8 @@ launch_remote <- function(
   n <- as.integer(n)
   envir <- ..[[.compute]]
   is.null(envir) && stop(._[["daemons_unset"]])
-  url <- envir[["urls"]]
-  write_args <- if (is.null(envir[["msgid"]])) wa2 else wa3
+  url <- envir[["url"]]
+  write_args <- if (is.null(envir[["dispatcher"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(...)
   if (is.null(tls)) tls <- envir[["tls"]]
 
@@ -233,13 +233,7 @@ remote_config <- function(
   quote = FALSE
 ) {
   if (is.list(args)) lapply(args, find_dot) else find_dot(args)
-  list(
-    command = command,
-    args = args,
-    rscript = rscript,
-    quote = quote,
-    tunnel = FALSE
-  )
+  list(command = command, args = args, rscript = rscript, quote = quote, tunnel = FALSE)
 }
 
 #' SSH Remote Launch Configuration
@@ -330,23 +324,13 @@ ssh_config <- function(
   args <- vector(mode = "list", length = length(remotes))
   for (i in seq_along(args)) {
     args[[i]] <- c(
-      sprintf(
-        "-o ConnectTimeout=%s -fTp %s",
-        as.character(timeout),
-        ports[[i]]
-      ),
+      sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports[[i]]),
       hostnames[[i]],
       "."
     )
   }
 
-  list(
-    command = command,
-    args = args,
-    rscript = rscript,
-    quote = TRUE,
-    tunnel = isTRUE(tunnel)
-  )
+  list(command = command, args = args, rscript = rscript, quote = TRUE, tunnel = isTRUE(tunnel))
 }
 
 #' URL Constructors

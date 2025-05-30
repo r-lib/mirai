@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the `url` of a `daemons()` call.
+
 #### Updates
 
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.

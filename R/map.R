@@ -221,10 +221,7 @@ mirai_map <- function(
 #'
 print.mirai_map <- function(x, ...) {
   xlen <- length(x)
-  cat(
-    sprintf("< mirai map [%d/%d] >\n", xlen - .unresolved(x), xlen),
-    file = stdout()
-  )
+  cat(sprintf("< mirai map [%d/%d] >\n", xlen - .unresolved(x), xlen), file = stdout())
   invisible(x)
 }
 
@@ -244,10 +241,7 @@ print.mirai_map <- function(x, ...) {
     ) {
       is_error_value(xi) && {
         stop_mirai(x)
-        stop(
-          sprintf("In index %d:\n%s", i, attr(xi, "message")),
-          call. = FALSE
-        )
+        stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
       }
       typeof(xi) != typ && {
         stop_mirai(x)
@@ -294,19 +288,13 @@ print.mirai_map <- function(x, ...) {
 
 # internals --------------------------------------------------------------------
 
-ensure_cli_initialized <- function()
-  if (is.null(.[[".flat"]])) {
-    cli <- requireNamespace("cli", quietly = TRUE)
-    `[[<-`(
-      `[[<-`(
-        `[[<-`(., ".flat", if (cli) flat_cli else .flat),
-        ".progress",
-        if (cli) progress_cli else .progress
-      ),
-      ".stop",
-      if (cli) stop_cli else .stop
-    )
-  }
+ensure_cli_initialized <- function() {
+  is.null(.[[".flat"]]) || return()
+  cli <- requireNamespace("cli", quietly = TRUE)
+  `[[<-`(., ".flat", if (cli) flat_cli else .flat)
+  `[[<-`(., ".progress", if (cli) progress_cli else .progress)
+  `[[<-`(., ".stop", if (cli) stop_cli else .stop)
+}
 
 map <- function(x, dots) {
   expr <- if (length(dots) > 1L) do.call(expression, dots) else dots[[1L]]

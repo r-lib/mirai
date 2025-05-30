@@ -18,8 +18,9 @@ to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 
 \item{x}{character value of item to retrieve. One of \code{"n"} (number of
-dispatcher daemons), \code{"pid"} (dispatcher process ID), \code{"urls"} (URLs
-dispatcher is listening at) or \code{"tls"} (the stored client TLS configuration
+dispatcher daemons), \code{"pid"} (dispatcher process ID), \code{"dispatcher"} (the
+URL to connect to dispatcher from the host) \code{"url"} (the URL to connect to
+dispatcher from daemons) or \code{"tls"} (the stored client TLS configuration
 for use by daemons).}
 
 \item{xc}{integer return value of \code{\link[=daemon]{daemon()}}.}
@@ -58,7 +59,7 @@ nextstream()
 nextstream()
 
 nextget("pid")
-nextget("urls")
+nextget("url")
 
 daemons(0)
 \dontshow{\}) # examplesIf}
