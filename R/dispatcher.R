@@ -121,7 +121,12 @@ dispatcher <- function(
 
   suspendInterrupts(
     repeat {
-      wait(cv) || cv_value(cva) && wait(cva) && !cv_reset(cv) && next || break
+      wait(cv) || {
+        cv_value(cva) || break
+        cv_reset(cv)
+        wait(cva)
+        next
+      }
 
       changes <- read_monitor(m)
       is.null(changes) || {
