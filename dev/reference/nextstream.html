@@ -77,8 +77,9 @@ to use (each has its own independent set of daemons), or NULL to use the
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>character value of item to retrieve. One of <code>"n"</code> (number of
-dispatcher daemons), <code>"pid"</code> (dispatcher process ID), <code>"urls"</code> (URLs
-dispatcher is listening at) or <code>"tls"</code> (the stored client TLS configuration
+dispatcher daemons), <code>"pid"</code> (dispatcher process ID), <code>"dispatcher"</code> (the
+URL to connect to dispatcher from the host) <code>"url"</code> (the URL to connect to
+dispatcher from daemons) or <code>"tls"</code> (the stored client TLS configuration
 for use by daemons).</p></dd>
 
 
@@ -113,7 +114,7 @@ next recursive stream is returned when the function is called again.</p>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"pid"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"urls"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"url"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
