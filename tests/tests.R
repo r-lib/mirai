@@ -254,6 +254,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
     test_equal(2L, status()[["connections"]])
     test_zero(mirai(0)[])
   })
+  Sys.sleep(0.5)
   test_zero(daemons(0L))
   Sys.sleep(1L)
   test_zero(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
