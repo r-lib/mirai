@@ -156,6 +156,11 @@ mirai <- function(
       }
       all(nzchar(gn)) || stop(._[["named_dots"]])
     }
+  if (is.environment(.[["capsule"]])) {
+    capsule <- as.list.environment(.[["capsule"]], all.names = TRUE)
+    capsule[[".Random.seed"]] <- NULL
+    globals <- c(capsule, globals)
+  }
   data <- list(
     ._mirai_globals_. = globals,
     .expr = if (
@@ -536,6 +541,13 @@ is_error_value <- is_error_value
 #' @export
 #'
 on_daemon <- function() !is.null(.[["sock"]])
+
+#' @export
+#'
+scope <- function(.x) {
+  on.exit(`[[<-`(., "capsule", NULL))
+  eval(substitute(.x), envir = .[["capsule"]] <- new.env())
+}
 
 # methods ----------------------------------------------------------------------
 
