@@ -372,7 +372,7 @@ collect_mirai <- function(x, options = NULL) {
 
   ensure_cli_initialized()
   dots <- mget(options, envir = .)
-  map(x, dots)
+  mmap(x, dots)
 }
 
 #' mirai (Stop)

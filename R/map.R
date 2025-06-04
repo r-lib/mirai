@@ -214,7 +214,7 @@ mirai_map <- function(
 
   ensure_cli_initialized()
   dots <- eval(`[[<-`(substitute(alist(...)), 1L, quote(list)), envir = .)
-  map(x, dots)
+  mmap(x, dots)
 }
 
 #' @export
@@ -296,7 +296,7 @@ ensure_cli_initialized <- function() {
   `[[<-`(., ".stop", if (cli) stop_cli else .stop)
 }
 
-map <- function(x, dots) {
+mmap <- function(x, dots) {
   expr <- if (length(dots) > 1L) do.call(expression, dots) else dots[[1L]]
   xlen <- length(x)
   i <- 0L
