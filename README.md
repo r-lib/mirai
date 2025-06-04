@@ -66,28 +66,19 @@ A ‘mirai’ object is returned immediately, and is always non-blocking.
 ``` r
 m
 #> < mirai [] >
-```
 
-Whilst the async operation is ongoing, attempting to access a mirai’s
-`$data` yields an ‘unresolved’ logical NA.
-
-``` r
+# Whilst async operation still ongoing:
 m$data
 #> 'unresolved' logi NA
-```
-
-To check whether a mirai remains unresolved (yet to complete):
-
-``` r
 unresolved(m)
 #> [1] TRUE
 ```
 
-To wait for and collect the return value, use the mirai’s `[]` method:
+To wait for and collect the return value, use the mirai’s `[]` method.
 
 ``` r
 m[]
-#> [1] 6.486331 5.398450 6.702158
+#> [1] 7.147735 7.442937 6.165155
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -96,10 +87,10 @@ at `$data`.
 
 ``` r
 while (unresolved(m)) {
-  # do other work
+  # Do other work
 }
 m$data
-#> [1] 6.486331 5.398450 6.702158
+#> [1] 7.147735 7.442937 6.165155
 ```
 
 #### Daemons

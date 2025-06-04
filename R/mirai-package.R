@@ -94,8 +94,7 @@
 
 #' Call mirai
 #'
-#' `call_mirai_` is deprecated and exported for historical compatibility only.
-#' It will be removed in a future package version. Use [call_mirai()] instead.
+#' `call_mirai_` is deprecated and will be removed. Use [call_mirai()] instead.
 #'
 #' @inheritParams call_mirai
 #'

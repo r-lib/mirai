@@ -63,18 +63,12 @@ A 'mirai' object is returned immediately, and is always non-blocking.
 ```{r}
 #| label: do
 m
-```
-Whilst the async operation is ongoing, attempting to access a mirai's `$data` yields an 'unresolved' logical NA.
-```{r}
-#| label: data
+
+# Whilst async operation still ongoing:
 m$data
-```
-To check whether a mirai remains unresolved (yet to complete):
-```{r}
-#| label: unres
 unresolved(m)
 ```
-To wait for and collect the return value, use the mirai's `[]` method:
+To wait for and collect the return value, use the mirai's `[]` method.
 ```{r}
 #| label: call
 m[]
@@ -83,7 +77,7 @@ As a mirai represents an async operation, it is never necessary to wait for it. 
 ```{r}
 #| label: resolv
 while (unresolved(m)) {
-  # do other work
+  # Do other work
 }
 m$data
 ```
