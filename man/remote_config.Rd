@@ -2,22 +2,13 @@
 % Please edit documentation in R/launchers.R
 \name{remote_config}
 \alias{remote_config}
-\alias{ssh_config}
-\title{Generic and SSH Remote Launch Configuration}
+\title{Generic Remote Launch Configuration}
 \usage{
 remote_config(
   command = NULL,
   args = c("", "."),
   rscript = "Rscript",
   quote = FALSE
-)
-
-ssh_config(
-  remotes,
-  tunnel = FALSE,
-  timeout = 10,
-  command = "ssh",
-  rscript = "Rscript"
 )
 }
 \arguments{
@@ -33,74 +24,23 @@ that must include \code{"."} as an element, which will be substituted for the
 daemon launch command. Alternatively, a list of such character vectors to
 effect multiple launches (one for each list element).}
 
-\item{rscript}{(optional) name / path of the Rscript executable on the remote
-machine. The default assumes \code{"Rscript"} is on the executable search
-path. Prepend the full path if necessary. If launching on Windows,
-\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
+\item{rscript}{[default "Rscript"] assumes the R executable is on the
+search path. Replace with the full path of the Rscript executable on the
+remote machine if necessary. If launching on Windows, \code{"Rscript"} should be
+replaced with \code{"Rscript.exe"}.}
 
 \item{quote}{[default FALSE] logical value whether or not to quote the
 daemon launch command (not required for Slurm \code{"srun"} for example, but
 required for Slurm \code{"sbatch"} or \code{"ssh"}).}
-
-\item{remotes}{the character URL or vector of URLs to SSH into, using the
-'ssh://' scheme and including the port open for SSH connections (defaults
-to 22 if not specified), e.g. 'ssh://10.75.32.90:22' or 'ssh://nodename'.}
-
-\item{tunnel}{[default FALSE] logical value, whether to use SSH tunnelling.
-If TRUE, requires the \code{\link[=daemons]{daemons()}} \code{url} hostname to be '127.0.0.1'. See
-the 'SSH Tunnelling' section below for further details.}
-
-\item{timeout}{[default 10] maximum time allowed for connection setup in
-seconds.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument
-of \code{\link[=launch_remote]{launch_remote()}}, \code{\link[=daemons]{daemons()}}, or \code{\link[=make_cluster]{make_cluster()}}.
+of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remote()}}.
 }
 \description{
-\code{remote_config} provides a flexible generic framework for generating the
-shell commands to deploy daemons remotely.
-
-\code{ssh_config} generates a remote configuration for launching daemons over
-SSH, with the option of SSH tunnelling.
+Provides a flexible generic framework for generating the shell commands to
+deploy daemons remotely.
 }
-\section{SSH Direct Connections}{
-
-
-The simplest use of SSH is to execute the daemon launch command on a remote
-machine, for it to dial back to the host / dispatcher URL.
-
-It is assumed that SSH key-based authentication is already in place. The
-relevant port on the host must also be open to inbound connections from the
-remote machine, and is hence suitable for use within trusted networks.
-}
-
-\section{SSH Tunnelling}{
-
-
-Use of SSH tunnelling provides a convenient way to launch remote daemons
-without requiring the remote machine to be able to access the host. Often
-firewall configurations or security policies may prevent opening a port to
-accept outside connections.
-
-In these cases SSH tunnelling offers a solution by creating a tunnel once the
-initial SSH connection is made. For simplicity, this SSH tunnelling
-implementation uses the same port on both host and daemon. SSH key-based
-authentication must already be in place, but no other configuration is
-required.
-
-To use tunnelling, set the hostname of the \code{\link[=daemons]{daemons()}} \code{url} argument to be
-'127.0.0.1'. Using \code{\link[=local_url]{local_url()}} with \code{tcp = TRUE} also does this for you.
-Specifying a specific port to use is optional, with a random ephemeral port
-assigned otherwise. For example, specifying 'tcp://127.0.0.1:5555' uses the
-local port '5555' to create the tunnel on each machine. The host listens
-to '127.0.0.1:5555' on its machine and the remotes each dial into
-'127.0.0.1:5555' on their own respective machines.
-
-This provides a means of launching daemons on any machine you are able to
-access via SSH, be it on the local network or the cloud.
-}
-
 \examples{
 # Slurm srun example
 remote_config(
@@ -109,15 +49,7 @@ remote_config(
   rscript = file.path(R.home("bin"), "Rscript")
 )
 
-# Slurm sbatch requires 'quote = TRUE'
-remote_config(
-  command = "sbatch",
-  args = c("--mem 512", "-n 1", "--wrap", "."),
-  rscript = file.path(R.home("bin"), "Rscript"),
-  quote = TRUE
-)
-
-# SSH also requires 'quote = TRUE'
+# SSH requires 'quote = TRUE'
 remote_config(
   command = "/usr/bin/ssh",
   args = c("-fTp 22 10.75.32.90", "."),
@@ -130,27 +62,8 @@ remote_config(
   rscript = "--default-packages=NULL --vanilla"
 )
 
-# direct SSH example
-ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), timeout = 5)
-
-# SSH tunnelling example
-ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), tunnel = TRUE)
-
-\dontrun{
-
-# launch 2 daemons on the remote machines 10.75.32.90 and 10.75.32.91 using
-# SSH, connecting back directly to the host URL over a TLS connection:
-daemons(
-  url = host_url(tls = TRUE),
-  remote = ssh_config(c("ssh://10.75.32.90:222", "ssh://10.75.32.91:222"))
-)
-
-# launch 2 daemons on the remote machine 10.75.32.90 using SSH tunnelling:
-daemons(
-  n = 2,
-  url = local_url(tcp = TRUE),
-  remote = ssh_config("ssh://10.75.32.90", tunnel = TRUE)
-)
 }
-
+\seealso{
+\code{\link[=ssh_config]{ssh_config()}} for SSH launch configurations, or \code{\link[=cluster_config]{cluster_config()}}
+for cluster job scheduler launch configurations.
 }
