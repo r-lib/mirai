@@ -47,6 +47,7 @@
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the <code>url</code> of a <code><a href="../reference/daemons.html">daemons()</a></code> call.</li>
+<li>Simpler launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
