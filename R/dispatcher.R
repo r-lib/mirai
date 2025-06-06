@@ -95,7 +95,7 @@ dispatcher <- function(
     dots <- parse_dots(...)
     output <- attr(dots, "output")
     for (i in seq_len(n))
-      launch_daemon(wa3(url, dots, next_stream(envir)), output)
+      launch_daemon(wa3(url, dots), output)
     for (i in seq_len(n))
       while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
@@ -104,7 +104,7 @@ dispatcher <- function(
     for (item in changes)
       item > 0 && {
         outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
-        send(psock, serial, mode = 1L, block = TRUE, pipe = item)
+        send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
       }
   } else {
     listener <- attr(psock, "listener")[[1L]]

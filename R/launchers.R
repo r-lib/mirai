@@ -10,9 +10,11 @@
 #'
 #' Daemons must already be set for launchers to work.
 #'
-#' The generated command contains the argument `rs` specifying the length 7
-#' L'Ecuyer-CMRG random seed supplied to the daemon. The values will be
-#' different each time the function is called.
+#' The generated command for non-dispatcher daemons contain the argument `rs`
+#' specifying the length 7 L'Ecuyer-CMRG random seed supplied to the daemon. The
+#' values will be different each time the function is called. For dispatcher
+#' daemons, the equivalent random seed is obtained automatically from
+#' dispatcher, and hence `rs` is not specified in this case.
 #'
 #' @inheritParams mirai
 #' @param n integer number of daemons.

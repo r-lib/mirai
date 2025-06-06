@@ -304,7 +304,6 @@ daemons <- function(
           args <- wa4(urld, n, envir[["stream"]], dots)
           res <- launch_dispatcher(sock, urld, args, output, serial)
           store_dispatcher(envir, sock, cv, urld, res)
-          for (i in seq_len(n)) next_stream(envir)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -568,13 +567,12 @@ wa2 <- function(url, dots, rs, tls = NULL)
     paste0(rs, collapse = ",")
   ))
 
-wa3 <- function(url, dots, rs, tls = NULL)
+wa3 <- function(url, dots, rs = NULL, tls = NULL)
   shQuote(sprintf(
-    "mirai::daemon(\"%s\"%s%s,rs=c(%s))",
+    "mirai::daemon(\"%s\"%s%s)",
     url,
     dots,
-    parse_tls(tls),
-    paste0(rs, collapse = ",")
+    parse_tls(tls)
   ))
 
 wa4 <- function(urld, n, rs, dots)
@@ -651,6 +649,7 @@ store_dispatcher <- function(envir, sock, cv, urld, res = NULL) {
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
   `[[<-`(envir, "cv", cv)
+  `[[<-`(envir, "stream", NULL)
   is.null(res) && return()
   `[[<-`(envir, "url", res[-1L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
