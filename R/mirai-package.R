@@ -89,16 +89,3 @@
   ),
   hash = TRUE
 )
-
-# Deprecated  ------------------------------------------------------------------
-
-#' Call mirai
-#'
-#' `call_mirai_` is deprecated and will be removed. Use [call_mirai()] instead.
-#'
-#' @inheritParams call_mirai
-#'
-#' @keywords internal
-#' @export
-#'
-call_mirai_ <- call_aio_

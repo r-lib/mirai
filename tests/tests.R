@@ -71,7 +71,7 @@ connection && {
   `lang obj` <- quote(m + n + 2L)
   args <- c(m = 2L, n = 4L)
   m <- mirai(.expr = `lang obj`, .args = args, .timeout = 2000L)
-  if (!is_error_value(call_mirai_(m)$data)) test_equal(m$data, 8L)
+  if (!is_error_value(call_mirai(m)$data)) test_equal(m$data, 8L)
   test_true(!stop_mirai(m))
   Sys.sleep(1L)
   m <- mirai(mirai::on_daemon(), .timeout = 2000L)

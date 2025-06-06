@@ -7,6 +7,7 @@
 #### Updates
 
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.
++ Deprecated `call_mirai_()` is now removed.
 
 # mirai 2.3.0
 
