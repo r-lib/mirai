@@ -3,11 +3,11 @@
 #### New Features
 
 * Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the `url` of a `daemons()` call.
+* Simpler launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the `rs` argument to `daemon()`.
 
 #### Updates
 
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.
-* Dispatcher daemons now retrieve the RNG stream from dispatcher directly and no longer use the `rs` argument to `daemon()`.
 * Deprecated `call_mirai_()` is now removed.
 
 # mirai 2.3.0
