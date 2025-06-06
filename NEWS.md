@@ -7,7 +7,8 @@
 #### Updates
 
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.
-+ Deprecated `call_mirai_()` is now removed.
+* Dispatcher daemons now retrieve the RNG stream from dispatcher directly and no longer use the `rs` argument to `daemon()`.
+* Deprecated `call_mirai_()` is now removed.
 
 # mirai 2.3.0
 

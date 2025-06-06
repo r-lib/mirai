@@ -64,9 +64,11 @@ reaching time or task limits.
 
 Daemons must already be set for launchers to work.
 
-The generated command contains the argument \code{rs} specifying the length 7
-L'Ecuyer-CMRG random seed supplied to the daemon. The values will be
-different each time the function is called.
+The generated command for non-dispatcher daemons contain the argument \code{rs}
+specifying the length 7 L'Ecuyer-CMRG random seed supplied to the daemon. The
+values will be different each time the function is called. For dispatcher
+daemons, the equivalent random seed is obtained automatically from
+dispatcher, and hence \code{rs} is not specified in this case.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
