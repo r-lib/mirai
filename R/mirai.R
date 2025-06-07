@@ -156,6 +156,11 @@ mirai <- function(
       }
       all(nzchar(gn)) || stop(._[["named_dots"]])
     }
+  if (is.environment(.[["capsule"]])) {
+    capsule <- as.list.environment(.[["capsule"]], all.names = TRUE)
+    capsule[[".Random.seed"]] <- NULL
+    globals <- c(capsule, globals)
+  }
   data <- list(
     ._mirai_globals_. = globals,
     .expr = if (
@@ -536,6 +541,32 @@ is_error_value <- is_error_value
 #' @export
 #'
 on_daemon <- function() !is.null(.[["sock"]])
+
+#' Create an Async Scope
+#'
+#' All objects created inside the scope is automatically added to any mirai
+#' calls.
+#'
+#' @param x an expression.
+#'
+#' @return The return value of the expression `x`.
+#'
+#' @examplesIf interactive()
+#' scope({
+#'   slow_lm <- function(formula, data) {
+#'     Sys.sleep(1)
+#'     lm(formula, data = data)
+#'   }
+#'   dat <- mtcars
+#'   mirai(slow_lm(mpg ~ disp, dat))[]
+#' })
+#'
+#' @export
+#'
+scope <- function(x) {
+  on.exit(`[[<-`(., "capsule", NULL))
+  eval(substitute(x), envir = .[["capsule"]] <- new.env())
+}
 
 # methods ----------------------------------------------------------------------
 
