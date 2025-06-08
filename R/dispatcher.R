@@ -133,7 +133,7 @@ dispatcher <- function(
         for (item in changes) {
           if (item > 0) {
             outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
-            send(psock, serial, mode = 1L, block = TRUE, pipe = item)
+            send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
           } else {
             id <- as.character(-item)
