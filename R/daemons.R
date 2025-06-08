@@ -242,7 +242,8 @@ daemons <- function(
         },
         {
           cv <- cv()
-          apply_serial(sock, serial)
+          if (is.null(serial)) serial <- .[["serial"]]
+          if (is.list(serial)) `opt<-`(sock, "serial", serial)
           sch <- purl[["scheme"]]
           if (!startsWith(sch, "t") && !startsWith(sch, "w") &&
               dial(sock, url = url, autostart = NA, fail = 3L) == 0L) {
@@ -300,7 +301,8 @@ daemons <- function(
         },
         {
           cv <- cv()
-          apply_serial(sock, serial)
+          if (is.null(serial)) serial <- .[["serial"]]
+          if (is.list(serial)) `opt<-`(sock, "serial", serial)
           args <- wa4(urld, n, envir[["stream"]], dots)
           res <- launch_dispatcher(sock, urld, args, output, serial)
           store_dispatcher(envir, sock, cv, urld, res)
@@ -490,11 +492,6 @@ register_serial <- function(class, sfunc, ufunc) {
 }
 
 # internals --------------------------------------------------------------------
-
-apply_serial <- function(sock, serial) {
-  if (is.null(serial)) serial <- .[["serial"]]
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
-}
 
 configure_tls <- function(purl, tls, pass, envir, returnconfig = TRUE) {
   sch <- purl[["scheme"]]

@@ -9,6 +9,7 @@
 
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - take note if you are manually launching daemons.
 * Deprecated `call_mirai_()` is now removed.
+* Requires nanonext >= [1.6.0.9001].
 
 # mirai 2.3.0
 
