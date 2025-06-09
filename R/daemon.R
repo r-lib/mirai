@@ -127,7 +127,7 @@ daemon <- function(
     is.numeric(id) && send(sock, c(0L, as.integer(id)), mode = 2L, block = TRUE)
     wait(cv) || return(invisible(xc))
     bundle <- collect_aio(aio)
-    `[[<-`(.GlobalEnv, ".Random.seed", bundle[[1L]])
+    `[[<-`(.GlobalEnv, ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
     if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
     snapshot()
     repeat {
