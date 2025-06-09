@@ -3,8 +3,8 @@
 #' Dispatcher
 #'
 #' Dispatches tasks from a host to daemons for processing, using FIFO
-#' scheduling, queuing tasks as required. Daemon / dispatcher settings may be
-#' controlled by [daemons()] and this function should not need to be invoked
+#' scheduling, queuing tasks as required. Daemon / dispatcher settings are
+#' controlled by [daemons()] and this function should not need to be called
 #' directly.
 #'
 #' The network topology is such that a dispatcher acts as a gateway between the
@@ -14,9 +14,8 @@
 #' task.
 #'
 #' @inheritParams daemon
-#' @param host the character host URL to dial (where tasks are sent from),
-#'   including the port to connect to e.g. 'tcp://hostname:5555' or
-#'   'tcp://10.75.32.70:5555'.
+#' @param host the character URL dispatcher should listen at (for hosts to dial
+#'   in to), typically an IPC address.
 #' @param url (optional) the character URL dispatcher should listen at (and
 #'   daemons should dial in to), including the port to connect to e.g.
 #'   'tcp://hostname:5555' or 'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to
