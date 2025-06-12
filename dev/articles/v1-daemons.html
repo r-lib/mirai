@@ -148,7 +148,7 @@ received (either completed or cancelled)</li>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "ipc:///tmp/c2c44fbab84c2abdc1dcec50"</span></span>
+<span><span class="co">#&gt; [1] "abstract://6f00be6c1a9c6d6d400cace8"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -186,7 +186,7 @@ URL:</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "ipc:///tmp/092bfa33b8c79e58a666b322"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "abstract://fc14c9199ce2c107d7b93265"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="everywhere">Everywhere<a class="anchor" aria-label="anchor" href="#everywhere"></a>
@@ -290,7 +290,7 @@ a free ephemeral port:</p>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "tcp://192.168.2.179:61815"</span></span>
+<span><span class="co">#&gt; [1] "tcp://192.168.1.71:41043"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -423,10 +423,10 @@ remote machine e.g. via a terminal session.</p>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,91257334,-1959188481,-1949566412,1212153765,450893858,-19985093))'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [2]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,-1946146075,-207229660,280621307,1679686356,-432010903,1372300061))'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
@@ -455,38 +455,38 @@ command for manually launching a daemon on a remote machine.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.2.179:61823",dispatcher=TRUE,tls=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjIuMTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw</span></span>
-<span><span class="co">#&gt; MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjIu</span></span>
-<span><span class="co">#&gt; MTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3</span></span>
-<span><span class="co">#&gt; DQEBAQUAA4ICDwAwggIKAoICAQC1rQfohQMGO1G/nJfPXKwRIyTOh0+YN3rPb8Fq</span></span>
-<span><span class="co">#&gt; 9YQisNJsZSAYWOCBZtcvfkhp6H3T8PkpHQpRvMqJRscvwBIGj5Q0wt9YlOiUL0nL</span></span>
-<span><span class="co">#&gt; lKgrc06HpzTCMDkd+gDXFFzpIkC9kywycou5EJCbHPX35G1DWUnk5EFljq/Rphgt</span></span>
-<span><span class="co">#&gt; oqF8orky7uxvV0okEN0/G4owdutIu7oj1bDDkyeAv2YwnQXhqd7qAtRlwBF25EMN</span></span>
-<span><span class="co">#&gt; sHb7CEdW9L8W0W0delwdey0HjgNZulq5FE7Jhzh9w0fjSQU+bz+T2lxFZhdMa8AB</span></span>
-<span><span class="co">#&gt; jwvOTFu+ruDd0H0N19u8yjc2hTjDLGSme4YoHsc0r8sFW2ebDSelPLiY4i+6RDud</span></span>
-<span><span class="co">#&gt; m2DPve12LYd6L/qOPayE/IFOm3+L0DZeicy5e+qhmbnkQMy83wX4MXcxFME4e+oR</span></span>
-<span><span class="co">#&gt; HiJjpR7VsmaCaDkWPQOA8K9+CMwhrCE1TJ8TNL6lQVf/jCwLFH11K24j2xFJd3xr</span></span>
-<span><span class="co">#&gt; qqNaeSeTo7J+e9hgX+UCgT9Y01fzwaZIo9xmXtd7VwLlvh6MtJXhH6G47OiqqPVT</span></span>
-<span><span class="co">#&gt; JDlQpqEilrxQgeOtvpzpVAafwUqeyTELwo6vovrOXZd++3v4ofPVYmZdLH+/fC1h</span></span>
-<span><span class="co">#&gt; vyoflaga5LmkJqXvfNFUl/qW9VqsZJtD+ugMesWaFvISWLcmTw+fpxibaucX1mC+</span></span>
-<span><span class="co">#&gt; QA/+aQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBTx8Dh/</span></span>
-<span><span class="co">#&gt; y5xUx7oDd91v+d4RGDKiNDAfBgNVHSMEGDAWgBTx8Dh/y5xUx7oDd91v+d4RGDKi</span></span>
-<span><span class="co">#&gt; NDANBgkqhkiG9w0BAQsFAAOCAgEAWd25sLJY/CCuHO4+AhT3PHJms9M9FkMrlfbA</span></span>
-<span><span class="co">#&gt; ZXh/40UaNjFgFBYbJprPrQWZgH55Me29badP4OMcGpP+Jwfb1mE9CGq7iTIPEkoN</span></span>
-<span><span class="co">#&gt; bQ12OQJIjj7CQZaEsukrnQPwj6aXZjHnDVA8GiMizEmEzEEj54qaEOCb+N1OsobI</span></span>
-<span><span class="co">#&gt; vvFZGcHi2ktVMugGnCgIf1R5/2ojul+lArbPeItbOBf1EzEyIObVWG6NeFU9pcQ3</span></span>
-<span><span class="co">#&gt; 18zSoBS3qhL44yxbmxponMf/Izw5AGtI6Ue1rLTab3lNp0eC8qt6buhs5Nef2gar</span></span>
-<span><span class="co">#&gt; iTWjqhrChzdwc6a1rFkdpzA5xZqp6hE7Q3x0XSK5qZkixdOt6Y4yHcWkKXaKLOVN</span></span>
-<span><span class="co">#&gt; o7M4UVw0b37oDXJc1lMoupUj8i+On34BpqU1A7EMNeSA64tSus15wUi8laIExpjc</span></span>
-<span><span class="co">#&gt; UpfBLeSU5tayz43EXX1wZAXRLLOYGE4z4jmRcFzhwzLFKOZZJayD8uXWAN58wR0E</span></span>
-<span><span class="co">#&gt; H4Y3RGWtINvz/H/k9lGYSYjXkQNnzpdBXxGD2TigCuINMpAzlhmlef72G3Cmv0+K</span></span>
-<span><span class="co">#&gt; yxZwaM1h216NGGn4JXYbExwMJ2Ea1lFK57jLCidBeDJtKOu//0YBAZI+GUia8QdU</span></span>
-<span><span class="co">#&gt; WqTluR6AP275Z7EG7oet2PYRrwvX30+OmFKDTrPFVupSTcnGAOlhAPAGtweFsrwo</span></span>
-<span><span class="co">#&gt; zLI1mR8=</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:36015",tls=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu</span></span>
+<span><span class="co">#&gt; MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
+<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43</span></span>
+<span><span class="co">#&gt; MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
+<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAsgsUV7lze0bVrhB53HTB1bK9NBSgv3MVmd+gIsPI</span></span>
+<span><span class="co">#&gt; wQ/EStPbJ5M6J7QR5g6XKFGcgWUIAcLARx1lg5xBATYeZA+mLoKObipe313x8Ebb</span></span>
+<span><span class="co">#&gt; XE9PU8b3pmWOhsP9Wd5R6Tbjeko8cEegRA8E/bmL++0mGUK/0zcBXmjndjs4D5Iy</span></span>
+<span><span class="co">#&gt; OjVeL3iE8uUsqC/8/Q4kg9vR61kkA/MT+tjHYIMwjV/VgG3OJgQQWxH3eRCdrPkJ</span></span>
+<span><span class="co">#&gt; QraxsT5GC2fc/mZm/VUyglVLBCEmfC1brBlTGaymnHaXdJvohhAqS9pgRuVeVbQP</span></span>
+<span><span class="co">#&gt; 3HR9J95ejNaz9xcQaea5/cPVXcqrYBWPHK41ctZ/EiQTpM9P1HC7nafQp8Qq1azI</span></span>
+<span><span class="co">#&gt; UbGhUOq/QpmnnbnVH1aRx8LjWni/p9B0nO5wsssSpyJfmtGbcBMYo0/ZvTMXdRc0</span></span>
+<span><span class="co">#&gt; R6eJGb1IrM/FEZFUEshrRCTjCZwf2gHhwU+tGAAXI9plutetOitxLi0XuTRDGmlC</span></span>
+<span><span class="co">#&gt; rF2DWXGdxBYrVYvQWz6rFW/VCk8gK8iN1I9dP7jEAJbv4x8jAcyTByQ4rRNCvWp/</span></span>
+<span><span class="co">#&gt; zJ7zrT4ibWSwNJOi3KcTmv8d5hJ98nvj5QhgiY5MYota5aM9QNn/KC2L8rgdbUpD</span></span>
+<span><span class="co">#&gt; uCKc8N/pOkykKOdTPnGlRxBpuewyXEmuWgoC+RRwh0rsKM1DWjMB/lVBEUou/FGl</span></span>
+<span><span class="co">#&gt; a/cCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUkcNg/pPN</span></span>
+<span><span class="co">#&gt; H29MuyI6iYq+emArXUIwHwYDVR0jBBgwFoAUkcNg/pPNH29MuyI6iYq+emArXUIw</span></span>
+<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBACOAaKqJBDSU4awmsS3v6Vr6/X55jmMw81kgtr6K</span></span>
+<span><span class="co">#&gt; 6v4WHK5O2SZKHZCN4gzaXig8L3uKmgB3zyzbR+t+owgWdk3IstCldVX1sxMq7cNP</span></span>
+<span><span class="co">#&gt; TFYx84Go887YRq3NYPfHdjYUPWgsRs/birgHCdslH+WGLwUmqTEeua9ydzgd5xP4</span></span>
+<span><span class="co">#&gt; Y6JUEOywH0BSpwAKB+dVZJu+qzhFGN/gCUhuX4+ptWAqW6AVNSt7zUcszsgYLpAf</span></span>
+<span><span class="co">#&gt; 9gFZWMnGtX6nNHZz86mWe0HFpfQZ3Z7WEYiF0xJJK7QEQpUeMxZF7GJX04MKvEnQ</span></span>
+<span><span class="co">#&gt; PXNVSaEtO1jgno3ToxhwjTcYaUubwSaxNAJFFrLuobO/FlHZsH/PUNWoRbZlCKzq</span></span>
+<span><span class="co">#&gt; MelQzUos1NRh3KsL1e344Hx8JOq4oRgtnje8RBojuOa8VOoLRQpVr8bUMUFiFMwI</span></span>
+<span><span class="co">#&gt; hSZW90zXrhFuKoZVMj6euYtNlA+w3U21YiKKfeeihFiFDyalshw/lCvFEv1PS63u</span></span>
+<span><span class="co">#&gt; NrJwSrPfaE4g6Rs9Cw0LBYt6nGK7fTqnNA4wzzZULUSnss58hSwk6BJmrHawpRYa</span></span>
+<span><span class="co">#&gt; YTPsrd6bf8+BiGcaYHDfhllt4tPRKpaR3kSx5Kq7Hw+z3jtEW5b6I1gg3hlnpQbn</span></span>
+<span><span class="co">#&gt; 6OBAe4KrodTqGrE0tjesan/NTdHK1o1+4IRpgGneWKg0MpC+7CVnfZYhb8WLKmPi</span></span>
+<span><span class="co">#&gt; KzvN</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; ",""),rs=c(10407,-1505249000,-2064814023,-250690906,-1957016337,2049359460,-2028631531))'</span></span></code></pre></div>
+<span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
