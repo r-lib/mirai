@@ -57,7 +57,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/c2c44fbab84c2abdc1dcec50"
+#> [1] "abstract://6f00be6c1a9c6d6d400cace8"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -97,7 +97,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/092bfa33b8c79e58a666b322"
+#> [1] "abstract://fc14c9199ce2c107d7b93265"
 ```
 
 #### Everywhere
@@ -195,7 +195,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.2.179:61815"
+#> [1] "tcp://192.168.1.71:41043"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -307,10 +307,10 @@ daemons(url = host_url())
 #> [1] 0
 launch_remote(2)
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,91257334,-1959188481,-1949566412,1212153765,450893858,-19985093))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.2.179:61819",dispatcher=TRUE,rs=c(10407,-1946146075,-207229660,280621307,1679686356,-432010903,1372300061))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'
 daemons(0)
 #> [1] 0
 ```
@@ -337,38 +337,38 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.2.179:61823",dispatcher=TRUE,tls=c("-----BEGIN CERTIFICATE-----
-#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
-#> MTY4LjIuMTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
-#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjIu
-#> MTc5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQC1rQfohQMGO1G/nJfPXKwRIyTOh0+YN3rPb8Fq
-#> 9YQisNJsZSAYWOCBZtcvfkhp6H3T8PkpHQpRvMqJRscvwBIGj5Q0wt9YlOiUL0nL
-#> lKgrc06HpzTCMDkd+gDXFFzpIkC9kywycou5EJCbHPX35G1DWUnk5EFljq/Rphgt
-#> oqF8orky7uxvV0okEN0/G4owdutIu7oj1bDDkyeAv2YwnQXhqd7qAtRlwBF25EMN
-#> sHb7CEdW9L8W0W0delwdey0HjgNZulq5FE7Jhzh9w0fjSQU+bz+T2lxFZhdMa8AB
-#> jwvOTFu+ruDd0H0N19u8yjc2hTjDLGSme4YoHsc0r8sFW2ebDSelPLiY4i+6RDud
-#> m2DPve12LYd6L/qOPayE/IFOm3+L0DZeicy5e+qhmbnkQMy83wX4MXcxFME4e+oR
-#> HiJjpR7VsmaCaDkWPQOA8K9+CMwhrCE1TJ8TNL6lQVf/jCwLFH11K24j2xFJd3xr
-#> qqNaeSeTo7J+e9hgX+UCgT9Y01fzwaZIo9xmXtd7VwLlvh6MtJXhH6G47OiqqPVT
-#> JDlQpqEilrxQgeOtvpzpVAafwUqeyTELwo6vovrOXZd++3v4ofPVYmZdLH+/fC1h
-#> vyoflaga5LmkJqXvfNFUl/qW9VqsZJtD+ugMesWaFvISWLcmTw+fpxibaucX1mC+
-#> QA/+aQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBTx8Dh/
-#> y5xUx7oDd91v+d4RGDKiNDAfBgNVHSMEGDAWgBTx8Dh/y5xUx7oDd91v+d4RGDKi
-#> NDANBgkqhkiG9w0BAQsFAAOCAgEAWd25sLJY/CCuHO4+AhT3PHJms9M9FkMrlfbA
-#> ZXh/40UaNjFgFBYbJprPrQWZgH55Me29badP4OMcGpP+Jwfb1mE9CGq7iTIPEkoN
-#> bQ12OQJIjj7CQZaEsukrnQPwj6aXZjHnDVA8GiMizEmEzEEj54qaEOCb+N1OsobI
-#> vvFZGcHi2ktVMugGnCgIf1R5/2ojul+lArbPeItbOBf1EzEyIObVWG6NeFU9pcQ3
-#> 18zSoBS3qhL44yxbmxponMf/Izw5AGtI6Ue1rLTab3lNp0eC8qt6buhs5Nef2gar
-#> iTWjqhrChzdwc6a1rFkdpzA5xZqp6hE7Q3x0XSK5qZkixdOt6Y4yHcWkKXaKLOVN
-#> o7M4UVw0b37oDXJc1lMoupUj8i+On34BpqU1A7EMNeSA64tSus15wUi8laIExpjc
-#> UpfBLeSU5tayz43EXX1wZAXRLLOYGE4z4jmRcFzhwzLFKOZZJayD8uXWAN58wR0E
-#> H4Y3RGWtINvz/H/k9lGYSYjXkQNnzpdBXxGD2TigCuINMpAzlhmlef72G3Cmv0+K
-#> yxZwaM1h216NGGn4JXYbExwMJ2Ea1lFK57jLCidBeDJtKOu//0YBAZI+GUia8QdU
-#> WqTluR6AP275Z7EG7oet2PYRrwvX30+OmFKDTrPFVupSTcnGAOlhAPAGtweFsrwo
-#> zLI1mR8=
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:36015",tls=c("-----BEGIN CERTIFICATE-----
+#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
+#> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
+#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
+#> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
+#> AQEFAAOCAg8AMIICCgKCAgEAsgsUV7lze0bVrhB53HTB1bK9NBSgv3MVmd+gIsPI
+#> wQ/EStPbJ5M6J7QR5g6XKFGcgWUIAcLARx1lg5xBATYeZA+mLoKObipe313x8Ebb
+#> XE9PU8b3pmWOhsP9Wd5R6Tbjeko8cEegRA8E/bmL++0mGUK/0zcBXmjndjs4D5Iy
+#> OjVeL3iE8uUsqC/8/Q4kg9vR61kkA/MT+tjHYIMwjV/VgG3OJgQQWxH3eRCdrPkJ
+#> QraxsT5GC2fc/mZm/VUyglVLBCEmfC1brBlTGaymnHaXdJvohhAqS9pgRuVeVbQP
+#> 3HR9J95ejNaz9xcQaea5/cPVXcqrYBWPHK41ctZ/EiQTpM9P1HC7nafQp8Qq1azI
+#> UbGhUOq/QpmnnbnVH1aRx8LjWni/p9B0nO5wsssSpyJfmtGbcBMYo0/ZvTMXdRc0
+#> R6eJGb1IrM/FEZFUEshrRCTjCZwf2gHhwU+tGAAXI9plutetOitxLi0XuTRDGmlC
+#> rF2DWXGdxBYrVYvQWz6rFW/VCk8gK8iN1I9dP7jEAJbv4x8jAcyTByQ4rRNCvWp/
+#> zJ7zrT4ibWSwNJOi3KcTmv8d5hJ98nvj5QhgiY5MYota5aM9QNn/KC2L8rgdbUpD
+#> uCKc8N/pOkykKOdTPnGlRxBpuewyXEmuWgoC+RRwh0rsKM1DWjMB/lVBEUou/FGl
+#> a/cCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUkcNg/pPN
+#> H29MuyI6iYq+emArXUIwHwYDVR0jBBgwFoAUkcNg/pPNH29MuyI6iYq+emArXUIw
+#> DQYJKoZIhvcNAQELBQADggIBACOAaKqJBDSU4awmsS3v6Vr6/X55jmMw81kgtr6K
+#> 6v4WHK5O2SZKHZCN4gzaXig8L3uKmgB3zyzbR+t+owgWdk3IstCldVX1sxMq7cNP
+#> TFYx84Go887YRq3NYPfHdjYUPWgsRs/birgHCdslH+WGLwUmqTEeua9ydzgd5xP4
+#> Y6JUEOywH0BSpwAKB+dVZJu+qzhFGN/gCUhuX4+ptWAqW6AVNSt7zUcszsgYLpAf
+#> 9gFZWMnGtX6nNHZz86mWe0HFpfQZ3Z7WEYiF0xJJK7QEQpUeMxZF7GJX04MKvEnQ
+#> PXNVSaEtO1jgno3ToxhwjTcYaUubwSaxNAJFFrLuobO/FlHZsH/PUNWoRbZlCKzq
+#> MelQzUos1NRh3KsL1e344Hx8JOq4oRgtnje8RBojuOa8VOoLRQpVr8bUMUFiFMwI
+#> hSZW90zXrhFuKoZVMj6euYtNlA+w3U21YiKKfeeihFiFDyalshw/lCvFEv1PS63u
+#> NrJwSrPfaE4g6Rs9Cw0LBYt6nGK7fTqnNA4wzzZULUSnss58hSwk6BJmrHawpRYa
+#> YTPsrd6bf8+BiGcaYHDfhllt4tPRKpaR3kSx5Kq7Hw+z3jtEW5b6I1gg3hlnpQbn
+#> 6OBAe4KrodTqGrE0tjesan/NTdHK1o1+4IRpgGneWKg0MpC+7CVnfZYhb8WLKmPi
+#> KzvN
 #> -----END CERTIFICATE-----
-#> ",""),rs=c(10407,-1505249000,-2064814023,-250690906,-1957016337,2049359460,-2028631531))'
+#> ",""))'
 ```
 
 ``` r
