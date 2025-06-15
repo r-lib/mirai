@@ -682,6 +682,7 @@ dispatcher_status <- function(envir) {
   is.object(status) && return(status)
   out <- list(
     connections = status[1L],
+    dispatcher = envir[["dispatcher"]],
     daemons = envir[["url"]],
     mirai = c(
       awaiting = status[2L],
