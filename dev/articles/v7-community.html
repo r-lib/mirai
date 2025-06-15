@@ -87,31 +87,63 @@ posed by the community, and will be added to over time.</p>
 </h3>
 <ol style="list-style-type: decimal">
 <li><a href="#migration-from-future_promise">Migration from
-future_promise</a></li>
-<li><a href="#setting-the-random-seed">Setting the Random Seed</a></li>
+<code>future_promise()</code></a></li>
+<li><a href="#setting-the-random-seed">Setting the random seed</a></li>
+<li><a href="#accessing-functions-during-package-development">Accessing
+functions during package development</a></li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="migration-from-future_promise">Migration from future_promise<a class="anchor" aria-label="anchor" href="#migration-from-future_promise"></a>
+<h3 id="migration-from-future_promise">Migration from <code>future_promise()</code><a class="anchor" aria-label="anchor" href="#migration-from-future_promise"></a>
 </h3>
-<p>It should be mostly straightforward translating ExtendedTask code
-that was originally written for use with a
-<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
-<p>The most important difference is that a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>
-tries to infer all the global variables that are required by the
-expression. However this can easily run into edge cases, or behave in a
-way that you would not expect. As this behaviour is not transparent, in
-the best case you will know something has gone wrong, but in the worst
-case could silently produce the wrong result. In both cases, you would
-not know until you are trying to debug the situation.</p>
-<p>A mirai on the other hand, requires that the expression be
-self-contained, hence any variables or helper functions are passed in
-via the <code>...</code> of <code><a href="../reference/mirai.html">mirai()</a></code>. This simple
-requirement allows for transparent and reliable behaviour that remains
-completely robust over time. It also means that you can easily reason
-about your code, and is designed to save you time in the long run.</p>
+<p>For use within Shiny, it should be straightforward translating
+ExtendedTask or other async code that was originally written for use
+with a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">promises::future_promise()</a></code>.</p>
+<p>Note: <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> exists in the promises package as
+we had to find a workaround to make <code>future(...)</code> always
+async. <code>future(...)</code> by itself is not always async as it
+blocks as soon as it runs out of parallel processes on which to run
+tasks.</p>
+<p><code><a href="../reference/mirai.html">mirai()</a></code> on the other hand is built as an async
+framework, so there’s no need for an additional function from the
+promises package. You should simply use a <code><a href="../reference/mirai.html">mirai()</a></code> directly
+in place of a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
 <div class="section level4">
-<h4 id="special-case-----example">Special Case: <code>...</code> Example<a class="anchor" aria-label="anchor" href="#special-case-----example"></a>
+<h4 id="globals">Globals<a class="anchor" aria-label="anchor" href="#globals"></a>
+</h4>
+<p>One important difference is that a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> by
+default tries to infer all the global variables that are required by the
+expression. If your code depended on this convenience feature then you
+will need to instead pass these in via the <code>...</code> of
+<code><a href="../reference/mirai.html">mirai()</a></code>. A mirai requires that the expression be
+self-contained, with any variables or helper functions explicitly
+supplied to it.</p>
+<p>On the other hand, if your code previously used the
+<code>globals</code> argument to supply these variables, then you can
+often pass that directly to the <code>.args</code> of
+<code><a href="../reference/mirai.html">mirai()</a></code>. Note that this would only work in the case of a
+named list and not the other forms that <code>globals</code> can
+take.</p>
+<p>Regardless of using a <code><a href="../reference/mirai.html">mirai()</a></code> or
+<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you pass globals
+explicitly in production code. This is as globals detection is never
+100% perfect, and there is always some element of guesswork. Edge cases
+can lead to unpredictable failures or silently incorrect results.
+Explicit passing of variables allows for transparent and reliable
+behaviour, that remains completely robust over time.</p>
+</div>
+<div class="section level4">
+<h4 id="capture-globals-using-environment">Capture globals using <code>environment()</code><a class="anchor" aria-label="anchor" href="#capture-globals-using-environment"></a>
+</h4>
+<p><code><a href="../reference/mirai.html">mirai()</a></code> allows passing an environment to
+<code>...</code> or to <code>.args</code>. This is especially useful for
+Shiny ExtendedTask, where it is invoked with a set of arguments. By
+using <code>mirai::mirai({...}, environment())</code> you automatically
+capture the variables provided to the invoke method. See the Shiny
+vignette for example usage.</p>
+</div>
+<div class="section level4">
+<h4 id="special-case----">Special Case: <code>...</code><a class="anchor" aria-label="anchor" href="#special-case----"></a>
 </h4>
 <p>A Shiny app may use the following <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> code
 within the server component:</p>
@@ -126,25 +158,18 @@ within the server component:</p>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/bind_task_button.html" class="external-link">bind_task_button</a></span><span class="op">(</span><span class="st">"btn"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">observeEvent</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">btn</span>, <span class="va">task</span><span class="op">$</span><span class="fu">invoke</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">n</span>, <span class="va">input</span><span class="op">$</span><span class="va">delay</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The equivalent may be achieved in <code><a href="../reference/mirai.html">mirai()</a></code> in the
-following way:</p>
+<p>The equivalent in <code><a href="../reference/mirai.html">mirai()</a></code> is achieved by:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">task</span> <span class="op">&lt;-</span> <span class="va">ExtendedTask</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">func</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, func <span class="op">=</span> <span class="va">func</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/bind_task_button.html" class="external-link">bind_task_button</a></span><span class="op">(</span><span class="st">"btn"</span><span class="op">)</span></span></code></pre></div>
-<ol style="list-style-type: decimal">
-<li>
-<code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> captures the <code>...</code> to be used
-by the function within the mirai expression, and can be supplied via
-<code>.args</code>.</li>
-<li>The definition for <code>func</code> is passed through in the usual
-way.</li>
-</ol>
+<p>Note that here <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> captures the
+<code>...</code> that’s used within the mirai expression.</p>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="setting-the-random-seed">Setting the Random Seed<a class="anchor" aria-label="anchor" href="#setting-the-random-seed"></a>
+<h3 id="setting-the-random-seed">Setting the random seed<a class="anchor" aria-label="anchor" href="#setting-the-random-seed"></a>
 </h3>
 <p>The following example was raised as being potentially
 counter-intuitive, given that default ‘cleanup’ settings at each daemon
@@ -162,10 +187,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1]  0.17961967 -1.42086665 -0.09406521</span></span>
+<span><span class="co">#&gt; [1]  0.99340139 -0.66103336  0.03745014</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] -1.3584870  0.3060082  0.5150974</span></span>
+<span><span class="co">#&gt; [1] -0.24687006  0.62359398 -0.03419501</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -204,6 +229,19 @@ using an independent method and set each time random draws are required.
 Another option would be to set the random seed within a local execution
 scope to prevent the global random seed on each daemon from being
 affected.</p>
+<p><a href="#table-of-contents">« Back to ToC</a></p>
+</div>
+<div class="section level3">
+<h3 id="accessing-functions-during-package-development">Accessing functions during package development<a class="anchor" aria-label="anchor" href="#accessing-functions-during-package-development"></a>
+</h3>
+<p>A mirai call usually requires package-namespaced functions. However
+the latest version of a package in development is often loaded
+dynamically by <code>devtools::load_all()</code> or the underlying
+<code>pkgload::load_all()</code> for quick iteration.</p>
+<p>In this case, use <code><a href="../reference/everywhere.html">everywhere()</a></code> to also call
+<code>devtools::load_all()</code> on all (local) daemons. They will then
+have access to the same functions as your host session for subsequent
+<code><a href="../reference/mirai.html">mirai()</a></code> calls.</p>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
