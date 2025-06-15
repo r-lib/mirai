@@ -16,8 +16,10 @@ query, or NULL to query the 'default' profile.
 A named list comprising:
 \itemize{
 \item \strong{connections} - integer number of active daemon connections.
+\item \strong{dispatcher} (present only if using dispatcher) - character URL
+at which dispatcher is listening for hosts.
 \item \strong{daemons} - character URL at which host / dispatcher is
-listening, or else \code{0L} if daemons have not yet been set.
+listening for daemons, or else \code{0L} if daemons have not yet been set.
 \item \strong{mirai} (present only if using dispatcher) - a named integer
 vector comprising: \strong{awaiting} - number of tasks queued for execution at
 dispatcher, \strong{executing} - number of tasks sent to a daemon for

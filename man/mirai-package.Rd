@@ -49,7 +49,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Joe Cheng \email{joe@posit.co} [contributor]
-  \item Posit Software, PBC (03wc8by49) [copyright holder, funder]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
   \item Hibiki AI Limited [copyright holder]
 }
 
