@@ -2,11 +2,13 @@
 
 #### New Features
 
-* Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the `url` of a `daemons()` call.
+* Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons.
+  + Simply pass the value of `status()$dispatcher` as the `url` of a `daemons()` call in another process.
 * Simpler launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the `rs` argument to `daemon()`.
 
 #### Updates
 
+* `status()` returns an additional element showing the dispatcher URL under dispatcher.
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - please take note if you are manually launching daemons.
 * Deprecated `call_mirai_()` is now removed.
 * Requires nanonext >= [1.6.0.9001].
