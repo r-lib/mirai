@@ -11,18 +11,41 @@ This vignette is designed to provide a knowledgebase for questions posed by the 
 
 ### Table of Contents
 
-1. [Migration from future_promise](#migration-from-future_promise)
+1. [Migration from `future_promise()`](#migration-from-future_promise)
 2. [Setting the Random Seed](#setting-the-random-seed)
 
-### Migration from future_promise
+### Migration from `future_promise()`
 
-It should be mostly straightforward translating ExtendedTask code that was originally written for use with a `future_promise()`.
+For use within Shiny, it should be straightforward translating ExtendedTask or other async code that was originally written for use with a `promises::future_promise()`.
 
-The most important difference is that a `future_promise()` tries to infer all the global variables that are required by the expression. However this can easily run into edge cases, or behave in a way that you would not expect. As this behaviour is not transparent, in the best case you will know something has gone wrong, but in the worst case could silently produce the wrong result. In both cases, you would not know until you are trying to debug the situation.
+Note: `future_promise()` exists in the promises package as we had to find a workaround to make `future(...)` always async.
+`future(...)` by itself is not always async as it blocks as soon as it runs out of parallel processes on which to run tasks.
 
-A mirai on the other hand, requires that the expression be self-contained, hence any variables or helper functions are passed in via the `...` of `mirai()`. This simple requirement allows for transparent and reliable behaviour that remains completely robust over time. It also means that you can easily reason about your code, and is designed to save you time in the long run.
+`mirai()` on the other hand is built as an async framework, so there's no need for an additional function from the promises package.
+You should simply use a `mirai()` directly in place of a `future_promise()`.
 
-#### Special Case: `...` Example
+#### Globals
+
+One important difference is that a `future_promise()` by default tries to infer all the global variables that are required by the expression.
+If your code depended on this convenience feature then you will need to instead pass these in via the `...` of `mirai()`.
+A mirai requires that the expression be self-contained, with any variables or helper functions explicitly supplied to it.
+
+On the other hand, if your code previously used the `globals` argument to supply these variables, then you can often pass that directly to the `.args` of `mirai()`.
+Note that this would only work in the case of a named list and not the other forms that `globals` can take.
+
+Regardless of using a `mirai()` or `future_promise()`, we recommend that you pass globals explicitly in production code.
+This is as globals detection is never 100% perfect, and there is always some element of guesswork.
+Edge cases can lead to unpredictable failures or silently incorrect results.
+Explicit passing of variables allows for transparent and reliable behaviour, that remains completely robust over time.
+
+#### Capture globals using `environment()`
+
+`mirai()` allows passing an environment to `...` or to `.args`.
+This is especially useful for Shiny ExtendedTask, where it is invoked with a set of arguments.
+By using `mirai::mirai({...}, environment())` you automatically capture the variables provided to the invoke method.
+See the Shiny vignette for example usage.
+
+#### Special Case: `...`
 
 A Shiny app may use the following `future_promise()` code within the server component:
 
@@ -38,14 +61,13 @@ task <- ExtendedTask$new(
 
 observeEvent(input$btn, task$invoke(input$n, input$delay))
 ```
-The equivalent may be achieved in `mirai()` in the following way:
+The equivalent in `mirai()` is achieved by:
 ```r
 task <- ExtendedTask$new(
   function(...) mirai(func(...), func = func, .args = environment())
 ) |> bind_task_button("btn")
 ```
-1. `environment()` captures the `...` to be used by the function within the mirai expression, and can be supplied via `.args`.
-2. The definition for `func` is passed through in the usual way.
+Note that here `environment()` captures the `...` that's used within the mirai expression.
 
 [&laquo; Back to ToC](#table-of-contents)
 
@@ -65,10 +87,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1]  0.17961967 -1.42086665 -0.09406521
+#> [1] -0.8624968 -0.2626110 -0.5623021
 #> 
 #> [[2]]
-#> [1] -1.3584870  0.3060082  0.5150974
+#> [1] -0.6259953  1.1215007  3.3093710
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {
