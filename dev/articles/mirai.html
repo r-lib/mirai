@@ -43,13 +43,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v1-daemons.html">1. Daemons</a></li>
-    <li><a class="dropdown-item" href="../articles/v2-map.html">2. Async Parallel Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v3-promises.html">3. Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v4-serialization.html">4. Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v5-parallel.html">5. Mirai Clusters - Base R</a></li>
-    <li><a class="dropdown-item" href="../articles/v6-packages.html">6. Guidance for Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v7-community.html">7. Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/mirai-daemons.html">Daemons</a></li>
+    <li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -141,9 +141,9 @@ data yields an ‘unresolved’ logical NA.</p>
 method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3.726824 3.938810 4.418751 3.883305 4.219401</span></span>
+<span><span class="co">#&gt; [1] 3.015379 4.302305 3.944091 4.288177 3.504224</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3.726824 3.938810 4.418751 3.883305 4.219401</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3.015379 4.302305 3.944091 4.288177 3.504224</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to
 wait for it - other code can continue to be run. Once it completes, the
 return value automatically becomes available at <code>$data</code>.</p>
@@ -151,7 +151,7 @@ return value automatically becomes available at <code>$data</code>.</p>
 <code class="sourceCode R"><span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai [$data] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 3.726824 3.938810 4.418751 3.883305 4.219401</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3.015379 4.302305 3.944091 4.288177 3.504224</span></span></code></pre></div>
 <p>For easy programmatic use of <code><a href="../reference/mirai.html">mirai()</a></code>, ‘.expr’ accepts a
 pre-constructed language object, and also a list of named arguments
 passed via ‘.args’. So, the following would be equivalent to the
@@ -161,7 +161,7 @@ above:</p>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3.664632 3.281520 5.257394 4.112212 4.661917</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 4.000838 5.240298 3.555610 2.854485 2.921133</span></span></code></pre></div>
 <p><a href="#table-of-contents">« Back to ToC</a></p>
 </div>
 <div class="section level3">
@@ -236,15 +236,15 @@ pipeline, even if it fails.</p>
 <span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; iteration 1 successful</span></span>
-<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 2 successful</span></span>
 <span><span class="co">#&gt; iteration 3 successful</span></span>
 <span><span class="co">#&gt; iteration 4 successful</span></span>
+<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 5 successful</span></span>
 <span><span class="co">#&gt; iteration 6 successful</span></span>
+<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 7 successful</span></span>
 <span><span class="co">#&gt; iteration 8 successful</span></span>
-<span><span class="co">#&gt; Error: random error</span></span>
 <span><span class="co">#&gt; iteration 9 successful</span></span>
 <span><span class="co">#&gt; iteration 10 successful</span></span></code></pre></div>
 <p>Further, by testing the return value of each ‘mirai’ for errors,
