@@ -1,7 +1,7 @@
 ---
-title: "3. Promises - Shiny and Plumber"
+title: "Promises - Shiny and Plumber"
 vignette: >
-  %\VignetteIndexEntry{3. Promises - Shiny and Plumber}
+  %\VignetteIndexEntry{Promises - Shiny and Plumber}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,32 +14,19 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-### Table of Contents
 
-1. [Event-driven Promises](#event-driven-promises)
-2. [The One Million Promises Challenge](#the-one-million-promises-challenge)
-3. [Shiny ExtendedTask: Introduction](#shiny-extendedtask-introduction)
-4. [Shiny ExtendedTask: Cancellation](#shiny-extendedtask-cancellation)
-5. [Shiny ExtendedTask: Generative Art](#shiny-extendedtask-generative-art)
-6. [Shiny ExtendedTask: mirai map](#shiny-extendedtask-mirai-map)
-7. [Shiny Async: Coin Flips](#shiny-async-coin-flips)
-8. [Shiny Async: Progress Bar](#shiny-async-progress-bar)
-9. [Plumber GET Endpoint](#plumber-get-endpoint)
-10. [Plumber POST Endpoint](#plumber-post-endpoint)
-
-### Event-driven promises
+### 1. Event-driven promises
 
 `mirai` supplies its own `as.promise()` method, allowing it to be used as a promise from the [`promises`](https://rstudio.github.io/promises/) package.
 
 These are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
 
-- Does not require each promise to be polled for completion in a background loop like other promises.
-- Instead, promise actions are automatically triggered as soon as each 'mirai' resolves (asynchronously).
+- Promise actions are triggered as soon as each 'mirai' resolves, without time-polling for completion as a `future_promise()` does.
 - Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of promises).
 
-A 'mirai' may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on the 'mirai'. Similarly all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` which take a promise can also take a 'mirai' (using `promises` >= 1.3.0).
+A 'mirai' may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on the 'mirai'. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a 'mirai' directly.
 
-Alternatively, a 'mirai' may be explicitly converted into a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly.
+Alternatively, a 'mirai' may be explicitly converted to a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly.
 
 The following example outputs "hello" to the console after one second when the 'mirai' resolves.
 ```{r}
@@ -71,11 +58,9 @@ env$res
 #> [1] "hello"
 ```
 
-A `mirai_map` also has an `as.promise()` method. It will resolve when the entire map operation completes or at least one mirai in the map is rejected.
+A `mirai_map` also has an `as.promise()` method. It resoles when the entire map operation completes or at least one mirai in the map is rejected.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### The One Million Promises Challenge
+### 2. The One Million Promises Challenge
 
 The code below is taken from the challenge to launch and collect one million promises. For illustration, the example is scaled down to ten thousand.
 
@@ -93,12 +78,10 @@ daemons(0)
 ```
 The one million promises challenge took 6 mins 25 secs to complete using an Intel i7 11th gen mobile processor with 16GB RAM.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Shiny ExtendedTask: Introduction
+### 3. Shiny ExtendedTask: Introduction
 
 mirai is an asynchronous backend to scale [Shiny](https://shiny.posit.co/) applications.
-Depending on the options supplied to `daemons()`, mirai tasks may be distributed across local background processes or networked servers in an efficient and performant manner.
+Depending on the options supplied to `daemons()`, mirai tasks may be distributed across parallel processes locally or across the network.
 
 Shiny ExtendedTask allows the creation of scalable Shiny apps, which remain responsive intra-session for each user, as well as inter-session for multiple concurrent users.
 
@@ -178,17 +161,14 @@ observeEvent(input$btn, task$invoke(x = input$n, y = input$delay))
 output$plot <- renderPlot(hist(task$result()))
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
+### 4. Shiny ExtendedTask: Cancellation
 
-### Shiny ExtendedTask: Cancellation
-
-The app below is a demonstration of the cancellation capability added in mirai v2.
+The app below is a demonstration of mirai's cancellation capability. Cancellation is performed in the same way irrespective of where the mirai task may be executing, locally or remotely.
 
 It builds on the introductory app by adding a button that sends an infinite sleep extendedTask. This will block execution as we are using a single daemon - any new extendedTasks will be queued behind this never-ending task.
 There is also a button to cancel that blocking task and allow any queued plots to continue processing.
 
 It works by assigning a reference to the mirai created in the `extendedTask$new()` method, which can then be passed to `stop_mirai()`.
-
 
 ``` r
 library(shiny)
@@ -245,9 +225,7 @@ shinyApp(ui = ui, server = server)
 ```
 *Thanks to Joe Cheng for providing examples on which the above is based.*
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Shiny ExtendedTask: Generative Art
+### 5. Shiny ExtendedTask: Generative Art
 
 The following app produces pretty spiral patterns.
 
@@ -366,7 +344,7 @@ observeEvent(input$resample, task$invoke(calc_time, run_task))
 ``` r
 output$plot <- renderPlot(plot_result(task$result()))
 ```
-### Shiny ExtendedTask: mirai map
+### 6. Shiny ExtendedTask: mirai map
 
 A `mirai_map` also has an `as.promise()` method, which allows it to be used directly in a Shiny ExtendedTask. It will resolve when the entire map operation completes or at least one mirai in the map is rejected.
 
@@ -417,9 +395,7 @@ app <- shinyApp(ui, server)
 with(daemons(4), runApp(app))
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Shiny Async: Coin Flips
+### 7. Shiny Async: Coin Flips
 
 The below example demonstrates how to integrate a `mirai_map()` operation into a Shiny app in an observer, without using ExtendedTask.
 
@@ -486,9 +462,7 @@ with(daemons(8, dispatcher = FALSE), {
 
 *This is an adaptation of an original example provided by Will Landau for use of `crew` with Shiny. Please see <https://wlandau.github.io/crew/articles/shiny.html>.*
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Shiny Async: Progress Bar
+### 8. Shiny Async: Progress Bar
 
 The below example uses a `mirai_map()` operation in an observer to update a Shiny progress bar with custom messages, and also to update a reactive value once the entire map operation has completed (asynchronously).
 
@@ -552,9 +526,7 @@ with(daemons(8), runApp(app))
 ```
 *This example adapts a contribution from Davide Magno.*
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Plumber GET Endpoint
+### 9. Plumber GET Endpoint
 
 mirai may be used as an asynchronous backend for [`plumber`](https://www.rplumber.io/) pipelines.
 
@@ -624,9 +596,7 @@ collect_aio(res)
 daemons(0)
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Plumber POST Endpoint
+### 10. Plumber POST Endpoint
 
 This is the equivalent using a POST endpoint, accepting a JSON instruction sent as request data.
 
@@ -693,5 +663,3 @@ collect_aio(res)
 
 daemons(0)
 ```
-
-[&laquo; Back to ToC](#table-of-contents)

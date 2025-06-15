@@ -1,20 +1,21 @@
 ---
-title: "4. Serialization - Arrow, ADBC, polars, torch"
+title: "Serialization - Arrow, ADBC, polars, torch"
 vignette: >
-  %\VignetteIndexEntry{4. Serialization - Arrow, ADBC, polars, torch}
+  %\VignetteIndexEntry{Serialization - Arrow, ADBC, polars, torch}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 
-### Table of Contents
-
-1. [Serialization: Arrow, polars and beyond](#serialization-arrow-polars-and-beyond)
-2. [Serialization: Torch](#serialization-torch)
-3. [Database Hosting using Arrow Database Connectivity](#database-hosting-using-arrow-database-connectivity)
-4. [Shiny / mirai / DBI / ADBC Integrated Example](#shiny-mirai-dbi-adbc-integrated-example)
-
-### Serialization: Arrow, polars and beyond
+### 1. Serialization: Arrow, polars and beyond
 
 Native R serialization is used for sending data between host and daemons.
 Some R objects by their nature cannot be serialized, such as those accessed via an external pointer.
@@ -22,29 +23,26 @@ In these cases, performing 'mirai' operations on them would normally error.
 
 Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
 
-
-``` r
+```{r}
+#| label: arrowfail
 library(mirai)
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
-#> [1] 1
 everywhere(library(arrow))
 
 x <- as_arrow_table(iris)
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
 m[]
-#> 'miraiError' chr Error: Invalid <Table>, external pointer to null
 
 daemons(0)
-#> [1] 0
 ```
 However, `serial_config()` can be used to create custom serialization configurations, specifying functions that hook into R's native serialization mechanism for reference objects ('refhooks').
 
 This configuration may then be passed to the 'serial' argument of a `daemons()` call.
 
-
-``` r
+```{r}
+#| label: arrowpass
 cfg <- serial_config(
   "ArrowTabular",
   arrow::write_to_raw,
@@ -52,36 +50,21 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(library(arrow))
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
 m[]
-#> $a
-#> Table
-#> 6 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <dictionary<values=string, indices=int8>>
-#> 
-#> See $metadata for additional Schema metadata
-#> 
-#> $b
-#> [1] "some text"
 
 daemons(0)
-#> [1] 0
 ```
 It can be seen that this time, the arrow table is seamlessly handled in the 'mirai' process.
 This is the case even when the object is deeply nested inside lists or other structures.
 
 Multiple serialization functions may be registered to handle different object classes.
 As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
-
-``` r
+```{r}
+#| label: polars
 daemons(
   n = 1,
   serial = serial_config(
@@ -90,48 +73,27 @@ daemons(
     list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
   )
 )
-#> [1] 1
 
 x <- polars::as_polars_df(iris)
 
 m <- mirai(list(a = head(x), b = "some text"), x = x)
 m[]
-#> $a
-#> shape: (6, 5)
-#> ┌──────────────┬─────────────┬──────────────┬─────────────┬─────────┐
-#> │ Sepal.Length ┆ Sepal.Width ┆ Petal.Length ┆ Petal.Width ┆ Species │
-#> │ ---          ┆ ---         ┆ ---          ┆ ---         ┆ ---     │
-#> │ f64          ┆ f64         ┆ f64          ┆ f64         ┆ cat     │
-#> ╞══════════════╪═════════════╪══════════════╪═════════════╪═════════╡
-#> │ 5.1          ┆ 3.5         ┆ 1.4          ┆ 0.2         ┆ setosa  │
-#> │ 4.9          ┆ 3.0         ┆ 1.4          ┆ 0.2         ┆ setosa  │
-#> │ 4.7          ┆ 3.2         ┆ 1.3          ┆ 0.2         ┆ setosa  │
-#> │ 4.6          ┆ 3.1         ┆ 1.5          ┆ 0.2         ┆ setosa  │
-#> │ 5.0          ┆ 3.6         ┆ 1.4          ┆ 0.2         ┆ setosa  │
-#> │ 5.4          ┆ 3.9         ┆ 1.7          ┆ 0.4         ┆ setosa  │
-#> └──────────────┴─────────────┴──────────────┴─────────────┴─────────┘
-#> 
-#> $b
-#> [1] "some text"
 
 daemons(0)
-#> [1] 0
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Serialization: Torch
+### 2. Serialization: Torch
 
 Tensors from the [`torch`](https://torch.mlverse.org/) package may be used seamlessly in 'mirai' computations.
 
-#### Setup Steps
+Setup Steps:
 
 1. Create the serialization configuration, specifying 'class' as 'torch_tensor'.
 1. Set up daemons, supplying the configuration to the 'serial' argument.
 1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
 
-
-``` r
+```{r}
+#| label: tensors
 library(mirai)
 library(torch)
 
@@ -142,11 +104,10 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(library(torch))
 ```
-#### Example Usage
+Example Usage:
 
 The below example creates a convolutional neural network using `torch::nn_module()`.
 
@@ -154,8 +115,8 @@ A set of model parameters is also specified.
 
 The model specification and parameters are then passed to and initialized within a 'mirai'.
 
-
-``` r
+```{r}
+#| label: tensors2
 model <- nn_module(
   initialize = function(in_size, out_size) {
     self$conv1 <- nn_conv2d(in_size, out_size, 5)
@@ -175,85 +136,28 @@ params <- list(in_size = 1, out_size = 20)
 m <- mirai(do.call(model, params), model = model, params = params)
 
 m[]
-#> An `nn_module` containing 1,040 parameters.
-#> 
-#> ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────
-#> • conv1: <nn_conv2d> #520 parameters
-#> • conv2: <nn_conv2d> #520 parameters
 ```
 The returned model is an object containing many tensor elements.
-
-``` r
+```{r}
+#| label: tensors3
 m$data$parameters$conv1.weight
-#> torch_tensor
-#> (1,1,.,.) = 
-#>  -0.1159  0.0131 -0.0293  0.1811 -0.0934
-#>   0.1743 -0.0088 -0.0034  0.0371  0.1198
-#>   0.1839  0.1770  0.0776  0.0803  0.1164
-#>  -0.1215 -0.0225 -0.1182  0.1343 -0.0874
-#>  -0.1112 -0.1029 -0.0660 -0.1814 -0.0761
-#> 
-#> (2,1,.,.) = 
-#>   0.0107 -0.0216  0.0272  0.0200 -0.1624
-#>  -0.0948 -0.1554 -0.0346 -0.0651 -0.1535
-#>   0.0640 -0.0574 -0.1220 -0.0404 -0.0683
-#>  -0.1239  0.0455  0.0654  0.0729  0.0475
-#>  -0.0869 -0.0277 -0.1304  0.1077  0.1394
-#> 
-#> (3,1,.,.) = 
-#>   0.1901 -0.1770 -0.0195  0.1194 -0.0319
-#>  -0.1149  0.1173 -0.1870  0.1938 -0.0778
-#>  -0.1997 -0.1295  0.1925 -0.1032  0.1147
-#>   0.1868 -0.0978 -0.1547  0.1952 -0.0667
-#>  -0.1185  0.1072 -0.0367  0.0156  0.0251
-#> 
-#> (4,1,.,.) = 
-#>  -0.1247 -0.1997  0.1966  0.0915  0.1068
-#>  -0.0064 -0.0205 -0.0341  0.1088 -0.1333
-#>   0.0770 -0.1461  0.1219  0.1405 -0.0900
-#>   0.1160 -0.0235  0.1053  0.0854 -0.0145
-#>   0.0170  0.0712 -0.1098 -0.1763  0.0716
-#> 
-#> (5,1,.,.) = 
-#>   0.1204  0.1830 -0.1124  0.0128  0.0136
-#> ... [the output was truncated (use n=-1 to disable)]
-#> [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]
 ```
 It is usual for model parameters to then be passed to an optimiser.
 
 This can also be initialized within a 'mirai' process.
-
-``` r
+```{r}
+#| label: tensors4
 optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
 
 optim[]
-#> <optim_rmsprop>
-#>   Inherits from: <torch_optimizer>
-#>   Public:
-#>     add_param_group: function (param_group) 
-#>     clone: function (deep = FALSE) 
-#>     defaults: list
-#>     initialize: function (params, lr = 0.01, alpha = 0.99, eps = 1e-08, weight_decay = 0, 
-#>     load_state_dict: function (state_dict, ..., .refer_to_state_dict = FALSE) 
-#>     param_groups: list
-#>     state: State, R6
-#>     state_dict: function () 
-#>     step: function (closure = NULL) 
-#>     zero_grad: function (set_to_none = FALSE) 
-#>   Private:
-#>     deep_clone: function (name, value) 
-#>     step_helper: function (closure, loop_fun)
 
 daemons(0)
-#> [1] 0
 ```
 Above, tensors and complex objects containing tensors were passed seamlessly between host and daemon processes, in the same way as any other R object.
 
 The custom serialization in `mirai` leverages R's own native 'refhook' mechanism to allow such completely transparent usage. Designed to be fast and efficient, data copies are minimised and the 'official' serialization methods from the `torch` package are used directly.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Database Hosting using Arrow Database Connectivity
+### 3. Database Hosting using Arrow Database Connectivity
 
 It is possible using the `DBI` interface to access and manipulate data in the Apache Arrow data format efficiently through ABDC (Arrow Database Connectivity).
 
@@ -261,8 +165,8 @@ The example below creates an in-memory SQLite connection using the `adbcsqlite` 
 
 Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `daemons()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
 
-
-``` r
+```{r}
+#| label: arrow1
 library(mirai)
 
 cfg <- serial_config(
@@ -272,7 +176,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(
   {
@@ -283,33 +186,18 @@ everywhere(
 
 ```
 `mirai()` calls may then be used to write to or query the database all in the Arrow format.
-
-``` r
+```{r}
+#| label: arrow2
 m <- mirai(dbWriteTableArrow(con, "iris", iris))
 m[]
-#> [1] TRUE
 m <- mirai(dbReadTableArrow(con, "iris"))
 m[]
-#> Table
-#> 150 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
 m <- mirai(dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6'))
 m[]
-#> Table
-#> 5 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
 ```
 Due to the tight integration of the `mirai` serialization mechanism with R's 'refhook' system, we can easily return complex / nested objects containing multiple queries in the Arrow format:
-
-``` r
+```{r}
+#| label: arrow3
 m <- mirai({
   a <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
   b <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Width" < 2.6')
@@ -318,56 +206,15 @@ m <- mirai({
   list(sepal = list(length = a, width = b), petal = list(length = x, width = y))
 })
 m[]
-#> $sepal
-#> $sepal$length
-#> Table
-#> 5 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
-#> 
-#> $sepal$width
-#> Table
-#> 19 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
-#> 
-#> 
-#> $petal
-#> $petal$length
-#> Table
-#> 24 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
-#> 
-#> $petal$width
-#> Table
-#> 5 rows x 5 columns
-#> $Sepal.Length <double>
-#> $Sepal.Width <double>
-#> $Petal.Length <double>
-#> $Petal.Width <double>
-#> $Species <string>
 ```
 As before, `everywhere()` can be used again to cleanly tear down the databases, before resetting daemons.
-
-``` r
+```{r}
+#| label: arrow4
 everywhere(dbDisconnect(con))
 daemons(0)
-#> [1] 0
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Shiny / mirai / DBI / ADBC Integrated Example
+### 4. Shiny / mirai / DBI / ADBC Integrated Example
 
 The following is an example of how database connections hosted in mirai daemons may be used to power a Shiny app.
 
@@ -379,8 +226,9 @@ Non-dispatcher daemons are created as scheduling is not required (all queries ex
 
 Shiny ExtendedTask is then used to perform each query via a `mirai()` call, using the session-specific compute profile.
 
-
-``` r
+```{r}
+#| label: demo
+#| eval: false
 library(mirai)
 library(secretbase)
 library(shiny)
@@ -471,5 +319,3 @@ shinyApp(ui = ui, server = server)
 # deletes temp database file (for this demonstration)
 unlink(file)
 ```
-
-[&laquo; Back to ToC](#table-of-contents)

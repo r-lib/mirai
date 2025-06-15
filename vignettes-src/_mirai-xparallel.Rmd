@@ -1,7 +1,7 @@
 ---
-title: "5. Mirai Clusters - Base R"
+title: "Communications Backend for R"
 vignette: >
-  %\VignetteIndexEntry{5. Mirai Clusters - Base R}
+  %\VignetteIndexEntry{Communications Backend for R}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,18 +14,14 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-### Table of Contents
 
-1. [Alternative Communications Backend for R](#alternative-communications-backend-for-r)
-2. [Foreach Support](#foreach-support)
-
-### Alternative Communications Backend for R
+### 1. Mirai Parallel Clusters
 
 mirai provides an alternative communications backend for R.
 This functionality was developed to fulfil a request by R Core at R Project Sprint 2023.
 
-A 'miraiCluster' is recognised as one of the official cluster types, and may be created by `parallel::makeCluster(type = "MIRAI")` from R 4.5 onwards.
-This function calls `make_cluster()`, which may also be used to directly create a 'miraiCluster'.
+A 'miraiCluster' is recognised as one of the official cluster types in R 4.5, and may be created by `parallel::makeCluster(type = "MIRAI")`.
+This function calls `make_cluster()`, which may also be used to create a 'miraiCluster' directly.
 
   + Specify 'n' to launch nodes on the local machine.
   + Specify 'url' for receiving connections from remote nodes.
@@ -60,9 +56,7 @@ cl <- make_cluster(n = 2, url = host_url())
 stop_cluster(cl)
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Foreach Support
+### 2. Foreach Support
 
 A 'miraiCluster' may also be registered by [`doParallel`](https://cran.r-project.org/package=doParallel) for use with the [`foreach`](https://cran.r-project.org/package=foreach) package.
 
@@ -89,5 +83,3 @@ foreach(b = iterators::iter(b, by='col'), .combine = cbind) %dopar%
 
 stopCluster(cl)
 ```
-
-[&laquo; Back to ToC](#table-of-contents)

@@ -1,33 +1,30 @@
 ---
-title: "6. Guidance for Package Authors"
+title: "For Package Authors"
 vignette: >
-  %\VignetteIndexEntry{6. Guidance for Package Authors}
+  %\VignetteIndexEntry{For Package Authors}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 
-### Table of Contents
+### 1. Developer Interfaces
 
-1. [Developer Interfaces](#developer-interfaces)
-2. [Points to Note](#points-to-note)
+mirai offers the following functions primarily for package authors using mirai:
 
-### Developer Interfaces
+1. `daemons_set()`, to detect if daemons have already been set and prompt the user to set daemons if not.
+1. `on_daemon()`, to detect if code is already running on a daemon, i.e. within a `mirai()` call.
+1. `register_serial()` to register custom serialization functions, which are automatically available by default for all subsequent `daemons()` calls.
+1. `nextget()`, for querying values for a compute profile, such as 'url', described in the function's documentation. Note: only the specifically-documented values are supported interfaces.
 
-mirai offers the following functions primarily for package authors wishing to build on mirai:
-
-1. `daemons_set()` may be used to detect if daemons have already been set and prompt the user to set daemons if not.
-
-2. `on_daemon()` may be used to detect if code is running on a daemon, i.e. within a `mirai()` call.
-
-3. `register_serial()` may be used by other packages to register custom serialization functions, which are automatically available for all subsequent `daemons()` calls where the 'serial' argument uses the default of `NULL`.
-The effect is additive, and does not remove any previously-registered functions.
-
-4. `nextget()`, for querying values for a compute profile, such as 'url', described in the function's documentation. Note: only the specifically-documented values are supported interfaces.
-
-[&laquo; Back to ToC](#table-of-contents)
-
-### Points to Note
+### 2. Guidance
 
 mirai as a framework is designed to support completely transparent and inter-operable use within packages.
 A core design precept of not relying on global options or environment variables minimises the likelihood of conflict between use by different packages.
@@ -40,18 +37,16 @@ You do not need to anticipate whether an end-user will run the code on their own
 
 - Consider pointing to the documentation for `mirai::daemons()`, or re-exporting `daemons()` in your package as a convenience.
 - Never include a call to `daemons()` when using `mirai_map()`.
-  This is important to ensure that there is no unintentional recursive creation of daemons on the same machine, for example if your function is used within another package's function that also uses mirai.
-- Including a `daemons()` call may exceptionally be appropriate for async operations using only one dedicated daemon.
+  This is important to ensure that there is no accidental recursive creation of daemons on the same machine, for example if your function is used within another package's function that also uses mirai.
+- Exceptionally, including a `daemons()` call may be appropriate for async operations using a single dedicated non-dispatcher daemon.
   A representative example of this usage pattern is `logger::appender_async()`, where the logger package's 'namespace' concept maps directly to mirai's 'compute profile'.
 
 2. The shape and contents of a `status()` call must not be used programatically, as this user interface is subject to change at any time. Use `nextget()` instead.
 
 3. The functions `unresolved()`, `is_error_value()`, `is_mirai_error()`, and `is_mirai_interrupt()` should be used to test for the relevant state of a mirai or its value.
-- The characteristics of how they are currently implemented, e.g. as a logical NA for an 'unresolvedValue', should not be relied upon, as these are subject to change at any time.
+- The characteristics of their current implementation, e.g. as a logical NA for an 'unresolvedValue', should not be relied upon, as these are subject to change at any time.
 
 4. Testing on CRAN should respect it's 2-core usage limit.
 - These limits apply only to tests on CRAN, and more complex tests may be run elsewhere.
 - This practically means limiting tests to using one daemon (with `dispatcher = FALSE`) to ensure that only one additional process is used.
 - Always reset daemons when done and then allow at least a one-second sleep to ensure all background processes have properly exited.
-
-[&laquo; Back to ToC](#table-of-contents)

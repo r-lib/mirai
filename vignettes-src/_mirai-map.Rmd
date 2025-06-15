@@ -1,19 +1,21 @@
 ---
-title: "2. Async Parallel Map"
+title: "Mirai Map"
 vignette: >
-  %\VignetteIndexEntry{2. Async Parallel Map}
+  %\VignetteIndexEntry{Mirai Map}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
 
-### Table of Contents
-
-1. [Introduction and Key Advantages](#introduction-and-key-advantages)
-1. [Collecting Results](#collecting-results)
-1. [Multiple Map](#multiple-map)
-
-### Introduction and Key Advantages
+### 1. Introduction
 
 `mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
 
@@ -24,74 +26,48 @@ It is in fact used to implement all parallel map variations from that package.
 The results of a mirai_map `x` may be collected using `x[]`.
 This waits for all asynchronous operations to complete if still in progress.
 
-It offers the following key advantages:
+### 2. Key Advantages
 
 1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
 1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects (such as checkpointing or sending a progress update).
 1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire operation to fail. This allows more efficient recovery from partial failure.
 1. Does not rely on a 'chunking' algorithm that attempts to split work into batches according to the number of available daemons, as implemented for instance in the `parallel` package. 
 Chunking cannot take into account varying or unpredictable compute times over the indices, which `mirai` scheduling is designed to deal with optimally. This is demonstrated in the example below.
-
-``` r
+```{r}
+#| label: chunk
 library(mirai)
 library(parallel)
 cl <- make_cluster(4)
 daemons(4)
-#> [1] 4
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
-#>    user  system elapsed 
-#>   0.003   0.005   4.007
 system.time(parLapply(cl, vec, Sys.sleep))
-#>    user  system elapsed 
-#>   0.006   0.006   8.012
 daemons(0)
-#> [1] 0
 ```
 `.args` is used to specify further constant arguments to `.f` - the 'mean' and 'sd' in the example below:
-
-``` r
+```{r}
+#| label: mmap
 with(
   daemons(3, dispatcher = FALSE),
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
-#> [[1]]
-#> [1] 21.29158
-#> 
-#> [[2]]
-#> [1] 20.55869 19.27829
-#> 
-#> [[3]]
-#> [1] 22.66111 20.02016 19.02493
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
-
-``` r
+```{r}
+#| label: mmap2
 daemons(4)
-#> [1] 4
 ml <- mirai_map(
   c(a = 1, b = 2, c = 3),
   function(x) do(x, as.logical(x %% 2)),
   do = nanonext::random
 )
 ml
-#> < mirai map [2/3] >
 ml[]
-#> $a
-#> [1] "49"
-#> 
-#> $b
-#> [1] 8d a9
-#> 
-#> $c
-#> [1] "94fe3d"
 ```
 
 > Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Collecting Results
+### 3. Collecting Results
 
 When collecting the results, optionally specify arguments to `[]`:
 
@@ -100,25 +76,18 @@ When collecting the results, optionally specify arguments to `[]`:
 - `x[.stop]` collects the results applying early stopping, which stops at the first failure and cancels remaining computations. If the `cli` package is available, it will be used for displaying the error message.
 
 Combinations of the above may be supplied in the fashion of `x[.stop, .progress]`.
-
-``` r
+```{r}
+#| label: mmapadv
+#| error: true
 mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
-#> Error in `mirai_map()`:
-#> ℹ In index: 2.
-#> ℹ With name: b.
-#> Caused by error in `exp()`:
-#> ! non-numeric argument to mathematical function
 
 with(
   daemons(4, dispatcher = FALSE, .compute = "sleep"),
   mirai_map(c(0.1, 0.2, 0.3), Sys.sleep)[.progress, .flat]
 )
-#> NULL
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Multiple Map
+### 4. Multiple Map
 
 Multiple map is performed over the **rows** of a dataframe or matrix, as this is most often the desired behaviour.
 
@@ -129,8 +98,8 @@ One of those may be an index value for indexed map.
 
 The function `.f` must take as many arguments as there are columns, either explicitly or via `...`.
 
-
-``` r
+```{r}
+#| label: mmapmulti
 fruit <- c("melon", "grapes", "coconut")
 
 # create a dataframe for indexed map:
@@ -140,7 +109,6 @@ with(
   daemons(3, dispatcher = FALSE, .compute = "fruit"),
   mirai_map(df, sprintf, .args = list(fmt = "%d. %s"))[.flat]
 )
-#> [1] "1. melon"   "2. grapes"  "3. coconut"
 ```
 
 `mirai_map()` maps a matrix over its **rows**, consistent with the behaviour for dataframes
@@ -148,15 +116,10 @@ Note that this is different to the behaviour of `lapply()` or `purrr::map()`, wh
 
 > If instead, mapping over the columns is desired, simply take the transpose of the matrix beforehand using `t()`.
 
-
-``` r
+```{r}
+#| label: mmapmultimatrix
 mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z")))
 mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
-#>  a  b 
-#> 14 16
 
 daemons(0)
-#> [1] 0
 ```
-
-[&laquo; Back to ToC](#table-of-contents)
