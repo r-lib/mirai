@@ -1,7 +1,7 @@
 ---
-title: "1. Daemons"
+title: "Daemons"
 vignette: >
-  %\VignetteIndexEntry{1. Daemons}
+  %\VignetteIndexEntry{Daemons}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,15 +14,8 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-### Table of Contents
 
-1. [Local Daemons](#local-daemons)
-2. [Remote Daemons](#remote-daemons)
-3. [Launching Remote Daemons](#launching-remote-daemons)
-4. [TLS Secure Connections](#tls-secure-connections)
-5. [Compute Profiles](#compute-profiles)
-
-### Local Daemons
+### 1. Local Daemons
 
 Daemons, or persistent background processes, may be set to receive 'mirai' requests.
 
@@ -158,9 +151,7 @@ In the case of other expressions, be sure to call the results (or collect the va
 
 If specifying a compute profile for the `daemons()` call (see below), all calls with `.compute = NULL` within the `with()` clause will default to this compute profile.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Remote Daemons
+### 2. Remote Daemons
 
 The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
 
@@ -193,9 +184,7 @@ daemons(0)
 ```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Launching Remote Daemons
+### 3. Launching Remote Daemons
 
 To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
 
@@ -293,9 +282,7 @@ launch_remote(2)
 daemons(0)
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### TLS Secure Connections
+### 4. TLS Secure Connections
 
 TLS provides a robust solution for securing communications from the local machine to remote daemons.
 
@@ -318,8 +305,6 @@ launch_remote(1)
 #| label: tlsclose
 daemons(0)
 ```
-
-[&laquo; Back to ToC](#table-of-contents)
 
 #### CA Signed Certificates
 
@@ -345,9 +330,7 @@ The CA may be a public CA or internal to an organisation.
   - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to the relevant 'tls' argument.
   - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tls' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Compute Profiles
+### 5. Compute Profiles
 
 The `daemons()` interface also allows the specification of compute profiles for managing tasks with heterogeneous compute requirements:
 
@@ -360,5 +343,3 @@ The daemons settings are saved under the named profile.
 To create a 'mirai' task using a specific compute profile, specify the '.compute' argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired '.compute' argument.
-
-[&laquo; Back to ToC](#table-of-contents)

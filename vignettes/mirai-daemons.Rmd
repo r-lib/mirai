@@ -1,21 +1,14 @@
 ---
-title: "1. Daemons"
+title: "Daemons"
 vignette: >
-  %\VignetteIndexEntry{1. Daemons}
+  %\VignetteIndexEntry{Daemons}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
 
 
-### Table of Contents
 
-1. [Local Daemons](#local-daemons)
-2. [Remote Daemons](#remote-daemons)
-3. [Launching Remote Daemons](#launching-remote-daemons)
-4. [TLS Secure Connections](#tls-secure-connections)
-5. [Compute Profiles](#compute-profiles)
-
-### Local Daemons
+### 1. Local Daemons
 
 Daemons, or persistent background processes, may be set to receive 'mirai' requests.
 
@@ -57,7 +50,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://6f00be6c1a9c6d6d400cace8"
+#> [1] "abstract://99760964cb9d7ab15077f9e8"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -97,7 +90,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://fc14c9199ce2c107d7b93265"
+#> [1] "abstract://8573c41da7c7aff98624f79c"
 ```
 
 #### Everywhere
@@ -165,9 +158,7 @@ In the case of other expressions, be sure to call the results (or collect the va
 
 If specifying a compute profile for the `daemons()` call (see below), all calls with `.compute = NULL` within the `with()` clause will default to this compute profile.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Remote Daemons
+### 2. Remote Daemons
 
 The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
 
@@ -195,7 +186,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.1.71:41043"
+#> [1] "tcp://192.168.1.71:44557"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -211,9 +202,7 @@ daemons(0)
 ```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Launching Remote Daemons
+### 3. Launching Remote Daemons
 
 To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
 
@@ -307,17 +296,15 @@ daemons(url = host_url())
 #> [1] 0
 launch_remote(2)
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:39155")'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:41701")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:39155")'
 daemons(0)
 #> [1] 0
 ```
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### TLS Secure Connections
+### 4. TLS Secure Connections
 
 TLS provides a robust solution for securing communications from the local machine to remote daemons.
 
@@ -337,36 +324,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:36015",tls=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:42017",tls=c("-----BEGIN CERTIFICATE-----
 #> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
 #> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
 #> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
 #> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEAsgsUV7lze0bVrhB53HTB1bK9NBSgv3MVmd+gIsPI
-#> wQ/EStPbJ5M6J7QR5g6XKFGcgWUIAcLARx1lg5xBATYeZA+mLoKObipe313x8Ebb
-#> XE9PU8b3pmWOhsP9Wd5R6Tbjeko8cEegRA8E/bmL++0mGUK/0zcBXmjndjs4D5Iy
-#> OjVeL3iE8uUsqC/8/Q4kg9vR61kkA/MT+tjHYIMwjV/VgG3OJgQQWxH3eRCdrPkJ
-#> QraxsT5GC2fc/mZm/VUyglVLBCEmfC1brBlTGaymnHaXdJvohhAqS9pgRuVeVbQP
-#> 3HR9J95ejNaz9xcQaea5/cPVXcqrYBWPHK41ctZ/EiQTpM9P1HC7nafQp8Qq1azI
-#> UbGhUOq/QpmnnbnVH1aRx8LjWni/p9B0nO5wsssSpyJfmtGbcBMYo0/ZvTMXdRc0
-#> R6eJGb1IrM/FEZFUEshrRCTjCZwf2gHhwU+tGAAXI9plutetOitxLi0XuTRDGmlC
-#> rF2DWXGdxBYrVYvQWz6rFW/VCk8gK8iN1I9dP7jEAJbv4x8jAcyTByQ4rRNCvWp/
-#> zJ7zrT4ibWSwNJOi3KcTmv8d5hJ98nvj5QhgiY5MYota5aM9QNn/KC2L8rgdbUpD
-#> uCKc8N/pOkykKOdTPnGlRxBpuewyXEmuWgoC+RRwh0rsKM1DWjMB/lVBEUou/FGl
-#> a/cCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUkcNg/pPN
-#> H29MuyI6iYq+emArXUIwHwYDVR0jBBgwFoAUkcNg/pPNH29MuyI6iYq+emArXUIw
-#> DQYJKoZIhvcNAQELBQADggIBACOAaKqJBDSU4awmsS3v6Vr6/X55jmMw81kgtr6K
-#> 6v4WHK5O2SZKHZCN4gzaXig8L3uKmgB3zyzbR+t+owgWdk3IstCldVX1sxMq7cNP
-#> TFYx84Go887YRq3NYPfHdjYUPWgsRs/birgHCdslH+WGLwUmqTEeua9ydzgd5xP4
-#> Y6JUEOywH0BSpwAKB+dVZJu+qzhFGN/gCUhuX4+ptWAqW6AVNSt7zUcszsgYLpAf
-#> 9gFZWMnGtX6nNHZz86mWe0HFpfQZ3Z7WEYiF0xJJK7QEQpUeMxZF7GJX04MKvEnQ
-#> PXNVSaEtO1jgno3ToxhwjTcYaUubwSaxNAJFFrLuobO/FlHZsH/PUNWoRbZlCKzq
-#> MelQzUos1NRh3KsL1e344Hx8JOq4oRgtnje8RBojuOa8VOoLRQpVr8bUMUFiFMwI
-#> hSZW90zXrhFuKoZVMj6euYtNlA+w3U21YiKKfeeihFiFDyalshw/lCvFEv1PS63u
-#> NrJwSrPfaE4g6Rs9Cw0LBYt6nGK7fTqnNA4wzzZULUSnss58hSwk6BJmrHawpRYa
-#> YTPsrd6bf8+BiGcaYHDfhllt4tPRKpaR3kSx5Kq7Hw+z3jtEW5b6I1gg3hlnpQbn
-#> 6OBAe4KrodTqGrE0tjesan/NTdHK1o1+4IRpgGneWKg0MpC+7CVnfZYhb8WLKmPi
-#> KzvN
+#> AQEFAAOCAg8AMIICCgKCAgEAs4GhSh0H3jT6iWT612qWipVTjHkogqoRDouiZBQ2
+#> Xz8A0rQeC+v0AD6pVEkh8Q3pysxw/F9qnTGZII4eosSSyozzsdxHPIC2dU4x9wQi
+#> Df82CfVsGsBeO2oKdhP+yaUY1VDYORg8daTvKDqStH+3vgxyr/o0ANvPSBqoTh4E
+#> TbHCu9Jz0SxgvbuPluOXZbWV8+pelX6NvX6uoIzS3Q0Fjy8eu2sXknT792n9DV9s
+#> Lbf9ipv7JlBU0qo6IP+BUvS0Lu/i8n8vzomnjnUFzV6WoY/qN3WgoWGf7VWHomaC
+#> koauLYkZUOt86pRaQuXHybm0OUFs2CPducYQfNiDvJyXm2PLga5Mf/Etxd8i7+Ws
+#> HeR+xbqjJNbO4xdwhSDWdg3N0mJ2fTGDup/V+NBpo39H72Db66kR70jYJnbpvaEk
+#> gQG05tgB9TR4UvyKOZQsvziUPinJdIaJayZ3QG6XGlmqNtcB9cJuGQACyT40Q1mc
+#> 5svlU8PIwyz9fG+8zZxEJMJRR70qp6Ksxnj+44/ju2oU8s8zlIXrpvMQeayjcSfm
+#> 7ePcpvA3lIWV9x/PP+LiZ3cemY32cISBnavrnR30r5H1bi+9Owe7sH4j17MCN6Wo
+#> YQoldtGhQwavSj2DM7W2n1+Wn4cojTO2TLp1NTFBX6EJ0OR158hPTqRnVkIuDn4U
+#> BecCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU7sjF84Hj
+#> 7C5eDENNqJ3+bMGt4W0wHwYDVR0jBBgwFoAU7sjF84Hj7C5eDENNqJ3+bMGt4W0w
+#> DQYJKoZIhvcNAQELBQADggIBAJKRjdGf0fanRf9OOuJqtc5koTQw9a8gQ9SAAWzO
+#> hGXdeI+jkLnMr2Xj9Li8FwWYaxFzFTyiQizaXtgoyrZPJPwvRy/hPmI1UohaeJz6
+#> O009ins92l0s2XMRZkJ+QKnozmeUBMF/L/wzggmy1k2cH8JyUlz2DUiRZxCDlqAj
+#> VtIGfPl6a2VEHSljhHQOu+E7dRIx3t+cMQAGdyzFrgjBsRhoc0Xq+lCBwNgYutkV
+#> oDu5oPupq9CEFzl6uo2+XhyNEtqe80W+eIrXaTM9+w+ETxJgJi2nfZFyE0JDD6yQ
+#> 5js7Vf39tO4v+fnXuGWeVhsQzZ3QPYcFqVL4oFCKKjEuZizLiizmCWdX1VbBmaKK
+#> oHvaozN30J/eKe3zWJeHeFb4E3QeJ5nH+QhMxe7F0xPlMqT1KTNTl/+H7lRIgoVQ
+#> OX+m/b+P/Tn2AEjDgzdM1uhruEZCXH9fOAZf+z+x04K3ezPvYn1EDdmEWZSRnzff
+#> XWLRydV9ffHu66bPd4lg8ovqN/E88iUIoSzGjRZ37/B3f89XztmQZlBPs8fmsp85
+#> 8gm01Cd5BivMNydPyreJjigVNFP4Bg7qT7QsZ6AYs8ZkT2/oK7S8zwIiu8sgz/f5
+#> mQz2qKCOJRsJxk0TzqM1x5pnXOq9BAaWJLibu6E0B6Nhax1OlZupkcyuqhOn5bcA
+#> f1gs
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -375,8 +362,6 @@ launch_remote(1)
 daemons(0)
 #> [1] 0
 ```
-
-[&laquo; Back to ToC](#table-of-contents)
 
 #### CA Signed Certificates
 
@@ -402,9 +387,7 @@ The CA may be a public CA or internal to an organisation.
   - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to the relevant 'tls' argument.
   - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tls' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
-[&laquo; Back to ToC](#table-of-contents)
-
-### Compute Profiles
+### 5. Compute Profiles
 
 The `daemons()` interface also allows the specification of compute profiles for managing tasks with heterogeneous compute requirements:
 
@@ -417,5 +400,3 @@ The daemons settings are saved under the named profile.
 To create a 'mirai' task using a specific compute profile, specify the '.compute' argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired '.compute' argument.
-
-[&laquo; Back to ToC](#table-of-contents)
