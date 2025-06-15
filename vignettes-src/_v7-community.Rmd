@@ -19,7 +19,8 @@ This vignette is designed to provide a knowledgebase for questions posed by the 
 ### Table of Contents
 
 1. [Migration from `future_promise()`](#migration-from-future_promise)
-2. [Setting the Random Seed](#setting-the-random-seed)
+2. [Setting the random seed](#setting-the-random-seed)
+3. [Accessing functions during package development](#accessing-functions-during-package-development)
 
 ### Migration from `future_promise()`
 
@@ -78,7 +79,7 @@ Note that here `environment()` captures the `...` that's used within the mirai e
 
 [&laquo; Back to ToC](#table-of-contents)
 
-### Setting the Random Seed
+### Setting the random seed
 
 The following example was raised as being potentially counter-intuitive, given that default 'cleanup' settings at each daemon ensures that variables in the global environment, of which `.Random.seed` is one, do not carry over to subsequent runs.
 
@@ -113,5 +114,13 @@ Hence normally, the random seed should be set once on the host process when daem
 
 If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required.
 Another option would be to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
+
+[&laquo; Back to ToC](#table-of-contents)
+
+### Accessing functions during package development
+
+A mirai call usually requires package-namespaced functions. However the latest version of a package in development is often loaded dynamically by `devtools::load_all()` or the underlying `pkgload::load_all()` for quick iteration.
+
+In this case, use `everywhere()` to also call `devtools::load_all()` on all (local) daemons. They will then have access to the same functions as your host session for subsequent `mirai()` calls.
 
 [&laquo; Back to ToC](#table-of-contents)
