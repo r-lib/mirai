@@ -652,7 +652,7 @@ store_dispatcher <- function(envir, sock, cv, urld, res = NULL) {
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "stream", NULL)
   is.null(res) && return()
-  `[[<-`(envir, "url", res[-1L])
+  `[[<-`(envir, "url", res[2L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
 }
 
