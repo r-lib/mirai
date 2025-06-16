@@ -350,9 +350,12 @@ ssh_config <- function(
 #' @param options \[default ""\] options as would be supplied inside a script
 #'   file passed to `command`, e.g. "#SBATCH --mem=10G", each separated by new
 #'   lines. See examples below.
-#' @param module \[default "module load R"\] optional command to load
-#'   environment modules, e.g. "module load R/4.5.0" for a specific R version,
-#'   or "" if not applicable to the system in use.
+#'   \cr Other shell commands e.g. to change working directory may also be
+#'   included.
+#'   \cr For certain setups, "module load R" as a final line is required, or
+#'   for example "module load R/4.5.0" for a specific R version.
+#'   \cr For the avoidance of doubt, the initial shebang line such as
+#'   "#!/bin/bash" is not required.
 #' @inheritParams remote_config
 #'
 #' @inherit remote_config return
@@ -366,8 +369,8 @@ ssh_config <- function(
 #'   command = "sbatch",
 #'   options = "#SBATCH --job-name=mirai
 #'              #SBATCH --mem=10G
-#'              #SBATCH --output=job.out",
-#'   module = "module load R/4.5.0",
+#'              #SBATCH --output=job.out
+#'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
 #' )
 #'
@@ -376,8 +379,8 @@ ssh_config <- function(
 #'   command = "qsub",
 #'   options = "#$ -N mirai
 #'              #$ -l mem_free=10G
-#'              #$ -o job.out",
-#'   module = "module load R/4.5.0",
+#'              #$ -o job.out
+#'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
 #' )
 #'
@@ -386,8 +389,8 @@ ssh_config <- function(
 #'   command = "qsub",
 #'   options = "#PBS -N mirai
 #'              #PBS -l mem=10gb
-#'              #PBS -o job.out",
-#'   module = "module load R/4.5.0",
+#'              #PBS -o job.out
+#'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
 #' )
 #'
@@ -396,8 +399,8 @@ ssh_config <- function(
 #'   command = "bsub",
 #'   options = "#BSUB -J mirai
 #'              #BSUB -M 10000
-#'              #BSUB -o job.out",
-#'   module = "module load R/4.5.0",
+#'              #BSUB -o job.out
+#'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
 #' )
 #'
@@ -416,12 +419,12 @@ ssh_config <- function(
 cluster_config <- function(
     command = "sbatch",
     options = "",
-    module = "module load R",
     rscript = "Rscript"
 ) {
   command <- command[[1L]]
+  options <- gsub("\n[ \t]+", "\n", options, perl = TRUE)
   args <- c(
-    sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n%s\n", command, options, module),
+    sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n", command, options),
     ".",
     "\nEOF"
   )

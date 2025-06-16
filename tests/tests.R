@@ -274,7 +274,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
   test_zero(daemons(url = host_url(), pass = "test", serial = cfg))
-  if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", module = "", rscript = file.path(R.home("bin"), "Rscript"))))
+  if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
   test_equal(launch_local(1L), 1L)
   Sys.sleep(1L)
   q <- quote({ list2env(list(b = 2), envir = .GlobalEnv); 0L})
