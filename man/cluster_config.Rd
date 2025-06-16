@@ -11,8 +11,8 @@ cluster_config(command = "sbatch", options = "", rscript = "Rscript")
 SGE / Torque / PBS, or "bsub" for LSF. See examples below.}
 
 \item{options}{[default ""] options as would be supplied inside a script
-file passed to \code{command}, e.g. "#SBATCH --mem=10G", each separated by new
-lines. See examples below.
+file passed to \code{command}, e.g. "#SBATCH --mem=10G", each separated by a new
+line. See examples below.
 \cr Other shell commands e.g. to change working directory may also be
 included.
 \cr For certain setups, "module load R" as a final line is required, or

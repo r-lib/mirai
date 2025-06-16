@@ -348,8 +348,8 @@ ssh_config <- function(
 #' @param command \[default "sbatch"\] for Slurm. Replace with "qsub" for
 #'   SGE / Torque / PBS, or "bsub" for LSF. See examples below.
 #' @param options \[default ""\] options as would be supplied inside a script
-#'   file passed to `command`, e.g. "#SBATCH --mem=10G", each separated by new
-#'   lines. See examples below.
+#'   file passed to `command`, e.g. "#SBATCH --mem=10G", each separated by a new
+#'   line. See examples below.
 #'   \cr Other shell commands e.g. to change working directory may also be
 #'   included.
 #'   \cr For certain setups, "module load R" as a final line is required, or
