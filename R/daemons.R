@@ -689,13 +689,13 @@ dispatcher_status <- function(envir) {
   is.object(status) && return(status)
   out <- list(
     connections = status[1L],
-    dispatcher = envir[["dispatcher"]],
     daemons = envir[["url"]],
     mirai = c(
       awaiting = status[2L],
       executing = status[3L],
       completed = status[4L] - status[2L] - status[3L]
-    )
+    ),
+    dispatcher = envir[["dispatcher"]]
   )
   if (length(status) > 4L)
     out <- c(out, list(events = status[5:length(status)]))
