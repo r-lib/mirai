@@ -112,7 +112,7 @@ dispatcher <- function(
       url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
   }
 
-  send(sock, c(Sys.getpid(), url), mode = 2L, block = TRUE)
+  send(sock, c(url, Sys.getpid()), mode = 2L, block = TRUE)
 
   ctx <- .context(sock)
   req <- recv_aio(ctx, mode = 8L, cv = cv)

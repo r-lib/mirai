@@ -3,7 +3,8 @@
 #### New Features
 
 * Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons.
-  + Simply pass the value of `status()$dispatcher` as the `url` of a `daemons()` call in another process.
+  + `daemons()` argument dispatcher allows supplying a character URL.
+    This should be the value of `status()$dispatcher` in another process.
 
 #### Updates
 

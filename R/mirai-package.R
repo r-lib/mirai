@@ -71,7 +71,7 @@
     cluster_inactive = "cluster is no longer active",
     daemons_set = "daemons already set for `%s` compute profile",
     daemons_unset = "daemons must be set to use launchers",
-    dispatcher_args = "`dispatcher` should be either TRUE or FALSE",
+    dispatcher_args = "`dispatcher` should be TRUE, FALSE or the URL to an existing dispatcher",
     dot_required = "`.` must be an element of the character vector(s) supplied to `args`",
     function_required = "`.f` must be of type function, not %s",
     localhost = "SSH tunnelling requires daemons `url` hostname to be `127.0.0.1`",
