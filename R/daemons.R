@@ -434,6 +434,32 @@ daemons_set <- function(.compute = NULL) {
   !is.null(..[[.compute]])
 }
 
+#' Require Daemons
+#'
+#' Returns TRUE only if daemons are set, otherwise produces an informative
+#' error for the user to set daemons, with a clickable function link if the
+#' \CRANpkg{cli} package is available.
+#'
+#' @param call (only used if the \CRANpkg{cli} package is installed) the
+#'   execution environment of a currently running function, e.g.
+#'   `environment()`. The function will be mentioned in error messages as the
+#'   source of the error.
+#' @inheritParams status
+#'
+#' @return Logical `TRUE`, or else errors.
+#'
+#' @examplesIf interactive()
+#' daemons(1)
+#' require_daemons()
+#' daemons(0)
+#'
+#' @export
+#'
+require_daemons <- function(call = environment(), .compute = NULL) {
+  ensure_cli_initialized()
+  daemons_set(.compute = .compute) || .[["require_daemons"]](call)
+}
+
 #' Create Serialization Configuration
 #'
 #' Returns a serialization configuration, which may be set to perform custom
@@ -693,5 +719,11 @@ dispatcher_status <- function(envir) {
     out <- c(out, list(events = status[5:length(status)]))
   out
 }
+
+stop_d_cli <- function(call)
+  cli::cli_abort("No daemons set - use e.g. {.run mirai::daemons(6)} to set 6 local daemons.", call = call)
+
+stop_d <- function(call)
+  stop("No daemons set - use e.g. mirai::daemons(6) to set 6 local daemons.", call. = FALSE)
 
 ._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))

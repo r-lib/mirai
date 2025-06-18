@@ -294,6 +294,7 @@ ensure_cli_initialized <- function() {
   `[[<-`(., ".flat", if (cli) flat_cli else .flat)
   `[[<-`(., ".progress", if (cli) progress_cli else .progress)
   `[[<-`(., ".stop", if (cli) stop_cli else .stop)
+  `[[<-`(., "require_daemons", if (cli) stop_d_cli else stop_d)
 }
 
 mmap <- function(x, dots) {
