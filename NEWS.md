@@ -4,6 +4,7 @@
 
 * Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the `url` of a `daemons()` call.
 * Simpler launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the `rs` argument to `daemon()`.
+* New developer function `require_daemons()` prompts the user to set daemons if they are not already set.
 
 #### Updates
 
