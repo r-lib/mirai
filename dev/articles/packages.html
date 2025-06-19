@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,16 +153,21 @@ logical NA for an ‘unresolvedValue’, should not be relied upon, as these
 are subject to change at any time.</li>
 </ul>
 <ol start="4" style="list-style-type: decimal">
-<li>Testing on CRAN should respect it’s 2-core usage limit.</li>
+<li>For CRAN packages, all examples and tests should respect the
+following rules when running on CRAN:</li>
 </ol>
 <ul>
-<li>These limits apply only to tests on CRAN, and more complex tests may
-be run elsewhere.</li>
-<li>This practically means limiting tests to using one daemon (with
-<code>dispatcher = FALSE</code>) to ensure that only one additional
-process is used.</li>
-<li>Always reset daemons when done and then allow at least a one-second
-sleep to ensure all background processes have properly exited.</li>
+<li>Use only one daemon (with <code>dispatcher = FALSE</code>) to ensure
+that only one additional process is used, to remain within the 2-core
+limit.</li>
+<li>Always reset daemons at the end of each example or test file. Allow
+at least a one-second sleep to ensure that all background processes have
+properly exited and that no ‘detritus’ from the processes remains.</li>
+<li>Never modify the default value of <code>asyncdial</code> or
+<code>autoexit</code> for <code><a href="../reference/daemon.html">daemon()</a></code>, in that function or any
+functions that pass arguments through to it such as
+<code><a href="../reference/daemons.html">daemons()</a></code>. This is to ensure that processes exit as soon as
+the host process does.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

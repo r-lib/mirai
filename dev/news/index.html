@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,17 +45,23 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
+<h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
+<ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task on hand. To achieve the previous behaviour use instead: <code>with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))</code>.</li>
+<li>
+<code><a href="../reference/daemon.html">daemon()</a></code> argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit without interrupting ongoing tasks.</li>
+<li>
+<code><a href="../reference/daemon.html">daemon()</a></code> argument <code>dispatcher</code> now defaults to <code>TRUE</code> - please note when manually launching daemons.</li>
+</ul></div>
+<div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>Implements <code><a href="../reference/cluster_config.html">cluster_config()</a></code> which provides more control when using an HPC job scheduler such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.</li>
 <li>Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the <code>url</code> of a <code><a href="../reference/daemons.html">daemons()</a></code> call.</li>
 <li>Simpler launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
-<li>New developer function <code><a href="../reference/require_daemons.html">require_daemons()</a></code> prompts the user to set daemons if they are not already set.</li>
+<li>New developer function <code><a href="../reference/require_daemons.html">require_daemons()</a></code> prompts the user to set daemons if they are not already set, with a clickable function link if the cli package is available.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>
-<code><a href="../reference/daemon.html">daemon()</a></code> argument <code>dispatcher</code> now defaults to <code>TRUE</code> - please take note if you are manually launching daemons.</li>
-<li>Deprecated <code>call_mirai_()</code> is now removed.</li>
+<ul><li>Deprecated <code>call_mirai_()</code> is now removed.</li>
 <li>Requires nanonext &gt;= [1.6.0.9001].</li>
 </ul></div>
 </div>

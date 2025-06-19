@@ -15,7 +15,7 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,10 +108,10 @@ can mask potential connection issues.</p></dd>
 
 <dt id="arg-autoexit">autoexit<a class="anchor" aria-label="anchor" href="#arg-autoexit"></a></dt>
 <dd><p>[default TRUE] logical value, whether the daemon should
-exit automatically when its socket connection ends. If a signal from the
-<span class="pkg">tools</span> package, such as <code><a href="https://rdrr.io/r/tools/pskill.html" class="external-link">tools::SIGINT</a></code>, or an equivalent integer
-value is supplied, this signal is additionally raised on exit (see
-'Persistence' section below).</p></dd>
+exit automatically when its socket connection ends. By default, the process
+ends immediately when the host process ends. Supply <code>NA</code> to have a daemon
+complete any tasks in progress before exiting (see 'Persistence' section
+below).</p></dd>
 
 
 <dt id="arg-cleanup">cleanup<a class="anchor" aria-label="anchor" href="#arg-cleanup"></a></dt>
@@ -182,13 +182,13 @@ distributes tasks to all available daemons.</p>
 
 
 <p>The <code>autoexit</code> argument governs persistence settings for the daemon. The
-default TRUE ensures that it will exit cleanly once its socket connection
-has ended.</p>
-<p>Instead of TRUE, supplying a signal from the <span class="pkg">tools</span> package, such as
-<code><a href="https://rdrr.io/r/tools/pskill.html" class="external-link">tools::SIGINT</a></code>, or an equivalent integer value, sets this signal to be
-raised when the socket connection ends. For instance, supplying SIGINT allows
-a potentially more immediate exit by interrupting any ongoing evaluation
-rather than letting it complete.</p>
+default TRUE ensures that it will exit as soon as its socket connection
+with the host process drops.</p>
+<p>Supplying <code>NA</code> will allow a daemon to exit cleanly once its socket connection
+with the host process drops, as soon as it has finished any task that is
+currently in progress. This may be useful if the daemon is performing some
+side effect such as writing files to disk, and the result is not required in
+the host process.</p>
 <p>Setting to FALSE allows the daemon to persist indefinitely even when there is
 no longer a socket connection. This allows a host session to end and a new
 session to connect at the URL where the daemon is dialled in. Daemons must be
