@@ -17,6 +17,7 @@
 <url><loc>https://mirai.r-lib.org/dev/reference/as.promise.mirai.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/as.promise.mirai_map.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/call_mirai.html</loc></url>
+<url><loc>https://mirai.r-lib.org/dev/reference/cluster_config.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/collect_mirai.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/daemon.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/daemons.html</loc></url>
@@ -39,6 +40,7 @@
 <url><loc>https://mirai.r-lib.org/dev/reference/remote_config.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/require_daemons.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/serial_config.html</loc></url>
+<url><loc>https://mirai.r-lib.org/dev/reference/ssh_config.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/status.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/stop_mirai.html</loc></url>
 <url><loc>https://mirai.r-lib.org/dev/reference/unresolved.html</loc></url>

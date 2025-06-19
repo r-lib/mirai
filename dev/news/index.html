@@ -46,7 +46,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the <code>url</code> of a <code><a href="../reference/daemons.html">daemons()</a></code> call.</li>
+<ul><li>Implements <code><a href="../reference/cluster_config.html">cluster_config()</a></code> which provides more control when using an HPC job scheduler such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.</li>
+<li>Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the <code>url</code> of a <code><a href="../reference/daemons.html">daemons()</a></code> call.</li>
 <li>Simpler launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
 <li>New developer function <code><a href="../reference/require_daemons.html">require_daemons()</a></code> prompts the user to set daemons if they are not already set.</li>
 </ul></div>
@@ -93,7 +94,7 @@
 <h5 id="behavioural-changes-2-2-0">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-2-2-0"></a></h5>
 <ul><li>Simplified SSH tunnelling for distributed computing:
 <ul><li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> argument ‘port’ is removed, with the tunnel port now inferred at the time of launch, and no longer set by the configuration.</li>
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> argument ‘port’ is removed, with the tunnel port now inferred at the time of launch, and no longer set by the configuration.</li>
 <li>
 <code><a href="../reference/host_url.html">local_url()</a></code> adds logical argument ‘tcp’ for easily constructing an automatic local TCP URL when setting <code><a href="../reference/daemons.html">daemons()</a></code> for SSH tunnelling.</li>
 </ul></li>
@@ -223,7 +224,7 @@
 <li>
 <code><a href="../reference/collect_mirai.html">collect_mirai()</a></code> is now interruptible and takes a ‘…’ argument accepting the collection options provided to the ‘mirai_map’ <code>[]</code> method, such as <code>.flat</code> etc.</li>
 <li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> simplified to take the argument ‘port’ instead of ‘host’. For SSH tunnelling, this is the port that will be used, and the hostname is now required to be ‘127.0.0.1’ (no longer accepting ‘localhost’).</li>
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> simplified to take the argument ‘port’ instead of ‘host’. For SSH tunnelling, this is the port that will be used, and the hostname is now required to be ‘127.0.0.1’ (no longer accepting ‘localhost’).</li>
 <li>
 <code><a href="../reference/host_url.html">host_url()</a></code> argument ‘ws’ is removed as a TCP URL is now always recommended (although websocket URLs are still supported).</li>
 <li>
@@ -346,7 +347,7 @@
 <li>allows evaluation of a symbol in the ‘mirai’ environment, e.g. <code>mirai(x, x = 1)</code>.</li>
 </ul></li>
 <li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> improvements:
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> improvements:
 <ul><li>new argument ‘host’ allows specifying the localhost URL and port to create a standalone configuration object.</li>
 <li>order of arguments ‘tunnel’ and ‘timeout’ reversed.</li>
 </ul></li>
@@ -386,7 +387,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.12.1" id="mirai-0121">mirai 0.12.1<a class="anchor" aria-label="anchor" href="#mirai-0121"></a></h2><p class="text-muted">CRAN release: 2024-02-02</p>
 <ul><li>Dispatcher initial sync timeout widened to 10s to allow for launching large numbers of daemons.</li>
-<li>Default for <code><a href="../reference/remote_config.html">ssh_config()</a></code> argument ‘timeout’ widened to 10 (seconds).</li>
+<li>Default for <code><a href="../reference/ssh_config.html">ssh_config()</a></code> argument ‘timeout’ widened to 10 (seconds).</li>
 <li>Fixes <code><a href="../reference/daemons.html">daemons()</a></code> specifying ‘output = FALSE’ registering as TRUE instead.</li>
 <li>Fixes use of <code><a href="../reference/everywhere.html">everywhere()</a></code> specifying ‘.args’ as an unnamed list or ‘.expr’ as a language object.</li>
 <li>Ensures compatibility with nanonext &gt;= 0.13.0.</li>
@@ -449,7 +450,7 @@
 <li>
 <code><a href="../reference/daemon.html">daemon()</a></code> argument ‘cleanup’ simplified to a logical argument, with more granular control offered by the existing integer bitmask (thanks <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a> <a href="https://github.com/r-lib/mirai/issues/79" class="external-link">#79</a>).</li>
 <li>Daemons connecting over TLS now perform synchronous dials by default (as documented).</li>
-<li>Fixes supplying an <code><a href="../reference/remote_config.html">ssh_config()</a></code> specifying tunnelling to the ‘remote’ argument of <code><a href="../reference/daemons.html">daemons()</a></code>.</li>
+<li>Fixes supplying an <code><a href="../reference/ssh_config.html">ssh_config()</a></code> specifying tunnelling to the ‘remote’ argument of <code><a href="../reference/daemons.html">daemons()</a></code>.</li>
 <li>Fixes the print method for a subset ‘miraiCluster’ (thanks <a href="https://github.com/HenrikBengtsson" class="external-link">@HenrikBengtsson</a> <a href="https://github.com/r-lib/mirai/issues/83" class="external-link">#83</a>).</li>
 <li>Removes the deprecated deferred evaluation pipe <code>%&gt;&gt;%</code>.</li>
 <li>Requires nanonext &gt;= 0.10.4.</li>
@@ -477,7 +478,7 @@
 <li>
 <code><a href="../reference/remote_config.html">remote_config()</a></code> added to generate configurations for directly launching remote daemons, and can be supplied directly to a ‘remote’ argument.</li>
 <li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> added as a convenience method to generate launch configurations using SSH, including SSH tunnelling.</li>
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> added as a convenience method to generate launch configurations using SSH, including SSH tunnelling.</li>
 <li>
 <code><a href="../reference/mirai.html">mirai()</a></code> adds logical argument ‘.signal’ for whether to signal the condition variable within the compute profile upon resolution of the ‘mirai’.</li>
 <li>

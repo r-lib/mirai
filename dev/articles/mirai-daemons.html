@@ -303,7 +303,7 @@ the dispatcher are terminated.</p>
 configurations:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> if there is SSH access to the remote
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> if there is SSH access to the remote
 machine.</li>
 <li>
 <code><a href="../reference/remote_config.html">remote_config()</a></code> provides a flexible method for using
@@ -326,7 +326,7 @@ back to the host URL:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The second example below launches one daemon on each of 10.75.32.90
 and 10.75.32.91 using the custom SSH port of 222:</p>
@@ -334,7 +334,7 @@ and 10.75.32.91 using the custom SSH port of 222:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://10.75.32.91:222"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://10.75.32.91:222"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -373,7 +373,7 @@ machines.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
