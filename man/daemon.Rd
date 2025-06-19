@@ -38,10 +38,10 @@ specified port is not open etc.). Specifying TRUE continues retrying
 can mask potential connection issues.}
 
 \item{autoexit}{[default TRUE] logical value, whether the daemon should
-exit automatically when its socket connection ends. If a signal from the
-\pkg{tools} package, such as \code{tools::SIGINT}, or an equivalent integer
-value is supplied, this signal is additionally raised on exit (see
-'Persistence' section below).}
+exit automatically when its socket connection ends. By default, the process
+ends immediately when the host process ends. Supply \code{NA} to have a daemon
+complete any tasks in progress before exiting (see 'Persistence' section
+below).}
 
 \item{cleanup}{[default TRUE] logical value, whether to perform cleanup of
 the global environment and restore attached packages and options to an
@@ -98,14 +98,14 @@ distributes tasks to all available daemons.
 
 
 The \code{autoexit} argument governs persistence settings for the daemon. The
-default TRUE ensures that it will exit cleanly once its socket connection
-has ended.
+default TRUE ensures that it will exit as soon as its socket connection
+with the host process drops.
 
-Instead of TRUE, supplying a signal from the \pkg{tools} package, such as
-\code{tools::SIGINT}, or an equivalent integer value, sets this signal to be
-raised when the socket connection ends. For instance, supplying SIGINT allows
-a potentially more immediate exit by interrupting any ongoing evaluation
-rather than letting it complete.
+Supplying \code{NA} will allow a daemon to exit cleanly once its socket connection
+with the host process drops, as soon as it has finished any task that is
+currently in progress. This may be useful if the daemon is performing some
+side effect such as writing files to disk, and the result is not required in
+the host process.
 
 Setting to FALSE allows the daemon to persist indefinitely even when there is
 no longer a socket connection. This allows a host session to end and a new

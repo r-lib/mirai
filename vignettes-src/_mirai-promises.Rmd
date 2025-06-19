@@ -538,8 +538,7 @@ The /echo endpoint takes a GET request, sleeps for 1 second (simulating an expen
 #| label: get
 library(mirai)
 
-# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
-daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
+daemons(1L, dispatcher = FALSE)
 
 m <- mirai({
   library(plumber)
@@ -605,8 +604,7 @@ Note that `req$postBody` should always be accessed in the router process and pas
 #| label: post
 library(mirai)
 
-# supply SIGINT so the plumber server is interrupted and exits cleanly when finished
-daemons(1L, dispatcher = FALSE, autoexit = tools::SIGINT)
+daemons(1L, dispatcher = FALSE)
 
 m <- mirai({
   library(plumber)

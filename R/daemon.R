@@ -26,10 +26,10 @@
 #'   (indefinitely) if not immediately successful, which is more resilient but
 #'   can mask potential connection issues.
 #' @param autoexit \[default TRUE\] logical value, whether the daemon should
-#'   exit automatically when its socket connection ends. If a signal from the
-#'   \pkg{tools} package, such as `tools::SIGINT`, or an equivalent integer
-#'   value is supplied, this signal is additionally raised on exit (see
-#'   'Persistence' section below).
+#'   exit automatically when its socket connection ends. By default, the process
+#'   ends immediately when the host process ends. Supply `NA` to have a daemon
+#'   complete any tasks in progress before exiting (see 'Persistence' section
+#'   below).
 #' @param cleanup \[default TRUE\] logical value, whether to perform cleanup of
 #'   the global environment and restore attached packages and options to an
 #'   initial state after each evaluation.
@@ -63,14 +63,14 @@
 #' @section Persistence:
 #'
 #' The `autoexit` argument governs persistence settings for the daemon. The
-#' default TRUE ensures that it will exit cleanly once its socket connection
-#' has ended.
+#' default TRUE ensures that it will exit as soon as its socket connection
+#' with the host process drops.
 #'
-#' Instead of TRUE, supplying a signal from the \pkg{tools} package, such as
-#' `tools::SIGINT`, or an equivalent integer value, sets this signal to be
-#' raised when the socket connection ends. For instance, supplying SIGINT allows
-#' a potentially more immediate exit by interrupting any ongoing evaluation
-#' rather than letting it complete.
+#' Supplying `NA` will allow a daemon to exit cleanly once its socket connection
+#' with the host process drops, as soon as it has finished any task that is
+#' currently in progress. This may be useful if the daemon is performing some
+#' side effect such as writing files to disk, and the result is not required in
+#' the host process.
 #'
 #' Setting to FALSE allows the daemon to persist indefinitely even when there is
 #' no longer a socket connection. This allows a host session to end and a new
@@ -98,7 +98,8 @@ daemon <- function(
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit(reap(sock))
-  autoexit && pipe_notify(sock, cv, remove = TRUE, flag = autoexit)
+  flag <- if (!identical(parent.frame(), .GlobalEnv)) autoexit else if (isFALSE(autoexit)) FALSE else if (is.na(autoexit)) TRUE else tools::SIGTERM
+  pipe_notify(sock, cv, remove = TRUE, flag = flag)
   if (length(tls)) tls <- tls_config(client = tls)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tls)
 
@@ -195,7 +196,7 @@ daemon <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE)
+  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
