@@ -98,7 +98,7 @@ daemon <- function(
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit(reap(sock))
-  flag <- if (isNamespaceLoaded("crew")) autoexit else if (isFALSE(autoexit)) FALSE else if (is.na(autoexit)) TRUE else tools::SIGTERM
+  flag <- if (!identical(parent.frame(), .GlobalEnv)) autoexit else if (isFALSE(autoexit)) FALSE else if (is.na(autoexit)) TRUE else tools::SIGTERM
   pipe_notify(sock, cv, remove = TRUE, flag = flag)
   if (length(tls)) tls <- tls_config(client = tls)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tls)
