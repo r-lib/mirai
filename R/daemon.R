@@ -98,8 +98,7 @@ daemon <- function(
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit(reap(sock))
-  flag <- if (!identical(parent.frame(), .GlobalEnv)) autoexit else if (isFALSE(autoexit)) FALSE else if (is.na(autoexit)) TRUE else tools::SIGTERM
-  pipe_notify(sock, cv, remove = TRUE, flag = flag)
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
   if (length(tls)) tls <- tls_config(client = tls)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tls)
 
@@ -196,7 +195,7 @@ daemon <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_dot_value())
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
   data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
@@ -245,3 +244,8 @@ do_cleanup <- function() {
 
 snapshot <- function()
   `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
+
+flag_value <- function(autoexit)
+  { isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL)) } && return(autoexit) || is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
+
+flag_dot_value <- function() isNamespaceLoaded("covr") || return(tools::SIGTERM)
