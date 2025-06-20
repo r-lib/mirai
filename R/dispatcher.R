@@ -53,7 +53,7 @@ dispatcher <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
   dial_sync_socket(sock, host)
 
   res <- recv(sock, mode = 1L, block = TRUE)
