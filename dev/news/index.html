@@ -51,6 +51,7 @@
 <code><a href="../reference/daemon.html">daemon()</a></code> argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit without interrupting ongoing tasks.</li>
 <li>
 <code><a href="../reference/daemon.html">daemon()</a></code> argument <code>dispatcher</code> now defaults to <code>TRUE</code> - please note when manually launching daemons.</li>
+<li>Calling <code><a href="../reference/daemons.html">daemons()</a></code> to create local daemons now errors if performed within a mirai map. This guards against excessive spawning of local processes on a single machine.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
