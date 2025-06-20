@@ -90,6 +90,23 @@ To map over \strong{columns} instead, first wrap a dataframe in \code{\link[=as.
 transpose a matrix using \code{\link[=t]{t()}}.
 }
 
+\section{Nested Maps}{
+
+
+At times you way wish to run maps within maps. To do this, the function
+provided to the outer map needs to include a call to \code{\link[=daemons]{daemons()}} to set
+daemons used by the inner map. To guard against inadvertently spawning an
+excessive number of daemons on the same machine, attempting to launch local
+daemons within a map using \code{daemons(n)} will error.
+
+A legitimate use of this pattern however is when the outer daemons are
+launched on remote machines, and you then wish to launch daemons locally on
+each of those machines. In this case, use the following solution: instead of
+a single call to \code{daemons(n)} make 2 separate calls to
+\verb{daemons(url = local_url()); launch_local(n)}. This is equivalent, and is
+permitted from within a map.
+}
+
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(4)

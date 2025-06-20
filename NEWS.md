@@ -7,7 +7,7 @@
 * `daemon()` argument `autoexit` default of `TRUE` now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks.
   Set to `NA` to retain the previous behaviour of having them automatically exit without interrupting ongoing tasks.
 * `daemon()` argument `dispatcher` now defaults to `TRUE` - please note when manually launching daemons.
-* Calling `daemons()` to create local daemons now errors if performed within a mirai map. This guards against excessive spawning of processes on a local machine.
+* Calling `daemons()` to create local daemons now errors if performed within a mirai map. This guards against excessive spawning of local processes on a single machine.
 
 #### New Features
 
