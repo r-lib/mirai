@@ -114,7 +114,7 @@
 #'
 #' Switching the URL scheme to 'tls+tcp://' automatically upgrades the
 #' connection to use TLS. The auxiliary function [host_url()] may be used to
-#' construct a valid host URL based on the computer's hostname.
+#' construct a valid host URL based on the computer's IP address.
 #'
 #' IPv6 addresses are also supported and must be enclosed in square brackets
 #' `[]` to avoid confusion with the final colon separating the port. For
@@ -227,34 +227,28 @@ daemons <- function(
   if (is.character(url)) {
     if (is.null(envir)) {
       url <- url[1L]
-      purl <- parse_url(url)
       envir <- init_envir_stream(seed)
       launches <- 0L
       dots <- parse_dots(...)
       output <- attr(dots, "output")
-      sock <- req_socket()
+
       switch(
         parse_dispatcher(dispatcher),
         {
-          tls <- configure_tls(purl, tls, pass, envir)
-          listen(sock, url = url, tls = tls, fail = 2L)
+          tls <- configure_tls(url, tls, pass, envir)
+          sock <- req_socket(url, tls = tls)
           check_store_sock_url(envir, sock)
         },
         {
           cv <- cv()
+          tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
+          urld <- local_url()
+          sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
-          sch <- purl[["scheme"]]
-          if (!startsWith(sch, "t") && !startsWith(sch, "w") &&
-              dial(sock, url = url, autostart = NA, fail = 3L) == 0L) {
-            store_dispatcher(envir, sock, cv, url)
-          } else {
-            tls <- configure_tls(purl, tls, pass, envir, returnconfig = FALSE)
-            urld <- local_url()
-            args <- wa5(urld, url, dots)
-            res <- launch_dispatcher(sock, urld, args, output, serial, tls = tls, pass = pass)
-            store_dispatcher(envir, sock, cv, urld, res)
-          }
+          args <- wa5(urld, url, dots)
+          res <- launch_dispatcher(sock, args, output, serial, tls = tls, pass = pass)
+          store_dispatcher(envir, sock, cv, urld, res)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -291,20 +285,20 @@ daemons <- function(
       urld <- local_url()
       dots <- parse_dots(...)
       output <- attr(dots, "output")
-      sock <- req_socket()
       switch(
         parse_dispatcher(dispatcher),
         {
-          listen(sock, url = urld, fail = 2L)
+          sock <- req_socket(urld)
           launch_daemons(seq_len(n), sock, urld, dots, envir, output)
           store_sock_url(envir, sock, urld)
         },
         {
           cv <- cv()
+          sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
           args <- wa4(urld, n, envir[["stream"]], dots)
-          res <- launch_dispatcher(sock, urld, args, output, serial)
+          res <- launch_dispatcher(sock, args, output, serial)
           store_dispatcher(envir, sock, cv, urld, res)
         },
         stop(._[["dispatcher_args"]])
@@ -519,7 +513,8 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(purl, tls, pass, envir, returnconfig = TRUE) {
+configure_tls <- function(url, tls, pass, envir, returnconfig = TRUE) {
+  purl <- parse_url(url)
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
@@ -551,8 +546,8 @@ init_envir_stream <- function(seed) {
   envir
 }
 
-req_socket <- function(listen = NULL, tls = NULL)
-  `opt<-`(socket("req", listen = listen, tls = tls), "req:resend-time", 0L)
+req_socket <- function(url, tls = NULL)
+  `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", 0L)
 
 parse_dispatcher <- function(x)
   if (is.logical(x)) 1L + (!is.na(x) && x) else if (is.character(x)) 1L else 3L
@@ -632,7 +627,7 @@ query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, bloc
   recv(sock, mode = recv_mode, block = block)
 }
 
-launch_dispatcher <- function(sock, urld, args, output, serial, tls = NULL, pass = NULL) {
+launch_dispatcher <- function(sock, args, output, serial, tls = NULL, pass = NULL) {
   pkgs <- Sys.getenv("R_DEFAULT_PACKAGES")
   system2(
     .command,
@@ -644,13 +639,10 @@ launch_dispatcher <- function(sock, urld, args, output, serial, tls = NULL, pass
   sync <- 0L
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
-  msleep(100L) # Causes async dial below to succeed faster
-  dial(sock, url = urld, fail = 2L)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   pipe_notify(sock, NULL, add = TRUE)
-  send(sock, list(pkgs, tls, pass, serial), mode = 1L, block = TRUE)
-  res <- recv_aio(sock, mode = 2L, cv = cv)
+  res <- request(.context(sock), list(pkgs, tls, pass, serial), send_mode = 1L, recv_mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   collect_aio(res)
@@ -668,13 +660,12 @@ launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-store_dispatcher <- function(envir, sock, cv, urld, res = NULL) {
+store_dispatcher <- function(envir, sock, cv, urld, res) {
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "stream", NULL)
-  is.null(res) && return()
-  `[[<-`(envir, "url", res[-1L])
+  `[[<-`(envir, "url", res[2L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
 }
 

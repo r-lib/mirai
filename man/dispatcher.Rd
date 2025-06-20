@@ -7,8 +7,8 @@
 dispatcher(host, url = NULL, n = NULL, ..., tls = NULL, pass = NULL, rs = NULL)
 }
 \arguments{
-\item{host}{the character URL dispatcher should listen at (for hosts to dial
-in to), typically an IPC address.}
+\item{host}{the character URL dispatcher should dial in to, typically an IPC
+address.}
 
 \item{url}{(optional) the character URL dispatcher should listen at (and
 daemons should dial in to), including the port to connect to e.g.
