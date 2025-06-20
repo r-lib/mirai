@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.3.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,6 @@
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>Implements <code><a href="../reference/cluster_config.html">cluster_config()</a></code> which provides more control when using an HPC job scheduler such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.</li>
-<li>Multiple processes can now attach to a dispatcher instance and share the compute of a pool of daemons. Simply pass the dispatcher URL to the <code>url</code> of a <code><a href="../reference/daemons.html">daemons()</a></code> call.</li>
 <li>Simpler launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
 <li>New developer function <code><a href="../reference/require_daemons.html">require_daemons()</a></code> prompts the user to set daemons if they are not already set, with a clickable function link if the cli package is available.</li>
 </ul></div>
