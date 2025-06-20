@@ -160,7 +160,7 @@ mirai_map <- function(
           mirai(
             .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
             ...,
-            .args = list(.f = .f, .x = x, .args = .args),
+            .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
             .compute = .compute
           )
       ),
@@ -175,7 +175,7 @@ mirai_map <- function(
             mirai(
               .expr = do.call(.f, c(as.vector(.x, mode = "list"), .args), quote = TRUE),
               ...,
-              .args = list(.f = .f, .x = .x[i, ], .args = .args),
+              .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
               .compute = .compute
             )
         ),
@@ -190,7 +190,7 @@ mirai_map <- function(
             mirai(
               .expr = do.call(.f, c(.x, .args), quote = TRUE),
               ...,
-              .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args),
+              .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
               .compute = .compute
             )
         ),
