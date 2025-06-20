@@ -14,8 +14,8 @@
 #' task.
 #'
 #' @inheritParams daemon
-#' @param host the character URL dispatcher should listen at (for hosts to dial
-#'   in to), typically an IPC address.
+#' @param host the character URL dispatcher should dial in to, typically an IPC
+#'   address.
 #' @param url (optional) the character URL dispatcher should listen at (and
 #'   daemons should dial in to), including the port to connect to e.g.
 #'   'tcp://hostname:5555' or 'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to
@@ -51,19 +51,12 @@ dispatcher <- function(
   n > 0L || stop(._[["missing_url"]])
 
   cv <- cv()
-  cva <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = TRUE)
-  pipe_notify(sock, cva, add = TRUE)
-  listen(sock, url = host, tls = tls, fail = 2L)
-  wait(cva)
+  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
+  dial_sync_socket(sock, host)
 
-  req <- recv_aio(sock, mode = 1L, cv = cv)
-  while(!until(cv, .limit_long))
-    cv_signal(cv) || wait(cv) || return()
-  res <- collect_aio(req)
-
+  res <- recv(sock, mode = 1L, block = TRUE)
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
@@ -119,13 +112,7 @@ dispatcher <- function(
   res <- recv_aio(psock, mode = 8L, cv = cv)
 
   suspendInterrupts(
-    repeat {
-      wait(cv) || {
-        cv_value(cva) || break
-        cv_reset(cv)
-        wait(cva)
-        next
-      }
+    while (wait(cv)) {
 
       changes <- read_monitor(m)
       is.null(changes) || {

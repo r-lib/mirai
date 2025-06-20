@@ -151,7 +151,7 @@ connected, allowing dynamic upscaling or downscaling as required.
 
 Switching the URL scheme to 'tls+tcp://' automatically upgrades the
 connection to use TLS. The auxiliary function \code{\link[=host_url]{host_url()}} may be used to
-construct a valid host URL based on the computer's hostname.
+construct a valid host URL based on the computer's IP address.
 
 IPv6 addresses are also supported and must be enclosed in square brackets
 \verb{[]} to avoid confusion with the final colon separating the port. For

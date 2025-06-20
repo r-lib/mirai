@@ -226,7 +226,7 @@ eval_mirai <- function(._mirai_.) {
   )
 }
 
-dial_sync_socket <- function(sock, url, autostart, tls) {
+dial_sync_socket <- function(sock, url, autostart = NA, tls = NULL) {
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
   dial(sock, url = url, autostart = autostart, tls = tls, fail = 2L)
