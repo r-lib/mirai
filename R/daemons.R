@@ -281,6 +281,7 @@ daemons <- function(
       ..[[.compute]] <- NULL -> envir
     } else if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
+      dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
       urld <- local_url()
       dots <- parse_dots(...)

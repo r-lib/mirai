@@ -71,6 +71,21 @@
 #' To map over **columns** instead, first wrap a dataframe in [as.list()], or
 #' transpose a matrix using [t()].
 #'
+#' @section Nested Maps:
+#'
+#' At times you way wish to run maps within maps. To do this, the function
+#' provided to the outer map needs to include a call to [daemons()] to set
+#' daemons used by the inner map. To guard against inadvertently spawning an
+#' excessive number of daemons on the same machine, attempting to launch local
+#' daemons within a map using `daemons(n)` will error.
+#'
+#' A legitimate use of this pattern however is when the outer daemons are
+#' launched on remote machines, and you then wish to launch daemons locally on
+#' each of those machines. In this case, use the following solution: instead of
+#' a single call to `daemons(n)` make 2 separate calls to
+#' `daemons(url = local_url()); launch_local(n)`. This is equivalent, and is
+#' permitted from within a map.
+#'
 #' @examplesIf interactive()
 #' daemons(4)
 #'
@@ -160,7 +175,7 @@ mirai_map <- function(
           mirai(
             .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
             ...,
-            .args = list(.f = .f, .x = x, .args = .args),
+            .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
             .compute = .compute
           )
       ),
@@ -175,7 +190,7 @@ mirai_map <- function(
             mirai(
               .expr = do.call(.f, c(as.vector(.x, mode = "list"), .args), quote = TRUE),
               ...,
-              .args = list(.f = .f, .x = .x[i, ], .args = .args),
+              .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
               .compute = .compute
             )
         ),
@@ -190,7 +205,7 @@ mirai_map <- function(
             mirai(
               .expr = do.call(.f, c(.x, .args), quote = TRUE),
               ...,
-              .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args),
+              .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
               .compute = .compute
             )
         ),

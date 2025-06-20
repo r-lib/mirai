@@ -85,7 +85,8 @@
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     requires_daemons = "daemons must be set prior to a map operation",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
-    sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]"
+    sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
+    within_map = "cannot create local daemons from within a mirai map"
   ),
   hash = TRUE
 )
