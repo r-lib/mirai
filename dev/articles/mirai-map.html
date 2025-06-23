@@ -122,10 +122,10 @@ optimally. This is demonstrated in the example below.</li>
 <span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.006   0.004   4.006</span></span>
+<span><span class="co">#&gt;   0.003   0.008   4.003</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.019   0.042   8.073</span></span>
+<span><span class="co">#&gt;   0.006   0.007   8.008</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><code>.args</code> is used to specify further constant arguments to
@@ -136,13 +136,13 @@ optimally. This is demonstrated in the example below.</li>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 20.45311</span></span>
+<span><span class="co">#&gt; [1] 19.74695</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 17.50899 18.70689</span></span>
+<span><span class="co">#&gt; [1] 21.44419 20.67814</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] 24.49598 21.52816 21.03546</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 26.73569 20.14336 20.49444</span></span></code></pre></div>
 <p>Use <code>...</code> to further specify objects referenced but not
 defined in <code>.f</code> - the ‘do’ in the anonymous function
 below:</p>
@@ -158,13 +158,13 @@ below:</p>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "b6"</span></span>
+<span><span class="co">#&gt; [1] "df"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] 05 73</span></span>
+<span><span class="co">#&gt; [1] 91 52</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "6deff8"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "de4e19"</span></span></code></pre></div>
 <blockquote>
 <p>Use of <code><a href="../reference/mirai_map.html">mirai_map()</a></code> requires that <code><a href="../reference/daemons.html">daemons()</a></code>
 have previously been set, and will error if this is not the case.</p>
@@ -250,6 +250,32 @@ transpose of the matrix beforehand using <code><a href="https://rdrr.io/r/base/t
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="nested-maps">5. Nested Maps<a class="anchor" aria-label="anchor" href="#nested-maps"></a>
+</h3>
+<p>In certain cases it may be desirable to perform maps within maps. To
+do this, the function provided to the outer map needs to include a call
+to <code><a href="../reference/daemons.html">daemons()</a></code> to set daemons used by the inner map.</p>
+<p>To prevent accidental proliferation of processes on the same machine,
+setting local daemons of the form <code>daemons(6)</code> from within a
+function provided to <code><a href="../reference/mirai_map.html">mirai_map()</a></code> will error. As an example,
+8 daemons created in the outer map, which each then create 8 in the
+inner map leads to 64 daemons being created.</p>
+<p>It is far more common (and useful) for these to be created across
+different machines. Creating and launching remote daemons is permitted
+in all cases.</p>
+<p>The above limitation does however prevent a legitimate use pattern:
+when the outer daemons are launched on remote machines, and you wish to
+launch inner daemons locally on each of those machines.</p>
+<p>The solution in such a case is to use ‘remote’ daemons which are in
+fact identical to local daemons. Instead of a single call to:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></code></pre></div>
+<p>Instead, make 2 separate calls to:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>⁠<span class="fu">daemons</span>(<span class="at">url =</span> <span class="fu">local_url</span>())</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">launch_local</span>(n)</span></code></pre></div>
+<p>This is permitted from within a mirai map operation.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
