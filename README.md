@@ -78,7 +78,7 @@ To wait for and collect the return value, use the mirai’s `[]` method.
 
 ``` r
 m[]
-#> [1] 7.147735 7.442937 6.165155
+#> [1] 6.647460 5.473031 7.259106
 ```
 
 As a mirai represents an async operation, it is never necessary to wait
@@ -90,7 +90,7 @@ while (unresolved(m)) {
   # Do other work
 }
 m$data
-#> [1] 7.147735 7.442937 6.165155
+#> [1] 6.647460 5.473031 7.259106
 ```
 
 #### Daemons
@@ -194,9 +194,8 @@ implementing a new parallel cluster type, a feature request by R-Core at
 R Project Sprint 2023.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
-  Powers the (in development) implementation of parallel map for the
-purrr functional programming toolkit, one of the core tidyverse
-packages.
+  Powers parallel map for the purrr functional programming toolkit, a
+core tidyverse package.
 
 [<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/v3-promises.html)
   Implements the next generation of completely event-driven promises.
@@ -204,9 +203,8 @@ packages.
 ‘promises’, including with the promise pipe `%...>%`.
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v3-promises.html)
-  Asynchronous parallel / distributed backend, supporting the next level
-of responsiveness and scalability within Shiny, with native support for
-ExtendedTask.
+  The new default async backend for Shiny, supporting ExtendedTask and
+the next level of responsiveness and scalability for Shiny apps.
 
 [<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v3-promises.html)
   Asynchronous parallel / distributed backend for scaling Plumber
