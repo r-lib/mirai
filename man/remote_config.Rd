@@ -65,5 +65,5 @@ remote_config(
 }
 \seealso{
 \code{\link[=ssh_config]{ssh_config()}} for SSH launch configurations, or \code{\link[=cluster_config]{cluster_config()}}
-for cluster job scheduler launch configurations.
+for cluster resource manager launch configurations.
 }

@@ -203,7 +203,7 @@ launch_remote <- function(
 #'   of [daemons()] or [launch_remote()].
 #'
 #' @seealso [ssh_config()] for SSH launch configurations, or [cluster_config()]
-#'   for cluster job scheduler launch configurations.
+#'   for cluster resource manager launch configurations.
 #'
 #' @examples
 #' # Slurm srun example
@@ -288,8 +288,8 @@ remote_config <- function(
 #' This provides a means of launching daemons on any machine you are able to
 #' access via SSH, be it on the local network or the cloud.
 #'
-#' @seealso [cluster_config()] for cluster job scheduler launch configurations,
-#'   or [remote_config()] for generic configurations.
+#' @seealso [cluster_config()] for cluster resource manager launch
+#'   configurations, or [remote_config()] for generic configurations.
 #'
 #' @examples
 #' # direct SSH example
@@ -342,8 +342,8 @@ ssh_config <- function(
 
 #' Cluster Remote Launch Configuration
 #'
-#' Generates a remote configuration for launching daemons using a cluster job
-#' scheduler such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.
+#' Generates a remote configuration for launching daemons using an HPC cluster
+#' resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.
 #'
 #' @param command \[default "sbatch"\] for Slurm. Replace with "qsub" for
 #'   SGE / Torque / PBS, or "bsub" for LSF. See examples below.
@@ -406,7 +406,7 @@ ssh_config <- function(
 #'
 #' \dontrun{
 #'
-#' # launch 2 daemons using the Slurm sbatch defaults:
+#' # Launch 2 daemons using the Slurm sbatch defaults:
 #' daemons(
 #'   n = 2,
 #'   url = host_url(),

@@ -4,15 +4,18 @@
 
 * An ephemeral daemon started by `mirai()` without setting daemons now exits as soon as the parent process does rather than finish the task on hand.
   To achieve the previous behaviour use instead: `with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))`.
-* `daemon()` argument `autoexit` default of `TRUE` now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks.
-  Set to `NA` to retain the previous behaviour of having them automatically exit without interrupting ongoing tasks.
-* `daemon()` argument `dispatcher` now defaults to `TRUE` - please note when manually launching daemons.
-* Calling `daemons()` to create local daemons now errors if performed within a mirai map. This guards against excessive spawning of local processes on a single machine.
+* Change in `daemon()` defaults:
+  + Argument `autoexit` default of `TRUE` now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks.
+    Set to `NA` to retain the previous behaviour of having them automatically exit after completing any in-progress tasks.
+  + Argument `dispatcher` now defaults to `TRUE`.
+* Calling `daemons()` to create local daemons now errors if performed within a `mirai_map()` call.
+  This guards against excessive spawning of local processes on a single machine.
 
 #### New Features
 
-* Implements `cluster_config()` which provides more control when using an HPC job scheduler such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.
-* Simpler launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the `rs` argument to `daemon()`.
+* Implements `cluster_config()` which provides more control when using an HPC resource manager such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.
+* Simpler launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches.
+  Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the `rs` argument to `daemon()`.
 * New developer function `require_daemons()` prompts the user to set daemons if they are not already set, with a clickable function link if the cli package is available.
 
 #### Updates

@@ -107,6 +107,6 @@ daemons(
 
 }
 \seealso{
-\code{\link[=cluster_config]{cluster_config()}} for cluster job scheduler launch configurations,
-or \code{\link[=remote_config]{remote_config()}} for generic configurations.
+\code{\link[=cluster_config]{cluster_config()}} for cluster resource manager launch
+configurations, or \code{\link[=remote_config]{remote_config()}} for generic configurations.
 }
