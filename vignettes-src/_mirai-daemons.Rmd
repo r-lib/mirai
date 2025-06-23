@@ -188,12 +188,15 @@ Closing the connection causes all connected daemons to exit automatically. If us
 
 To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
 
-There are currently two options for generating remote launch configurations:
+There are currently 3 options for generating remote launch configurations:
 
-1. `ssh_config()` if there is SSH access to the remote machine.
-2. `remote_config()` provides a flexible method for using cluster resource managers, or a custom launcher.
+1. `ssh_config()` where there is SSH access to the remote machine.
+2. `cluster_config()` to use HPC cluster resource managers such as Slurm, SGE, Torque/PBS and LSF.
+2. `remote_config()` for a generic, flexible method that caters for other custom launchers.
 
-#### SSH Direct Connection
+The return value of all of these functions is a simple list. This means that they may be pre-constructed, saved and re-used whenever the same configuration is required.
+
+#### i. SSH Direct Connection
 
 This method is appropriate for internal networks and in trusted, properly-configured environments where it is safe for your machine to accept incoming connections on certain ports.
 In the examples below, the remote daemons connect back directly to port 5555 on the local machine.
@@ -221,7 +224,7 @@ daemons(
 )
 ```
 
-#### SSH Tunnelling
+#### ii. SSH Tunnelling
 
 Use SSH tunnelling to launch daemons on any machine you are able to access via SSH, whether on the local network or the cloud.
 SSH key-based authentication must already be in place, but no other configuration is required.
@@ -252,11 +255,53 @@ daemons(
 )
 ```
 
-#### Cluster Resource Managers
+#### iii. HPC Cluster Resource Managers
 
-`remote_config()` may be used to run a command to deploy daemons using a resource manager.
+`cluster_config()` may be used to deploy daemons using a cluster resource manager / scheduler.
 
-Taking Slurm as an example, the following uses `sbatch` to launch a daemon on the cluster, with some additional arguments to `sbatch` specifying the resource allocation:
+1. The first argument is `command`. This should be:
+  + `"sbatch"` if using Slurm
+  + `"qsub"` if using SGE / Torque / PBS
+  + `"bsub"` if using LSF.
+  
+2. The second argument `options` are any options that you would normally supply in a shell script to pass to the scheduler. These are script lines typically preceded by a `#`.
+```
+  Slurm: "#SBATCH --job-name=mirai
+          #SBATCH --mem=10G
+          #SBATCH --output=job.out"
+  SGE: "#$ -N mirai
+        #$ -l mem_free=10G
+        #$ -o job.out"
+  Torque/PBS: "#PBS -N mirai
+               #PBS -l mem=10gb
+               #PBS -o job.out"
+  LSF: "#BSUB -J mirai
+        #BSUB -M 10000
+        #BSUB -o job.out"
+```
+ - As per the above, it is fine to pass this as a character string with the options each on a new line (whitespace is automatically handled), or else by specifically using `\n` to denote a newline.
+ - It is also permissible to include other shell commands, for example to change working directory.
+ - For the avoidance of doubt, the initial shebang line of a script such as `"#!/bin/bash"` is not required.
+ - For certain setups, a final line which loads environment modules may be needed. This would usually be of the form:
+ 
+ ```
+ module load R
+ ```
+ or to specify an R version:
+ 
+ ```
+ module load R/4.5.0
+```
+
+3. The third argument `rscript` defaults to `"Rscript"`, which assumes that R is on the file search path.      This may be substituted for the full path to a specific R executable, such as that returned by `file.path(R.home("bin"), "Rscript")`.
+
+#### iv. Generic Remote Configuration
+
+`remote_config()` provides a generic, flexible framework for running any shell command that may be used to deploy daemons.
+
+Conceptually, this function takes an `args` argument, which must contain ".". The correctly-configured call to `daemon()` is substituted in for this ".", so that `command` is run with this as one of its arguments.
+
+This can provide an alternative for cluster resource managers in certain cases, although `cluster_config()` provides an easier and more complete interface. Using Slurm as an example, the following uses `sbatch` to launch a daemon on the cluster, with some additional Slurm options passed via command line arguments to `sbatch`:
 ``` r
 daemons(
   n = 2,
@@ -270,7 +315,7 @@ daemons(
 )
 ```
 
-#### Manual Deployment
+#### v. Manual Deployment
 
 As an alternative to automated launches, calling `launch_remote()` without specifying 'remote' may be used to return the shell commands for deploying daemons manually.
 
