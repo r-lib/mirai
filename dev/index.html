@@ -116,14 +116,14 @@
 <p>To wait for and collect the return value, use the mirai’s <code>[]</code> method.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 7.147735 7.442937 6.165155</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 6.647460 5.473031 7.259106</span></span></code></pre></div>
 <p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Do other work</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 7.147735 7.442937 6.165155</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 6.647460 5.473031 7.259106</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
 </h4>
@@ -188,9 +188,9 @@
 </h3>
 <p>mirai features the following core integrations, with usage examples in the linked vignettes:</p>
 <p><a href="https://mirai.r-lib.org/articles/v5-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing a new parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
-<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers the (in development) implementation of parallel map for the purrr functional programming toolkit, one of the core tidyverse packages.</p>
+<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
 <p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements the next generation of completely event-driven promises. ‘mirai’ and ‘mirai_map’ objects may be used interchangeably with ‘promises’, including with the promise pipe <code>%...&gt;%</code>.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend, supporting the next level of responsiveness and scalability within Shiny, with native support for ExtendedTask.</p>
+<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The new default async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
 <p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend for scaling Plumber applications in production.</p>
 <p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
 <p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
