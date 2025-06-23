@@ -36,10 +36,10 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.006   0.004   4.006
+#>   0.003   0.008   4.003
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.019   0.042   8.073
+#>   0.006   0.007   8.008
 daemons(0)
 #> [1] 0
 ```
@@ -51,13 +51,13 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 20.45311
+#> [1] 19.74695
 #> 
 #> [[2]]
-#> [1] 17.50899 18.70689
+#> [1] 21.44419 20.67814
 #> 
 #> [[3]]
-#> [1] 24.49598 21.52816 21.03546
+#> [1] 26.73569 20.14336 20.49444
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
 
@@ -73,13 +73,13 @@ ml
 #> < mirai map [0/3] >
 ml[]
 #> $a
-#> [1] "b6"
+#> [1] "df"
 #> 
 #> $b
-#> [1] 05 73
+#> [1] 91 52
 #> 
 #> $c
-#> [1] "6deff8"
+#> [1] "de4e19"
 ```
 
 > Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case.
@@ -149,3 +149,26 @@ mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 daemons(0)
 #> [1] 0
 ```
+
+### 5. Nested Maps
+
+In certain cases it may be desirable to perform maps within maps. To do this, the function provided to the outer map needs to include a call to `daemons()` to set daemons used by the inner map.
+
+To prevent accidental proliferation of processes on the same machine, setting local daemons of the form `daemons(6)` from within a function provided to `mirai_map()` will error. As an example, 8 daemons created in the outer map, which each then create 8 in the inner map leads to 64 daemons being created.
+
+It is far more common (and useful) for these to be created across different machines. Creating and launching remote daemons is permitted in all cases.
+
+The above limitation does however prevent a legitimate use pattern: when the outer daemons are launched on remote machines, and you wish to launch inner daemons locally on each of those machines.
+
+The solution in such a case is to use 'remote' daemons which are in fact identical to local daemons.
+Instead of a single call to:
+```r
+daemons(n)
+```
+Instead, make 2 separate calls to:
+```r
+⁠daemons(url = local_url())
+launch_local(n)
+```
+This is permitted from within a mirai map operation.
+

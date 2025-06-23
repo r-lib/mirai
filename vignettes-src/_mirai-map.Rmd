@@ -123,3 +123,26 @@ mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 
 daemons(0)
 ```
+
+### 5. Nested Maps
+
+In certain cases it may be desirable to perform maps within maps. To do this, the function provided to the outer map needs to include a call to `daemons()` to set daemons used by the inner map.
+
+To prevent accidental proliferation of processes on the same machine, setting local daemons of the form `daemons(6)` from within a function provided to `mirai_map()` will error. As an example, 8 daemons created in the outer map, which each then create 8 in the inner map leads to 64 daemons being created.
+
+It is far more common (and useful) for these to be created across different machines. Creating and launching remote daemons is permitted in all cases.
+
+The above limitation does however prevent a legitimate use pattern: when the outer daemons are launched on remote machines, and you wish to launch inner daemons locally on each of those machines.
+
+The solution in such a case is to use 'remote' daemons which are in fact identical to local daemons.
+Instead of a single call to:
+```r
+daemons(n)
+```
+Instead, make 2 separate calls to:
+```r
+⁠daemons(url = local_url())
+launch_local(n)
+```
+This is permitted from within a mirai map operation.
+
