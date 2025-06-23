@@ -136,7 +136,7 @@ received (either completed or cancelled)</li>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://99760964cb9d7ab15077f9e8"</span></span>
+<span><span class="co">#&gt; [1] "ipc:///tmp/599b5e1acc58df616ff7466d"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -174,7 +174,7 @@ URL:</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://8573c41da7c7aff98624f79c"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "ipc:///tmp/f1fc8ba8521a62d41a1dadfc"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="everywhere">Everywhere<a class="anchor" aria-label="anchor" href="#everywhere"></a>
@@ -277,7 +277,7 @@ a free ephemeral port:</p>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "tcp://192.168.1.71:44557"</span></span>
+<span><span class="co">#&gt; [1] "tcp://10.216.58.66:51899"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -299,18 +299,24 @@ the dispatcher are terminated.</p>
 <p>To launch remote daemons, supply a remote launch configuration to the
 ‘remote’ argument of <code><a href="../reference/daemons.html">daemons()</a></code>, or
 <code><a href="../reference/launch_local.html">launch_remote()</a></code> at any time thereafter.</p>
-<p>There are currently two options for generating remote launch
+<p>There are currently 3 options for generating remote launch
 configurations:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/ssh_config.html">ssh_config()</a></code> if there is SSH access to the remote
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> where there is SSH access to the remote
 machine.</li>
 <li>
-<code><a href="../reference/remote_config.html">remote_config()</a></code> provides a flexible method for using
-cluster resource managers, or a custom launcher.</li>
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code> to use HPC cluster resource managers
+such as Slurm, SGE, Torque/PBS and LSF.</li>
+<li>
+<code><a href="../reference/remote_config.html">remote_config()</a></code> for a generic, flexible method that
+caters for other custom launchers.</li>
 </ol>
+<p>The return value of all of these functions is a simple list. This
+means that they may be pre-constructed, saved and re-used whenever the
+same configuration is required.</p>
 <div class="section level4">
-<h4 id="ssh-direct-connection">SSH Direct Connection<a class="anchor" aria-label="anchor" href="#ssh-direct-connection"></a>
+<h4 id="i--ssh-direct-connection">i. SSH Direct Connection<a class="anchor" aria-label="anchor" href="#i--ssh-direct-connection"></a>
 </h4>
 <p>This method is appropriate for internal networks and in trusted,
 properly-configured environments where it is safe for your machine to
@@ -338,7 +344,7 @@ and 10.75.32.91 using the custom SSH port of 222:</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="ssh-tunnelling">SSH Tunnelling<a class="anchor" aria-label="anchor" href="#ssh-tunnelling"></a>
+<h4 id="ii--ssh-tunnelling">ii. SSH Tunnelling<a class="anchor" aria-label="anchor" href="#ii--ssh-tunnelling"></a>
 </h4>
 <p>Use SSH tunnelling to launch daemons on any machine you are able to
 access via SSH, whether on the local network or the cloud. SSH key-based
@@ -377,14 +383,76 @@ machines.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="cluster-resource-managers">Cluster Resource Managers<a class="anchor" aria-label="anchor" href="#cluster-resource-managers"></a>
+<h4 id="iii--hpc-cluster-resource-managers">iii. HPC Cluster Resource Managers<a class="anchor" aria-label="anchor" href="#iii--hpc-cluster-resource-managers"></a>
 </h4>
-<p><code><a href="../reference/remote_config.html">remote_config()</a></code> may be used to run a command to deploy
-daemons using a resource manager.</p>
-<p>Taking Slurm as an example, the following uses <code>sbatch</code> to
-launch a daemon on the cluster, with some additional arguments to
-<code>sbatch</code> specifying the resource allocation:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<p><code><a href="../reference/cluster_config.html">cluster_config()</a></code> may be used to deploy daemons using a
+cluster resource manager / scheduler.</p>
+<ol style="list-style-type: decimal">
+<li>The first argument is <code>command</code>. This should be:</li>
+</ol>
+<ul>
+<li>
+<code>"sbatch"</code> if using Slurm</li>
+<li>
+<code>"qsub"</code> if using SGE / Torque / PBS</li>
+<li>
+<code>"bsub"</code> if using LSF.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>The second argument <code>options</code> are any options that you
+would normally supply in a shell script to pass to the scheduler. These
+are script lines typically preceded by a <code>#</code>.</li>
+</ol>
+<pre><code><span>  <span class="va">Slurm</span><span class="op">:</span> <span class="st">"#SBATCH --job-name=mirai</span></span>
+<span><span class="st">          #SBATCH --mem=10G</span></span>
+<span><span class="st">          #SBATCH --output=job.out"</span></span>
+<span>  <span class="va">SGE</span><span class="op">:</span> <span class="st">"#$ -N mirai</span></span>
+<span><span class="st">        #$ -l mem_free=10G</span></span>
+<span><span class="st">        #$ -o job.out"</span></span>
+<span>  <span class="va">Torque</span><span class="op">/</span><span class="va">PBS</span><span class="op">:</span> <span class="st">"#PBS -N mirai</span></span>
+<span><span class="st">               #PBS -l mem=10gb</span></span>
+<span><span class="st">               #PBS -o job.out"</span></span>
+<span>  <span class="va">LSF</span><span class="op">:</span> <span class="st">"#BSUB -J mirai</span></span>
+<span><span class="st">        #BSUB -M 10000</span></span>
+<span><span class="st">        #BSUB -o job.out"</span></span></code></pre>
+<ul>
+<li>As per the above, it is fine to pass this as a character string with
+the options each on a new line (whitespace is automatically handled), or
+else by specifically using <code>\n</code> to denote a newline.</li>
+<li>It is also permissible to include other shell commands, for example
+to change working directory.</li>
+<li>For the avoidance of doubt, the initial shebang line of a script
+such as <code>"#!/bin/bash"</code> is not required.</li>
+<li>For certain setups, a final line which loads environment modules may
+be needed. This would usually be of the form:</li>
+</ul>
+<pre><code>module load R</code></pre>
+<p>or to specify an R version:</p>
+<pre><code>module load R/4.5.0</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>The third argument <code>rscript</code> defaults to
+<code>"Rscript"</code>, which assumes that R is on the file search path.
+This may be substituted for the full path to a specific R executable,
+such as that returned by
+<code>file.path(R.home("bin"), "Rscript")</code>.</li>
+</ol>
+</div>
+<div class="section level4">
+<h4 id="iv--generic-remote-configuration">iv. Generic Remote Configuration<a class="anchor" aria-label="anchor" href="#iv--generic-remote-configuration"></a>
+</h4>
+<p><code><a href="../reference/remote_config.html">remote_config()</a></code> provides a generic, flexible framework
+for running any shell command that may be used to deploy daemons.</p>
+<p>Conceptually, this function takes an <code>args</code> argument,
+which must contain “.”. The correctly-configured call to
+<code><a href="../reference/daemon.html">daemon()</a></code> is substituted in for this “.”, so that
+<code>command</code> is run with this as one of its arguments.</p>
+<p>This can provide an alternative for cluster resource managers in
+certain cases, although <code><a href="../reference/cluster_config.html">cluster_config()</a></code> provides an easier
+and more complete interface. Using Slurm as an example, the following
+uses <code>sbatch</code> to launch a daemon on the cluster, with some
+additional Slurm options passed via command line arguments to
+<code>sbatch</code>:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -397,22 +465,22 @@ launch a daemon on the cluster, with some additional arguments to
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="manual-deployment">Manual Deployment<a class="anchor" aria-label="anchor" href="#manual-deployment"></a>
+<h4 id="v--manual-deployment">v. Manual Deployment<a class="anchor" aria-label="anchor" href="#v--manual-deployment"></a>
 </h4>
 <p>As an alternative to automated launches, calling
 <code><a href="../reference/launch_local.html">launch_remote()</a></code> without specifying ‘remote’ may be used to
 return the shell commands for deploying daemons manually.</p>
 <p>The printed return values may then be copy / pasted directly to a
 remote machine e.g. via a terminal session.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:39155")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.216.58.66:51904")'</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [2]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:39155")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.216.58.66:51904")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 </div>
@@ -428,7 +496,7 @@ local machine to remote daemons.</p>
 <p>Simply specify a secure URL using the scheme <code>tls+tcp://</code>
 when setting daemons, or use <code>host_url(tls = TRUE)</code>, for
 example:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p>Single-use keys and certificates are automatically generated and
@@ -437,42 +505,42 @@ is always retained on the host machine and never transmitted.</p>
 <p>The generated self-signed certificate is available via
 <code><a href="../reference/launch_local.html">launch_remote()</a></code>, where it is included as part of the shell
 command for manually launching a daemon on a remote machine.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:42017",tls=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
-<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43</span></span>
-<span><span class="co">#&gt; MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
-<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAs4GhSh0H3jT6iWT612qWipVTjHkogqoRDouiZBQ2</span></span>
-<span><span class="co">#&gt; Xz8A0rQeC+v0AD6pVEkh8Q3pysxw/F9qnTGZII4eosSSyozzsdxHPIC2dU4x9wQi</span></span>
-<span><span class="co">#&gt; Df82CfVsGsBeO2oKdhP+yaUY1VDYORg8daTvKDqStH+3vgxyr/o0ANvPSBqoTh4E</span></span>
-<span><span class="co">#&gt; TbHCu9Jz0SxgvbuPluOXZbWV8+pelX6NvX6uoIzS3Q0Fjy8eu2sXknT792n9DV9s</span></span>
-<span><span class="co">#&gt; Lbf9ipv7JlBU0qo6IP+BUvS0Lu/i8n8vzomnjnUFzV6WoY/qN3WgoWGf7VWHomaC</span></span>
-<span><span class="co">#&gt; koauLYkZUOt86pRaQuXHybm0OUFs2CPducYQfNiDvJyXm2PLga5Mf/Etxd8i7+Ws</span></span>
-<span><span class="co">#&gt; HeR+xbqjJNbO4xdwhSDWdg3N0mJ2fTGDup/V+NBpo39H72Db66kR70jYJnbpvaEk</span></span>
-<span><span class="co">#&gt; gQG05tgB9TR4UvyKOZQsvziUPinJdIaJayZ3QG6XGlmqNtcB9cJuGQACyT40Q1mc</span></span>
-<span><span class="co">#&gt; 5svlU8PIwyz9fG+8zZxEJMJRR70qp6Ksxnj+44/ju2oU8s8zlIXrpvMQeayjcSfm</span></span>
-<span><span class="co">#&gt; 7ePcpvA3lIWV9x/PP+LiZ3cemY32cISBnavrnR30r5H1bi+9Owe7sH4j17MCN6Wo</span></span>
-<span><span class="co">#&gt; YQoldtGhQwavSj2DM7W2n1+Wn4cojTO2TLp1NTFBX6EJ0OR158hPTqRnVkIuDn4U</span></span>
-<span><span class="co">#&gt; BecCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU7sjF84Hj</span></span>
-<span><span class="co">#&gt; 7C5eDENNqJ3+bMGt4W0wHwYDVR0jBBgwFoAU7sjF84Hj7C5eDENNqJ3+bMGt4W0w</span></span>
-<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBAJKRjdGf0fanRf9OOuJqtc5koTQw9a8gQ9SAAWzO</span></span>
-<span><span class="co">#&gt; hGXdeI+jkLnMr2Xj9Li8FwWYaxFzFTyiQizaXtgoyrZPJPwvRy/hPmI1UohaeJz6</span></span>
-<span><span class="co">#&gt; O009ins92l0s2XMRZkJ+QKnozmeUBMF/L/wzggmy1k2cH8JyUlz2DUiRZxCDlqAj</span></span>
-<span><span class="co">#&gt; VtIGfPl6a2VEHSljhHQOu+E7dRIx3t+cMQAGdyzFrgjBsRhoc0Xq+lCBwNgYutkV</span></span>
-<span><span class="co">#&gt; oDu5oPupq9CEFzl6uo2+XhyNEtqe80W+eIrXaTM9+w+ETxJgJi2nfZFyE0JDD6yQ</span></span>
-<span><span class="co">#&gt; 5js7Vf39tO4v+fnXuGWeVhsQzZ3QPYcFqVL4oFCKKjEuZizLiizmCWdX1VbBmaKK</span></span>
-<span><span class="co">#&gt; oHvaozN30J/eKe3zWJeHeFb4E3QeJ5nH+QhMxe7F0xPlMqT1KTNTl/+H7lRIgoVQ</span></span>
-<span><span class="co">#&gt; OX+m/b+P/Tn2AEjDgzdM1uhruEZCXH9fOAZf+z+x04K3ezPvYn1EDdmEWZSRnzff</span></span>
-<span><span class="co">#&gt; XWLRydV9ffHu66bPd4lg8ovqN/E88iUIoSzGjRZ37/B3f89XztmQZlBPs8fmsp85</span></span>
-<span><span class="co">#&gt; 8gm01Cd5BivMNydPyreJjigVNFP4Bg7qT7QsZ6AYs8ZkT2/oK7S8zwIiu8sgz/f5</span></span>
-<span><span class="co">#&gt; mQz2qKCOJRsJxk0TzqM1x5pnXOq9BAaWJLibu6E0B6Nhax1OlZupkcyuqhOn5bcA</span></span>
-<span><span class="co">#&gt; f1gs</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://10.216.58.66:51908",tls=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4y</span></span>
+<span><span class="co">#&gt; MTYuNTguNjYxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
+<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjIxNi41OC42</span></span>
+<span><span class="co">#&gt; NjERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
+<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAx29j3ZK17X6Cl2naOVyjkdVnhE+WdmD1LVO4lZX4</span></span>
+<span><span class="co">#&gt; clluL7Dkxc2zCGkz+8KFlCqmHPI56Rb9GFU7fKV6SoJ4D4wpdZqRXiudwX9DdoEk</span></span>
+<span><span class="co">#&gt; fB+iUEqcsuoy16wwLx4ekU3JkOqX1A9lWvezgBdZsD1jEK5FZBduEXP87p3/eun+</span></span>
+<span><span class="co">#&gt; V2EUm1ZGzTkd65WkZJpN+0jyHoQ+piwLeQBqcNz1NHdYqM2OFAzgblQCQ1CaW6+z</span></span>
+<span><span class="co">#&gt; GCFCpgpT4d5YFwqY9ZFph+/OvsdGFptKlS7MLzvyrc4uop/9NAAAl3kldCVwOkWK</span></span>
+<span><span class="co">#&gt; sIYML+Og67P2rfIxsQSO3B3p8qSF8XNIp2cTGnXUGRriJKAC98hr5KViKrKZ+sqP</span></span>
+<span><span class="co">#&gt; SyDOiRsx0ZVAHJu76d8rP8sAZIEThusKkyFe9Be2r1cIJZHJBMPyyRtUhlhOBqKW</span></span>
+<span><span class="co">#&gt; Kl91ffbRCuWD1X4k8VCMta5lqCXnwREHTcSnkb71LscNtOmnOiSaEcj47XA/FOqc</span></span>
+<span><span class="co">#&gt; Paw4UR7rAMXeUFgp651D7MVJ5sb/oQmiYOgIAzN8x3zKoOCOMS2LyHSsU6HGs1aG</span></span>
+<span><span class="co">#&gt; AoJBb9al8FPXGSsKZsB3xdir06T/9365hczNQPvlY5VjHLcqyXaclRGsgdKOd5+z</span></span>
+<span><span class="co">#&gt; xYDDS/kgWhL+cRRGO0whUglmbOlj+DEQw6vzLqwaKYUPV+bFfbs3FafYxtgVVRsC</span></span>
+<span><span class="co">#&gt; ESkCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUv3V4iFqx</span></span>
+<span><span class="co">#&gt; JkY86Lo0uQJKd34tvIAwHwYDVR0jBBgwFoAUv3V4iFqxJkY86Lo0uQJKd34tvIAw</span></span>
+<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBAExCtnmZ3fjb8YXYzIX2kfAg2jDlj8pX+Yt9KnP7</span></span>
+<span><span class="co">#&gt; J/h4QAo+GIhBrG9JoD3fuyuRJiFKX2dQh0VE8RbCUxocFw7bikOsyKh5u/Wm069d</span></span>
+<span><span class="co">#&gt; RLy/UeAqmrYMQbP8anZiTXwQ/b42LIY2KSO+Z91vvYF8jQode32leKTs/Ld54dnm</span></span>
+<span><span class="co">#&gt; Vzp8ikmxSff0CwxdWSy/GogEU1Ac3w6xXZoZqESi+eamrXCSaAZaoGQZfC1tDQDG</span></span>
+<span><span class="co">#&gt; afJS38EIyra+JoWBJkwTwuf+6ViJIZvyPG/E1vjWNV5WrbSAza9kuNFEVO9gHopD</span></span>
+<span><span class="co">#&gt; 0IPLEASFUy6stuybhDHhISFEl8UfV93WKkEuCW8SWmUbVGOJC8LzeWO5lE0eDcfH</span></span>
+<span><span class="co">#&gt; apW1AoElkmlW3MROGvAfVYwYVk8Nz/xKEYRdvMHFngA51oRqpHd3mghiHDR3dtNU</span></span>
+<span><span class="co">#&gt; 1e0WTTdkV7N3rojLHqWN/IIMnp3Exmyb9rijVRyh4fLJCtYCXvtGM/Jr3HP8vhNM</span></span>
+<span><span class="co">#&gt; CwFe466YbydQAyNjRudpz1kYkvdklfCF6y/cHtEHTJWruHSqDhHoEtiOwcVTg5tS</span></span>
+<span><span class="co">#&gt; 5LpMA/t5RIuo4Rkb8OerSnJ8rPP+DfnOuJk1ci6a7RwYlm1D4DSiJc029kyF31Rv</span></span>
+<span><span class="co">#&gt; iMBK8SujL95qjxXEcbIUkhkku+ob3q3wGnqlZXfGmf5q6NBsVohLPc7vEaPqm6zW</span></span>
+<span><span class="co">#&gt; ZUtn</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 </div>
