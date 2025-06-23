@@ -47,15 +47,15 @@
 <div class="section level5">
 <h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
 <ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task on hand. To achieve the previous behaviour use instead: <code>with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))</code>.</li>
-<li>
-<code><a href="../reference/daemon.html">daemon()</a></code> argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit without interrupting ongoing tasks.</li>
-<li>
-<code><a href="../reference/daemon.html">daemon()</a></code> argument <code>dispatcher</code> now defaults to <code>TRUE</code> - please note when manually launching daemons.</li>
-<li>Calling <code><a href="../reference/daemons.html">daemons()</a></code> to create local daemons now errors if performed within a mirai map. This guards against excessive spawning of local processes on a single machine.</li>
+<li>Change in <code><a href="../reference/daemon.html">daemon()</a></code> defaults:
+<ul><li>Argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated with the parent process, rather than continuing with any in-progress tasks. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit after completing any in-progress tasks.</li>
+<li>Argument <code>dispatcher</code> now defaults to <code>TRUE</code>.</li>
+</ul></li>
+<li>Calling <code><a href="../reference/daemons.html">daemons()</a></code> to create local daemons now errors if performed within a <code><a href="../reference/mirai_map.html">mirai_map()</a></code> call. This guards against excessive spawning of local processes on a single machine.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Implements <code><a href="../reference/cluster_config.html">cluster_config()</a></code> which provides more control when using an HPC job scheduler such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.</li>
+<ul><li>Implements <code><a href="../reference/cluster_config.html">cluster_config()</a></code> which provides more control when using an HPC resource manager such as Slurm sbatch, SGE / Torque / PBS qsub or LSF bsub.</li>
 <li>Simpler launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. Daemons automatically retrieve the next RNG stream from dispatcher and no longer require the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
 <li>New developer function <code><a href="../reference/require_daemons.html">require_daemons()</a></code> prompts the user to set daemons if they are not already set, with a clickable function link if the cli package is available.</li>
 </ul></div>
