@@ -67,9 +67,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 100
+#> [1] 88
 m$data
-#> [1] 100
+#> [1] 88
 ```
 
 `daemons()` sets persistent background processes (*daemons*) where mirai
@@ -83,7 +83,8 @@ daemons(6)
 ```
 
 We provide launchers for distributed computing that launch daemons over
-the network via SSH or any of the major HPC cluster resource managers.
+the network via SSH or HPC cluster resource managers including Slurm,
+SGE, Torque, PBS and LSF.
 
 See the reference vignette
 [`vignette("mirai", package = "mirai")`](https://mirai.r-lib.org/articles/mirai.html)
@@ -154,17 +155,17 @@ the linked vignettes:
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v5-parallel.html)
   Provides the first official alternative communications backend for R,
-implementing a new parallel cluster type, a feature request by R-Core at
-R Project Sprint 2023.
+implementing the ‘MIRAI’ parallel cluster type, a feature request by
+R-Core at R Project Sprint 2023.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
   Powers parallel map for the purrr functional programming toolkit, a
 core tidyverse package.
 
 [<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/v3-promises.html)
-  Implements the next generation of completely event-driven promises.
-‘mirai’ and ‘mirai_map’ objects may be used interchangeably with
-‘promises’, including with the promise pipe `%...>%`.
+  Implements next generation, event-driven promises. ‘mirai’ and
+‘mirai_map’ objects are readily convertible to ‘promises’, and may be
+used directly with the promise pipe.
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v3-promises.html)
   The new default async backend for Shiny, supporting ExtendedTask and
@@ -186,8 +187,7 @@ over ADBC database connections hosted in background processes.
   Targets, a make-like pipeline tool, has adopted crew as its default
 high-performance computing backend. Crew is a distributed
 worker-launcher extending mirai to different distributed computing
-platforms, from traditional clusters including LFS, PBS/TORQUE, SGE and
-Slurm to cloud services such as AWS Batch.
+platforms, from traditional clusters to cloud services.
 
 ### Thanks
 
