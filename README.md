@@ -37,94 +37,72 @@ serialization of otherwise non-exportable reference objects.
 
 ### Quick Start
 
-Use `mirai()` to evaluate an expression asynchronously in a separate,
-clean R process.
+mirai is Japanese for ‘future’ and is an implementation of *futures* in
+R.
 
-The following mimics an expensive calculation that eventually returns a
-vector of random values.
+`mirai()` sends an expression to be evaluated asynchronously in a
+separate R process and returns a mirai object immediately. Creation of a
+mirai is never blocking.
+
+The result of a mirai `m` will be available at `m$data` once evaluation
+is complete and its return value is received. `m[]` may be used to wait
+for and collect the value.
 
 ``` r
 library(mirai)
 
 m <- mirai(
   {
-    Sys.sleep(n)
-    rnorm(n, mean)
-  },
-  n = 3L,
-  mean = 7
+    # slow operation
+    Sys.sleep(2)
+    sample(1:100, 1)
+  }
 )
-```
 
-> The mirai expression is evaluated in another process and hence must be
-> self-contained, not referring to variables that do not already exist
-> there. Above, the variables `n` and `mean` are passed as part of the
-> `mirai()` call.
-
-A ‘mirai’ object is returned immediately, and is always non-blocking.
-
-``` r
 m
 #> < mirai [] >
-
-# Whilst async operation still ongoing:
 m$data
 #> 'unresolved' logi NA
-unresolved(m)
-#> [1] TRUE
-```
 
-To wait for and collect the return value, use the mirai’s `[]` method.
+# do other work
 
-``` r
 m[]
-#> [1] 6.647460 5.473031 7.259106
-```
-
-As a mirai represents an async operation, it is never necessary to wait
-for it. Once it completes, the return value is automatically available
-at `$data`.
-
-``` r
-while (unresolved(m)) {
-  # Do other work
-}
+#> [1] 100
 m$data
-#> [1] 6.647460 5.473031 7.259106
+#> [1] 100
 ```
 
-#### Daemons
+`daemons()` sets persistent background processes (*daemons*) where mirai
+are evaluated.
 
-📡️️
-[Daemons](https://mirai.r-lib.org/articles/v1-daemons.html#local-daemons)
-are persistent background processes for receiving mirai requests, and
-are created as easily as:
+Launching 6 local daemons is as easy as:
 
 ``` r
 daemons(6)
 #> [1] 6
 ```
 
-Daemons may also be deployed
-[remotely](https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons)
-for distributed computing over the network.
+We provide launchers for distributed computing that launch daemons over
+the network via SSH or any of the major HPC cluster resource managers.
 
-🛰️️
-[Launchers](https://mirai.r-lib.org/articles/v1-daemons.html#launching-remote-daemons)
-can start daemons via (tunnelled) SSH or a cluster resource manager.
-
-🔐 [Secure TLS
-connections](https://mirai.r-lib.org/articles/v1-daemons.html#tls-secure-connections)
-can be used for remote daemon connections, with zero configuration
-required.
+See the reference vignette
+[`vignette("mirai", package = "mirai")`](https://mirai.r-lib.org/articles/mirai.html)
+for full details.
 
 #### Async Parallel Map
 
 `mirai_map()` maps a function over a list or vector, with each element
-processed in a separate parallel process.
+processed in a separate daemon.
 
 For a dataframe or matrix, it automatically performs multiple map over
 the rows.
+
+A ‘mirai_map’ object is returned immediately, and is always
+non-blocking.
+
+Its value may be retrieved at any time using its `[]` method, returning
+a list. The `[]` method also provides options for flatmap, early
+stopping and/or progress indicators.
 
 ``` r
 df <- data.frame(
@@ -135,26 +113,12 @@ m <- mirai_map(
   df,
   \(...) sprintf("%s: $%d", ...)
 )
-```
 
-A ‘mirai_map’ object is returned immediately, and is always
-non-blocking.
-
-Its value may be retrieved at any time using its `[]` method, returning
-a list just like `purrr::map()`. The `[]` method also provides options
-for flatmap, early stopping and/or progress indicators.
-
-``` r
 m
-#> < mirai map [3/3] >
+#> < mirai map [0/3] >
 m[.flat]
 #> [1] "melon: $3"   "grapes: $5"  "coconut: $2"
 ```
-
-> All errors are returned as ‘errorValues’, facilitating recovery from
-> partial failure. There are further
-> [advantages](https://mirai.r-lib.org/articles/v2-map.html) over
-> alternative map implementations.
 
 ### Design Concepts
 
