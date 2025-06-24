@@ -86,60 +86,46 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p>Use <code><a href="reference/mirai.html">mirai()</a></code> to evaluate an expression asynchronously in a separate, clean R process.</p>
-<p>The following mimics an expensive calculation that eventually returns a vector of random values.</p>
+<p>mirai is Japanese for ‘future’ and is an implementation of <em>futures</em> in R.</p>
+<p><code><a href="reference/mirai.html">mirai()</a></code> sends an expression to be evaluated asynchronously in a separate R process and returns a mirai object immediately. Creation of a mirai is never blocking.</p>
+<p>The result of a mirai <code>m</code> will be available at <code>m$data</code> once evaluation is complete and its return value is received. <code>m[]</code> may be used to wait for and collect the value.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai.html">mirai</a></span><span class="op">(</span></span>
 <span>  <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">mean</span><span class="op">)</span></span>
-<span>  <span class="op">}</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">3L</span>,</span>
-<span>  mean <span class="op">=</span> <span class="fl">7</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<blockquote>
-<p>The mirai expression is evaluated in another process and hence must be self-contained, not referring to variables that do not already exist there. Above, the variables <code>n</code> and <code>mean</code> are passed as part of the <code><a href="reference/mirai.html">mirai()</a></code> call.</p>
-</blockquote>
-<p>A ‘mirai’ object is returned immediately, and is always non-blocking.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span></span>
-<span><span class="co">#&gt; &lt; mirai [] &gt;</span></span>
+<span>    <span class="co"># slow operation</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Whilst async operation still ongoing:</span></span>
+<span><span class="va">m</span></span>
+<span><span class="co">#&gt; &lt; mirai [] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
 <span><span class="co">#&gt; 'unresolved' logi NA</span></span>
-<span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>To wait for and collect the return value, use the mirai’s <code>[]</code> method.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 6.647460 5.473031 7.259106</span></span></code></pre></div>
-<p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Do other work</span></span>
-<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># do other work</span></span>
+<span></span>
+<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 100</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 6.647460 5.473031 7.259106</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
-</h4>
-<p>📡️️ <a href="https://mirai.r-lib.org/articles/v1-daemons.html#local-daemons">Daemons</a> are persistent background processes for receiving mirai requests, and are created as easily as:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; [1] 100</span></span></code></pre></div>
+<p><code><a href="reference/daemons.html">daemons()</a></code> sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
+<p>Launching 6 local daemons is as easy as:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons">remotely</a> for distributed computing over the network.</p>
-<p>🛰️️ <a href="https://mirai.r-lib.org/articles/v1-daemons.html#launching-remote-daemons">Launchers</a> can start daemons via (tunnelled) SSH or a cluster resource manager.</p>
-<p>🔐 <a href="https://mirai.r-lib.org/articles/v1-daemons.html#tls-secure-connections">Secure TLS connections</a> can be used for remote daemon connections, with zero configuration required.</p>
-</div>
+<p>We provide launchers for distributed computing that launch daemons over the network via SSH or any of the major HPC cluster resource managers.</p>
+<p>See the reference vignette <a href="https://mirai.r-lib.org/articles/mirai.html"><code>vignette("mirai", package = "mirai")</code></a> for full details.</p>
 <div class="section level4">
 <h4 id="async-parallel-map">Async Parallel Map<a class="anchor" aria-label="anchor" href="#async-parallel-map"></a>
 </h4>
-<p><code><a href="reference/mirai_map.html">mirai_map()</a></code> maps a function over a list or vector, with each element processed in a separate parallel process.</p>
+<p><code><a href="reference/mirai_map.html">mirai_map()</a></code> maps a function over a list or vector, with each element processed in a separate daemon.</p>
 <p>For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>A ‘mirai_map’ object is returned immediately, and is always non-blocking.</p>
+<p>Its value may be retrieved at any time using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and/or progress indicators.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span>,</span>
 <span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">5L</span>, <span class="fl">2L</span><span class="op">)</span></span>
@@ -147,17 +133,12 @@
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span></span>
 <span>  <span class="va">df</span>,</span>
 <span>  \<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s: $%d"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>A ‘mirai_map’ object is returned immediately, and is always non-blocking.</p>
-<p>Its value may be retrieved at any time using its <code>[]</code> method, returning a list just like <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>. The <code>[]</code> method also provides options for flatmap, early stopping and/or progress indicators.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span></span>
-<span><span class="co">#&gt; &lt; mirai map [3/3] &gt;</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">m</span></span>
+<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "melon: $3"   "grapes: $5"  "coconut: $2"</span></span></code></pre></div>
-<blockquote>
-<p>All errors are returned as ‘errorValues’, facilitating recovery from partial failure. There are further <a href="https://mirai.r-lib.org/articles/v2-map.html">advantages</a> over alternative map implementations.</p>
-</blockquote>
 </div>
 </div>
 <div class="section level3">
@@ -211,10 +192,10 @@
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>Install the latest release from CRAN:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mirai"</span><span class="op">)</span></span></code></pre></div>
 <p>The current development version is available from R-universe:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mirai"</span>, repos <span class="op">=</span> <span class="st">"https://r-lib.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
