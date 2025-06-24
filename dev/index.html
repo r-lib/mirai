@@ -108,15 +108,15 @@
 <span><span class="co"># do other work</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 100</span></span>
+<span><span class="co">#&gt; [1] 88</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 100</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 88</span></span></code></pre></div>
 <p><code><a href="reference/daemons.html">daemons()</a></code> sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
 <p>Launching 6 local daemons is as easy as:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>We provide launchers for distributed computing that launch daemons over the network via SSH or any of the major HPC cluster resource managers.</p>
+<p>We provide launchers for distributed computing that launch daemons over the network via SSH or HPC cluster resource managers including Slurm, SGE, Torque, PBS and LSF.</p>
 <p>See the reference vignette <a href="https://mirai.r-lib.org/articles/mirai.html"><code>vignette("mirai", package = "mirai")</code></a> for full details.</p>
 <div class="section level4">
 <h4 id="async-parallel-map">Async Parallel Map<a class="anchor" aria-label="anchor" href="#async-parallel-map"></a>
@@ -167,14 +167,14 @@
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
 </h3>
 <p>mirai features the following core integrations, with usage examples in the linked vignettes:</p>
-<p><a href="https://mirai.r-lib.org/articles/v5-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing a new parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
+<p><a href="https://mirai.r-lib.org/articles/v5-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements the next generation of completely event-driven promises. ‘mirai’ and ‘mirai_map’ objects may be used interchangeably with ‘promises’, including with the promise pipe <code>%...&gt;%</code>.</p>
+<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements next generation, event-driven promises. ‘mirai’ and ‘mirai_map’ objects are readily convertible to ‘promises’, and may be used directly with the promise pipe.</p>
 <p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The new default async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
 <p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend for scaling Plumber applications in production.</p>
 <p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
 <p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
-<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters including LFS, PBS/TORQUE, SGE and Slurm to cloud services such as AWS Batch.</p>
+<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters to cloud services.</p>
 </div>
 <div class="section level3">
 <h3 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>
