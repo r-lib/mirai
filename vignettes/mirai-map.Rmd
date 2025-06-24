@@ -12,20 +12,23 @@ vignette: >
 
 `mirai_map()` performs asynchronous parallel/distributed map using `mirai`.
 
-This function is similar to `purrr::map()`, but returns a 'mirai_map' object.
-It is also more advanced as it allows multiple map over the rows of a dataframe or matrix.
-It is in fact used to implement all parallel map variations from that package.
+This function is similar to `purrr::map()`, but instead of a list of values, returns a 'mirai_map' object, which is a list of mirai.
 
-The results of a mirai_map `x` may be collected using `x[]`.
+Incidentally, purrr's `in_parallel()` parallel map capability is based entirely on `mirai_map()`, but does not extend in the same way to async usage, as there you'd wait for completion in all cases.
+
+A `mirai_map()` call returns almost immediately on the other hand.
+The results of a mirai_map `x` may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai.
 This waits for all asynchronous operations to complete if still in progress.
+
+Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case (rather than launching potentially too many *ephemeral daemons* if the map is over a large number of elements).
 
 ### 2. Key Advantages
 
 1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
-1. The '.promise' argument allows a promise to registered against each mirai, which can be used to perform side-effects (such as checkpointing or sending a progress update).
-1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire operation to fail. This allows more efficient recovery from partial failure.
+1. The '.promise' argument allows a promise action to be registered against each iteration. This can be used to perform side-effects when each iteration completes (such as checkpointing or sending a progress update).
+1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire map to fail. This allows more efficient recovery from partial failure.
 1. Does not rely on a 'chunking' algorithm that attempts to split work into batches according to the number of available daemons, as implemented for instance in the `parallel` package. 
-Chunking cannot take into account varying or unpredictable compute times over the indices, which `mirai` scheduling is designed to deal with optimally. This is demonstrated in the example below.
+Chunking cannot take into account varying or unpredictable compute times over the indices, which `mirai` scheduling is designed to deal with optimally. This is demonstrated in the example below:
 
 ``` r
 library(mirai)
@@ -36,14 +39,14 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.003   0.008   4.003
+#>   0.026   0.290   4.008
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.006   0.007   8.008
+#>   0.008   0.003   8.011
 daemons(0)
 #> [1] 0
 ```
-`.args` is used to specify further constant arguments to `.f` - the 'mean' and 'sd' in the example below:
+`.args` is used to specify further constant arguments to `.f` - the `mean` and `sd` in the example below:
 
 ``` r
 with(
@@ -51,15 +54,15 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 19.74695
+#> [1] 18.34921
 #> 
 #> [[2]]
-#> [1] 21.44419 20.67814
+#> [1] 20.92965 18.65826
 #> 
 #> [[3]]
-#> [1] 26.73569 20.14336 20.49444
+#> [1] 22.05289 17.32964 21.19244
 ```
-Use `...` to further specify objects referenced but not defined in `.f` - the 'do' in the anonymous function below:
+Use `...` to further specify objects referenced but not defined in `.f` - the function `do` below:
 
 ``` r
 daemons(4)
@@ -70,19 +73,17 @@ ml <- mirai_map(
   do = nanonext::random
 )
 ml
-#> < mirai map [0/3] >
+#> < mirai map [2/3] >
 ml[]
 #> $a
-#> [1] "df"
+#> [1] "67"
 #> 
 #> $b
-#> [1] 91 52
+#> [1] e6 51
 #> 
 #> $c
-#> [1] "de4e19"
+#> [1] "23b40b"
 ```
-
-> Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case.
 
 ### 3. Collecting Results
 
@@ -111,7 +112,7 @@ with(
 
 ### 4. Multiple Map
 
-Multiple map is performed over the **rows** of a dataframe or matrix, as this is most often the desired behaviour.
+When a dataframe or matrix is passed as `.x`, multiple map is automatically performed over its **rows**, as this is most often the desired behaviour.
 
 > As a dataframe often contains columns of differing type, it is unusual to want to map over the **columns**, however this is possible by simply transforming it beforehand into a list using `as.list()`.
 
@@ -171,4 +172,3 @@ Instead, make 2 separate calls to:
 launch_local(n)
 ```
 This is permitted from within a mirai map operation.
-
