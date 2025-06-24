@@ -20,7 +20,7 @@ A `mirai_map()` call returns almost immediately on the other hand.
 The results of a mirai_map `x` may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai.
 This waits for all asynchronous operations to complete if still in progress.
 
-Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case.
+Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case (rather than launching potentially too many *ephemeral daemons* if the map is over a large number of elements).
 
 ### 2. Key Advantages
 
@@ -39,10 +39,10 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.004   0.004   4.006
+#>   0.026   0.290   4.008
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.005   0.005   8.011
+#>   0.008   0.003   8.011
 daemons(0)
 #> [1] 0
 ```
@@ -54,13 +54,13 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 21.27412
+#> [1] 18.34921
 #> 
 #> [[2]]
-#> [1] 21.79711 20.13869
+#> [1] 20.92965 18.65826
 #> 
 #> [[3]]
-#> [1] 18.83802 17.20362 18.65988
+#> [1] 22.05289 17.32964 21.19244
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the function `do` below:
 
@@ -76,13 +76,13 @@ ml
 #> < mirai map [2/3] >
 ml[]
 #> $a
-#> [1] "8e"
+#> [1] "67"
 #> 
 #> $b
-#> [1] ff 76
+#> [1] e6 51
 #> 
 #> $c
-#> [1] "20698d"
+#> [1] "23b40b"
 ```
 
 ### 3. Collecting Results
