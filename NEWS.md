@@ -21,7 +21,7 @@
 #### Updates
 
 * Deprecated `call_mirai_()` is now removed.
-* Requires nanonext >= [1.6.1].
+* Requires nanonext >= 1.6.1.
 
 # mirai 2.3.0
 

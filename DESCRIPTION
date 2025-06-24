@@ -1,7 +1,7 @@
 Type: Package
 Package: mirai
 Title: Minimalist Async Evaluation Framework for R
-Version: 2.3.0.9003
+Version: 2.3.0.9004
 Authors@R: c(
     person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0750-061X")),
@@ -40,6 +40,4 @@ Config/Needs/website: tidyverse/tidytemplate
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2.9000
-Remotes:
-    r-lib/nanonext
+RoxygenNote: 7.3.2
