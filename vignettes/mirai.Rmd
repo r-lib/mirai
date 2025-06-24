@@ -13,10 +13,12 @@ This is a reference vignette of the package's core functionality. Other package 
 ### 1. The mirai Concept
 
 mirai (Japanese for 'future') implements the concept of *futures* in R.
-Futures are an abstraction that represent the result of code evaluation that will be available at some point in the future.
 
-The actual code evaluation is sent to and performed in a separate R process (*daemon*), and the result is sent back to the main (*host*) process when it completes.
-This means that a `mirai()` call that creates a mirai returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue.
+Futures are an abstraction that represent the result of code evaluation that will be available at some point in the future. The actual code evaluation is sent to and performed in a separate R process (*daemon*), and the result is sent back to the main (*host*) process when it completes.
+
+The package has one main function: `mirai()` to create a mirai object.
+
+This function returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue.
 
 As the mirai expression is sent to another process, it must be self-contained.
 This means that any functions and variables used in it must be available in that process as well.
@@ -25,25 +27,25 @@ This requires that:
 - Package functions be namespaced using `::`, or `library()` calls be made within the expression.
 - Other functions/data/objects required by the expression should be passed via the `...` argument, to be sent along to the daemon.
 
-A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. Use `unresolved()` to check for the state of a mirai.
+A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is helper function to check the state of a mirai.
 
-When a mirai has resolved, the result is available at `$data`.
+For a mirai `m`, the result is available at `m$data` once it has resolved.
 If successful, this will be the return value of the evaluated expression.
-If the expression threw an error or caused the process to crash then this will be an 'errorValue' instead.
+If the expression errored or caused the process to crash then this will be an 'errorValue' instead.
 See the section [Errors in a mirai](#errors-in-a-mirai) below.
 
-Instead of repeatedly checking `unresolved()`, to wait for a mirai to resolve and then return its `$data` value, use it's `[]` method, or equivalently `collect_mirai()`.
+Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
 When a developer or code author writes a `mirai()` call, they should not be concerned about where or how execution of that code actually happens.
 It is simply meant to be executed on the resources that are available to it at the time it is run.
 
-Instead, it is for the end-user running the code to declare the resources available using a `daemons()` call. `daemons_set()` may be used to check if these have been set up for a particular session.
+Instead, it is for the end-user running the code to declare the resources available for evaluating mirai calls. This is done using the package's other main function: `daemons()`.
 
-If daemons are not set, each `mirai()` call will by default create a new local process (*ephemeral daemon*) on which to perform its evaluation.
+If daemons have not been set, each `mirai()` call will by default create a new local background process (*ephemeral daemon*) on which to perform its evaluation.
 
-Instead `daemons()` sets up persistent daemons on which to evaluate mirai expressions.
+Instead, `daemons()` sets up persistent daemons on which to evaluate mirai expressions.
 
-- Using persistent daemons eliminates the time and overhead of starting new processes for each evaluation, and allows control over the number of processes used at any one time.
+- Using persistent daemons eliminates the time and overhead of starting new processes for each evaluation, and limits the number of processes used at any one time.
 - Even re-using the same daemon, cleanup steps performed between evaluations ensure that each mirai continues to be self-contained and unaffected by past evaluations.
 
 How to set up and launch daemons is covered in sections below, starting with [local daemons](#local-daemons).
@@ -81,9 +83,9 @@ unresolved(m)
 # Do other stuff
 
 collect_mirai(m)
-#> [1] 3.550325 4.770648 4.121557 5.044731 3.792272
+#> [1] 4.393826 3.289580 3.218941 2.785651 4.276051
 m[]
-#> [1] 3.550325 4.770648 4.121557 5.044731 3.792272
+#> [1] 4.393826 3.289580 3.218941 2.785651 4.276051
 ```
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
@@ -92,11 +94,16 @@ So, the following would be equivalent to the above:
 
 ``` r
 expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
+args <- list(time = 2L, mean = 4)
 
-m <- mirai(.expr = expr, .args = args)
-m[]
-#> [1] 2.888348 4.275282 2.945653 4.850117 4.306285
+m1 <- mirai(.expr = expr, .args = args)
+m2 <- mirai(.expr = expr, .args = args)
+m1[]
+#> [1] 4.573154 4.507001 2.195403 2.917958 3.160021
+m2[]
+#> [1] 2.384668 4.595920 2.856312 4.273929 4.119159
 ```
+By running the above two calculations in parallel, they take roughly half the time as running sequentially (minus a relatively inconsequential parallelization overhead).
 
 #### Unblock I/O-bound Operations
 
@@ -153,6 +160,7 @@ for (i in 1:10) {
   cat(m$data)
 
 }
+#> Error: random error
 #> iteration 1 successful
 #> iteration 2 successful
 #> iteration 3 successful
@@ -281,7 +289,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/e8b1d23e26751cc5e0db7231"
+#> [1] "abstract://5fbc0d90e04a443f07687f1e"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -321,7 +329,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/f53b80cc9e4f3e14d759ba02"
+#> [1] "abstract://8e8fccde572178a673639aac"
 ```
 
 #### Everywhere
@@ -417,7 +425,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.5.57:65264"
+#> [1] "tcp://192.168.1.71:36673"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -573,7 +581,7 @@ daemons(url = host_url())
 #> [1] 0
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.5.57:65269")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:36635")'
 daemons(0)
 #> [1] 0
 ```
@@ -598,36 +606,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.5.57:65274",tls=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:33169",tls=c("-----BEGIN CERTIFICATE-----
 #> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
-#> MTY4LjUuNTcxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
-#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguNS41
-#> NzERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEAoGraApc7r1LRWlOLwY8eZmNG66TGxGxzi/wvnY2Q
-#> 8pYM4OhtDzrTG2ISQxVu6Np3gRZMOV6pJCGnU2FpYRJyQ5Z+0JYrUzW1lzsTBijA
-#> gwFxVcWA2mb0tOrK4VdWA03ErmCiikG0g5voaqmmAL7M7h/wkhCcTpNiNOprHwsA
-#> wbfE58Vc5W4jGSV2hBZRgVGNXZ2m4ICUqnFSUjdX2JQN7iEFzW/iYw9lcwo8U1FK
-#> PvpXzNgNdu2uzVgl/8z1uouP9lZLURR1t8hfdbtvktKt874/jd0DeV/LEpLaa58i
-#> KJv9nNp3iNsNlR7oE3+Q2GJDtF6GlSs/T3K/RDnWKSUdxKmt+yRvIti19dgSvdhZ
-#> /z2mpmY5dFtmFfrP+1xcVIWE8QV+X+mloNO9JgfUj3HvS052UsmbfbOJVQF4yqXy
-#> WC1I599XFzF43zRmoPrMllzzNZ5pcZ6fb1TqWmvAjD6CRkctlnDemErHfrbApMv9
-#> X3aGyRFvlMCrmH/XZegfXDV8yHgBII879eYH+sowf5LEnKDD4qTVJLKTyYqwDotx
-#> lXa1kILhG6dGFOVqpzbR/bSiuQxaa60dCQiFoXYj5XBApTPxD+3X2OiQkzijvpSR
-#> maT0fGE8IVBWzXCyHXJLktilcj3/+zd7FyB6ZWDLWVKlE8rGJorhNH6e7rwLH1B9
-#> N1UCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUJ8S73/oV
-#> 0eP+HiSC6CVPgD6vEekwHwYDVR0jBBgwFoAUJ8S73/oV0eP+HiSC6CVPgD6vEekw
-#> DQYJKoZIhvcNAQELBQADggIBAFln/0tO0YKumUwHff3FQGNaNR6cVjAdi++sgeXG
-#> ocZNV/02PJf3/F2n3o/yAvmjvN05a5W1FokaOInnLCiTmChxuxxLGYtf0IARnBWL
-#> pqLPrt2NczVk5pdQXsyo6chz5RRDeMm8PujNWFTZmxRo9uIxmV96RicLVnOd1Uhn
-#> TZHUObM55p3eobz4yXFK+6PY8lFYqjFNswOFRiSY3iVyDEcOTsqi4YNdoUBWoePi
-#> h0ScfQ/aasuzIjg/+vC84yJj2jYVXAESHTBi9kxlx7rIsWkAIh8T+m3Lj+v6uLK3
-#> +wlgMQn5M6a7uZE4kJPZTeh6NYiX5ZHe6zJmtO1t0oiYVXfzhJ/rhLSspjX/fbxu
-#> wWkBMKbygEuq+wftdKJ8JYDECBCE0JARvGf8moe6etAZg9sgoxZ84BgQw5n6zb/C
-#> Xxr+8iImjxJQkxF7Tk6mamW5zawoibZ2B6HsjJxcCT99FNvi9+ZCFARcW0ZlhP/+
-#> PbEVAakmTLvoaE+shIUOzbWxRDvyK3CEeIDfzSodvANX/XQ+2hr0HLkBDsfzTofc
-#> 0yaWCEhd7fJDIEnVnjesQSEqkw2WxsSRyX2/s0hjM1/9YNx4SJB8aTEmkC4qV3Y5
-#> Yt35I4/jHNVC8rzo1iDXRI5KT5WsS4chKaa0jWAZjGh2+Fd+vLy6AiwM8XbeNq7X
-#> jJQm
+#> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
+#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
+#> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
+#> AQEFAAOCAg8AMIICCgKCAgEA2+nAp9A8/TT/cMlt+iB0/if1x7alMqlWl3jJ5XW7
+#> cq0Qu12MkPVHx5uTY3e7l1ln0ll9sBfSz4OycKrdnxCpJ7/B+4CjBmhM7cex0xpU
+#> KvYOeHX4lVqxVA2zfTi5P+/2Iwl315h8dvGuUGnEkmoT28lbYGYN4xZ6X2ZxZDhZ
+#> loVo88T9QpRMGLb9gLAq7w2/jBGievgwAJGrFRFjt1M5DCVkXMIcXhIihCs3YC2M
+#> 0duXIdRAeAp6coqEIfHWoDuu19CpeWRi9CY9jqS2UbywTvf4MqLPMZ3T3j5WjCQ0
+#> c3fkxx0zsU9k8ouejz6O3rHM++X4wFLU9OuDF7eldJixrTjNrrKNJmANu1zvSdq6
+#> VvSVimmh6mZfqHTTi3ncv/fQLl80YBt6VMtxB3nxmYFS6KW+xaaxFBugjqOCTn5S
+#> GFtM4v40rGQeFnAdRMl8G0fPjS3tNYrWKCOnpQJuR/9tsUsMnlcn1S1QIcZRImYY
+#> 004fJw4+rMnq7dULJFwjiuhZqm5OYqjHrU6BGwLgr0Iy+1CcHC1JegbL3OGuictl
+#> u1BQZuv6w/cSEXgDqu3NclVoVaVmRQaEP5qzMJNO4sqGqtkklESaz58cwvXAb76g
+#> mhaoJJfscuPVz1pE+jROdDxx1Qj9PNfoHV2TzmliV+XqVfgnuunUXiGLMlFJooCZ
+#> oh0CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU/Zegy99x
+#> ZnJ0iNaLHAURTqA2cN8wHwYDVR0jBBgwFoAU/Zegy99xZnJ0iNaLHAURTqA2cN8w
+#> DQYJKoZIhvcNAQELBQADggIBAM7cgcvAdxa6liNn09XmH4x1VPmUKJY6qEYCQX5F
+#> Hav5YGG3WmDhgNV2tB85e4ilPTx1IpFmsEVNzGPynMzRUXdZSa1t+TZfH+FN+gHS
+#> OZb7RaTgX/K9E8zo7pKBQcMTIPD+5d/nrLRhUcWpH/vFCdk6l4fAC1BgqILv2fR6
+#> z4Wp5TMKt52r9WH0xiHZifLIS+8CGZ2JwTrFHhJpmvJvaZwGzB6I7+/qVf8iwXXx
+#> VZHG2kABT9odDTp51OUTMITSTglTprKExQmRjn/LIMAsa4Lm/Ja4GXkelOCcUwh5
+#> vD4bzgCKR7im088UFzqV6MLAgwqHsWTw9EhyunLHq94knz0Cnya7zeaepSR/JcRT
+#> uVeVtdRfQo023xFzMWNBRHulaKbipzjHDu6dcK4zvIdVYUc7AZg3r9naptHNPt/0
+#> 17yCbW6unJuHwAxErxy/4kvHq0fnyGL+9cfEl+ng/iPfA4wNuY1m6H9reXQ++f3t
+#> +LKO1YUXImA+IQZjOX0gGfuG2d1aGXRXFmgdrbZPjHyylEn7pL6lGtvdd6Wqo5z4
+#> mS4BfPhC8QmT3MIJxg3a99aJs7F7munN2ragFIJlJuePWmwvy93XSFuZS3KlPLOU
+#> aC/yT0GQWsMQ/mcieLcsq4jv/Yq3aTFTPDUBhII2vcc8hdQESDi0uK92CAgyQo92
+#> 0OEj
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
