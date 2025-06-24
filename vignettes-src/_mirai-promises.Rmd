@@ -17,16 +17,20 @@ knitr::opts_chunk$set(
 
 ### 1. Event-driven promises
 
-`mirai` supplies its own `as.promise()` method, allowing it to be used as a promise from the [`promises`](https://rstudio.github.io/promises/) package.
+`mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package.
 
-These are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
+A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a mirai directly.
 
-- Promise actions are triggered as soon as each 'mirai' resolves, without time-polling for completion as a `future_promise()` does.
-- Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of promises).
+Alternatively, a mirai may be explicitly converted to a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly from the promise object.
 
-A 'mirai' may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on the 'mirai'. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a 'mirai' directly.
+Whilst normal usage of a mirai involves collecting its value, a promise instead registers an action to be taken as soon as a mirai resolves. This will happen automatically if the R session is idle at the top prompt, or if within a loop or function where `later::run_now()` is being called periodically to service promise actions.
 
-Alternatively, a 'mirai' may be explicitly converted to a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly.
+The vignettes for the promises package contain a full description of how to use promises. We note that in the case of mirai, the mirai's value is passed to the `onFulfilled` argument of `promises::then()` if no error has occurred, and the mirai's `errorValue` is passed to the `onRejected` argument if an error has occured.
+
+Promises converted from mirai are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
+
+- Promise actions are triggered as soon as each mirai resolves, without time-polling for completion as a `future_promise()` does.
+- Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of concurrent promises).
 
 The following example outputs "hello" to the console after one second when the 'mirai' resolves.
 ```{r}
@@ -58,7 +62,7 @@ env$res
 #> [1] "hello"
 ```
 
-A `mirai_map` also has an `as.promise()` method. It resoles when the entire map operation completes or at least one mirai in the map is rejected.
+A `mirai_map` also has an `as.promise()` method. It resolves when the entire map operation completes or at least one mirai in the map is rejected.
 
 ### 2. The One Million Promises Challenge
 
