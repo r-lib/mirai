@@ -2,7 +2,6 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  mirai-daemons: mirai-daemons.html
   mirai-map: mirai-map.html
   mirai-promises: mirai-promises.html
   mirai-serialization: mirai-serialization.html
@@ -10,7 +9,7 @@ articles:
   mirai: mirai.html
   packages: packages.html
   questions: questions.html
-last_built: 2025-06-24T06:59Z
+last_built: 2025-06-24T20:36Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles

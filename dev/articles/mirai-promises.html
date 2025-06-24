@@ -43,8 +43,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/mirai-daemons.html">Daemons</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
+<li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
     <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
@@ -84,25 +83,38 @@
 <h3 id="event-driven-promises">1. Event-driven promises<a class="anchor" aria-label="anchor" href="#event-driven-promises"></a>
 </h3>
 <p><code>mirai</code> supplies its own <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method,
-allowing it to be used as a promise from the <a href="https://rstudio.github.io/promises/" class="external-link"><code>promises</code></a>
-package.</p>
-<p>These are next-generation, event-driven promises, developed in
-collaboration with Joe Cheng (creator of Shiny).</p>
+allowing it to be readily converted to a promise from the <a href="https://rstudio.github.io/promises/" class="external-link"><code>promises</code></a>
+package. See the vignettes for the promises package for a full
+treatment.</p>
+<p>A mirai may be piped directly using the promise pipe
+<code>%...&gt;%</code>, which implicitly calls <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code>
+on it. Similarly, all promise-aware functions such as
+<code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code> or <code>shiny::ExtendedTask$new()</code>
+accept a mirai directly.</p>
+<p>Alternatively, a mirai may be explicitly converted to a promise by
+<code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code>, which then allows using the methods
+<code>$then()</code>, <code>$finally()</code> etc. directly from the
+promise object.</p>
+<p>Whilst normal usage of a mirai involves collecting its value, a
+promise instead registers an action to be taken as soon as a mirai
+resolves. This will happen automatically if the R session is idle at the
+top prompt, or if within a loop or function where
+<code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is being called periodically to service
+promise actions (e.g. in Shiny).</p>
+<p>For a mirai promise, the mirai’s value is passed to the
+<code>onFulfilled</code> argument of <code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code> if no
+error has occurred, and the mirai’s <code>errorValue</code> is passed to
+the <code>onRejected</code> argument if an error has occured.</p>
+<p>Promises converted from mirai are next-generation, event-driven
+promises, developed in collaboration with Joe Cheng (creator of
+Shiny).</p>
 <ul>
-<li>Promise actions are triggered as soon as each ‘mirai’ resolves,
+<li>Promise actions are triggered as soon as each mirai resolves,
 without time-polling for completion as a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>
 does.</li>
 <li>Allows for much higher responsiveness (zero latency) and massive
-scalability (thousands or even millions of promises).</li>
+scalability (thousands or even millions of concurrent promises).</li>
 </ul>
-<p>A ‘mirai’ may be piped directly using the promise pipe
-<code>%...&gt;%</code>, which implicitly calls <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code>
-on the ‘mirai’. Similarly, all promise-aware functions such as
-<code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code> or <code>shiny::ExtendedTask$new()</code>
-accept a ‘mirai’ directly.</p>
-<p>Alternatively, a ‘mirai’ may be explicitly converted to a promise by
-<code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code>, which then allows using the methods
-<code>$then()</code>, <code>$finally()</code> etc. directly.</p>
 <p>The following example outputs “hello” to the console after one second
 when the ‘mirai’ resolves.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -132,7 +144,7 @@ an environment in the example below).</p>
 <code class="sourceCode R"><span><span class="va">env</span><span class="op">$</span><span class="va">res</span></span>
 <span><span class="co">#&gt; [1] "hello"</span></span></code></pre></div>
 <p>A <code>mirai_map</code> also has an <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code>
-method. It resoles when the entire map operation completes or at least
+method. It resolves when the entire map operation completes or at least
 one mirai in the map is rejected.</p>
 </div>
 <div class="section level3">
@@ -149,7 +161,7 @@ thousand.</p>
 <span><span class="va">start</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10000</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span>, .promise <span class="op">=</span> \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">r</span> <span class="op">&lt;&lt;-</span> <span class="va">r</span> <span class="op">+</span> <span class="va">x</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">start</span></span>
-<span><span class="co">#&gt; Time difference of 1.903031 secs</span></span>
+<span><span class="co">#&gt; Time difference of 3.19889 secs</span></span>
 <span><span class="fu">later</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">run_now</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">r</span></span>
 <span><span class="co">#&gt; [1] 50005000</span></span>
@@ -697,28 +709,28 @@ one time (limited by the number of daemons set).</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:35\"],\"msg\":[\"1\"],\"pid\":[31746]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"1\"],\"pid\":[45605]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:35\"],\"msg\":[\"2\"],\"pid\":[31758]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"2\"],\"pid\":[45607]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:35\"],\"msg\":[\"3\"],\"pid\":[31748]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"3\"],\"pid\":[45603]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:35\"],\"msg\":[\"4\"],\"pid\":[31768]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"4\"],\"pid\":[45610]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:36\"],\"msg\":[\"5\"],\"pid\":[31748]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"5\"],\"pid\":[45607]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:36\"],\"msg\":[\"6\"],\"pid\":[31746]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"6\"],\"pid\":[45610]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:36\"],\"msg\":[\"7\"],\"pid\":[31758]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"7\"],\"pid\":[45603]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:36\"],\"msg\":[\"8\"],\"pid\":[31768]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"8\"],\"pid\":[45605]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
@@ -784,28 +796,28 @@ previous example.</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:39\"],\"msg\":[\"1\"],\"pid\":[31821]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"1\"],\"pid\":[45889]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:39\"],\"msg\":[\"2\"],\"pid\":[31823]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"2\"],\"pid\":[45882]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:39\"],\"msg\":[\"3\"],\"pid\":[31833]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"3\"],\"pid\":[45886]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:39\"],\"msg\":[\"4\"],\"pid\":[31839]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"4\"],\"pid\":[45884]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:40\"],\"msg\":[\"5\"],\"pid\":[31833]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"5\"],\"pid\":[45884]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:40\"],\"msg\":[\"6\"],\"pid\":[31821]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"6\"],\"pid\":[45882]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:40\"],\"msg\":[\"7\"],\"pid\":[31823]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"7\"],\"pid\":[45889]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-19 13:29:40\"],\"msg\":[\"8\"],\"pid\":[31839]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"8\"],\"pid\":[45886]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
