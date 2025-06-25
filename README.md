@@ -24,16 +24,16 @@ over the network.
 
 → Modern networking and concurrency, built on
 [nanonext](https://github.com/r-lib/nanonext/) and
-[NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and
-efficient scheduling over fast inter-process communications or TCP/IP
-secured by TLS. Launch remote resources via SSH or cluster managers for
-distributed computing.
+[NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable
+scheduling over fast inter-process communications or TCP/IP secured by
+TLS. Launch remote resources via SSH or cluster managers for distributed
+computing.
 
-→ The queued architecture scales to millions of tasks over thousands of
-processes, requiring no storage on the file system. Innovative features
-include event-driven promises, asynchronous parallel map, and seamless
-serialization of otherwise non-exportable reference objects.
-<br /><br />
+→ The queued architecture scales efficiently to millions of tasks over
+thousands of connections, requiring no storage on the file system.
+Innovative features include event-driven promises, asynchronous parallel
+map, and seamless serialization of otherwise non-exportable reference
+objects. <br /><br />
 
 ### Quick Start
 
@@ -69,9 +69,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 32
+#> [1] 81
 m$data
-#> [1] 32
+#> [1] 81
 ```
 
 → `daemons()`:
@@ -170,8 +170,8 @@ used directly with the promise pipe.
 next level of responsiveness and scalability for Shiny apps.
 
 [<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
-  The built-in async evaluator behind the `@async` tag in Plumber 2;
-also provides an async backend for Plumber.
+  The built-in async evaluator behind the `@async` tag in plumber2; also
+provides an async backend for Plumber.
 
 [<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
   Allows Torch tensors and complex objects such as models and optimizers

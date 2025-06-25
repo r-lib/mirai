@@ -8,11 +8,11 @@
 Designed for simplicity, a 'mirai' evaluates an R expression asynchronously
 in a parallel process, locally or distributed over the network. Modern
 networking and concurrency, built on 'nanonext' and 'NNG' (Nanomsg Next Gen),
-ensures reliable and efficient scheduling over fast inter-process
-communications or TCP/IP secured by TLS. Launch remote resources via SSH or
-cluster managers for distributed computing. The queued architecture scales to
-millions of tasks over thousands of processes, requiring no storage on the
-file system. Innovative features include event-driven promises, asynchronous
+ensures reliable scheduling over fast inter-process communications or TCP/IP
+secured by TLS. Launch remote resources via SSH or cluster managers for
+distributed computing. The queued architecture scales efficiently to millions
+of tasks over thousands of connections, requiring no storage on the file
+system. Innovative features include event-driven promises, asynchronous
 parallel map, and seamless serialization of otherwise non-exportable
 reference objects.
 }
