@@ -31,7 +31,7 @@ distributed computing.
 
 → The queued architecture scales to millions of tasks over thousands of
 processes, requiring no storage on the file system. Innovative features
-include event-driven promises, asynchronous parallel map, and automatic
+include event-driven promises, asynchronous parallel map, and seamless
 serialization of otherwise non-exportable reference objects.
 <br /><br />
 
@@ -69,9 +69,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 9
+#> [1] 55
 m$data
-#> [1] 9
+#> [1] 55
 ```
 
 → `daemons()`:
@@ -105,9 +105,9 @@ over the rows.
 A ‘mirai_map’ object is returned immediately, and is always
 non-blocking.
 
-Its value may be retrieved at any time using its `[]` method, returning
-a list. The `[]` method also provides options for flatmap, early
-stopping and/or progress indicators.
+Its value may be retrieved using its `[]` method, returning a list. The
+`[]` method also provides options for flatmap, early stopping and
+progress indicators.
 
 ``` r
 df <- data.frame(
