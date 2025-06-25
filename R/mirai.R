@@ -370,7 +370,6 @@ call_mirai <- call_aio_
 collect_mirai <- function(x, options = NULL) {
   is.list(x) && length(options) || return(collect_aio_(x))
 
-  ensure_cli_initialized()
   dots <- mget(options, envir = .)
   mmap(x, dots)
 }
