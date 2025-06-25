@@ -142,7 +142,7 @@ mirai features the following core integrations, with usage examples in the linke
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html) &nbsp; The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.
 
-[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html) &nbsp; The built-in async evaluator behind the @async tag in Plumber 2, also provides an async backend for Plumber.
+[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html) &nbsp; The built-in async evaluator behind the `@async` tag in Plumber 2; also provides an async backend for Plumber.
 
 [<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html) &nbsp; Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.
 

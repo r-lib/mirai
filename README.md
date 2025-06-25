@@ -69,9 +69,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 55
+#> [1] 32
 m$data
-#> [1] 55
+#> [1] 32
 ```
 
 → `daemons()`:
@@ -170,8 +170,8 @@ used directly with the promise pipe.
 next level of responsiveness and scalability for Shiny apps.
 
 [<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
-  The built-in async evaluator behind the @async tag in Plumber 2, also
-provides an async backend for Plumber.
+  The built-in async evaluator behind the `@async` tag in Plumber 2;
+also provides an async backend for Plumber.
 
 [<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
   Allows Torch tensors and complex objects such as models and optimizers
