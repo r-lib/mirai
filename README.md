@@ -40,9 +40,11 @@ serialization of otherwise non-exportable reference objects.
 mirai is Japanese for ‘future’ and is an implementation of *futures* in
 R.
 
-`mirai()` sends an expression to be evaluated asynchronously in a
-separate R process and returns a mirai object immediately. Creation of a
-mirai is never blocking.
+→ `mirai()`:
+
+Sends an expression to be evaluated asynchronously in a separate R
+process and returns a mirai object immediately. Creation of a mirai is
+never blocking.
 
 The result of a mirai `m` will be available at `m$data` once evaluation
 is complete and its return value is received. `m[]` may be used to wait
@@ -67,36 +69,37 @@ m$data
 # do other work
 
 m[]
-#> [1] 88
+#> [1] 3
 m$data
-#> [1] 88
+#> [1] 3
 ```
 
-`daemons()` sets persistent background processes (*daemons*) where mirai
-are evaluated.
+→ `daemons()`:
 
-Launching 6 local daemons is as easy as:
+Sets persistent background processes (*daemons*) where mirai are
+evaluated.
+
+To launch 6 local daemons:
 
 ``` r
 daemons(6)
 #> [1] 6
 ```
 
-We provide launchers for distributed computing that launch daemons over
-the network via SSH or HPC cluster resource managers including Slurm,
-SGE, Torque, PBS and LSF.
+There are built-in capabilities to launch daemons over the network via:
 
-See the reference vignette
-[`vignette("mirai", package = "mirai")`](https://mirai.r-lib.org/articles/mirai.html)
-for full details.
+- SSH and tunnelled SSH
+- HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)
 
-#### Async Parallel Map
+See the [reference
+vignette](https://mirai.r-lib.org/articles/mirai.html) for further
+details.
 
-`mirai_map()` maps a function over a list or vector, with each element
-processed in a separate daemon.
+→ `mirai_map()`:
 
-For a dataframe or matrix, it automatically performs multiple map over
-the rows.
+Maps a function over a list or vector, with each element processed as a
+mirai. For a dataframe or matrix, it automatically performs multiple map
+over the rows.
 
 A ‘mirai_map’ object is returned immediately, and is always
 non-blocking.
@@ -110,11 +113,9 @@ df <- data.frame(
   fruit = c("melon", "grapes", "coconut"),
   price = c(3L, 5L, 2L)
 )
-m <- mirai_map(
-  df,
-  \(...) sprintf("%s: $%d", ...)
-)
 
+m <- df |>
+  mirai_map(\(...) sprintf("%s: $%d", ...))
 m
 #> < mirai map [0/3] >
 m[.flat]
@@ -144,16 +145,12 @@ experience.
 - Proven track record for heavy-duty workloads in the life sciences
   industry
 
-[<img alt="Joe Cheng on mirai with Shiny" src="https://img.youtube.com/vi/GhX0PcEm3CY/hqdefault.jpg" width = "300" height="225" />](https://youtu.be/GhX0PcEm3CY?t=1740)
- 
-[<img alt="Will Landau on mirai in clinical trials" src="https://img.youtube.com/vi/cyF2dzloVLo/hqdefault.jpg" width = "300" height="225" />](https://youtu.be/cyF2dzloVLo?t=5127)
-
 ### Powering the Ecosystem
 
 mirai features the following core integrations, with usage examples in
 the linked vignettes:
 
-[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v5-parallel.html)
+[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/mirai-xparallel.html)
   Provides the first official alternative communications backend for R,
 implementing the ‘MIRAI’ parallel cluster type, a feature request by
 R-Core at R Project Sprint 2023.
@@ -167,19 +164,19 @@ core tidyverse package.
 ‘mirai_map’ objects are readily convertible to ‘promises’, and may be
 used directly with the promise pipe.
 
-[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v3-promises.html)
-  The new default async backend for Shiny, supporting ExtendedTask and
-the next level of responsiveness and scalability for Shiny apps.
+[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
+  The primary async backend for Shiny, supporting ExtendedTask and the
+next level of responsiveness and scalability for Shiny apps.
 
-[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v3-promises.html)
-  Asynchronous parallel / distributed backend for scaling Plumber
-applications in production.
+[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
+  The built-in async evaluator behind the @async tag in Plumber 2, also
+provides an async backend for Plumber.
 
-[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v4-serialization.html)
+[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
   Allows Torch tensors and complex objects such as models and optimizers
 to be used seamlessly across parallel processes.
 
-[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v4-serialization.html)
+[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
   Allows queries using the Apache Arrow format to be handled seamlessly
 over ADBC database connections hosted in background processes.
 
