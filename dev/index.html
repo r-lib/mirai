@@ -109,9 +109,9 @@
 <span><span class="co"># do other work</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 81</span></span>
+<span><span class="co">#&gt; [1] 31</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 81</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 31</span></span></code></pre></div>
 <p>→ <code><a href="reference/daemons.html">daemons()</a></code>:</p>
 <p>Sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
 <p>To launch 6 local daemons:</p>
@@ -121,7 +121,7 @@
 <p>To launch daemons over the network for distributed computing, this is supported via:</p>
 <ul>
 <li>SSH</li>
-<li>HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)</li>
+<li>HPC cluster resource managers (for Slurm, SGE, Torque, PBS, LSF)</li>
 </ul>
 <p>See the <a href="https://mirai.r-lib.org/articles/mirai.html">reference vignette</a> for further details.</p>
 <p>→ <code><a href="reference/mirai_map.html">mirai_map()</a></code>:</p>
@@ -130,8 +130,8 @@
 <p>Its value may be retrieved using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and progress indicators.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span>,</span>
-<span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">5L</span>, <span class="fl">2L</span><span class="op">)</span></span>
+<span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apples"</span>, <span class="st">"oranges"</span>, <span class="st">"pears"</span><span class="op">)</span>,</span>
+<span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">2L</span>, <span class="fl">5L</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
@@ -139,7 +139,7 @@
 <span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] "melon: $3"   "grapes: $5"  "coconut: $2"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "apples: $3"  "oranges: $2" "pears: $5"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="design-concepts">Design Concepts<a class="anchor" aria-label="anchor" href="#design-concepts"></a>
