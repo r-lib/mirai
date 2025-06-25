@@ -11,7 +11,7 @@ over the rows of a dataframe or matrix."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ over the rows of a dataframe or matrix."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>mirai Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/map.R" class="external-link"><code>R/map.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/map.R" class="external-link"><code>R/map.R</code></a></small>
       <div class="d-none name"><code>mirai_map.Rd</code></div>
     </div>
 
@@ -144,6 +144,23 @@ many arguments as there are columns. If the dataframe has names, or the
 matrix column dimnames, named arguments are provided to <code>.f</code>.</p>
 <p>To map over <strong>columns</strong> instead, first wrap a dataframe in <code><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list()</a></code>, or
 transpose a matrix using <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="nested-maps">Nested Maps<a class="anchor" aria-label="anchor" href="#nested-maps"></a></h2>
+
+
+
+<p>At times you way wish to run maps within maps. To do this, the function
+provided to the outer map needs to include a call to <code><a href="daemons.html">daemons()</a></code> to set
+daemons used by the inner map. To guard against inadvertently spawning an
+excessive number of daemons on the same machine, attempting to launch local
+daemons within a map using <code>daemons(n)</code> will error.</p>
+<p>A legitimate use of this pattern however is when the outer daemons are
+launched on remote machines, and you then wish to launch daemons locally on
+each of those machines. In this case, use the following solution: instead of
+a single call to <code>daemons(n)</code> make 2 separate calls to
+<code>daemons(url = local_url()); launch_local(n)</code>. This is equivalent, and is
+permitted from within a map.</p>
     </div>
 
     <div class="section level2">

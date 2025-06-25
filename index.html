@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Minimalist Async Evaluation Framework for R">
-<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
-<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers. A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.">
+<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
+<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
 <meta property="og:image" content="https://mirai.r-lib.org/logo.png">
 <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,87 +79,68 @@
 <h3 id="ミライ">ミライ<a class="anchor" aria-label="anchor" href="#%E3%83%9F%E3%83%A9%E3%82%A4"></a>
 </h3>
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br> → Designed for simplicity, a ‘mirai’ evaluates an R expression asynchronously in a parallel process, locally or distributed over the network.</p>
-<p>→ Modern networking and concurrency, built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Distributed computing can launch remote resources via SSH or cluster managers.</p>
-<p>→ A queued architecture readily handles more tasks than available processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects. <br><br></p>
+<p>→ Modern networking and concurrency, built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a>, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS.</p>
+<p>→ Launch remote resources via SSH or cluster managers for distributed computing.</p>
+<p>→ The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system.</p>
+<p>→ Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects. <br><br></p>
 </div>
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p>Use <code><a href="reference/mirai.html">mirai()</a></code> to evaluate an expression asynchronously in a separate, clean R process.</p>
-<p>The following mimics an expensive calculation that eventually returns a vector of random values.</p>
+<p>mirai is Japanese for ‘future’ and is an implementation of <em>futures</em> in R.</p>
+<p>→ <code><a href="reference/mirai.html">mirai()</a></code>:</p>
+<p>Sends an expression to be evaluated asynchronously in a separate R process and returns a mirai object immediately. Creation of a mirai is never blocking.</p>
+<p>The result of a mirai <code>m</code> will be available at <code>m$data</code> once evaluation is complete and its return value is received. <code>m[]</code> may be used to wait for and collect the value.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai.html">mirai</a></span><span class="op">(</span></span>
 <span>  <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">mean</span><span class="op">)</span></span>
-<span>  <span class="op">}</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">3L</span>,</span>
-<span>  mean <span class="op">=</span> <span class="fl">7</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<blockquote>
-<p>The mirai expression is evaluated in another process and hence must be self-contained, not referring to variables that do not already exist there. Above, the variables <code>n</code> and <code>mean</code> are passed as part of the <code><a href="reference/mirai.html">mirai()</a></code> call.</p>
-</blockquote>
-<p>A ‘mirai’ object is returned immediately, and is always non-blocking.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span></span>
-<span><span class="co">#&gt; &lt; mirai [] &gt;</span></span></code></pre></div>
-<p>Whilst the async operation is ongoing, attempting to access a mirai’s <code>$data</code> yields an ‘unresolved’ logical NA.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; 'unresolved' logi NA</span></span></code></pre></div>
-<p>To check whether a mirai remains unresolved (yet to complete):</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>To wait for and collect the return value, use the mirai’s <code>[]</code> method:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 7.775407 5.847902 5.866847</span></span></code></pre></div>
-<p>As a mirai represents an async operation, it is never necessary to wait for it. Once it completes, the return value is automatically available at <code>$data</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># do other work</span></span>
-<span><span class="op">}</span></span>
+<span>    <span class="co"># slow operation</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">m</span></span>
+<span><span class="co">#&gt; &lt; mirai [] &gt;</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 7.775407 5.847902 5.866847</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="daemons">Daemons<a class="anchor" aria-label="anchor" href="#daemons"></a>
-</h4>
-<p>📡️️ <a href="https://mirai.r-lib.org/articles/v1-daemons.html#local-daemons">Daemons</a> are persistent background processes for receiving mirai requests, and are created as easily as:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; 'unresolved' logi NA</span></span>
+<span></span>
+<span><span class="co"># do other work</span></span>
+<span></span>
+<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 79</span></span>
+<span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
+<span><span class="co">#&gt; [1] 79</span></span></code></pre></div>
+<p>→ <code><a href="reference/daemons.html">daemons()</a></code>:</p>
+<p>Sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
+<p>To launch 6 local daemons:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>Daemons may also be deployed <a href="https://mirai.r-lib.org/articles/v1-daemons.html#remote-daemons">remotely</a> for distributed computing over the network.</p>
-<p>🛰️️ <a href="https://mirai.r-lib.org/articles/v1-daemons.html#launching-remote-daemons">Launchers</a> can start daemons via (tunnelled) SSH or a cluster resource manager.</p>
-<p>🔐 <a href="https://mirai.r-lib.org/articles/v1-daemons.html#tls-secure-connections">Secure TLS connections</a> can be used for remote daemon connections, with zero configuration required.</p>
-</div>
-<div class="section level4">
-<h4 id="async-parallel-map">Async Parallel Map<a class="anchor" aria-label="anchor" href="#async-parallel-map"></a>
-</h4>
-<p><code><a href="reference/mirai_map.html">mirai_map()</a></code> maps a function over a list or vector, with each element processed in a separate parallel process.</p>
-<p>For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span>,</span>
-<span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">5L</span>, <span class="fl">2L</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span></span>
-<span>  <span class="va">df</span>,</span>
-<span>  \<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s: $%d"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>To launch daemons over the network for distributed computing, this is supported via:</p>
+<ul>
+<li>SSH</li>
+<li>HPC cluster resource managers (for Slurm, SGE, Torque, PBS, LSF)</li>
+</ul>
+<p>See the <a href="https://mirai.r-lib.org/articles/mirai.html">reference vignette</a> for further details.</p>
+<p>→ <code><a href="reference/mirai_map.html">mirai_map()</a></code>:</p>
+<p>Maps a function over a list or vector, with each element processed as a mirai. For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
 <p>A ‘mirai_map’ object is returned immediately, and is always non-blocking.</p>
-<p>Its value may be retrieved at any time using its <code>[]</code> method, returning a list just like <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>. The <code>[]</code> method also provides options for flatmap, early stopping and/or progress indicators.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span></span>
-<span><span class="co">#&gt; &lt; mirai map [3/3] &gt;</span></span>
+<p>Its value may be retrieved using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and progress indicators.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apples"</span>, <span class="st">"oranges"</span>, <span class="st">"pears"</span><span class="op">)</span>,</span>
+<span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">2L</span>, <span class="fl">5L</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s: $%d"</span>, <span class="va">...</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">m</span></span>
+<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] "melon: $3"   "grapes: $5"  "coconut: $2"</span></span></code></pre></div>
-<blockquote>
-<p>All errors are returned as ‘errorValues’, facilitating recovery from partial failure. There are further <a href="https://mirai.r-lib.org/articles/v2-map.html">advantages</a> over alternative map implementations.</p>
-</blockquote>
-</div>
+<span><span class="co">#&gt; [1] "apples: $3"  "oranges: $2" "pears: $5"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="design-concepts">Design Concepts<a class="anchor" aria-label="anchor" href="#design-concepts"></a>
@@ -181,20 +162,19 @@
 <li>Launch millions of tasks over thousands of connections</li>
 <li>Proven track record for heavy-duty workloads in the life sciences industry</li>
 </ul>
-<p><a href="https://youtu.be/GhX0PcEm3CY?t=1740" class="external-link"><img alt="Joe Cheng on mirai with Shiny" src="https://img.youtube.com/vi/GhX0PcEm3CY/hqdefault.jpg" width="300" height="225"></a>   <a href="https://youtu.be/cyF2dzloVLo?t=5127" class="external-link"><img alt="Will Landau on mirai in clinical trials" src="https://img.youtube.com/vi/cyF2dzloVLo/hqdefault.jpg" width="300" height="225"></a></p>
 </div>
 <div class="section level3">
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
 </h3>
 <p>mirai features the following core integrations, with usage examples in the linked vignettes:</p>
-<p><a href="https://mirai.r-lib.org/articles/v5-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing a new parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
-<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers the (in development) implementation of parallel map for the purrr functional programming toolkit, one of the core tidyverse packages.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements the next generation of completely event-driven promises. ‘mirai’ and ‘mirai_map’ objects may be used interchangeably with ‘promises’, including with the promise pipe <code>%...&gt;%</code>.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend, supporting the next level of responsiveness and scalability within Shiny, with native support for ExtendedTask.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend for scaling Plumber applications in production.</p>
-<p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
-<p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
-<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters including LFS, PBS/TORQUE, SGE and Slurm to cloud services such as AWS Batch.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-xparallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
+<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
+<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements next generation, event-driven promises. ‘mirai’ and ‘mirai_map’ objects are readily convertible to ‘promises’, and may be used directly with the promise pipe.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   The built-in async evaluator behind the <code>@async</code> tag in plumber2; also provides an async backend for Plumber.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
+<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters to cloud services.</p>
 </div>
 <div class="section level3">
 <h3 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>
@@ -203,6 +183,7 @@
 <p><a href="https://github.com/wlandau/" class="external-link">Will Landau</a> for being instrumental in shaping development of the package, from initiating the original request for persistent daemons, through to orchestrating robustness testing for the high performance computing requirements of crew and targets.</p>
 <p><a href="https://github.com/jcheng5/" class="external-link">Joe Cheng</a> for integrating the ‘promises’ method to work seamlessly within Shiny, and prototyping event-driven promises.</p>
 <p><a href="https://github.com/ltierney/" class="external-link">Luke Tierney</a> of R Core, for discussion on L’Ecuyer-CMRG streams to ensure statistical independence in parallel processing, and making it possible for mirai to be the first ‘alternative communications backend for R’.</p>
+<p><a href="https://github.com/traversc" class="external-link">Travers Ching</a> for a novel idea in extending the original custom serialization support in the package.</p>
 <p><a href="https://github.com/HenrikBengtsson/" class="external-link">Henrik Bengtsson</a> for valuable insights leading to the interface accepting broader usage patterns.</p>
 <p><a href="https://github.com/dfalbel/" class="external-link">Daniel Falbel</a> for discussion around an efficient solution to serialization and transmission of torch tensors.</p>
 <p><a href="https://github.com/krlmlr/" class="external-link">Kirill Müller</a> for discussion on using parallel processes to host Arrow database connections.</p>
@@ -211,10 +192,10 @@
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>Install the latest release from CRAN:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mirai"</span><span class="op">)</span></span></code></pre></div>
 <p>The current development version is available from R-universe:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mirai"</span>, repos <span class="op">=</span> <span class="st">"https://r-lib.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">

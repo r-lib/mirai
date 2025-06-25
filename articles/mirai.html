@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Minimalist Async Evaluation Framework for R</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/mirai.Rmd" class="external-link"><code>vignettes/mirai.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/mirai.Rmd" class="external-link"><code>vignettes/mirai.Rmd</code></a></small>
       <div class="d-none name"><code>mirai.Rmd</code></div>
     </div>
 
@@ -569,10 +569,10 @@ the dispatcher are terminated.</p>
 configurations:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/remote_config.html">ssh_config()</a></code> where there is SSH access to the remote
+<code><a href="../reference/ssh_config.html">ssh_config()</a></code> where there is SSH access to the remote
 machine.</li>
 <li>
-<code>cluster_config()</code> to use HPC cluster resource managers
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code> to use HPC cluster resource managers
 such as Slurm, SGE, Torque/PBS and LSF.</li>
 <li>
 <code><a href="../reference/remote_config.html">remote_config()</a></code> for a generic, flexible method that
@@ -598,7 +598,7 @@ back to the host URL:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The second example below launches one daemon on each of 10.75.32.90
 and 10.75.32.91 using the custom SSH port of 222:</p>
@@ -606,7 +606,7 @@ and 10.75.32.91 using the custom SSH port of 222:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://10.75.32.91:222"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://10.75.32.91:222"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -645,13 +645,13 @@ machines.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/remote_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90"</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="iii--hpc-cluster-resource-managers">iii. HPC Cluster Resource Managers<a class="anchor" aria-label="anchor" href="#iii--hpc-cluster-resource-managers"></a>
 </h4>
-<p><code>cluster_config()</code> may be used to deploy daemons using a
+<p><code><a href="../reference/cluster_config.html">cluster_config()</a></code> may be used to deploy daemons using a
 cluster resource manager / scheduler.</p>
 <ol style="list-style-type: decimal">
 <li>The first argument is <code>command</code>. This should be:</li>
@@ -713,7 +713,7 @@ which must contain “.”. The correctly-configured call to
 <code><a href="../reference/daemon.html">daemon()</a></code> is substituted in for this “.”, so that
 <code>command</code> is run with this as one of its arguments.</p>
 <p>This can provide an alternative for cluster resource managers in
-certain cases, although <code>cluster_config()</code> provides an easier
+certain cases, although <code><a href="../reference/cluster_config.html">cluster_config()</a></code> provides an easier
 and more complete interface. Using Slurm as an example, the following
 uses <code>sbatch</code> to launch a daemon on the cluster, with some
 additional Slurm options passed via command line arguments to
