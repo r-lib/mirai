@@ -161,9 +161,7 @@ mirai_map <- function(
   .promise = NULL,
   .compute = NULL
 ) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
-  is.null(envir) && stop(._[["requires_daemons"]])
+  require_daemons(call = environment(), .compute = .compute)
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
 
   dx <- dim(.x)
@@ -227,7 +225,6 @@ mirai_map <- function(
 `[.mirai_map` <- function(x, ...) {
   missing(..1) && return(collect_aio_(x))
 
-  ensure_cli_initialized()
   dots <- eval(`[[<-`(substitute(alist(...)), 1L, quote(list)), envir = .)
   mmap(x, dots)
 }
@@ -304,7 +301,7 @@ print.mirai_map <- function(x, ...) {
 # internals --------------------------------------------------------------------
 
 ensure_cli_initialized <- function() {
-  is.null(.[[".flat"]]) || return()
+  is.null(.[["require_daemons"]]) || return()
   cli <- requireNamespace("cli", quietly = TRUE)
   `[[<-`(., ".flat", if (cli) flat_cli else .flat)
   `[[<-`(., ".progress", if (cli) progress_cli else .progress)
