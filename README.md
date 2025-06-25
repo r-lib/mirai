@@ -26,10 +26,10 @@ over the network.
 [nanonext](https://github.com/r-lib/nanonext/) and
 [NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and
 efficient scheduling over fast inter-process communications or TCP/IP
-secured by TLS. Distributed computing can launch remote resources via
-SSH or cluster managers.
+secured by TLS. Launch remote resources via SSH or cluster managers for
+distributed computing.
 
-→ A queued architecture readily handles more tasks than available
+→ The queued architecture scales to millions of tasks over thousands of
 processes, requiring no storage on the file system. Innovative features
 include event-driven promises, asynchronous parallel map, and automatic
 serialization of otherwise non-exportable reference objects.
@@ -69,9 +69,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 3
+#> [1] 9
 m$data
-#> [1] 3
+#> [1] 9
 ```
 
 → `daemons()`:
@@ -86,9 +86,10 @@ daemons(6)
 #> [1] 6
 ```
 
-There are built-in capabilities to launch daemons over the network via:
+To launch daemons over the network for distributed computing, this is
+supported via:
 
-- SSH and tunnelled SSH
+- SSH
 - HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)
 
 See the [reference

@@ -33,9 +33,9 @@ Minimalist Async Evaluation Framework for R
 → Designed for simplicity, a 'mirai' evaluates an R expression asynchronously in a parallel process, locally or distributed over the network.
 
 → Modern networking and concurrency, built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://nng.nanomsg.org/) (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS.
-Distributed computing can launch remote resources via SSH or cluster managers.
+Launch remote resources via SSH or cluster managers for distributed computing.
 
-→ A queued architecture readily handles more tasks than available processes, requiring no storage on the file system.
+→ The queued architecture scales to millions of tasks over thousands of processes, requiring no storage on the file system.
 Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects.
 <br /><br />
 
@@ -81,9 +81,9 @@ To launch 6 local daemons:
 daemons(6)
 ```
 
-There are built-in capabilities to launch daemons over the network via:
+To launch daemons over the network for distributed computing, this is supported via:
 
-- SSH and tunnelled SSH
+- SSH
 - HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)
 
 See the [reference vignette](https://mirai.r-lib.org/articles/mirai.html) for further details.
