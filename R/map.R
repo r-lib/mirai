@@ -301,7 +301,7 @@ print.mirai_map <- function(x, ...) {
 # internals --------------------------------------------------------------------
 
 ensure_cli_initialized <- function() {
-  is.null(.[[".flat"]]) || return()
+  is.null(.[["require_daemons"]]) || return()
   cli <- requireNamespace("cli", quietly = TRUE)
   `[[<-`(., ".flat", if (cli) flat_cli else .flat)
   `[[<-`(., ".progress", if (cli) progress_cli else .progress)
