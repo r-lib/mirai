@@ -81,7 +81,7 @@
 </h3>
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br> → Designed for simplicity, a ‘mirai’ evaluates an R expression asynchronously in a parallel process, locally or distributed over the network.</p>
 <p>→ Modern networking and concurrency, built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> (Nanomsg Next Gen), ensures reliable and efficient scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing.</p>
-<p>→ The queued architecture scales to millions of tasks over thousands of processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and automatic serialization of otherwise non-exportable reference objects. <br><br></p>
+<p>→ The queued architecture scales to millions of tasks over thousands of processes, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects. <br><br></p>
 </div>
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -109,9 +109,9 @@
 <span><span class="co"># do other work</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 9</span></span>
+<span><span class="co">#&gt; [1] 55</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 9</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 55</span></span></code></pre></div>
 <p>→ <code><a href="reference/daemons.html">daemons()</a></code>:</p>
 <p>Sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
 <p>To launch 6 local daemons:</p>
@@ -127,7 +127,7 @@
 <p>→ <code><a href="reference/mirai_map.html">mirai_map()</a></code>:</p>
 <p>Maps a function over a list or vector, with each element processed as a mirai. For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
 <p>A ‘mirai_map’ object is returned immediately, and is always non-blocking.</p>
-<p>Its value may be retrieved at any time using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and/or progress indicators.</p>
+<p>Its value may be retrieved using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and progress indicators.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span>,</span>
