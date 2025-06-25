@@ -69,9 +69,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 81
+#> [1] 31
 m$data
-#> [1] 81
+#> [1] 31
 ```
 
 → `daemons()`:
@@ -90,7 +90,7 @@ To launch daemons over the network for distributed computing, this is
 supported via:
 
 - SSH
-- HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)
+- HPC cluster resource managers (for Slurm, SGE, Torque, PBS, LSF)
 
 See the [reference
 vignette](https://mirai.r-lib.org/articles/mirai.html) for further
@@ -111,8 +111,8 @@ progress indicators.
 
 ``` r
 df <- data.frame(
-  fruit = c("melon", "grapes", "coconut"),
-  price = c(3L, 5L, 2L)
+  fruit = c("apples", "oranges", "pears"),
+  price = c(3L, 2L, 5L)
 )
 
 m <- df |>
@@ -120,7 +120,7 @@ m <- df |>
 m
 #> < mirai map [0/3] >
 m[.flat]
-#> [1] "melon: $3"   "grapes: $5"  "coconut: $2"
+#> [1] "apples: $3"  "oranges: $2" "pears: $5"
 ```
 
 ### Design Concepts

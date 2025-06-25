@@ -84,7 +84,7 @@ daemons(6)
 To launch daemons over the network for distributed computing, this is supported via:
 
 - SSH
-- HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)
+- HPC cluster resource managers (for Slurm, SGE, Torque, PBS, LSF)
 
 See the [reference vignette](https://mirai.r-lib.org/articles/mirai.html) for further details.
 
@@ -101,8 +101,8 @@ The `[]` method also provides options for flatmap, early stopping and progress i
 ```{r}
 #| label: map
 df <- data.frame(
-  fruit = c("melon", "grapes", "coconut"),
-  price = c(3L, 5L, 2L)
+  fruit = c("apples", "oranges", "pears"),
+  price = c(3L, 2L, 5L)
 )
 
 m <- df |>
