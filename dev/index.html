@@ -87,7 +87,8 @@
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
 <p>mirai is Japanese for ‘future’ and is an implementation of <em>futures</em> in R.</p>
-<p><code><a href="reference/mirai.html">mirai()</a></code> sends an expression to be evaluated asynchronously in a separate R process and returns a mirai object immediately. Creation of a mirai is never blocking.</p>
+<p>→ <code><a href="reference/mirai.html">mirai()</a></code>:</p>
+<p>Sends an expression to be evaluated asynchronously in a separate R process and returns a mirai object immediately. Creation of a mirai is never blocking.</p>
 <p>The result of a mirai <code>m</code> will be available at <code>m$data</code> once evaluation is complete and its return value is received. <code>m[]</code> may be used to wait for and collect the value.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
@@ -108,21 +109,23 @@
 <span><span class="co"># do other work</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 88</span></span>
+<span><span class="co">#&gt; [1] 3</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 88</span></span></code></pre></div>
-<p><code><a href="reference/daemons.html">daemons()</a></code> sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
-<p>Launching 6 local daemons is as easy as:</p>
+<span><span class="co">#&gt; [1] 3</span></span></code></pre></div>
+<p>→ <code><a href="reference/daemons.html">daemons()</a></code>:</p>
+<p>Sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
+<p>To launch 6 local daemons:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6</span></span></code></pre></div>
-<p>We provide launchers for distributed computing that launch daemons over the network via SSH or HPC cluster resource managers including Slurm, SGE, Torque, PBS and LSF.</p>
-<p>See the reference vignette <a href="https://mirai.r-lib.org/articles/mirai.html"><code>vignette("mirai", package = "mirai")</code></a> for full details.</p>
-<div class="section level4">
-<h4 id="async-parallel-map">Async Parallel Map<a class="anchor" aria-label="anchor" href="#async-parallel-map"></a>
-</h4>
-<p><code><a href="reference/mirai_map.html">mirai_map()</a></code> maps a function over a list or vector, with each element processed in a separate daemon.</p>
-<p>For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
+<p>There are built-in capabilities to launch daemons over the network via:</p>
+<ul>
+<li>SSH and tunnelled SSH</li>
+<li>HPC cluster resource managers (Slurm, SGE, Torque, PBS, LSF)</li>
+</ul>
+<p>See the <a href="https://mirai.r-lib.org/articles/mirai.html">reference vignette</a> for further details.</p>
+<p>→ <code><a href="reference/mirai_map.html">mirai_map()</a></code>:</p>
+<p>Maps a function over a list or vector, with each element processed as a mirai. For a dataframe or matrix, it automatically performs multiple map over the rows.</p>
 <p>A ‘mirai_map’ object is returned immediately, and is always non-blocking.</p>
 <p>Its value may be retrieved at any time using its <code>[]</code> method, returning a list. The <code>[]</code> method also provides options for flatmap, early stopping and/or progress indicators.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -130,16 +133,13 @@
 <span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"melon"</span>, <span class="st">"grapes"</span>, <span class="st">"coconut"</span><span class="op">)</span>,</span>
 <span>  price <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3L</span>, <span class="fl">5L</span>, <span class="fl">2L</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span></span>
-<span>  <span class="va">df</span>,</span>
-<span>  \<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s: $%d"</span>, <span class="va">...</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%s: $%d"</span>, <span class="va">...</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m</span></span>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "melon: $3"   "grapes: $5"  "coconut: $2"</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level3">
 <h3 id="design-concepts">Design Concepts<a class="anchor" aria-label="anchor" href="#design-concepts"></a>
@@ -161,19 +161,18 @@
 <li>Launch millions of tasks over thousands of connections</li>
 <li>Proven track record for heavy-duty workloads in the life sciences industry</li>
 </ul>
-<p><a href="https://youtu.be/GhX0PcEm3CY?t=1740" class="external-link"><img alt="Joe Cheng on mirai with Shiny" src="https://img.youtube.com/vi/GhX0PcEm3CY/hqdefault.jpg" width="300" height="225"></a>   <a href="https://youtu.be/cyF2dzloVLo?t=5127" class="external-link"><img alt="Will Landau on mirai in clinical trials" src="https://img.youtube.com/vi/cyF2dzloVLo/hqdefault.jpg" width="300" height="225"></a></p>
 </div>
 <div class="section level3">
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
 </h3>
 <p>mirai features the following core integrations, with usage examples in the linked vignettes:</p>
-<p><a href="https://mirai.r-lib.org/articles/v5-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-xparallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
 <p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements next generation, event-driven promises. ‘mirai’ and ‘mirai_map’ objects are readily convertible to ‘promises’, and may be used directly with the promise pipe.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The new default async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   Asynchronous parallel / distributed backend for scaling Plumber applications in production.</p>
-<p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
-<p><a href="https://mirai.r-lib.org/articles/v4-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   The built-in async evaluator behind the @async tag in Plumber 2, also provides an async backend for Plumber.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
+<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
 <p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters to cloud services.</p>
 </div>
 <div class="section level3">
