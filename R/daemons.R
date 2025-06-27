@@ -596,20 +596,22 @@ wa3 <- function(url, dots, rs = NULL, tls = NULL)
 
 wa4 <- function(urld, n, rs, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,rs=c(%s)%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,rs=c(%s),signal=%d%s)",
     libp(),
     urld,
     n,
     paste0(rs, collapse = ","),
+    tools::SIGTERM,
     dots
   ))
 
 wa5 <- function(urld, url, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",signal=%d%s)",
     libp(),
     urld,
     url,
+    tools::SIGTERM,
     dots
   ))
 

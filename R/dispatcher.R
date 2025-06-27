@@ -33,6 +33,9 @@
 #' @param pass \[default NULL\] (required only if the private key supplied to
 #'   `tls` is encrypted with a password) For security, should be provided
 #'   through a function that returns this value, rather than directly.
+#' @param signal \[default TRUE\] integer signal to raise when the host
+#'   connection drops. This is always the value of `tools::SIGTERM` passed by
+#'   the host process.
 #'
 #' @return Invisible NULL.
 #'
@@ -45,7 +48,8 @@ dispatcher <- function(
   ...,
   tls = NULL,
   pass = NULL,
-  rs = NULL
+  rs = NULL,
+  signal = TRUE
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
   n > 0L || stop(._[["missing_url"]])
@@ -53,7 +57,7 @@ dispatcher <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_value_disp(signal))
   dial_sync_socket(sock, host)
 
   res <- recv(sock, mode = 1L, block = TRUE)
