@@ -407,7 +407,7 @@ status <- function(.compute = NULL) {
   )
 }
 
-#' Daemons Set
+#' Query if Daemons are Set
 #'
 #' Returns a logical value, whether or not daemons have been set for a given
 #' compute profile.

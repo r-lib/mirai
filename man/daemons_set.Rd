@@ -2,7 +2,7 @@
 % Please edit documentation in R/daemons.R
 \name{daemons_set}
 \alias{daemons_set}
-\title{Daemons Set}
+\title{Query if Daemons are Set}
 \usage{
 daemons_set(.compute = NULL)
 }
