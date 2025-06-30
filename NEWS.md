@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
+
 # mirai 2.4.0
 
 #### Behavioural Changes
