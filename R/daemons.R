@@ -227,7 +227,7 @@ daemons <- function(
   if (is.character(url)) {
     if (is.null(envir)) {
       url <- url[1L]
-      envir <- init_envir_stream(seed)
+      envir <- init_envir_cv_stream(seed)
       launches <- 0L
       dots <- parse_dots(...)
       output <- attr(dots, "output")
@@ -240,7 +240,6 @@ daemons <- function(
           check_store_sock_url(envir, sock)
         },
         {
-          cv <- cv()
           tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
           urld <- local_url()
           sock <- req_socket(urld)
@@ -248,7 +247,7 @@ daemons <- function(
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
           args <- wa5(urld, url, dots)
           res <- launch_dispatcher(sock, args, output, serial, tls = tls, pass = pass)
-          store_dispatcher(envir, sock, cv, urld, res)
+          store_dispatcher(envir, sock, urld, res)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -282,7 +281,7 @@ daemons <- function(
     } else if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
-      envir <- init_envir_stream(seed)
+      envir <- init_envir_cv_stream(seed)
       urld <- local_url()
       dots <- parse_dots(...)
       output <- attr(dots, "output")
@@ -294,13 +293,12 @@ daemons <- function(
           store_sock_url(envir, sock, urld)
         },
         {
-          cv <- cv()
           sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
           args <- wa4(urld, n, envir[["stream"]], dots)
           res <- launch_dispatcher(sock, args, output, serial)
-          store_dispatcher(envir, sock, cv, urld, res)
+          store_dispatcher(envir, sock, urld, res)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -533,15 +531,19 @@ create_profile <- function(envir, .compute, n, dots) {
   `[[<-`(.., .compute, envir)
 }
 
-init_envir_stream <- function(seed) {
+init_envir_cv_stream <- function(seed) {
   .advance()
   oseed <- .GlobalEnv[[".Random.seed"]]
   RNGkind("L'Ecuyer-CMRG")
   if (length(seed)) set.seed(seed)
   envir <- `[[<-`(
-    new.env(hash = FALSE, parent = ..),
-    "stream",
-    .GlobalEnv[[".Random.seed"]]
+    `[[<-`(
+      new.env(hash = FALSE, parent = ..),
+      "stream",
+      .GlobalEnv[[".Random.seed"]]
+    ),
+    "cv",
+    cv()
   )
   `[[<-`(.GlobalEnv, ".Random.seed", oseed)
   envir
@@ -663,10 +665,9 @@ launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-store_dispatcher <- function(envir, sock, cv, urld, res) {
+store_dispatcher <- function(envir, sock, urld, res) {
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
-  `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "stream", NULL)
   `[[<-`(envir, "url", res[2L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
