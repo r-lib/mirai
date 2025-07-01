@@ -2,6 +2,7 @@ library(testthat)
 library(shinytest2)
 library(shiny)
 library(bslib)
+library(mirai)
 
 ui <- page_fluid(
   p("The time is ", textOutput("current_time", inline = TRUE)),
