@@ -49,10 +49,14 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::covr, any::xml2, any::shinytest2, any::shiny, any::bslib, any::withr, any::testthat
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      - name: ShinyCoreCI
+        run: test_file("tests-extra/test-mirai-cancellation.R")
+        shell: Rscript {0}
