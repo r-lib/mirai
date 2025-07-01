@@ -4,6 +4,14 @@ library(shiny)
 library(bslib)
 library(mirai)
 
+chromote::set_chrome_args(
+  c(
+    chromote::default_chrome_args(),
+    "--no-sandbox",
+    "--no-proxy-server"
+  )
+)
+
 ui <- page_fluid(
   p("The time is ", textOutput("current_time", inline = TRUE)),
   hr(),
