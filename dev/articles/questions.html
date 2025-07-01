@@ -166,10 +166,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1]  0.5181037  2.1586584 -1.0289586</span></span>
+<span><span class="co">#&gt; [1] 1.016203 1.497606 0.128886</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 1.86116214 0.08797008 0.02283249</span></span>
+<span><span class="co">#&gt; [1] -0.4182534 -0.2395251 -1.0790350</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -222,15 +222,14 @@ have access to the same functions as your host session for subsequent
 <code><a href="../reference/mirai.html">mirai()</a></code> calls.</p>
 </div>
 <div class="section level3">
-<h3 id="why-does-it-take-a-long-time-to-invoke-a-mirai-in-a-shiny-extendedtask-or-generally-why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately">4. Why does it take a long time to invoke a mirai in a Shiny
-<code>ExtendedTask</code> (or generally why does it take time for
-<code>mirai()</code> to execute when it’s meant to return
-immediately)?<a class="anchor" aria-label="anchor" href="#why-does-it-take-a-long-time-to-invoke-a-mirai-in-a-shiny-extendedtask-or-generally-why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately"></a>
+<h3 id="why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately">4. Why does it take time for <code>mirai()</code> to execute when
+it’s meant to return immediately?<a class="anchor" aria-label="anchor" href="#why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately"></a>
 </h3>
 <p>A <code><a href="../reference/mirai.html">mirai()</a></code> call is meant to return almost
-instantaneously. The only reason it would take time is if you are
-passing through large objects, which then need to be serialized to be
-sent to the parallel process.</p>
+instantaneously. The same when invoked by a Shiny
+<code>ExtendedTask</code>. The only reason it would take time is if you
+are passing through large objects, which then need to be serialized to
+be sent to the parallel process.</p>
 <p>Care should be taken when you pass a function or environment to
 <code><a href="../reference/mirai.html">mirai()</a></code> in the <code>...</code> or <code>.args</code>
 arguments. This is as a function includes its closure (enclosing
@@ -252,10 +251,11 @@ of items that are not needed for the parallel process, in which case
 consider passing individual members rather than the entire object.</li>
 </ul>
 <p>mirai does not rely on options or environment variables at all, so
-there are no object size limits to set. This follows mirai’s philosophy
-of being an enabler to widen the possibility frontier for R code, but it
-does place a responsibility on the user to ensure that the code is
-sensible and does what is desired.</p>
+there are no object size limits to set.</p>
+<p>This follows mirai’s philosophy of being an enabler to widen the
+possibility frontier for R code, but it does place a responsibility on
+the user to ensure that the code is sensible and does what is
+desired.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
