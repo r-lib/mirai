@@ -8,8 +8,7 @@
 ^pkgdown$
 ^revdep$
 ^codecov\.yml$
-^tests-extra$
-^vignettes-src$
+^dev$
 ^[\.]?air\.toml$
 ^\.vscode$
 ^cran-comments\.md$
