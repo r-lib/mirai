@@ -23,12 +23,10 @@ jobs:
         config:
           - {os: ubuntu-24.04-arm, r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,    r: 'release'}
-          - {os: ubuntu-latest,    r: 'oldrel-1'}
-          - {os: ubuntu-22.04,     r: 'oldrel-2'}
+          - {os: ubuntu-22.04,     r: 'release'}
           - {os: macOS-latest,     r: 'release'}
-          - {os: macOS-13,         r: 'oldrel-3'}
+          - {os: macOS-13,         r: 'release'}
           - {os: windows-latest,   r: 'release'}
-          - {os: windows-latest,   r: 'oldrel-4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +47,5 @@ jobs:
           needs: check
 
       - name: ShinyCoreCI
-        run: |
-          pkgload::load_all()
-          testthat::test_dir("tests-extra")
+        run: testthat::test_dir("tests-extra")
         shell: Rscript {0}

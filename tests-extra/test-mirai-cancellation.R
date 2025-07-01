@@ -1,10 +1,8 @@
+pkgload::load_all()
 library(testthat)
 library(shinytest2)
 library(shiny)
 library(bslib)
-
-# skip tests if bslib < 0.7.0 as input_task_button() is not present
-packageVersion("bslib") < "0.7.0" && return()
 
 ui <- page_fluid(
   p("The time is ", textOutput("current_time", inline = TRUE)),
