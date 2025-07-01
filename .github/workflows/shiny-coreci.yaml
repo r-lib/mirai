@@ -51,5 +51,5 @@ jobs:
         shell: Rscript {0}
 
       - name: ShinyCoreCI
-        run: testthat::test_dir("tests-extra")
+        run: testthat::test_dir("dev/tests")
         shell: Rscript {0}
