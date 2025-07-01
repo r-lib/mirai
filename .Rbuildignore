@@ -8,6 +8,7 @@
 ^pkgdown$
 ^revdep$
 ^codecov\.yml$
+^tests-extra$
 ^vignettes-src$
 ^[\.]?air\.toml$
 ^\.vscode$
