@@ -126,8 +126,8 @@ using <code>mirai::mirai({...}, environment())</code> you automatically
 capture the variables provided to the invoke method. See the Shiny
 vignette for example usage.</p>
 <p><strong>Special Case: <code>...</code>:</strong></p>
-<p>A Shiny app may use the following <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> code
-within the server component:</p>
+<p>A Shiny app may have used <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> code similar
+to the following within the server component:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
@@ -166,10 +166,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1]  0.3339189 -0.6827722 -0.3222064</span></span>
+<span><span class="co">#&gt; [1]  0.5181037  2.1586584 -1.0289586</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] -0.4858116  0.2750812 -0.1216267</span></span>
+<span><span class="co">#&gt; [1] 1.86116214 0.08797008 0.02283249</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -220,6 +220,42 @@ dynamically by <code>devtools::load_all()</code> or the underlying
 <code>devtools::load_all()</code> on all (local) daemons. They will then
 have access to the same functions as your host session for subsequent
 <code><a href="../reference/mirai.html">mirai()</a></code> calls.</p>
+</div>
+<div class="section level3">
+<h3 id="why-does-it-take-a-long-time-to-invoke-a-mirai-in-a-shiny-extendedtask-or-generally-why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately">4. Why does it take a long time to invoke a mirai in a Shiny
+<code>ExtendedTask</code> (or generally why does it take time for
+<code>mirai()</code> to execute when it’s meant to return
+immediately)?<a class="anchor" aria-label="anchor" href="#why-does-it-take-a-long-time-to-invoke-a-mirai-in-a-shiny-extendedtask-or-generally-why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately"></a>
+</h3>
+<p>A <code><a href="../reference/mirai.html">mirai()</a></code> call is meant to return almost
+instantaneously. The only reason it would take time is if you are
+passing through large objects, which then need to be serialized to be
+sent to the parallel process.</p>
+<p>Care should be taken when you pass a function or environment to
+<code><a href="../reference/mirai.html">mirai()</a></code> in the <code>...</code> or <code>.args</code>
+arguments. This is as a function includes its closure (enclosing
+environment), and an environment its parent environments. This means you
+could be passing more than you bargained for.</p>
+<p>Generally, <code>obj_size()</code> from the lobstr package is a great
+function for checking the actual size of an object (capturing many cases
+more accurately than the base R <code>object.size</code>).</p>
+<p>As mitigation for accidentally passing large objects:</p>
+<ul>
+<li>For functions, use <code>crate()</code> from the carrier package.
+This is what we use in purrr, and it makes sure only what’s necessary is
+‘crated’ with the function.</li>
+<li>For environments, consider using
+<code>parent.env(e) &lt;- emptyenv()</code>. This is not required for R6
+classes as they are already isolated by default. Regardless of any
+parent environment, an environment / R6 class could still contain a lot
+of items that are not needed for the parallel process, in which case
+consider passing individual members rather than the entire object.</li>
+</ul>
+<p>mirai does not rely on options or environment variables at all, so
+there are no object size limits to set. This follows mirai’s philosophy
+of being an enabler to widen the possibility frontier for R code, but it
+does place a responsibility on the user to ensure that the code is
+sensible and does what is desired.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
