@@ -49,7 +49,7 @@ See the Shiny vignette for example usage.
 
 **Special Case: `...`:**
 
-A Shiny app may use the following `future_promise()` code within the server component:
+A Shiny app may have used `future_promise()` code similar to the following within the server component:
 
 ```r
 func <- function(x, y){
@@ -112,3 +112,18 @@ Another option would be to set the random seed within a local execution scope to
 A mirai call usually requires package-namespaced functions. However the latest version of a package in development is often loaded dynamically by `devtools::load_all()` or the underlying `pkgload::load_all()` for quick iteration.
 
 In this case, use `everywhere()` to also call `devtools::load_all()` on all (local) daemons. They will then have access to the same functions as your host session for subsequent `mirai()` calls.
+
+### 4. Why does it take a long time to invoke a mirai in a Shiny `ExtendedTask` (or generally why does it take time for `mirai()` to execute when it's meant to return immediately)?
+
+A `mirai()` call is meant to return almost instantaneously. The only reason it would take time is if you are passing through large objects, which then need to be serialized to be sent to the parallel process.
+
+Care should be taken when you pass a function or environment to `mirai()` in the `...` or `.args` arguments. This is as a function includes its closure (enclosing environment), and an environment its parent environments. This means you could be passing more than you bargained for.
+
+Generally, `obj_size()` from the lobstr package is a great function for checking the actual size of an object (capturing many cases more accurately than the base R `object.size`).
+
+As mitigation for accidentally passing large objects:
+
+- For functions, use `crate()` from the carrier package. This is what we use in purrr, and it makes sure only what's necessary is 'crated' with the function.
+- For environments, consider using `parent.env(e) <- emptyenv()`. This is not required for R6 classes as they are already isolated by default. Regardless of any parent environment, an environment / R6 class could still contain a lot of items that are not needed for the parallel process, in which case consider passing individual members rather than the entire object.
+
+mirai does not rely on options or environment variables at all, so there are no object size limits to set. This follows mirai's philosophy of being an enabler to widen the possibility frontier for R code, but it does place a responsibility on the user to ensure that the code is sensible and does what is desired.
