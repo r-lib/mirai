@@ -58,5 +58,7 @@ jobs:
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
       - name: ShinyCoreCI
-        run: testthat::test_file("tests-extra/test-mirai-cancellation.R")
+        run: |
+          pkgload::load_all()
+          testthat::test_file("tests-extra/test-mirai-cancellation.R")
         shell: Rscript {0}
