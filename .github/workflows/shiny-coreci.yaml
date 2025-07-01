@@ -23,9 +23,9 @@ jobs:
         config:
           - {os: ubuntu-24.04-arm, r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,    r: 'release'}
-          - {os: ubuntu-22.04,     r: 'release'}
+          - {os: ubuntu-22.04,     r: 'oldrel-1'}
           - {os: macOS-latest,     r: 'release'}
-          - {os: macOS-13,         r: 'release'}
+          - {os: macOS-13,         r: 'oldrel-2'}
           - {os: windows-latest,   r: 'release'}
 
     env:
@@ -43,11 +43,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2, any::shinytest2, any::shiny, any::bslib, any::withr, any::testthat
+          extra-packages: any::shinytest2, any::shiny, any::bslib, any::withr, any::testthat
           needs: check
 
       - name: Install mirai
-        run: R CMD INSTALL .
+        run: install.packages(".", repos = NULL, type = "source")
+        shell: Rscript {0}
 
       - name: ShinyCoreCI
         run: testthat::test_dir("tests-extra")
