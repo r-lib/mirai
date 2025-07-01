@@ -46,6 +46,9 @@ jobs:
           extra-packages: any::covr, any::xml2, any::shinytest2, any::shiny, any::bslib, any::withr, any::testthat
           needs: check
 
+      - name: Install mirai
+        run: R CMD INSTALL .
+
       - name: ShinyCoreCI
         run: testthat::test_dir("tests-extra")
         shell: Rscript {0}

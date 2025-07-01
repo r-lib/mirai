@@ -1,4 +1,3 @@
-pkgload::load_all()
 library(testthat)
 library(shinytest2)
 library(shiny)
