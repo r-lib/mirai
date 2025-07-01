@@ -60,5 +60,5 @@ jobs:
       - name: ShinyCoreCI
         run: |
           pkgload::load_all()
-          testthat::test_file("tests-extra/test-mirai-cancellation.R")
+          testthat::test_dir("tests-extra")
         shell: Rscript {0}
