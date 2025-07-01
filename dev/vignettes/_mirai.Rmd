@@ -25,20 +25,20 @@ Futures are an abstraction that represent the result of code evaluation that wil
 
 The package has one main function: `mirai()` to create a mirai object.
 
-This function returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue.
+This function returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue with other things.
 
 As the mirai expression is sent to another process, it must be self-contained.
 This means that any functions and variables used in it must be available in that process as well.
 This requires that:
 
 - Package functions be namespaced using `::`, or `library()` calls be made within the expression.
-- Other functions/data/objects required by the expression should be passed via the `...` argument, to be sent along to the daemon.
+- Other functions/data/objects required by the expression should be passed via `...` or `.args` to be sent along to the daemon.
 
-A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is helper function to check the state of a mirai.
+A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
 
 For a mirai `m`, the result is available at `m$data` once it has resolved.
-If successful, this will be the return value of the evaluated expression.
-If the expression errored or caused the process to crash then this will be an 'errorValue' instead.
+Normally this will be the return value of the evaluated expression.
+If the expression errored, caused the process to crash, or timed out then this will be an 'errorValue' instead.
 See the section [Errors in a mirai](#errors-in-a-mirai) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
@@ -385,6 +385,10 @@ daemons(0)
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
 ### 6. Launching Remote Daemons
+
+The launcher analogy is appropriate, as they are ways to execute a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
+
+The local launcher simply runs an `Rscript` instance via a local shell. The remote launcher uses a method to run this `Rscript` command on a remote machine.
 
 To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
 
