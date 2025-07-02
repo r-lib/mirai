@@ -91,6 +91,8 @@ cli_enabled <- FALSE
     n_one = "`n` must be 1 or greater",
     n_zero = "the number of daemons must be zero or greater",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
+    rstudio_api = "workbench launcher requires the `rstudioapi` package",
+    rstudio_unavailable = "workbench launcher requires a compatible environment",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     synchronous = "daemons cannot be launched for synchronous compute profiles",

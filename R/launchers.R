@@ -89,6 +89,23 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   tls <- envir[["tls"]]
 
+  if (length(remote) == 2L) {
+    requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
+    rstudioapi::launcherAvailable()
+    cluster <- remote[["name"]]
+    container <- rstudioapi::launcherContainer(remote[["image"]])
+    lapply(
+      seq_len(n),
+      function(x) rstudioapi::launcherSubmitJob(
+        sprintf("mirai_daemon_%d", x),
+        cluster = cluster,
+        command = launch_remote(),
+        container = container
+      )
+    )
+    return(invisible())
+  }
+
   command <- remote[["command"]]
   rscript <- remote[["rscript"]]
   quote <- remote[["quote"]]
@@ -376,6 +393,34 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
   options <- gsub("^[ \t]+|(?<=\n)[ \t]+", "", options, perl = TRUE)
   args <- c(sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n", command, options), ".", "\nEOF")
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
+}
+
+#' Workbench Remote Launch Configuration
+#'
+#' Generates a remote configuration for launching daemons using the default
+#' launcher configured in Posit Workbench.
+#'
+#' @inherit remote_config return
+#'
+#' @seealso [ssh_config()], [cluster_config()], and [remote_config()] for other
+#'   remote launch configurations.
+#'
+#' @examples
+#' tryCatch(workbench_config(), error = identity)
+#'
+#' \dontrun{
+#'
+#' # Launch 2 daemons using the Workbench default launcher:
+#' daemons(n = 2, url = host_url(), remote = workbench_config())
+#' }
+#'
+#' @export
+#'
+workbench_config <- function() {
+  requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
+  rstudioapi::launcherAvailable()
+  cluster <- rstudioapi::launcherGetInfo()[["clusters"]][[1L]]
+  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
 }
 
 #' URL Constructors
