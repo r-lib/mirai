@@ -414,7 +414,7 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' Workbench Remote Launch Configuration
 #'
 #' Generates a remote configuration for launching daemons using the default
-#' launcher configured in Posit Workbench.
+#' configured Kubernetes or traditional cluster in Posit Workbench.
 #'
 #' @inherit remote_config return
 #'
@@ -426,7 +426,7 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'
 #' \dontrun{
 #'
-#' # Launch 2 daemons using the Workbench default launcher:
+#' # Launch 2 daemons using the Workbench default:
 #' daemons(n = 2, url = host_url(), remote = workbench_config())
 #' }
 #'
