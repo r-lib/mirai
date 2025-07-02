@@ -130,20 +130,28 @@ your package as a convenience.</li>
 accidental recursive creation of daemons on the same machine, for
 example if your function is used within another package’s function that
 also uses mirai.</li>
-<li>Exceptionally, including a <code><a href="../reference/daemons.html">daemons()</a></code> call may be
-appropriate for async operations using a single dedicated non-dispatcher
-daemon. A representative example of this usage pattern is
-<code>logger::appender_async()</code>, where the logger package’s
-‘namespace’ concept maps directly to mirai’s ‘compute profile’.</li>
+<li>Exceptionally, a
+<code>daemons(n = 1, dispatcher = FALSE, .compute = ...)</code> call may
+be used to set up a single dedicated daemon, but only if used with a
+unique value for <code>.compute</code>. A representative example of this
+usage pattern is <code>logger::appender_async()</code>, where the logger
+package’s ‘namespace’ concept maps directly to mirai’s ‘compute
+profile’.</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li><p>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not
-be used programatically, as this user interface is subject to change at
-any time. Use <code><a href="../reference/nextstream.html">nextget()</a></code> instead.</p></li>
-<li><p>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
+<li>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not be
+used programatically, as this user interface is subject to change at any
+time. Use <code><a href="../reference/nextstream.html">nextget()</a></code> where possible instead.</li>
+</ol>
+<ul>
+<li>An exception is that <code>status()$connections</code> may be used
+to return the total number of daemon connections at any time.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
 <code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>, <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
 <code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> should be used to test for the
-relevant state of a mirai or its value.</p></li>
+relevant state of a mirai or its value.</li>
 </ol>
 <ul>
 <li>The characteristics of their current implementation, e.g. as a
