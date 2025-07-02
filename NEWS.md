@@ -2,6 +2,7 @@
 
 #### New Features
 
+* Adds `workbench_config()` to launch remote daemons using the default-configured Kubernetes or traditional cluster on Posit Workbench.
 * New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
   This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
 
