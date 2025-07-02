@@ -31,7 +31,8 @@ Imports:
 Suggests: 
     cli,
     litedown,
-    otel
+    otel,
+    rstudioapi
 Enhances: 
     parallel,
     promises
