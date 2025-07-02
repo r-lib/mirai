@@ -77,11 +77,7 @@ cluster_config(
 \dontrun{
 
 # Launch 2 daemons using the Slurm sbatch defaults:
-daemons(
-  n = 2,
-  url = host_url(),
-  remote = cluster_config())
-)
+daemons(n = 2, url = host_url(), remote = cluster_config())
 }
 
 }
