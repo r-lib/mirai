@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Adds `workbench_config()` to launch remote daemons using the default-configured Kubernetes or traditional cluster on Posit Workbench.
+
 #### Updates
 
 * `daemons()` gains a `tlscert` argument to specify custom TLS certificates to pass to the daemon.
