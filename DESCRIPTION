@@ -29,7 +29,8 @@ Suggests:
     cli,
     litedown,
     otel,
-    otelsdk
+    otelsdk,
+    rstudioapi
 Enhances: 
     parallel,
     promises
