@@ -6,6 +6,10 @@
   Returns immediately if any mirai is already resolved, and returns `0L` for empty lists.
   This enables efficient removal from the list via `remaining <- remaining[-idx]`.
 
+#### New Features
+
+* Adds `workbench_config()` to launch remote daemons using the default-configured Kubernetes or traditional cluster on Posit Workbench.
+
 #### Updates
 
 * A `miraiError` gains `conditionCall` and `conditionMessage` methods (@jan-swissre, #529)
