@@ -26,10 +26,10 @@
 #'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
 #'   .context cv cv_signal cv_value dial .interrupt ip_addr
-#'   is_error_value .keep listen .mark mclock monitor msleep nng_error opt opt<-
-#'   parse_url pipe_id pipe_notify random .read_header .read_marker read_monitor
-#'   reap recv recv_aio request send serial_config socket stat stop_aio
-#'   tls_config unresolved .unresolved until wait write_cert
+#'   is_error_value .keep listen .mark mclock monitor msleep ncurl nng_error opt
+#'   opt<- parse_url pipe_id pipe_notify random .read_header .read_marker
+#'   read_monitor reap recv recv_aio request send serial_config socket stat
+#'   stop_aio tls_config unresolved .unresolved until wait write_cert
 #'
 "_PACKAGE"
 
@@ -82,7 +82,7 @@
     n_zero = "the number of daemons must be zero or greater",
     not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
-    rstudio_api = "workbench launcher requires the `rstudioapi` package",
+    rstudio_api = "workbench launcher can only be used in Posit Workbench",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     within_map = "cannot create local daemons from within mirai map"
