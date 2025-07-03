@@ -12,14 +12,14 @@ of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remot
 }
 \description{
 Generates a remote configuration for launching daemons using the default
-launcher configured in Posit Workbench.
+configured Kubernetes or traditional cluster in Posit Workbench.
 }
 \examples{
 tryCatch(workbench_config(), error = identity)
 
 \dontrun{
 
-# Launch 2 daemons using the Workbench default launcher:
+# Launch 2 daemons using the Workbench default:
 daemons(n = 2, url = host_url(), remote = workbench_config())
 }
 

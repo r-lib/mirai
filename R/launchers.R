@@ -109,20 +109,26 @@ launch_remote <- function(
   if (is.null(tls)) tls <- envir[["tls"]]
 
   if (length(remote) == 2L) {
-    requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
-    rstudioapi::launcherAvailable()
-    cluster <- remote[["name"]]
-    container <- rstudioapi::launcherContainer(remote[["image"]])
-    lapply(
+    server <- Sys.getenv("RS_SERVER_ADDRESS")
+    cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+    nzchar(server) && nzchar(cookie) || stop(._[["rstudio_api"]])
+
+    res <- lapply(
       seq_len(n),
-      function(x) rstudioapi::launcherSubmitJob(
-        sprintf("mirai_daemon_%d", x),
-        cluster = cluster,
-        command = launch_remote(),
-        container = container
-      )
+      function(i) ncurl(
+        sprintf("%s/api/launch_job", server),
+        method = "POST",
+        headers = c(cookie = cookie),
+        data = sprintf(
+          '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"name":"mirai_daemon_%d","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
+          remote[["cluster"]],
+          remote[["image"]],
+          i,
+          nextget("url")
+        )
+      )[["status"]]
     )
-    return(invisible())
+    return(as.integer(res))
   }
 
   command <- remote[["command"]]
@@ -470,10 +476,18 @@ cluster_config <- function(
 #' @export
 #'
 workbench_config <- function() {
-  requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
-  rstudioapi::launcherAvailable()
-  cluster <- rstudioapi::launcherGetInfo()[["clusters"]][[1L]]
-  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
+  server <- Sys.getenv("RS_SERVER_ADDRESS")
+  cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  nzchar(server) && nzchar(cookie) || stop(._[["rstudio_api"]])
+  res <- ncurl(
+    sprintf("%s/api/get_compute_envs", server),
+    headers = c(cookie = cookie),
+    data = '{"method":"get_compute_envs"}'
+  )
+  json <- res[["data"]]
+  cluster <- regmatches(json, regexpr('(?<=default_cluster":")([^"]*)', json, perl = TRUE))
+  image <- regmatches(json, regexpr('(?<=defaultImage":")([^"]*)', json, perl = TRUE))
+  list(cluster = cluster, image = image)
 }
 
 #' URL Constructors
