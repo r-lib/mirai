@@ -1,5 +1,11 @@
 # mirai (development version)
 
+#### Behavioural Changes
+
+* The `seed` argument of `daemons()` now changes the default random seed behaviour.
+  The default uses L'Ecuyer-CMRG RNG streams advanced per daemon, which produces statistically-sound yet generally non-reproducible results.
+  Setting a seed now initialises a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, and hence does provide reproducible results.
+
 #### Updates
 
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
