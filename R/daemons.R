@@ -24,8 +24,7 @@
 #'
 #' If the host session ends, all connected dispatcher and daemon processes
 #' automatically exit as soon as their connections are dropped (unless the
-#' daemons were started with `autoexit = FALSE`). If a daemon is processing
-#' a task, it will exit as soon as the task is complete.
+#' daemons were started with `autoexit = FALSE`).
 #'
 #' To reset persistent daemons started with `autoexit = FALSE`, use
 #' `daemons(NULL)` instead, which also sends exit signals to all connected
@@ -104,11 +103,11 @@
 #' @section Distributed Computing:
 #'
 #' Specify `url` as a character string to allow tasks to be distributed across
-#' the network (`n` is not required in this case, unless also providing a launch
+#' the network (`n` is only required in this case if also providing a launch
 #' configuration to `remote`).
 #'
-#' The host / dispatcher listens at this address, utilising a single port, and
-#' [daemon()] processes dial in to this address. Host / dispatcher automatically
+#' The host / dispatcher listens at this URL, utilising a single port, and
+#' [daemon()] processes dial in to this URL. Host / dispatcher automatically
 #' adjusts to the number of daemons actually connected, allowing dynamic
 #' upscaling / downscaling.
 #'
@@ -127,16 +126,16 @@
 #' the actual assigned port at any time.
 #'
 #' Specify `remote` with a call to [ssh_config()], [cluster_config()] or
-#' [remote_config()] to launch daemons on remote machines. This programatically
-#' deploys daemons on remote resources, dialing back to `url`. If not launching
-#' daemons, [launch_remote()] may be used to generate the shell commands for
-#' manual deployment.
+#' [remote_config()] to launch (programatically deploy) daemons on remote
+#' machines, from where they dial back to `url`. If not launching daemons,
+#' [launch_remote()] may be used to generate the shell commands for manual
+#' deployment.
 #'
 #' @section Compute Profiles:
 #'
-#' If `NULL`, the `"default"` compute profile is used. Providing a character value
-#' for `.compute` creates a new compute profile with the name specified. Each
-#' compute profile retains its own daemons settings, and may be operated
+#' If `NULL`, the `"default"` compute profile is used. Providing a character
+#' value for `.compute` creates a new compute profile with the name specified.
+#' Each compute profile retains its own daemons settings, and may be operated
 #' independently of each other. Some usage examples follow:
 #'
 #' **local / remote** daemons may be set with a host URL and specifying

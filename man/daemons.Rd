@@ -97,8 +97,7 @@ settings.
 
 If the host session ends, all connected dispatcher and daemon processes
 automatically exit as soon as their connections are dropped (unless the
-daemons were started with \code{autoexit = FALSE}). If a daemon is processing
-a task, it will exit as soon as the task is complete.
+daemons were started with \code{autoexit = FALSE}).
 
 To reset persistent daemons started with \code{autoexit = FALSE}, use
 \code{daemons(NULL)} instead, which also sends exit signals to all connected
@@ -141,11 +140,11 @@ or where concurrent tasks typically do not exceed available daemons.
 
 
 Specify \code{url} as a character string to allow tasks to be distributed across
-the network (\code{n} is not required in this case, unless also providing a launch
+the network (\code{n} is only required in this case if also providing a launch
 configuration to \code{remote}).
 
-The host / dispatcher listens at this address, utilising a single port, and
-\code{\link[=daemon]{daemon()}} processes dial in to this address. Host / dispatcher automatically
+The host / dispatcher listens at this URL, utilising a single port, and
+\code{\link[=daemon]{daemon()}} processes dial in to this URL. Host / dispatcher automatically
 adjusts to the number of daemons actually connected, allowing dynamic
 upscaling / downscaling.
 
@@ -164,18 +163,18 @@ will automatically assign a free ephemeral port. Use \code{\link[=status]{status
 the actual assigned port at any time.
 
 Specify \code{remote} with a call to \code{\link[=ssh_config]{ssh_config()}}, \code{\link[=cluster_config]{cluster_config()}} or
-\code{\link[=remote_config]{remote_config()}} to launch daemons on remote machines. This programatically
-deploys daemons on remote resources, dialing back to \code{url}. If not launching
-daemons, \code{\link[=launch_remote]{launch_remote()}} may be used to generate the shell commands for
-manual deployment.
+\code{\link[=remote_config]{remote_config()}} to launch (programatically deploy) daemons on remote
+machines, from where they dial back to \code{url}. If not launching daemons,
+\code{\link[=launch_remote]{launch_remote()}} may be used to generate the shell commands for manual
+deployment.
 }
 
 \section{Compute Profiles}{
 
 
-If \code{NULL}, the \code{"default"} compute profile is used. Providing a character value
-for \code{.compute} creates a new compute profile with the name specified. Each
-compute profile retains its own daemons settings, and may be operated
+If \code{NULL}, the \code{"default"} compute profile is used. Providing a character
+value for \code{.compute} creates a new compute profile with the name specified.
+Each compute profile retains its own daemons settings, and may be operated
 independently of each other. Some usage examples follow:
 
 \strong{local / remote} daemons may be set with a host URL and specifying
