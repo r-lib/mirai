@@ -55,8 +55,8 @@
 #' `.expr`.
 #'
 #' For evaluation to occur *as if* in your global environment, supply objects to
-#' `...` rather than `.args`, e.g. for free variables or helper functions
-#' defined in function bodies, as scoping rules may otherwise prevent them from
+#' `...` rather than `.args`, e.g. for non-local variables or helper functions
+#' required by other functions, as scoping rules may otherwise prevent them from
 #' being found.
 #'
 #' @section Timeouts:
@@ -94,7 +94,10 @@
 #' # passing the calling environment to '...'
 #' df1 <- data.frame(a = 1, b = 2)
 #' df2 <- data.frame(a = 3, b = 1)
-#' m <- mirai(as.matrix(rbind(df1, df2)), environment(), .timeout = 1000)
+#' df_matrix <- function(x, y) {
+#'   mirai(as.matrix(rbind(x, y)), environment(), .timeout = 1000)
+#' }
+#' m <- df_matrix(df1, df2)
 #' m[]
 #'
 #' # using unresolved()

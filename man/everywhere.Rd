@@ -59,8 +59,8 @@ Functions from a package should use namespaced calls such as
 \code{.expr}.
 
 For evaluation to occur \emph{as if} in your global environment, supply objects to
-\code{...} rather than \code{.args}, e.g. for free variables or helper functions
-defined in function bodies, as scoping rules may otherwise prevent them from
+\code{...} rather than \code{.args}, e.g. for non-local variables or helper functions
+required by other functions, as scoping rules may otherwise prevent them from
 being found.
 }
 
