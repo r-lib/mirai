@@ -110,12 +110,13 @@ optionally \code{.compute}) returns the value of \code{\link[=status]{status()}}
 \section{Local Daemons}{
 
 
-Daemons provide a potentially more efficient solution for asynchronous
-operations as new processes no longer need to be created on an \emph{ad hoc}
-basis.
+Setting daemons, or persistent background processes, is typically more
+efficient as it removes the need for, and overhead of, creating new processes
+for each mirai evaluation. It also provides control over the total number of
+processes at any one time.
 
 Supply the argument \code{n} to set the number of daemons. New background
-\code{\link[=daemon]{daemon()}} processes are automatically created on the local machine
+\code{\link[=daemon]{daemon()}} processes are automatically launched on the local machine
 connecting back to the host process, either directly or via dispatcher.
 }
 
@@ -139,16 +140,16 @@ or where concurrent tasks typically do not exceed available daemons.
 \section{Distributed Computing}{
 
 
-Specifying \code{url} as a character string allows tasks to be distributed across
-the network. \code{n} is only required in this case if providing a launch
-configuration to \code{remote} to launch remote daemons.
+Specify \code{url} as a character string to allow tasks to be distributed across
+the network (\code{n} is not required in this case, unless also providing a launch
+configuration to \code{remote}).
 
-Supply a URL with a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'. The
-host / dispatcher listens at this address, utilising a single port.
-Individual daemons (started with \code{\link[=daemon]{daemon()}}) may then dial in to this URL.
-Host / dispatcher automatically adjusts to the number of daemons actually
-connected, allowing dynamic upscaling or downscaling as required.
+The host / dispatcher listens at this address, utilising a single port, and
+\code{\link[=daemon]{daemon()}} processes dial in to this address. Host / dispatcher automatically
+adjusts to the number of daemons actually connected, allowing dynamic
+upscaling / downscaling.
 
+The URL should have a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'.
 Switching the URL scheme to 'tls+tcp://' automatically upgrades the
 connection to use TLS. The auxiliary function \code{\link[=host_url]{host_url()}} may be used to
 construct a valid host URL based on the computer's IP address.
@@ -162,9 +163,11 @@ Specifying the wildcard value zero for the port number e.g. 'tcp://[::1]:0'
 will automatically assign a free ephemeral port. Use \code{\link[=status]{status()}} to inspect
 the actual assigned port at any time.
 
-Specify \code{remote} with a call to \code{\link[=remote_config]{remote_config()}} or \code{\link[=ssh_config]{ssh_config()}} to launch
-daemons on remote machines. Otherwise, \code{\link[=launch_remote]{launch_remote()}} may be used to
-generate the shell commands to deploy daemons manually on remote resources.
+Specify \code{remote} with a call to \code{\link[=ssh_config]{ssh_config()}}, \code{\link[=cluster_config]{cluster_config()}} or
+\code{\link[=remote_config]{remote_config()}} to launch daemons on remote machines. This programatically
+deploys daemons on remote resources, dialing back to \code{url}. If not launching
+daemons, \code{\link[=launch_remote]{launch_remote()}} may be used to generate the shell commands for
+manual deployment.
 }
 
 \section{Compute Profiles}{

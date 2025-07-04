@@ -77,12 +77,13 @@
 #'
 #' @section Local Daemons:
 #'
-#' Daemons provide a potentially more efficient solution for asynchronous
-#' operations as new processes no longer need to be created on an *ad hoc*
-#' basis.
+#' Setting daemons, or persistent background processes, is typically more
+#' efficient as it removes the need for, and overhead of, creating new processes
+#' for each mirai evaluation. It also provides control over the total number of
+#' processes at any one time.
 #'
 #' Supply the argument `n` to set the number of daemons. New background
-#' [daemon()] processes are automatically created on the local machine
+#' [daemon()] processes are automatically launched on the local machine
 #' connecting back to the host process, either directly or via dispatcher.
 #'
 #' @section Dispatcher:
@@ -102,16 +103,16 @@
 #'
 #' @section Distributed Computing:
 #'
-#' Specifying `url` as a character string allows tasks to be distributed across
-#' the network. `n` is only required in this case if providing a launch
-#' configuration to `remote` to launch remote daemons.
+#' Specify `url` as a character string to allow tasks to be distributed across
+#' the network (`n` is not required in this case, unless also providing a launch
+#' configuration to `remote`).
 #'
-#' Supply a URL with a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'. The
-#' host / dispatcher listens at this address, utilising a single port.
-#' Individual daemons (started with [daemon()]) may then dial in to this URL.
-#' Host / dispatcher automatically adjusts to the number of daemons actually
-#' connected, allowing dynamic upscaling or downscaling as required.
+#' The host / dispatcher listens at this address, utilising a single port, and
+#' [daemon()] processes dial in to this address. Host / dispatcher automatically
+#' adjusts to the number of daemons actually connected, allowing dynamic
+#' upscaling / downscaling.
 #'
+#' The URL should have a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'.
 #' Switching the URL scheme to 'tls+tcp://' automatically upgrades the
 #' connection to use TLS. The auxiliary function [host_url()] may be used to
 #' construct a valid host URL based on the computer's IP address.
@@ -125,9 +126,11 @@
 #' will automatically assign a free ephemeral port. Use [status()] to inspect
 #' the actual assigned port at any time.
 #'
-#' Specify `remote` with a call to [remote_config()] or [ssh_config()] to launch
-#' daemons on remote machines. Otherwise, [launch_remote()] may be used to
-#' generate the shell commands to deploy daemons manually on remote resources.
+#' Specify `remote` with a call to [ssh_config()], [cluster_config()] or
+#' [remote_config()] to launch daemons on remote machines. This programatically
+#' deploys daemons on remote resources, dialing back to `url`. If not launching
+#' daemons, [launch_remote()] may be used to generate the shell commands for
+#' manual deployment.
 #'
 #' @section Compute Profiles:
 #'
