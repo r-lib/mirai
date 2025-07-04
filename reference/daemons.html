@@ -183,11 +183,12 @@ optionally <code>.compute</code>) returns the value of <code><a href="status.htm
 
 
 
-<p>Daemons provide a potentially more efficient solution for asynchronous
-operations as new processes no longer need to be created on an <em>ad hoc</em>
-basis.</p>
+<p>Setting daemons, or persistent background processes, is typically more
+efficient as it removes the need for, and overhead of, creating new processes
+for each mirai evaluation. It also provides control over the total number of
+processes at any one time.</p>
 <p>Supply the argument <code>n</code> to set the number of daemons. New background
-<code><a href="daemon.html">daemon()</a></code> processes are automatically created on the local machine
+<code><a href="daemon.html">daemon()</a></code> processes are automatically launched on the local machine
 connecting back to the host process, either directly or via dispatcher.</p>
     </div>
     <div class="section level2">
@@ -212,15 +213,15 @@ or where concurrent tasks typically do not exceed available daemons.</p>
 
 
 
-<p>Specifying <code>url</code> as a character string allows tasks to be distributed across
-the network. <code>n</code> is only required in this case if providing a launch
-configuration to <code>remote</code> to launch remote daemons.</p>
-<p>Supply a URL with a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'. The
-host / dispatcher listens at this address, utilising a single port.
-Individual daemons (started with <code><a href="daemon.html">daemon()</a></code>) may then dial in to this URL.
-Host / dispatcher automatically adjusts to the number of daemons actually
-connected, allowing dynamic upscaling or downscaling as required.</p>
-<p>Switching the URL scheme to 'tls+tcp://' automatically upgrades the
+<p>Specify <code>url</code> as a character string to allow tasks to be distributed across
+the network (<code>n</code> is not required in this case, unless also providing a launch
+configuration to <code>remote</code>).</p>
+<p>The host / dispatcher listens at this address, utilising a single port, and
+<code><a href="daemon.html">daemon()</a></code> processes dial in to this address. Host / dispatcher automatically
+adjusts to the number of daemons actually connected, allowing dynamic
+upscaling / downscaling.</p>
+<p>The URL should have a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'.
+Switching the URL scheme to 'tls+tcp://' automatically upgrades the
 connection to use TLS. The auxiliary function <code><a href="host_url.html">host_url()</a></code> may be used to
 construct a valid host URL based on the computer's IP address.</p>
 <p>IPv6 addresses are also supported and must be enclosed in square brackets
@@ -230,9 +231,11 @@ example, port 5555 on the IPv6 loopback address ::1 would be specified as
 <p>Specifying the wildcard value zero for the port number e.g. 'tcp://[::1]:0'
 will automatically assign a free ephemeral port. Use <code><a href="status.html">status()</a></code> to inspect
 the actual assigned port at any time.</p>
-<p>Specify <code>remote</code> with a call to <code><a href="remote_config.html">remote_config()</a></code> or <code><a href="ssh_config.html">ssh_config()</a></code> to launch
-daemons on remote machines. Otherwise, <code><a href="launch_local.html">launch_remote()</a></code> may be used to
-generate the shell commands to deploy daemons manually on remote resources.</p>
+<p>Specify <code>remote</code> with a call to <code><a href="ssh_config.html">ssh_config()</a></code>, <code><a href="cluster_config.html">cluster_config()</a></code> or
+<code><a href="remote_config.html">remote_config()</a></code> to launch daemons on remote machines. This programatically
+deploys daemons on remote resources, dialing back to <code>url</code>. If not launching
+daemons, <code><a href="launch_local.html">launch_remote()</a></code> may be used to generate the shell commands for
+manual deployment.</p>
     </div>
     <div class="section level2">
     <h2 id="compute-profiles">Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a></h2>
