@@ -170,8 +170,7 @@ settings for a compute profile. Daemons may be added at any time by using
 settings.</p></li>
 </ul><p>If the host session ends, all connected dispatcher and daemon processes
 automatically exit as soon as their connections are dropped (unless the
-daemons were started with <code>autoexit = FALSE</code>). If a daemon is processing
-a task, it will exit as soon as the task is complete.</p>
+daemons were started with <code>autoexit = FALSE</code>).</p>
 <p>To reset persistent daemons started with <code>autoexit = FALSE</code>, use
 <code>daemons(NULL)</code> instead, which also sends exit signals to all connected
 daemons prior to resetting.</p>
@@ -214,10 +213,10 @@ or where concurrent tasks typically do not exceed available daemons.</p>
 
 
 <p>Specify <code>url</code> as a character string to allow tasks to be distributed across
-the network (<code>n</code> is not required in this case, unless also providing a launch
+the network (<code>n</code> is only required in this case if also providing a launch
 configuration to <code>remote</code>).</p>
-<p>The host / dispatcher listens at this address, utilising a single port, and
-<code><a href="daemon.html">daemon()</a></code> processes dial in to this address. Host / dispatcher automatically
+<p>The host / dispatcher listens at this URL, utilising a single port, and
+<code><a href="daemon.html">daemon()</a></code> processes dial in to this URL. Host / dispatcher automatically
 adjusts to the number of daemons actually connected, allowing dynamic
 upscaling / downscaling.</p>
 <p>The URL should have a 'tcp://' scheme, such as 'tcp://10.75.32.70:5555'.
@@ -232,19 +231,19 @@ example, port 5555 on the IPv6 loopback address ::1 would be specified as
 will automatically assign a free ephemeral port. Use <code><a href="status.html">status()</a></code> to inspect
 the actual assigned port at any time.</p>
 <p>Specify <code>remote</code> with a call to <code><a href="ssh_config.html">ssh_config()</a></code>, <code><a href="cluster_config.html">cluster_config()</a></code> or
-<code><a href="remote_config.html">remote_config()</a></code> to launch daemons on remote machines. This programatically
-deploys daemons on remote resources, dialing back to <code>url</code>. If not launching
-daemons, <code><a href="launch_local.html">launch_remote()</a></code> may be used to generate the shell commands for
-manual deployment.</p>
+<code><a href="remote_config.html">remote_config()</a></code> to launch (programatically deploy) daemons on remote
+machines, from where they dial back to <code>url</code>. If not launching daemons,
+<code><a href="launch_local.html">launch_remote()</a></code> may be used to generate the shell commands for manual
+deployment.</p>
     </div>
     <div class="section level2">
     <h2 id="compute-profiles">Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a></h2>
 
 
 
-<p>If <code>NULL</code>, the <code>"default"</code> compute profile is used. Providing a character value
-for <code>.compute</code> creates a new compute profile with the name specified. Each
-compute profile retains its own daemons settings, and may be operated
+<p>If <code>NULL</code>, the <code>"default"</code> compute profile is used. Providing a character
+value for <code>.compute</code> creates a new compute profile with the name specified.
+Each compute profile retains its own daemons settings, and may be operated
 independently of each other. Some usage examples follow:</p>
 <p><strong>local / remote</strong> daemons may be set with a host URL and specifying
 <code>.compute</code> as <code>"remote"</code>, which creates a new compute profile. Subsequent
