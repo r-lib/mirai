@@ -9,7 +9,7 @@ articles:
   mirai: mirai.html
   packages: packages.html
   questions: questions.html
-last_built: 2025-07-07T11:05Z
+last_built: 2025-07-07T13:05Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles
