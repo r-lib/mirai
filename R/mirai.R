@@ -146,6 +146,8 @@ mirai <- function(
   .compute = NULL
 ) {
   missing(.expr) && stop(._[["missing_expression"]])
+  if (is.null(.compute)) .compute <- .[["cp"]]
+  envir <- ..[[.compute]]
 
   expr <- substitute(.expr)
   globals <- list(...)
@@ -159,6 +161,8 @@ mirai <- function(
       }
       all(nzchar(gn)) || stop(._[["named_dots"]])
     }
+  if (length(envir[["seed"]]))
+    globals[[".Random.seed"]] <- next_stream(envir)
   data <- list(
     ._mirai_globals_. = globals,
     .expr = if (
@@ -175,8 +179,6 @@ mirai <- function(
     data <- c(.args, data)
   }
 
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
   request(
