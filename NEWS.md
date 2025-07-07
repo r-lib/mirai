@@ -27,7 +27,7 @@
 * Simplifies launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches.
   This is as daemons now retrieve the next RNG stream from dispatcher rather than the `rs` argument to `daemon()`.
 * Deprecated `call_mirai_()` is now removed.
-* Requires nanonext >= 1.6.1.
+* Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.3.0
 
