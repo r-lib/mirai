@@ -50,13 +50,16 @@
 #' @param ... (optional) additional arguments passed through to
 #'   [daemon()] if launching daemons. These include `asyncdial`, `autoexit`,
 #'   `cleanup`, `output`, `maxtasks`, `idletime` and `walltime`.
-#' @param seed \[default NULL\] (optional) supply a random seed (single value,
-#'   interpreted as an integer). This is used to inititalise the L'Ecuyer-CMRG
-#'   RNG streams sent to each daemon. Note that reproducible results can be
-#'   expected only for `dispatcher = FALSE`, as the unpredictable timing of task
-#'   completions would otherwise influence the tasks sent to each daemon. Even
-#'   for `dispatcher = FALSE`, reproducibility is not guaranteed if the order in
-#'   which tasks are sent is not deterministic.
+#' @param seed \[default NULL\] (optional) For the default of NULL, this
+#'   inititalises L'Ecuyer-CMRG RNG streams for each daemon. Results are
+#'   statistically-sound, although generally non-reproducible. This is as (i)
+#'   which tasks are sent to which daemon is non-deterministic using dispatcher
+#'   and (ii) also depends on the number of daemons actually connected etc.\cr
+#'   (experimental) instead, supplying a random seed (single integer value)
+#'   changes the default behaviour by inititalising a global L'Ecuyer-CMRG RNG
+#'   stream on host. This is advanced for each mirai evaluation (rather than
+#'   once for each daemon). This now allows for reproducible results independent
+#'   of where the mirai is evaluated, as the random seed travels with it.
 #' @param serial \[default NULL\] (optional, requires dispatcher) a
 #'   configuration created by [serial_config()] to register serialization and
 #'   unserialization functions for normally non-exportable reference objects,
@@ -545,6 +548,7 @@ init_envir_stream <- function(seed) {
     "stream",
     .GlobalEnv[[".Random.seed"]]
   )
+  `[[<-`(envir, "seed", seed)
   `[[<-`(.GlobalEnv, ".Random.seed", oseed)
   envir
 }
