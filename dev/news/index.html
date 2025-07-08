@@ -58,6 +58,7 @@
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
 <ul><li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
+<li>Requires nanonext &gt;= [1.6.1.9000].</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -80,7 +81,7 @@
 <h5 id="updates-2-4-0">Updates<a class="anchor" aria-label="anchor" href="#updates-2-4-0"></a></h5>
 <ul><li>Simplifies launches when using dispatcher - <code><a href="../reference/launch_local.html">launch_remote()</a></code> commands are now the same irrespective of the number of launches. This is as daemons now retrieve the next RNG stream from dispatcher rather than the <code>rs</code> argument to <code><a href="../reference/daemon.html">daemon()</a></code>.</li>
 <li>Deprecated <code>call_mirai_()</code> is now removed.</li>
-<li>Requires nanonext &gt;= [1.6.1.9001].</li>
+<li>Requires nanonext &gt;= 1.6.1.</li>
 </ul></div>
 </div>
     <div class="section level2">
