@@ -9,6 +9,7 @@
 #### Updates
 
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
+* Requires nanonext >= [1.6.1.9000].
 
 # mirai 2.4.0
 
@@ -33,7 +34,7 @@
 * Simplifies launches when using dispatcher - `launch_remote()` commands are now the same irrespective of the number of launches.
   This is as daemons now retrieve the next RNG stream from dispatcher rather than the `rs` argument to `daemon()`.
 * Deprecated `call_mirai_()` is now removed.
-* Requires nanonext >= [1.6.1.9001].
+* Requires nanonext >= 1.6.1.
 
 # mirai 2.3.0
 
