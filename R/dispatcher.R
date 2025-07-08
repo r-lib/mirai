@@ -85,7 +85,7 @@ dispatcher <- function(
   inq <- outq <- list()
   events <- integer()
   count <- 0L
-  envir <- new.env(hash = FALSE)
+  envir <- new.env(hash = FALSE, parent = emptyenv())
   if (is.numeric(rs)) `[[<-`(envir, "stream", as.integer(rs))
   if (auto) {
     dots <- parse_dots(...)
@@ -99,7 +99,7 @@ dispatcher <- function(
     changes <- read_monitor(m)
     for (item in changes)
       item > 0 && {
-        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
+        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL)
         send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
       }
   } else {
@@ -122,7 +122,7 @@ dispatcher <- function(
       is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
-            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(), "pipe", item), "msgid", 0L), "ctx", NULL)
+            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL)
             send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
           } else {
@@ -143,7 +143,7 @@ dispatcher <- function(
         value <- .subset2(req, "value")
 
         if (value[1L] == 0L) {
-          id <- readBin(value, "integer", n = 2L)[2L]
+          id <- readBin(value, integer(), n = 2L)[2L]
           if (id == 0L) {
             found <- c(
               length(outq),
@@ -177,6 +177,7 @@ dispatcher <- function(
         }
         ctx <- .context(sock)
         req <- recv_aio(ctx, mode = 8L, cv = cv)
+
       } else if (!unresolved(res)) {
         value <- .subset2(res, "value")
         id <- as.character(pipe_id(res))
@@ -195,7 +196,7 @@ dispatcher <- function(
           next
         }
         as.logical(value[1L]) || {
-          dmnid <- readBin(value, "integer", n = 2L)[2L]
+          dmnid <- readBin(value, integer(), n = 2L)[2L]
           events <- c(events, dmnid)
           `[[<-`(outq[[id]], "dmnid", -dmnid)
           next
