@@ -39,15 +39,14 @@ and should normally be kept on (for details see Dispatcher section below).}
 \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime} and \code{walltime}.}
 
 \item{seed}{[default NULL] (optional) For the default of NULL, this
-inititalises L'Ecuyer-CMRG RNG streams for each daemon. Results are
-statistically-sound, although generally non-reproducible. This is as (i)
-which tasks are sent to which daemon is non-deterministic using dispatcher
-and (ii) also depends on the number of daemons actually connected etc.\cr
-(experimental) instead, supplying a random seed (single integer value)
-changes the default behaviour by inititalising a global L'Ecuyer-CMRG RNG
-stream on host. This is advanced for each mirai evaluation (rather than
-once for each daemon). This now allows for reproducible results independent
-of where the mirai is evaluated, as the random seed travels with it.}
+initializes L'Ecuyer-CMRG RNG streams for each daemon. Results are
+statistically-sound, although generally non-reproducible, as the daemons to
+which tasks are sent is non-deterministic when using dispatcher.\cr
+(experimental) supply an integer random seed to instead initialize a global
+L'Ecuyer-CMRG RNG stream on host. This is advanced for each mirai
+evaluation (rather than once for each daemon). This allows for reproducible
+results, as the random seed travels with the mirai, independently of where
+it is evaluated.}
 
 \item{serial}{[default NULL] (optional, requires dispatcher) a
 configuration created by \code{\link[=serial_config]{serial_config()}} to register serialization and
