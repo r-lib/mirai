@@ -26,23 +26,21 @@ to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 }
 \value{
-A list of mirai executed on each daemon. This may be waited for and
-inspected using \code{\link[=call_mirai]{call_mirai()}} or \code{\link[=collect_mirai]{collect_mirai()}}.
+A 'mirai_map' (list of 'mirai' objects).
 }
 \description{
 Evaluate an expression 'everywhere' on all connected daemons for the
 specified compute profile - this must be set prior to calling this function.
-Designed for performing setup operations across daemons by loading packages
-or exporting common data. Resultant changes to the global environment, loaded
-packages and options are persisted regardless of a daemon's \code{cleanup}
-setting.
+Performs operations across daemons such as loading packages or exporting
+common data. Resultant changes to the global environment, loaded packages and
+options are persisted regardless of a daemon's \code{cleanup} setting.
 }
 \details{
-This function should be called when no other mirai operations are in
-progress. If necessary, wait for all mirai operations to complete. This is as
-this function does not force a synchronization point, and using concurrently
-with other mirai operations does not guarantee the timing of when the
-instructions will be received, or that they will be received on each daemon.
+If using dispatcher, this function forces a synchronization point at
+dispatcher, whereby the \code{\link[=everywhere]{everywhere()}} call must have been evaluated on all
+daemons prior to subsequent evaluations taking place. It is an error to call
+\code{\link[=everywhere]{everywhere()}} successively without at least one \code{\link[=mirai]{mirai()}} call in between,
+as an ordinary mirai call is required to exit each synchronization point.
 }
 \section{Evaluation}{
 
