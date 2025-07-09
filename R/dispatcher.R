@@ -174,9 +174,6 @@ dispatcher <- function(
         } else {
           count <- count + 1L
           msgid <- .read_header(value)
-          .read_marker(value) && {
-            msgid <- -msgid
-          }
           inq[[length(inq) + 1L]] <- list(ctx = ctx, req = value, msgid = msgid)
         }
         ctx <- .context(sock)
@@ -212,17 +209,15 @@ dispatcher <- function(
       if (length(inq))
         for (item in outq)
           item[["msgid"]] || {
-            msgid <- inq[[1L]][["msgid"]]
-            if (msgid < 0) {
+            if (.read_marker(inq[[1L]][["req"]])) {
               item[["sync"]] && next
               `[[<-`(item, "sync", TRUE)
-              msgid <- -msgid
             } else if (item[["sync"]]) {
               lapply(outq, `[[<-`, "sync", FALSE)
             }
             send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
             `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
-            `[[<-`(item, "msgid", msgid)
+            `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
             inq[[1L]] <- NULL
             break
           }
