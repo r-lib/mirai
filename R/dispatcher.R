@@ -213,14 +213,13 @@ dispatcher <- function(
         for (item in outq)
           item[["msgid"]] || {
             msgid <- inq[[1L]][["msgid"]]
-            msgid < 0 && {
+            if (msgid < 0) {
               item[["sync"]] && next
               `[[<-`(item, "sync", TRUE)
               msgid <- -msgid
-            } ||
-              item[["sync"]] && {
-                item[["sync"]] <- FALSE
-              }
+            } else if (item[["sync"]]) {
+              lapply(outq, `[[<-`, "sync", FALSE)
+            }
             send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
             `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
             `[[<-`(item, "msgid", msgid)
