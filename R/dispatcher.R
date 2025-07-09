@@ -99,7 +99,7 @@ dispatcher <- function(
     changes <- read_monitor(m)
     for (item in changes)
       item > 0 && {
-        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL)
+        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
         send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
       }
   } else {
@@ -122,7 +122,7 @@ dispatcher <- function(
       is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
-            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL)
+            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
             send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
           } else {
@@ -173,7 +173,11 @@ dispatcher <- function(
           send(ctx, found, mode = 2L, block = TRUE)
         } else {
           count <- count + 1L
-          inq[[length(inq) + 1L]] <- list(ctx = ctx, req = value, msgid = .read_header(value))
+          msgid <- .read_header(value)
+          .read_marker(value) && {
+            msgid <- -msgid
+          }
+          inq[[length(inq) + 1L]] <- list(ctx = ctx, req = value, msgid = msgid)
         }
         ctx <- .context(sock)
         req <- recv_aio(ctx, mode = 8L, cv = cv)
@@ -208,9 +212,17 @@ dispatcher <- function(
       if (length(inq))
         for (item in outq)
           item[["msgid"]] || {
+            msgid <- inq[[1L]][["msgid"]]
+            if (msgid < 0) {
+              item[["sync"]] && next
+              `[[<-`(item, "sync", TRUE)
+              msgid <- -msgid
+            } else if (item[["sync"]]) {
+              lapply(outq, `[[<-`, "sync", FALSE)
+            }
             send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
             `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
-            `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
+            `[[<-`(item, "msgid", msgid)
             inq[[1L]] <- NULL
             break
           }

@@ -380,13 +380,15 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
   test_equal(daemons(4), 4L)
   Sys.unsetenv("R_DEFAULT_PACKAGES")
+  test_type("list", everywhere(a <<- TRUE))
+  test_true(all(mirai_map(1:4, function(x) { Sys.sleep(0.2); a})[.flat]))
   for (i in seq_len(10000L)) {q[[i]] <- mirai(1L); attr(q[[i]], "status") <- status()}
   test_equal(sum(unlist(collect_mirai(q))), 10000L)
   test_true(all(as.logical(lapply(lapply(q, attr, "status"), is.list))))
   for (i in seq_len(10000L)) {q[[i]] <- mirai({Sys.sleep(0.001); rnorm(1)}); attr(q[[i]], "status") <- status()}
   test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
   test_true(all(as.logical(lapply(lapply(q, attr, "status"), is.list))))
-  test_equal(daemons()[["mirai"]][["completed"]], 20000L)
+  test_equal(daemons()[["mirai"]][["completed"]], 20008L)
   test_zero(daemons(0))
 }
 test_zero(daemons(0))

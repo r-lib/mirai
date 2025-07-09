@@ -196,21 +196,19 @@ mirai <- function(
 #'
 #' Evaluate an expression 'everywhere' on all connected daemons for the
 #' specified compute profile - this must be set prior to calling this function.
-#' Designed for performing setup operations across daemons by loading packages
-#' or exporting common data. Resultant changes to the global environment, loaded
-#' packages and options are persisted regardless of a daemon's `cleanup`
-#' setting.
+#' Performs operations across daemons such as loading packages or exporting
+#' common data. Resultant changes to the global environment, loaded packages and
+#' options are persisted regardless of a daemon's `cleanup` setting.
 #'
-#' This function should be called when no other mirai operations are in
-#' progress. If necessary, wait for all mirai operations to complete. This is as
-#' this function does not force a synchronization point, and using concurrently
-#' with other mirai operations does not guarantee the timing of when the
-#' instructions will be received, or that they will be received on each daemon.
+#' If using dispatcher, this function forces a synchronization point at
+#' dispatcher, whereby the [everywhere()] call must have been evaluated on all
+#' daemons prior to subsequent evaluations taking place. It is an error to call
+#' [everywhere()] successively without at least one [mirai()] call in between,
+#' as an ordinary mirai call is required to exit each synchronization point.
 #'
 #' @inheritParams mirai
 #'
-#' @return A list of mirai executed on each daemon. This may be waited for and
-#'   inspected using [call_mirai()] or [collect_mirai()].
+#' @return A 'mirai_map' (list of 'mirai' objects).
 #'
 #' @inheritSection mirai Evaluation
 #'
@@ -257,24 +255,19 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
     )
   )
 
-  if (is.null(envir[["dispatcher"]])) {
-    vec <- vector(
-      mode = "list",
-      length = max(stat(envir[["sock"]], "pipes"), envir[["n"]])
-    )
-    for (i in seq_along(vec))
-      vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
-  } else {
-    .expr <- c(.block, .expr)
-    vec <- vector(
-      mode = "list",
-      length = max(status(.compute)[["connections"]], 1L)
-    )
-    for (i in seq_along(vec))
-      vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
-  }
-  `[[<-`(envir, "everywhere", vec)
-  invisible(vec)
+  vec <- vector(
+    mode = "list",
+    length = if (is.null(envir[["dispatcher"]]))
+      max(stat(envir[["sock"]], "pipes"), envir[["n"]]) else
+        max(status(.compute)[["connections"]], 1L)
+  )
+  .mark()
+  on.exit(.mark(FALSE))
+  for (i in seq_along(vec))
+    vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
+
+  class(vec) <- "mirai_map"
+  invisible(envir[["everywhere"]] <- vec)
 }
 
 #' mirai (Call Value)
@@ -634,4 +627,3 @@ mk_mirai_error <- function(cnd, sc) {
 .miraiInterrupt <- `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))
 .connectionReset <- `class<-`(19L, c("errorValue", "try-error"))
 .snapshot <- expression(on.exit(mirai:::snapshot(), add = TRUE))
-.block <- expression(on.exit(nanonext::msleep(1000L), add = TRUE))
