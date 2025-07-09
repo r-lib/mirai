@@ -257,25 +257,18 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
     )
   )
 
-  if (is.null(envir[["dispatcher"]])) {
-    vec <- vector(
-      mode = "list",
-      length = max(stat(envir[["sock"]], "pipes"), envir[["n"]])
-    )
-    for (i in seq_along(vec))
-      vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
-  } else {
-    vec <- vector(
-      mode = "list",
-      length = max(status(.compute)[["connections"]], 1L)
-    )
-    .mark()
-    on.exit(.mark(FALSE))
-    for (i in seq_along(vec))
-      vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
-  }
-  `[[<-`(envir, "everywhere", vec)
-  invisible(vec)
+  vec <- vector(
+    mode = "list",
+    length = if (is.null(envir[["dispatcher"]]))
+      max(stat(envir[["sock"]], "pipes"), envir[["n"]]) else
+        max(status(.compute)[["connections"]], 1L)
+  )
+  .mark()
+  on.exit(.mark(FALSE))
+  for (i in seq_along(vec))
+    vec[[i]] <- mirai(.expr, ..., .args = .args, .compute = .compute)
+
+  invisible(envir[["everywhere"]] <- vec)
 }
 
 #' mirai (Call Value)
