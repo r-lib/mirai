@@ -12,7 +12,7 @@
   + Returns a `mirai_map` object for easier handling (rather than just a list of mirai).
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
-* Requires nanonext >= [1.6.1.9000].
+* Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.4.0
 

@@ -221,7 +221,7 @@ is_error_value(m5$data)
 
 ### 4. Local Daemons
 
-Daemons, or persistent background processes, may be set to receive 'mirai' requests.
+Daemons, or persistent background processes, may be set to receive `mirai()` requests.
 
 > Daemons inherit the default system configuration and read in the relevant '.Renviron' and '.Rprofile' etc. on startup.
 They also load the default packages.
@@ -357,12 +357,10 @@ The daemons interface may also be used to send tasks for computation to remote d
 
 Call `daemons()` specifying 'url' as a character string such as: 'tcp://10.75.32.70:5555' at which daemon processes should connect.
 Alternatively, use `host_url()` to automatically construct a valid URL.
-The host (or dispatcher) listens at this address, utilising a single port.
+This acts like a 'base station', utilizing a single port to listen out for all daemons that dial in to the address. For launching the daemons (executing them on the machine of your choice), please see the next section.
 
 > IPv6 addresses are also supported and must be enclosed in square brackets `[]` to avoid confusion with the final colon separating the port.
 For example, port 5555 on the IPv6 address `::ffff:a6f:50d` would be specified as `tcp://[::ffff:a6f:50d]:5555`.
-
-For options on actually launching the daemons, please see the next section.
 
 Below, calling `host_url()` without a port value uses the default of '0'.
 This is a wildcard value that will automatically assigns a free ephemeral port:
@@ -386,7 +384,7 @@ Closing the connection causes all connected daemons to exit automatically. If us
 
 ### 6. Launching Remote Daemons
 
-The launcher analogy is appropriate, as they are ways to execute a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
+The launcher analogy is appropriate, as these are ways of executing a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
 
 The local launcher simply runs an `Rscript` instance via a local shell. The remote launcher uses a method to run this `Rscript` command on a remote machine.
 
@@ -484,8 +482,8 @@ daemons(
         #BSUB -o job.out"
 ```
  - As per the above, it is fine to pass this as a character string with the options each on a new line (whitespace is automatically handled), or else by explicitly using `\n` to denote a newline.
- - It is also permissible to include other shell commands, for example to change working directory.
- - For the avoidance of doubt, the initial shebang line of a script such as `#!/bin/bash` is not required.
+ - Other shell commands, for example to change working directory, may also be included.
+ - For the avoidance of doubt, the initial shebang line of a script such as `#!/bin/bash` should be omitted.
  - For certain HPC setups, a final line which loads environment modules may be needed. This would usually be of the form:
  
  ```
@@ -499,6 +497,23 @@ daemons(
 
 3. The third argument `rscript` defaults to `"Rscript"`, which assumes that R is on the file search path.
    This may be substituted for the full path to a specific R executable, such as that returned by `file.path(R.home("bin"), "Rscript")`.
+
+##### Job Arrays
+
+If launching large numbers of daemons, it is often more appropriate to submit a single job to the cluster scheduler that launches daemons via a job array, rather than sending multiple individual jobs to the cluster.
+
+So instead of:
+```r
+daemons(n = 100, url = host_url(), remote = cluster_config())
+```
+rather use:
+```r
+daemons(
+  n = 1,
+  url = host_url(),
+  remote = cluster_config(options = "#SBATCH --array=1-100")
+)
+```
 
 #### iv. Generic Remote Configuration
 
