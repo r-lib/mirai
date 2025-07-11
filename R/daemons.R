@@ -250,8 +250,8 @@ daemons <- function(
           sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
-          args <- wa5(urld, url, envir[["stream"]], dots)
-          res <- launch_dispatcher(sock, args, output, serial, tls = tls, pass = pass)
+          args <- wa5(urld, url, dots)
+          res <- launch_dispatcher(sock, args, output, serial, envir[["stream"]], tls = tls, pass = pass)
           store_dispatcher(envir, cv, sock, urld, res)
         },
         stop(._[["dispatcher_args"]])
@@ -302,8 +302,8 @@ daemons <- function(
           sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
-          args <- wa4(urld, n, envir[["stream"]], dots)
-          res <- launch_dispatcher(sock, args, output, serial)
+          args <- wa4(urld, n, dots)
+          res <- launch_dispatcher(sock, args, output, serial, envir[["stream"]])
           store_dispatcher(envir, cv, sock, urld, res)
         },
         stop(._[["dispatcher_args"]])
@@ -599,24 +599,22 @@ wa3 <- function(url, dots, rs = NULL, tls = NULL)
     parse_tls(tls)
   ))
 
-wa4 <- function(urld, n, rs, dots)
+wa4 <- function(urld, n, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,rs=c(%s),signal=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,signal=%d%s)",
     libp(),
     urld,
     n,
-    paste0(rs, collapse = ","),
     tools::SIGTERM,
     dots
   ))
 
-wa5 <- function(urld, url, rs, dots)
+wa5 <- function(urld, url, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",rs=c(%s),signal=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",signal=%d%s)",
     libp(),
     urld,
     url,
-    paste0(rs, collapse = ","),
     tools::SIGTERM,
     dots
   ))
@@ -636,7 +634,7 @@ query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, bloc
   recv(sock, mode = recv_mode, block = block)
 }
 
-launch_dispatcher <- function(sock, args, output, serial, tls = NULL, pass = NULL) {
+launch_dispatcher <- function(sock, args, output, serial, stream, tls = NULL, pass = NULL) {
   pkgs <- Sys.getenv("R_DEFAULT_PACKAGES")
   system2(
     .command,
@@ -651,7 +649,13 @@ launch_dispatcher <- function(sock, args, output, serial, tls = NULL, pass = NUL
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   pipe_notify(sock, NULL, add = TRUE)
-  res <- request(.context(sock), list(pkgs, tls, pass, serial), send_mode = 1L, recv_mode = 2L, cv = cv)
+  res <- request(
+    .context(sock),
+    list(pkgs, tls, pass, serial, stream),
+    send_mode = 1L,
+    recv_mode = 2L,
+    cv = cv
+  )
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
   collect_aio(res)

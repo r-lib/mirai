@@ -48,7 +48,6 @@ dispatcher <- function(
   ...,
   tls = NULL,
   pass = NULL,
-  rs = NULL,
   signal = TRUE
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
@@ -76,6 +75,7 @@ dispatcher <- function(
   }
   pass <- NULL
   serial <- res[[4L]]
+  stream <- res[[5L]]
 
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)
@@ -86,7 +86,7 @@ dispatcher <- function(
   events <- integer()
   count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
-  if (is.numeric(rs)) `[[<-`(envir, "stream", as.integer(rs))
+  `[[<-`(envir, "stream", stream)
   if (auto) {
     dots <- parse_dots(...)
     output <- attr(dots, "output")
