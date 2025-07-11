@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ### 1. Event-driven promises
 
-`mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. See the vignettes for the promises package for a full treatment.
+`mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. The [articles](https://rstudio.github.io/promises/) for the promises package provide a full guide for the use of promises, including with Shiny.
 
 A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a mirai directly.
 
@@ -27,7 +27,7 @@ Whilst normal usage of a mirai involves collecting its value, a promise instead 
 
 For a mirai promise, the mirai's value is passed to the `onFulfilled` argument of `promises::then()` if no error has occurred, and the mirai's `errorValue` is passed to the `onRejected` argument if an error has occured.
 
-Promises converted from mirai are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
+Promises converted from mirai are next-generation, event-driven promises.
 
 - Promise actions are triggered as soon as each mirai resolves, without time-polling for completion as a `future_promise()` does.
 - Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of concurrent promises).
@@ -71,7 +71,7 @@ The code below is taken from the challenge to launch and collect one million pro
 ```{r}
 #| label: promiseschallenge
 library(mirai)
-daemons(8, dispatcher = FALSE)
+daemons(12, dispatcher = FALSE)
 r <- 0
 start <- Sys.time()
 m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
@@ -80,7 +80,7 @@ later::run_now()
 r
 daemons(0)
 ```
-The one million promises challenge took 6 mins 25 secs to complete using an Intel i7 11th gen mobile processor with 16GB RAM.
+The one million promises challenge took 5 mins 5 secs to complete using an Apple M4 Pro MacBook.
 
 ### 3. Shiny ExtendedTask: Introduction
 

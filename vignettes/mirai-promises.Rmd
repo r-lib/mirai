@@ -10,7 +10,7 @@ vignette: >
 
 ### 1. Event-driven promises
 
-`mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. See the vignettes for the promises package for a full treatment.
+`mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. The [articles](https://rstudio.github.io/promises/) for the promises package provide a full guide for the use of promises, including with Shiny.
 
 A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a mirai directly.
 
@@ -20,7 +20,7 @@ Whilst normal usage of a mirai involves collecting its value, a promise instead 
 
 For a mirai promise, the mirai's value is passed to the `onFulfilled` argument of `promises::then()` if no error has occurred, and the mirai's `errorValue` is passed to the `onRejected` argument if an error has occured.
 
-Promises converted from mirai are next-generation, event-driven promises, developed in collaboration with Joe Cheng (creator of Shiny).
+Promises converted from mirai are next-generation, event-driven promises.
 
 - Promise actions are triggered as soon as each mirai resolves, without time-polling for completion as a `future_promise()` does.
 - Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of concurrent promises).
@@ -66,20 +66,20 @@ The code below is taken from the challenge to launch and collect one million pro
 
 ``` r
 library(mirai)
-daemons(8, dispatcher = FALSE)
-#> [1] 8
+daemons(12, dispatcher = FALSE)
+#> [1] 12
 r <- 0
 start <- Sys.time()
 m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
 Sys.time() - start
-#> Time difference of 3.19889 secs
+#> Time difference of 1.893664 secs
 later::run_now()
 r
 #> [1] 50005000
 daemons(0)
 #> [1] 0
 ```
-The one million promises challenge took 6 mins 25 secs to complete using an Intel i7 11th gen mobile processor with 16GB RAM.
+The one million promises challenge took 5 mins 5 secs to complete using an Apple M4 Pro MacBook.
 
 ### 3. Shiny ExtendedTask: Introduction
 
@@ -592,28 +592,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"1\"],\"pid\":[45605]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:01\"],\"msg\":[\"1\"],\"pid\":[12163]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"2\"],\"pid\":[45607]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:01\"],\"msg\":[\"2\"],\"pid\":[12165]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"3\"],\"pid\":[45603]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:01\"],\"msg\":[\"3\"],\"pid\":[12175]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"4\"],\"pid\":[45610]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:02\"],\"msg\":[\"4\"],\"pid\":[12163]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"5\"],\"pid\":[45607]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:01\"],\"msg\":[\"5\"],\"pid\":[12185]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"6\"],\"pid\":[45610]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:02\"],\"msg\":[\"6\"],\"pid\":[12185]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:39\"],\"msg\":[\"7\"],\"pid\":[45603]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:02\"],\"msg\":[\"7\"],\"pid\":[12165]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:40\"],\"msg\":[\"8\"],\"pid\":[45605]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:02\"],\"msg\":[\"8\"],\"pid\":[12175]}"
 
 daemons(0)
 #> [1] 0
@@ -680,28 +680,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"1\"],\"pid\":[45889]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:06\"],\"msg\":[\"1\"],\"pid\":[12238]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"2\"],\"pid\":[45882]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:06\"],\"msg\":[\"2\"],\"pid\":[12240]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"3\"],\"pid\":[45886]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:06\"],\"msg\":[\"3\"],\"pid\":[12256]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"4\"],\"pid\":[45884]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:06\"],\"msg\":[\"4\"],\"pid\":[12250]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:43\"],\"msg\":[\"5\"],\"pid\":[45884]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:07\"],\"msg\":[\"5\"],\"pid\":[12240]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"6\"],\"pid\":[45882]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:07\"],\"msg\":[\"6\"],\"pid\":[12238]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"7\"],\"pid\":[45889]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:07\"],\"msg\":[\"7\"],\"pid\":[12256]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-06-24 21:29:44\"],\"msg\":[\"8\"],\"pid\":[45886]}"
+#> [1] "{\"time\":[\"2025-07-11 17:06:07\"],\"msg\":[\"8\"],\"pid\":[12250]}"
 
 daemons(0)
 #> [1] 0
