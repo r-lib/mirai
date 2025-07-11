@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@
 <li>When using dispatcher, no longer has the potential to fail if sending large data (<a href="https://github.com/r-lib/mirai/issues/326" class="external-link">#326</a>).</li>
 </ul></li>
 <li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
+<li>Fixes a regression in mirai 2.4.0, the L’Ecuyer-CMRG seed was not being passed correctly only when using remote daemons (<a href="https://github.com/r-lib/mirai/issues/333" class="external-link">#333</a>).</li>
 <li>Requires nanonext &gt;= [1.6.1.9001].</li>
 </ul></div>
 </div>
@@ -70,7 +71,7 @@
 <h2 class="pkg-version" data-toc-text="2.4.0" id="mirai-240">mirai 2.4.0<a class="anchor" aria-label="anchor" href="#mirai-240"></a></h2><p class="text-muted">CRAN release: 2025-06-25</p>
 <div class="section level5">
 <h5 id="behavioural-changes-2-4-0">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-2-4-0"></a></h5>
-<ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task. For previous behaviour use: <code>with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))</code>.</li>
+<ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task.</li>
 <li>Change in <code><a href="../reference/daemon.html">daemon()</a></code> defaults:
 <ul><li>Argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated along with the parent process. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit after completing any in-progress tasks.</li>
 <li>Argument <code>dispatcher</code> now defaults to <code>TRUE</code>.</li>
