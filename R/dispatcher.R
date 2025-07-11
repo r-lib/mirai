@@ -48,7 +48,6 @@ dispatcher <- function(
   ...,
   tls = NULL,
   pass = NULL,
-  rs = NULL,
   signal = TRUE
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
@@ -60,7 +59,9 @@ dispatcher <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(signal))
   dial_sync_socket(sock, host)
 
-  res <- recv(sock, mode = 1L, block = TRUE)
+  raio <- recv_aio(sock, mode = 1L, cv = cv)
+  wait(cv) || return()
+  res <- collect_aio(raio)
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
@@ -76,6 +77,7 @@ dispatcher <- function(
   }
   pass <- NULL
   serial <- res[[4L]]
+  stream <- res[[5L]]
 
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)
@@ -86,7 +88,7 @@ dispatcher <- function(
   events <- integer()
   count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
-  if (is.numeric(rs)) `[[<-`(envir, "stream", as.integer(rs))
+  `[[<-`(envir, "stream", stream)
   if (auto) {
     dots <- parse_dots(...)
     output <- attr(dots, "output")

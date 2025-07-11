@@ -13,6 +13,7 @@
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would very rarely be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
 * Fixes a regression in mirai 2.4.0 where the L'Ecuyer-CMRG seed was not being passed correctly for remote daemons (#333).
+* `dispatcher()` argument `rs` is removed (should not have any impact as this was never meant to be set by the user).
 * Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.4.0
