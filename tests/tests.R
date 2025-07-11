@@ -268,6 +268,13 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
   test_zero(daemons(0))
+  Sys.sleep(0.5)
+  daemons(n = 1L, url = local_url(), dispatcher = TRUE)
+  task <- mirai(TRUE)
+  url <- nextget("url")
+  test_equal(3L, daemon(url = url, maxtasks = 1L, cleanup = 0L, dispatcher = TRUE))
+  test_zero(daemons(n = 0L))
+  test_type("integer", .Random.seed)
 }
 # TLS tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
