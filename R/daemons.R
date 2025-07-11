@@ -250,7 +250,7 @@ daemons <- function(
           sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
           if (is.list(serial)) `opt<-`(sock, "serial", serial)
-          args <- wa5(urld, url, dots)
+          args <- wa5(urld, url, envir[["stream"]], dots)
           res <- launch_dispatcher(sock, args, output, serial, tls = tls, pass = pass)
           store_dispatcher(envir, cv, sock, urld, res)
         },
@@ -610,12 +610,13 @@ wa4 <- function(urld, n, rs, dots)
     dots
   ))
 
-wa5 <- function(urld, url, dots)
+wa5 <- function(urld, url, rs, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",signal=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",rs=c(%s),signal=%d%s)",
     libp(),
     urld,
     url,
+    paste0(rs, collapse = ","),
     tools::SIGTERM,
     dots
   ))

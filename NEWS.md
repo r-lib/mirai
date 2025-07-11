@@ -12,6 +12,7 @@
   + Returns a `mirai_map` object for easier handling (rather than just a list of mirai).
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
+* Fixes a regression in mirai 2.4.0, the L'Ecuyer-CMRG seed was not being passed correctly only when using remote daemons (#333).
 * Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.4.0
@@ -19,7 +20,6 @@
 #### Behavioural Changes
 
 * An ephemeral daemon started by `mirai()` without setting daemons now exits as soon as the parent process does rather than finish the task.
-  For previous behaviour use: `with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))`.
 * Change in `daemon()` defaults:
   + Argument `autoexit` default of `TRUE` now ensures daemons are terminated along with the parent process.
     Set to `NA` to retain the previous behaviour of having them automatically exit after completing any in-progress tasks.
