@@ -2,17 +2,17 @@
 
 #### Behavioural Changes
 
-* The `seed` argument of `daemons()` now changes the default random seed behaviour.
-  The default uses L'Ecuyer-CMRG RNG streams advanced per daemon, which produces statistically-sound yet generally non-reproducible results.
-  Setting a seed now initialises a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, and hence does provide reproducible results.
+* The `seed` argument of `daemons()` now provides alternative random seed strategies:
+  + The default `NULL` uses L'Ecuyer-CMRG RNG streams advanced per daemon, which produces statistically-sound yet generally non-reproducible results.
+  + Setting an integer seed now initializes a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, and hence does provide reproducible results.
 
 #### Updates
 
-* `everywhere()` enhancements:
+* `everywhere()` has been updated for robustness and ease of use:
   + Returns a `mirai_map` object for easier handling (rather than just a list of mirai).
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
-* Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would rarely (and non-deterministically) be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
-* Fixes a regression in mirai 2.4.0, the L'Ecuyer-CMRG seed was not being passed correctly only when using remote daemons (#333).
+* Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would very rarely be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
+* Fixes a regression in mirai 2.4.0 where the L'Ecuyer-CMRG seed was not being passed correctly for remote daemons (#333).
 * Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.4.0
