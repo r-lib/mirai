@@ -59,7 +59,9 @@ dispatcher <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(signal))
   dial_sync_socket(sock, host)
 
-  res <- recv(sock, mode = 1L, block = TRUE)
+  raio <- recv_aio(sock, mode = 1L, cv = cv)
+  wait(cv) || return()
+  res <- collect_aio(raio)
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
