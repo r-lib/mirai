@@ -71,7 +71,7 @@ The code below is taken from the challenge to launch and collect one million pro
 ```{r}
 #| label: promiseschallenge
 library(mirai)
-daemons(8, dispatcher = FALSE)
+daemons(12, dispatcher = FALSE)
 r <- 0
 start <- Sys.time()
 m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
@@ -80,7 +80,7 @@ later::run_now()
 r
 daemons(0)
 ```
-The one million promises challenge took 6 mins 25 secs to complete using an Intel i7 11th gen mobile processor with 16GB RAM.
+The one million promises challenge took 5 mins 5 secs to complete using an Apple M4 Pro MacBook.
 
 ### 3. Shiny ExtendedTask: Introduction
 
