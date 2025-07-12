@@ -555,8 +555,10 @@ init_envir_stream <- function(seed) {
 req_socket <- function(url, tls = NULL)
   `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", 0L)
 
-parse_dispatcher <- function(x)
-  if (is.logical(x)) 1L + (!is.na(x) && x) else if (is.character(x)) 1L else 3L
+parse_dispatcher <- function(x) {
+  is.logical(x) && return(1L + (!is.na(x) && x))
+  is.character(x) && x == "none" || return(3L)
+}
 
 parse_dots <- function(...) {
   ...length() || return("")
