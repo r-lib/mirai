@@ -11,9 +11,9 @@
 * `everywhere()` has been updated for robustness and ease of use:
   + Returns a `mirai_map` object for easier handling (rather than just a list of mirai).
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
+* `dispatcher()` function signature simplified with `rs`, `tls` and `pass` arguments removed (should have no effect as these are no longer passed via the arguments).
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would very rarely be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
 * Fixes a regression in mirai 2.4.0 where the L'Ecuyer-CMRG seed was not being passed correctly for remote daemons (#333).
-* `dispatcher()` argument `rs` is removed (should not have any impact as this was never meant to be set by the user).
 * Requires nanonext >= [1.6.1.9001].
 
 # mirai 2.4.0

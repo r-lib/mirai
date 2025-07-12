@@ -4,15 +4,7 @@
 \alias{dispatcher}
 \title{Dispatcher}
 \usage{
-dispatcher(
-  host,
-  url = NULL,
-  n = NULL,
-  ...,
-  tls = NULL,
-  pass = NULL,
-  signal = TRUE
-)
+dispatcher(host, url = NULL, n = NULL, ..., signal = TRUE)
 }
 \arguments{
 \item{host}{the character URL dispatcher should dial in to, typically an IPC
@@ -28,17 +20,6 @@ this case, a local url is automatically generated.}
 
 \item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}}.
 These include \code{asyncdial}, \code{autoexit}, and \code{cleanup}.}
-
-\item{tls}{[default NULL] (required for secure TLS connections) \strong{either}
-the character path to a file containing the PEM-encoded TLS certificate and
-associated private key (may contain additional certificates leading to a
-validation chain, with the TLS certificate first), \strong{or} a length 2
-character vector comprising [i] the TLS certificate (optionally
-certificate chain) and [ii] the associated private key.}
-
-\item{pass}{[default NULL] (required only if the private key supplied to
-\code{tls} is encrypted with a password) For security, should be provided
-through a function that returns this value, rather than directly.}
 
 \item{signal}{[default TRUE] integer signal to raise when the host
 connection drops. This is always the value of \code{tools::SIGTERM} passed by

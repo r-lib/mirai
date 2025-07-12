@@ -13,7 +13,6 @@
 #' tasks are only sent to daemons that can begin immediate execution of the
 #' task.
 #'
-#' @inheritParams daemon
 #' @param host the character URL dispatcher should dial in to, typically an IPC
 #'   address.
 #' @param url (optional) the character URL dispatcher should listen at (and
@@ -24,15 +23,6 @@
 #'   this case, a local url is automatically generated.
 #' @param ... (optional) additional arguments passed through to [daemon()].
 #'   These include `asyncdial`, `autoexit`, and `cleanup`.
-#' @param tls \[default NULL\] (required for secure TLS connections) **either**
-#'   the character path to a file containing the PEM-encoded TLS certificate and
-#'   associated private key (may contain additional certificates leading to a
-#'   validation chain, with the TLS certificate first), **or** a length 2
-#'   character vector comprising \[i\] the TLS certificate (optionally
-#'   certificate chain) and \[ii\] the associated private key.
-#' @param pass \[default NULL\] (required only if the private key supplied to
-#'   `tls` is encrypted with a password) For security, should be provided
-#'   through a function that returns this value, rather than directly.
 #' @param signal \[default TRUE\] integer signal to raise when the host
 #'   connection drops. This is always the value of `tools::SIGTERM` passed by
 #'   the host process.
@@ -46,8 +36,6 @@ dispatcher <- function(
   url = NULL,
   n = NULL,
   ...,
-  tls = NULL,
-  pass = NULL,
   signal = TRUE
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
@@ -65,11 +53,12 @@ dispatcher <- function(
   if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
     Sys.unsetenv("R_DEFAULT_PACKAGES")
 
+  tls <- NULL
   auto <- is.null(url)
   if (auto) {
     url <- local_url()
   } else {
-    if (is.character(res[[2L]]) && is.null(tls)) {
+    if (is.character(res[[2L]])) {
       tls <- res[[2L]]
       pass <- res[[3L]]
     }
@@ -77,7 +66,7 @@ dispatcher <- function(
   }
   pass <- NULL
   serial <- res[[4L]]
-  stream <- res[[5L]]
+  res <- res[[5L]]
 
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)
@@ -88,7 +77,7 @@ dispatcher <- function(
   events <- integer()
   count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
-  `[[<-`(envir, "stream", stream)
+  `[[<-`(envir, "stream", res)
   if (auto) {
     dots <- parse_dots(...)
     output <- attr(dots, "output")
