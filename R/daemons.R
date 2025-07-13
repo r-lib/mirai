@@ -662,8 +662,9 @@ launch_dispatcher <- function(sock, args, output, serial, stream, tls = NULL, pa
 launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
+  no_seed <- is.null(envir[["seed"]])
   for (i in seq)
-    launch_daemon(wa2(urld, dots, next_stream(envir)), output)
+    launch_daemon(wa2(urld, dots, if (no_seed) next_stream(envir)), output)
   sync <- 0L
   for (i in seq)
     while(!until(cv, .limit_long))

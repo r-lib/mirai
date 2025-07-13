@@ -404,7 +404,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   Sys.sleep(0.5)
-  test_equal(4L, daemons(4, seed = 1234L))
+  test_equal(4L, daemons(4, dispatcher = FALSE, seed = 1234L))
   n <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   test_identical(m, n)
