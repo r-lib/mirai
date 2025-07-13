@@ -248,4 +248,4 @@ snapshot <- function()
 flag_value_auto <- function(autoexit)
   { isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL)) } && return(autoexit) || is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
 
-flag_value <- function(signal = tools::SIGTERM) isNamespaceLoaded("covr") || return(signal)
+flag_value <- function() isNamespaceLoaded("covr") || return(tools::SIGTERM)

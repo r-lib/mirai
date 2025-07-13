@@ -34,7 +34,6 @@
 #' optionally `.compute`) returns the value of [status()].
 #'
 #' @inheritParams mirai
-#' @inheritParams dispatcher
 #' @param n integer number of daemons to launch.
 #' @param url \[default NULL\] if specified, a character string comprising a URL
 #'   at which to listen for remote daemons, including a port accepting incoming
@@ -72,6 +71,9 @@
 #'   with the TLS certificate first), **or** a length 2 character vector
 #'   comprising \[i\] the TLS certificate (optionally certificate chain) and
 #'   \[ii\] the associated private key.
+#' @param pass \[default NULL\] (required only if the private key supplied to
+#'   `tls` is encrypted with a password) For security, should be provided
+#'   through a function that returns this value, rather than directly.
 #'
 #' @return The integer number of daemons launched locally (zero if specifying
 #'   `url` or using a remote launcher).
@@ -603,21 +605,19 @@ wa3 <- function(url, dots, rs = NULL, tls = NULL)
 
 wa4 <- function(urld, n, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d,signal=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d%s)",
     libp(),
     urld,
     n,
-    tools::SIGTERM,
     dots
   ))
 
 wa5 <- function(urld, url, dots)
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",signal=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
     libp(),
     urld,
     url,
-    tools::SIGTERM,
     dots
   ))
 
