@@ -4,7 +4,7 @@
 \alias{dispatcher}
 \title{Dispatcher}
 \usage{
-dispatcher(host, url = NULL, n = NULL, ..., signal = TRUE)
+dispatcher(host, url = NULL, n = NULL, ...)
 }
 \arguments{
 \item{host}{the character URL dispatcher should dial in to, typically an IPC
@@ -20,10 +20,6 @@ this case, a local url is automatically generated.}
 
 \item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}}.
 These include \code{asyncdial}, \code{autoexit}, and \code{cleanup}.}
-
-\item{signal}{[default TRUE] integer signal to raise when the host
-connection drops. This is always the value of \code{tools::SIGTERM} passed by
-the host process.}
 }
 \value{
 Invisible NULL.

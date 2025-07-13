@@ -23,9 +23,6 @@
 #'   this case, a local url is automatically generated.
 #' @param ... (optional) additional arguments passed through to [daemon()].
 #'   These include `asyncdial`, `autoexit`, and `cleanup`.
-#' @param signal \[default TRUE\] integer signal to raise when the host
-#'   connection drops. This is always the value of `tools::SIGTERM` passed by
-#'   the host process.
 #'
 #' @return Invisible NULL.
 #'
@@ -35,8 +32,7 @@ dispatcher <- function(
   host,
   url = NULL,
   n = NULL,
-  ...,
-  signal = TRUE
+  ...
 ) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
   n > 0L || stop(._[["missing_url"]])
@@ -44,7 +40,7 @@ dispatcher <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = flag_value(signal))
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
   dial_sync_socket(sock, host)
 
   raio <- recv_aio(sock, mode = 1L, cv = cv)
