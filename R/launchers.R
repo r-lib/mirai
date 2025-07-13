@@ -65,7 +65,7 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   output <- attr(dots, "output")
   if (is.null(tls)) tls <- envir[["tls"]]
   for (i in seq_len(n))
-    launch_daemon(write_args(url, dots, next_stream(envir), tls), output)
+    launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls), output)
   n
 }
 
@@ -134,7 +134,7 @@ launch_remote <- function(
           cmds[i] <- sprintf(
             "%s -e %s",
             rscript,
-            write_args(url, dots, next_stream(envir), tls)
+            write_args(url, dots, maybe_next_stream(envir), tls)
           )
 
         for (i in seq_along(args))
@@ -160,7 +160,7 @@ launch_remote <- function(
     cmds[i] <- sprintf(
       "%s -e %s",
       rscript,
-      write_args(url, dots, next_stream(envir), tls)
+      write_args(url, dots, maybe_next_stream(envir), tls)
     )
 
   if (length(command))

@@ -89,3 +89,8 @@ next_stream <- function(envir) {
   if (is.integer(stream)) `[[<-`(envir, "stream", parallel::nextRNGStream(stream))
   stream
 }
+
+maybe_next_stream <- function(envir) {
+  is.null(envir[["seed"]]) || return()
+  next_stream(envir)
+}
