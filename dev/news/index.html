@@ -65,10 +65,10 @@
 <ul><li>Returns a <code>mirai_map</code> object for easier handling (rather than just a list of mirai).</li>
 <li>When using dispatcher, no longer has the potential to fail if sending large data (<a href="https://github.com/r-lib/mirai/issues/326" class="external-link">#326</a>).</li>
 </ul></li>
+<li>
+<code><a href="../reference/dispatcher.html">dispatcher()</a></code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (should have no effect as these are no longer passed via the arguments).</li>
 <li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> would very rarely be returned as the fulfilled value of a promise (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
 <li>Fixes a regression in mirai 2.4.0 where the L’Ecuyer-CMRG seed was not being passed correctly for remote daemons (<a href="https://github.com/r-lib/mirai/issues/333" class="external-link">#333</a>).</li>
-<li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> argument <code>rs</code> is removed (should not have any impact as this was never meant to be set by the user).</li>
 <li>Requires nanonext &gt;= [1.6.1.9001].</li>
 </ul></div>
 </div>
