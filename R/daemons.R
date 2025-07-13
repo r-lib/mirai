@@ -544,14 +544,10 @@ init_envir_stream <- function(seed) {
   oseed <- .GlobalEnv[[".Random.seed"]]
   RNGkind("L'Ecuyer-CMRG")
   if (length(seed)) set.seed(seed)
-  envir <- `[[<-`(
-    new.env(hash = FALSE, parent = ..),
-    "stream",
-    .GlobalEnv[[".Random.seed"]]
-  )
-  `[[<-`(envir, "seed", seed)
+  envir <- new.env(hash = FALSE, parent = ..)
+  `[[<-`(envir, "stream", .GlobalEnv[[".Random.seed"]])
   `[[<-`(.GlobalEnv, ".Random.seed", oseed)
-  envir
+  `[[<-`(envir, "seed", seed)
 }
 
 req_socket <- function(url, tls = NULL)
@@ -679,7 +675,6 @@ store_dispatcher <- function(envir, cv, sock, urld, res) {
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
-  `[[<-`(envir, "stream", NULL)
   `[[<-`(envir, "url", res[2L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
 }
