@@ -544,14 +544,10 @@ init_envir_stream <- function(seed) {
   oseed <- .GlobalEnv[[".Random.seed"]]
   RNGkind("L'Ecuyer-CMRG")
   if (length(seed)) set.seed(seed)
-  envir <- `[[<-`(
-    new.env(hash = FALSE, parent = ..),
-    "stream",
-    .GlobalEnv[[".Random.seed"]]
-  )
-  `[[<-`(envir, "seed", seed)
+  envir <- new.env(hash = FALSE, parent = ..)
+  `[[<-`(envir, "stream", .GlobalEnv[[".Random.seed"]])
   `[[<-`(.GlobalEnv, ".Random.seed", oseed)
-  envir
+  `[[<-`(envir, "seed", seed)
 }
 
 req_socket <- function(url, tls = NULL)
@@ -666,8 +662,9 @@ launch_dispatcher <- function(sock, args, output, serial, stream, tls = NULL, pa
 launch_daemons <- function(seq, sock, urld, dots, envir, output) {
   cv <- cv()
   pipe_notify(sock, cv, add = TRUE)
+  no_seed <- is.null(envir[["seed"]])
   for (i in seq)
-    launch_daemon(wa2(urld, dots, next_stream(envir)), output)
+    launch_daemon(wa2(urld, dots, if (no_seed) next_stream(envir)), output)
   sync <- 0L
   for (i in seq)
     while(!until(cv, .limit_long))
@@ -679,7 +676,6 @@ store_dispatcher <- function(envir, cv, sock, urld, res) {
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
-  `[[<-`(envir, "stream", NULL)
   `[[<-`(envir, "url", res[2L])
   `[[<-`(envir, "pid", as.integer(res[1L]))
 }
