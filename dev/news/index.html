@@ -52,10 +52,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
-<h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
-<ul><li>The <code>seed</code> argument of <code><a href="../reference/daemons.html">daemons()</a></code> now provides alternative random seed strategies:
-<ul><li>The default <code>NULL</code> uses L’Ecuyer-CMRG RNG streams advanced per daemon, which produces statistically-sound yet generally non-reproducible results.</li>
-<li>Setting an integer seed now initializes a global L’Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, and hence does provide reproducible results.</li>
+<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<ul><li>Reproducible parallel RNG by setting the <code>seed</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code>:
+<ul><li>The default <code>NULL</code> uses L’Ecuyer-CMRG RNG streams advanced per daemon, the same as base R’s parallel package, which produces statistically-sound yet generally non-reproducible results.</li>
+<li>Setting an integer seed now initializes a global L’Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, which does provide reproducible results.</li>
 </ul></li>
 </ul></div>
 <div class="section level5">
@@ -66,10 +66,10 @@
 <li>When using dispatcher, no longer has the potential to fail if sending large data (<a href="https://github.com/r-lib/mirai/issues/326" class="external-link">#326</a>).</li>
 </ul></li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (should have no effect as these are no longer passed via the arguments).</li>
-<li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> would very rarely be returned as the fulfilled value of a promise (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
+<code><a href="../reference/dispatcher.html">dispatcher()</a></code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (no user-facing impact).</li>
+<li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> could be returned as the fulfilled value of a promise in extremely rare cases (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
 <li>Fixes a regression in mirai 2.4.0 where the L’Ecuyer-CMRG seed was not being passed correctly for remote daemons (<a href="https://github.com/r-lib/mirai/issues/333" class="external-link">#333</a>).</li>
-<li>Requires nanonext &gt;= [1.6.1.9001].</li>
+<li>Requires nanonext &gt;= 1.6.2.</li>
 </ul></div>
 </div>
     <div class="section level2">
