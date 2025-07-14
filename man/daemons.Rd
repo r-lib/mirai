@@ -38,15 +38,16 @@ and should normally be kept on (for details see Dispatcher section below).}
 \code{\link[=daemon]{daemon()}} if launching daemons. These include \code{asyncdial}, \code{autoexit},
 \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime} and \code{walltime}.}
 
-\item{seed}{[default NULL] (optional) For the default of NULL, this
-initializes L'Ecuyer-CMRG RNG streams for each daemon. Results are
-statistically-sound, although generally non-reproducible, as the daemons to
-which tasks are sent is non-deterministic when using dispatcher.\cr
-(experimental) supply an integer random seed to instead initialize a global
+\item{seed}{[default NULL] (optional) The default of \code{NULL} initializes
+L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
+package. Results are statistically-sound, although generally
+non-reproducible, as which tasks are sent to which daemons may be
+non-deterministic, and also depends on the number of daemons.
+\cr (experimental) supply an integer value to instead initialize a global
 L'Ecuyer-CMRG RNG stream on host. This is advanced for each mirai
-evaluation (rather than once for each daemon). This allows for reproducible
-results, as the random seed travels with the mirai, independently of where
-it is evaluated.}
+evaluation, hence allowing for reproducible results, as the random seed is
+always associated with a given mirai, independently of where it is
+evaluated.}
 
 \item{serial}{[default NULL] (optional, requires dispatcher) a
 configuration created by \code{\link[=serial_config]{serial_config()}} to register serialization and

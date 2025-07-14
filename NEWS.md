@@ -1,18 +1,18 @@
 # mirai (development version)
 
-#### Behavioural Changes
+#### New Features
 
-* The `seed` argument of `daemons()` now provides alternative random seed strategies:
-  + The default `NULL` uses L'Ecuyer-CMRG RNG streams advanced per daemon, which produces statistically-sound yet generally non-reproducible results.
-  + Setting an integer seed now initializes a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, and hence does provide reproducible results.
+* Reproducible parallel RNG by setting the `seed` argument to `daemons()`:
+  + The default `NULL` uses L'Ecuyer-CMRG RNG streams advanced per daemon, the same as base R's parallel package, which produces statistically-sound yet generally non-reproducible results.
+  + Setting an integer seed now initializes a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, which does provide reproducible results.
 
 #### Updates
 
 * `everywhere()` has been updated for robustness and ease of use:
   + Returns a `mirai_map` object for easier handling (rather than just a list of mirai).
   + When using dispatcher, no longer has the potential to fail if sending large data (#326).
-* `dispatcher()` function signature simplified with `rs`, `tls` and `pass` arguments removed (should have no effect as these are no longer passed via the arguments).
-* Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would very rarely be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
+* `dispatcher()` function signature simplified with `rs`, `tls` and `pass` arguments removed (no user-facing impact).
+* Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` could be returned as the fulfilled value of a promise in extremely rare cases (thanks @James-G-Hill and @olivier7121, #243 and #317).
 * Fixes a regression in mirai 2.4.0 where the L'Ecuyer-CMRG seed was not being passed correctly for remote daemons (#333).
 * Requires nanonext >= 1.6.2.
 
