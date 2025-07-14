@@ -30,8 +30,9 @@ inter-process communications or TCP/IP secured by TLS.
 → Launch remote resources via SSH or cluster managers for distributed
 computing.
 
-→ The queued architecture scales efficiently to millions of tasks over
-thousands of connections, requiring no storage on the file system.
+→ Scales efficiently to millions of tasks over thousands of connections,
+requiring no storage on the file system due to its inherently queued
+architecture.
 
 → Innovative features include event-driven promises, asynchronous
 parallel map, and seamless serialization of otherwise non-exportable
@@ -71,9 +72,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 79
+#> [1] 6
 m$data
-#> [1] 79
+#> [1] 6
 ```
 
 → `daemons()`:
@@ -184,10 +185,10 @@ to be used seamlessly across parallel processes.
 over ADBC database connections hosted in background processes.
 
 [<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/)
-  Targets, a make-like pipeline tool, has adopted crew as its default
-high-performance computing backend. Crew is a distributed
-worker-launcher extending mirai to different distributed computing
-platforms, from traditional clusters to cloud services.
+  Targets, a make-like pipeline tool, uses crew as its default
+high-performance computing backend. Crew is a distributed worker
+launcher extending mirai to different computing platforms, from
+traditional clusters to cloud services.
 
 ### Thanks
 
