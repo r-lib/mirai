@@ -43,10 +43,10 @@ L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 package. Results are statistically-sound, although generally
 non-reproducible, as which tasks are sent to which daemons may be
 non-deterministic, and also depends on the number of daemons.
-\cr (experimental) supply an integer value to instead initialize a global
-L'Ecuyer-CMRG RNG stream on host. This is advanced for each mirai
-evaluation, hence allowing for reproducible results, as the random seed is
-always associated with a given mirai, independently of where it is
+\cr (experimental) supply an integer value to instead initialize a
+L'Ecuyer-CMRG RNG stream for the compute profile. This is advanced for each
+mirai evaluation, hence allowing for reproducible results, as the random
+seed is always associated with a given mirai, independently of where it is
 evaluated.}
 
 \item{serial}{[default NULL] (optional, requires dispatcher) a
