@@ -14,7 +14,7 @@
 * `dispatcher()` function signature simplified with `rs`, `tls` and `pass` arguments removed (should have no effect as these are no longer passed via the arguments).
 * Fixes a bug where using non-dispatcher daemons, an `unresolvedValue` would very rarely be returned as the fulfilled value of a promise (thanks @James-G-Hill and @olivier7121, #243 and #317).
 * Fixes a regression in mirai 2.4.0 where the L'Ecuyer-CMRG seed was not being passed correctly for remote daemons (#333).
-* Requires nanonext >= [1.6.1.9001].
+* Requires nanonext >= 1.6.2.
 
 # mirai 2.4.0
 
