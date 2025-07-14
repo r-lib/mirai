@@ -14,19 +14,20 @@ Description: Designed for simplicity, a 'mirai' evaluates an R expression
     asynchronously in a parallel process, locally or distributed over the
     network. Modern networking and concurrency, built on 'nanonext' and
     'NNG', ensures reliable scheduling over fast inter-process
-    communications or TCP/IP secured by TLS.  Launch remote resources via
-    SSH or cluster managers for distributed computing. The queued
-    architecture scales efficiently to millions of tasks over thousands of
-    connections, requiring no storage on the file system.  Innovative
-    features include event-driven promises, asynchronous parallel map, and
-    seamless serialization of otherwise non-exportable reference objects.
+    communications or TCP/IP secured by TLS. Launch remote resources via
+    SSH or cluster managers for distributed computing. Scales efficiently
+    to millions of tasks over thousands of connections, requiring no
+    storage on the file system due to its inherently queued architecture.
+    Innovative features include event-driven promises, asynchronous
+    parallel map, and seamless serialization of otherwise non-exportable
+    reference objects.
 License: MIT + file LICENSE
 URL: https://mirai.r-lib.org, https://github.com/r-lib/mirai
 BugReports: https://github.com/r-lib/mirai/issues
 Depends: 
     R (>= 3.6)
 Imports: 
-    nanonext (>= 1.6.1.9001)
+    nanonext (>= 1.6.2)
 Suggests: 
     cli,
     litedown
@@ -40,4 +41,3 @@ Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Remotes: r-lib/nanonext

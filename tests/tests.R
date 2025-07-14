@@ -403,7 +403,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_equal(2L, daemons(2, seed = 1234L))
   test_equal(1L, launch_local())
   test_type("character", launch_remote())
-  Sys.sleep(1L)
+  Sys.sleep(0.5)
   m <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   Sys.sleep(0.5)

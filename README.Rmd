@@ -36,7 +36,7 @@ Minimalist Async Evaluation Framework for R
 
 → Launch remote resources via SSH or cluster managers for distributed computing.
 
-→ The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system.
+→ Scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system due to its inherently queued architecture.
 
 → Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.
 <br /><br />
@@ -150,8 +150,8 @@ mirai features the following core integrations, with usage examples in the linke
 
 [<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html) &nbsp; Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.
 
-[<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/) &nbsp; Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend.
-Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters to cloud services.
+[<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/) &nbsp; Targets, a make-like pipeline tool, uses crew as its default high-performance computing backend.
+Crew is a distributed worker launcher extending mirai to different computing platforms, from traditional clusters to cloud services.
 
 ### Thanks
 
