@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,12 +43,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -504,7 +504,7 @@ number of daemons, as in the example below:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
 <p>Note: it is assumed the app is already created. Wrapping a call to
-<code><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shiny::shinyApp()</a></code> would not work as <code><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp()</a></code>
+<code><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shiny::shinyApp()</a></code> would not work as <code>runApp()</code>
 is implicitly called when the app is printed, however printing occurs
 only after <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code> has returned, hence the app would run
 outside of the scope of the <code><a href="https://rdrr.io/r/base/with.html" class="external-link">with()</a></code> statement.</p>

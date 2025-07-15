@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,12 +19,12 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -51,15 +51,18 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.1" id="mirai-241">mirai 2.4.1<a class="anchor" aria-label="anchor" href="#mirai-241"></a></h2>
 <div class="section level5">
-<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<h5 id="new-features-2-4-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-4-1"></a></h5>
 <ul><li>Reproducible parallel RNG by setting the <code>seed</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code>:
 <ul><li>The default <code>NULL</code> uses L’Ecuyer-CMRG RNG streams advanced per daemon, the same as base R’s parallel package, which produces statistically-sound yet generally non-reproducible results.</li>
-<li>Setting an integer seed now initializes a global L’Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, which does provide reproducible results.</li>
+<li>Setting an integer seed now initializes a L’Ecuyer-CMRG RNG stream for the compute profile, which is advanced for each mirai evaluation, which does provide reproducible results.</li>
 </ul></li>
 </ul></div>
 <div class="section level5">
-<h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
+<h5 id="updates-2-4-1">Updates<a class="anchor" aria-label="anchor" href="#updates-2-4-1"></a></h5>
 <ul><li>
 <code><a href="../reference/everywhere.html">everywhere()</a></code> has been updated for robustness and ease of use:
 <ul><li>Returns a <code>mirai_map</code> object for easier handling (rather than just a list of mirai).</li>

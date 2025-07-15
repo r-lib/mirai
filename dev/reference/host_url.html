@@ -17,7 +17,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,12 +29,12 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -120,16 +120,16 @@ Windows.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 eth0              docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.149:0" "tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.195:0" "tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     eth0                  docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.149:0" "tls+tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.195:0" "tls+tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        eth0                     docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.149:5555" "tls+tcp://172.17.0.1:5555" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.195:5555" "tls+tcp://172.17.0.1:5555" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://b43b8a3c4b437b8b0548bb9a"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://3876c44869ca1607fa98642f"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tcp://127.0.0.1:0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
