@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,9 +46,32 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.1" id="mirai-241">mirai 2.4.1<a class="anchor" aria-label="anchor" href="#mirai-241"></a></h2>
+<div class="section level5">
+<h5 id="new-features-2-4-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-4-1"></a></h5>
+<ul><li>Reproducible parallel RNG by setting the <code>seed</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code>:
+<ul><li>The default <code>NULL</code> uses L’Ecuyer-CMRG RNG streams advanced per daemon, the same as base R’s parallel package, which produces statistically-sound yet generally non-reproducible results.</li>
+<li>Setting an integer seed now initializes a L’Ecuyer-CMRG RNG stream for the compute profile, which is advanced for each mirai evaluation, which does provide reproducible results.</li>
+</ul></li>
+</ul></div>
+<div class="section level5">
+<h5 id="updates-2-4-1">Updates<a class="anchor" aria-label="anchor" href="#updates-2-4-1"></a></h5>
+<ul><li>
+<code><a href="../reference/everywhere.html">everywhere()</a></code> has been updated for robustness and ease of use:
+<ul><li>Returns a <code>mirai_map</code> object for easier handling (rather than just a list of mirai).</li>
+<li>When using dispatcher, no longer has the potential to fail if sending large data (<a href="https://github.com/r-lib/mirai/issues/326" class="external-link">#326</a>).</li>
+</ul></li>
+<li>
+<code><a href="../reference/dispatcher.html">dispatcher()</a></code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (no user-facing impact).</li>
+<li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> could be returned as the fulfilled value of a promise in extremely rare cases (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
+<li>Fixes a regression in mirai 2.4.0 where the L’Ecuyer-CMRG seed was not being passed correctly for remote daemons (<a href="https://github.com/r-lib/mirai/issues/333" class="external-link">#333</a>).</li>
+<li>Requires nanonext &gt;= 1.6.2.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.4.0" id="mirai-240">mirai 2.4.0<a class="anchor" aria-label="anchor" href="#mirai-240"></a></h2><p class="text-muted">CRAN release: 2025-06-25</p>
 <div class="section level5">
