@@ -141,10 +141,10 @@ optimally. This is demonstrated in the example below:</li>
 <span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.026   0.290   4.008</span></span>
+<span><span class="co">#&gt;   0.002   0.005   4.005</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.008   0.003   8.011</span></span>
+<span><span class="co">#&gt;   0.004   0.006   8.011</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><code>.args</code> is used to specify further constant arguments to
@@ -156,13 +156,13 @@ example below:</p>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 18.34921</span></span>
+<span><span class="co">#&gt; [1] 18.85852</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 20.92965 18.65826</span></span>
+<span><span class="co">#&gt; [1] 19.02842 19.22156</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] 22.05289 17.32964 21.19244</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 20.44371 17.17930 18.05175</span></span></code></pre></div>
 <p>Use <code>...</code> to further specify objects referenced but not
 defined in <code>.f</code> - the function <code>do</code> below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -174,16 +174,16 @@ defined in <code>.f</code> - the function <code>do</code> below:</p>
 <span>  do <span class="op">=</span> <span class="fu">nanonext</span><span class="fu">::</span><span class="va"><a href="https://nanonext.r-lib.org/reference/random.html" class="external-link">random</a></span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">ml</span></span>
-<span><span class="co">#&gt; &lt; mirai map [2/3] &gt;</span></span>
+<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "67"</span></span>
+<span><span class="co">#&gt; [1] "8d"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] e6 51</span></span>
+<span><span class="co">#&gt; [1] 95 2c</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "23b40b"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "e6c1ca"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="collecting-results">3. Collecting Results<a class="anchor" aria-label="anchor" href="#collecting-results"></a>
