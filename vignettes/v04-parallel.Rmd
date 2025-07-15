@@ -28,7 +28,7 @@ library(mirai)
 
 cl <- makeCluster(6, type = "MIRAI")
 cl
-#> < miraiCluster | ID: `26` nodes: 6 active: TRUE >
+#> < miraiCluster | ID: `1` nodes: 6 active: TRUE >
 parLapply(cl, iris, mean)
 #> $Sepal.Length
 #> [1] 5.843333
@@ -54,7 +54,7 @@ status(cl)
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://eb809f13097f9a03ba5cb5bb"
+#> [1] "abstract://1ffa515b477cb048623e8a7c"
 stopCluster(cl)
 ```
 
@@ -65,10 +65,10 @@ cl <- make_cluster(n = 2, url = host_url())
 #> Shell commands for deployment on nodes:
 #> 
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:45111",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,2115398811,-2011965664,-789584735,1666662894,1025958295,-751939348))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:36061",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,608223508,314351877,910111234,-668523109,970783776,-1964800607))'
 #> 
 #> [2]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:45111",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1495377764,161492535,-451945023,2093847167,-1105055737,1737365375))'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:36061",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1589879997,1665986728,-2021887029,-1113401414,1948876325,1799837871))'
 stop_cluster(cl)
 ```
 
@@ -81,6 +81,8 @@ Running some parallel examples for the `foreach()` function:
 
 ``` r
 library(doParallel)
+#> Loading required package: foreach
+#> Loading required package: iterators
 library(foreach)
 
 cl <- makeCluster(6, type = "MIRAI")
@@ -90,10 +92,10 @@ registerDoParallel(cl)
 m <- matrix(rnorm(9), 3, 3)
 foreach(i = 1:nrow(m), .combine = rbind) %dopar%
   (m[i, ] / mean(m[i, ]))
-#>              [,1]       [,2]       [,3]
-#> result.1 5.989529  1.1456413 -4.1351703
-#> result.2 3.745199 -0.5989935 -0.1462058
-#> result.3 3.007812  2.0183943 -2.0262067
+#>                [,1]      [,2]      [,3]
+#> result.1  0.5373009  1.073723  1.388976
+#> result.2 -8.7848778  7.635917  4.148961
+#> result.3 -3.6102409 10.285887 -3.675646
 
 # simple parallel matrix multiply
 a <- matrix(1:16, 4, 4)

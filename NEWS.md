@@ -1,10 +1,10 @@
-# mirai (development version)
+# mirai 2.4.1
 
 #### New Features
 
 * Reproducible parallel RNG by setting the `seed` argument to `daemons()`:
   + The default `NULL` uses L'Ecuyer-CMRG RNG streams advanced per daemon, the same as base R's parallel package, which produces statistically-sound yet generally non-reproducible results.
-  + Setting an integer seed now initializes a global L'Ecuyer-CMRG RNG stream, which is advanced for each mirai evaluation, which does provide reproducible results.
+  + Setting an integer seed now initializes a L'Ecuyer-CMRG RNG stream for the compute profile, which is advanced for each mirai evaluation, which does provide reproducible results.
 
 #### Updates
 

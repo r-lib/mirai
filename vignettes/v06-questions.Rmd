@@ -80,10 +80,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1] 1.016203 1.497606 0.128886
+#> [1] -0.03203249  0.06758411 -1.15134665
 #> 
 #> [[2]]
-#> [1] -0.4182534 -0.2395251 -1.0790350
+#> [1] -1.52548151  0.47057627  0.09368248
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {

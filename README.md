@@ -72,9 +72,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 6
+#> [1] 86
 m$data
-#> [1] 6
+#> [1] 86
 ```
 
 → `daemons()`:
@@ -154,7 +154,7 @@ experience.
 mirai features the following core integrations, with usage examples in
 the linked vignettes:
 
-[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/mirai-xparallel.html)
+[<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
   Provides the first official alternative communications backend for R,
 implementing the ‘MIRAI’ parallel cluster type, a feature request by
 R-Core at R Project Sprint 2023.
@@ -163,24 +163,24 @@ R-Core at R Project Sprint 2023.
   Powers parallel map for the purrr functional programming toolkit, a
 core tidyverse package.
 
-[<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/v3-promises.html)
+[<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/v02-promises.html)
   Implements next generation, event-driven promises. ‘mirai’ and
 ‘mirai_map’ objects are readily convertible to ‘promises’, and may be
 used directly with the promise pipe.
 
-[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
+[<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   The primary async backend for Shiny, supporting ExtendedTask and the
 next level of responsiveness and scalability for Shiny apps.
 
-[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-promises.html)
+[<img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   The built-in async evaluator behind the `@async` tag in plumber2; also
 provides an async backend for Plumber.
 
-[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
+[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
   Allows Torch tensors and complex objects such as models and optimizers
 to be used seamlessly across parallel processes.
 
-[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/mirai-serialization.html)
+[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
   Allows queries using the Apache Arrow format to be handled seamlessly
 over ADBC database connections hosted in background processes.
 
