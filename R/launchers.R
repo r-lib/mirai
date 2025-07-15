@@ -90,13 +90,13 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   tls <- envir[["tls"]]
 
   if (length(remote) == 2L) {
-    requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
-    rstudioapi::launcherAvailable()
+    submit_job <- .subset2(rstudio(), ".rs.api.launcher.submitJob")
+    new_container <- .subset2(rstudio(), ".rs.api.launcher.newContainer")
     cluster <- remote[["name"]]
-    container <- rstudioapi::launcherContainer(remote[["image"]])
+    container <- new_container(remote[["image"]])
     lapply(
       seq_len(n),
-      function(x) rstudioapi::launcherSubmitJob(
+      function(x) submit_job(
         sprintf("mirai_daemon_%d", x),
         cluster = cluster,
         command = launch_remote(),
@@ -417,9 +417,8 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' @export
 #'
 workbench_config <- function() {
-  requireNamespace("rstudioapi", quietly = TRUE) || stop(._[["rstudio_api"]])
-  rstudioapi::launcherAvailable()
-  cluster <- rstudioapi::launcherGetInfo()[["clusters"]][[1L]]
+  get_info <- .subset2(rstudio(), ".rs.api.launcher.getInfo")
+  cluster <- get_info()[["clusters"]][[1L]]
   list(name = cluster[["name"]], image = cluster[["defaultImage"]])
 }
 
@@ -504,4 +503,13 @@ find_dot <- function(args) {
   sel <- args == "."
   any(sel) || stop(._[["dot_required"]], call. = FALSE)
   sel
+}
+
+rstudio <- function() {
+  idx <- match("tools:rstudio", search())
+  is.na(idx) && stop(._[["rstudio_api"]])
+  tools <- as.environment(idx)
+  feature_available <- .subset2(tools, ".rs.api.launcher.jobsFeatureAvailable")
+  is.function(feature_available) && feature_available() || stop(._[["rstudio_api"]])
+  tools
 }
