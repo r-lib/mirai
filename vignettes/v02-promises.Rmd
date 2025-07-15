@@ -59,31 +59,9 @@ env$res
 
 A `mirai_map` also has an `as.promise()` method. It resolves when the entire map operation completes or at least one mirai in the map is rejected.
 
-### 2. The One Million Promises Challenge
+### 2. Shiny ExtendedTask: Introduction
 
-The code below is taken from the challenge to launch and collect one million promises. For illustration, the example is scaled down to ten thousand.
-
-
-``` r
-library(mirai)
-daemons(12, dispatcher = FALSE)
-#> [1] 12
-r <- 0
-start <- Sys.time()
-m <- mirai_map(1:10000, \(x) x, .promise = \(x) r <<- r + x)
-Sys.time() - start
-#> Time difference of 2.046158 secs
-later::run_now()
-r
-#> [1] 50005000
-daemons(0)
-#> [1] 0
-```
-The one million promises challenge took 5 mins 5 secs to complete using an Apple M4 Pro MacBook.
-
-### 3. Shiny ExtendedTask: Introduction
-
-mirai is an asynchronous backend to scale [Shiny](https://shiny.posit.co/) applications.
+mirai is the primary asynchronous backend for scaling [Shiny](https://shiny.posit.co/) applications.
 Depending on the options supplied to `daemons()`, mirai tasks may be distributed across parallel processes locally or across the network.
 
 Shiny ExtendedTask allows the creation of scalable Shiny apps, which remain responsive intra-session for each user, as well as inter-session for multiple concurrent users.
@@ -164,7 +142,7 @@ observeEvent(input$btn, task$invoke(x = input$n, y = input$delay))
 output$plot <- renderPlot(hist(task$result()))
 ```
 
-### 4. Shiny ExtendedTask: Cancellation
+### 3. Shiny ExtendedTask: Cancellation
 
 The app below is a demonstration of mirai's cancellation capability. Cancellation is performed in the same way irrespective of where the mirai task may be executing, locally or remotely.
 
@@ -228,7 +206,7 @@ shinyApp(ui = ui, server = server)
 ```
 *Thanks to Joe Cheng for providing examples on which the above is based.*
 
-### 5. Shiny ExtendedTask: Generative Art
+### 4. Shiny ExtendedTask: Generative Art
 
 The following app produces pretty spiral patterns.
 
@@ -347,7 +325,7 @@ observeEvent(input$resample, task$invoke(calc_time, run_task))
 ``` r
 output$plot <- renderPlot(plot_result(task$result()))
 ```
-### 6. Shiny ExtendedTask: mirai map
+### 5. Shiny ExtendedTask: mirai map
 
 A `mirai_map` also has an `as.promise()` method, which allows it to be used directly in a Shiny ExtendedTask. It will resolve when the entire map operation completes or at least one mirai in the map is rejected.
 
@@ -398,7 +376,7 @@ app <- shinyApp(ui, server)
 with(daemons(4), runApp(app))
 ```
 
-### 7. Shiny Async: Coin Flips
+### 6. Shiny Async: Coin Flips
 
 The below example demonstrates how to integrate a `mirai_map()` operation into a Shiny app in an observer, without using ExtendedTask.
 
@@ -465,7 +443,7 @@ with(daemons(8, dispatcher = FALSE), {
 
 *This is an adaptation of an original example provided by Will Landau for use of `crew` with Shiny. Please see <https://wlandau.github.io/crew/articles/shiny.html>.*
 
-### 8. Shiny Async: Progress Bar
+### 7. Shiny Async: Progress Bar
 
 The below example uses a `mirai_map()` operation in an observer to update a Shiny progress bar with custom messages, and also to update a reactive value once the entire map operation has completed (asynchronously).
 
@@ -529,7 +507,7 @@ with(daemons(8), runApp(app))
 ```
 *This example adapts a contribution from Davide Magno.*
 
-### 9. Plumber GET Endpoint
+### 8. Plumber GET Endpoint
 
 mirai may be used as an asynchronous backend for [`plumber`](https://www.rplumber.io/) pipelines.
 
@@ -592,34 +570,34 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:24\"],\"msg\":[\"1\"],\"pid\":[4692]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:53\"],\"msg\":[\"1\"],\"pid\":[4694]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:25\"],\"msg\":[\"2\"],\"pid\":[4694]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:53\"],\"msg\":[\"2\"],\"pid\":[4692]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:25\"],\"msg\":[\"3\"],\"pid\":[4704]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:54\"],\"msg\":[\"3\"],\"pid\":[4692]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:25\"],\"msg\":[\"4\"],\"pid\":[4710]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:53\"],\"msg\":[\"4\"],\"pid\":[4710]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:25\"],\"msg\":[\"5\"],\"pid\":[4692]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:53\"],\"msg\":[\"5\"],\"pid\":[4704]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:26\"],\"msg\":[\"6\"],\"pid\":[4694]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:54\"],\"msg\":[\"6\"],\"pid\":[4694]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:26\"],\"msg\":[\"7\"],\"pid\":[4710]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:54\"],\"msg\":[\"7\"],\"pid\":[4710]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:26\"],\"msg\":[\"8\"],\"pid\":[4704]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:54\"],\"msg\":[\"8\"],\"pid\":[4704]}"
 
 daemons(0)
 #> [1] 0
 ```
 
-### 10. Plumber POST Endpoint
+### 9. Plumber POST Endpoint
 
 This is the equivalent using a POST endpoint, accepting a JSON instruction sent as request data.
 
@@ -680,28 +658,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:29\"],\"msg\":[\"1\"],\"pid\":[4768]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:58\"],\"msg\":[\"1\"],\"pid\":[4768]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:29\"],\"msg\":[\"2\"],\"pid\":[4770]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:58\"],\"msg\":[\"2\"],\"pid\":[4776]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:29\"],\"msg\":[\"3\"],\"pid\":[4776]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:58\"],\"msg\":[\"3\"],\"pid\":[4770]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:30\"],\"msg\":[\"4\"],\"pid\":[4786]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:58\"],\"msg\":[\"4\"],\"pid\":[4786]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:30\"],\"msg\":[\"5\"],\"pid\":[4770]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:59\"],\"msg\":[\"5\"],\"pid\":[4786]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:29\"],\"msg\":[\"6\"],\"pid\":[4786]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:59\"],\"msg\":[\"6\"],\"pid\":[4768]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:30\"],\"msg\":[\"7\"],\"pid\":[4776]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:59\"],\"msg\":[\"7\"],\"pid\":[4770]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-07-15 11:09:30\"],\"msg\":[\"8\"],\"pid\":[4768]}"
+#> [1] "{\"time\":[\"2025-07-15 11:22:59\"],\"msg\":[\"8\"],\"pid\":[4776]}"
 
 daemons(0)
 #> [1] 0
