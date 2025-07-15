@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Minimalist Async Evaluation Framework for R">
-<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
-<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
+<meta name="description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. Scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system due to its inherently queued architecture. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
+<meta property="og:description" content="Designed for simplicity, a mirai evaluates an R expression asynchronously in a parallel process, locally or distributed over the network. Modern networking and concurrency, built on nanonext and NNG, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS. Launch remote resources via SSH or cluster managers for distributed computing. Scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system due to its inherently queued architecture. Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects.">
 <meta property="og:image" content="https://mirai.r-lib.org/logo.png">
 <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -45,12 +45,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="articles/questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="articles/v06-questions.html">Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -91,7 +91,7 @@
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br> → Designed for simplicity, a ‘mirai’ evaluates an R expression asynchronously in a parallel process, locally or distributed over the network.</p>
 <p>→ Modern networking and concurrency, built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a>, ensures reliable scheduling over fast inter-process communications or TCP/IP secured by TLS.</p>
 <p>→ Launch remote resources via SSH or cluster managers for distributed computing.</p>
-<p>→ The queued architecture scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system.</p>
+<p>→ Scales efficiently to millions of tasks over thousands of connections, requiring no storage on the file system due to its inherently queued architecture.</p>
 <p>→ Innovative features include event-driven promises, asynchronous parallel map, and seamless serialization of otherwise non-exportable reference objects. <br><br></p>
 </div>
 <div class="section level3">
@@ -120,9 +120,9 @@
 <span><span class="co"># do other work</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 79</span></span>
+<span><span class="co">#&gt; [1] 86</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 79</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 86</span></span></code></pre></div>
 <p>→ <code><a href="reference/daemons.html">daemons()</a></code>:</p>
 <p>Sets persistent background processes (<em>daemons</em>) where mirai are evaluated.</p>
 <p>To launch 6 local daemons:</p>
@@ -177,14 +177,14 @@
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
 </h3>
 <p>mirai features the following core integrations, with usage examples in the linked vignettes:</p>
-<p><a href="https://mirai.r-lib.org/articles/mirai-xparallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
+<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Provides the first official alternative communications backend for R, implementing the ‘MIRAI’ parallel cluster type, a feature request by R-Core at R Project Sprint 2023.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
-<p><a href="https://mirai.r-lib.org/articles/v3-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements next generation, event-driven promises. ‘mirai’ and ‘mirai_map’ objects are readily convertible to ‘promises’, and may be used directly with the promise pipe.</p>
-<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
-<p><a href="https://mirai.r-lib.org/articles/mirai-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   The built-in async evaluator behind the <code>@async</code> tag in plumber2; also provides an async backend for Plumber.</p>
-<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
-<p><a href="https://mirai.r-lib.org/articles/mirai-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
-<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, has adopted crew as its default high-performance computing backend. Crew is a distributed worker-launcher extending mirai to different distributed computing platforms, from traditional clusters to cloud services.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Implements next generation, event-driven promises. ‘mirai’ and ‘mirai_map’ objects are readily convertible to ‘promises’, and may be used directly with the promise pipe.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Plumber" src="https://rstudio.github.io/cheatsheets/html/images/logo-plumber.png" width="40" height="46"></a>   The built-in async evaluator behind the <code>@async</code> tag in plumber2; also provides an async backend for Plumber.</p>
+<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
+<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
+<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets, a make-like pipeline tool, uses crew as its default high-performance computing backend. Crew is a distributed worker launcher extending mirai to different computing platforms, from traditional clusters to cloud services.</p>
 </div>
 <div class="section level3">
 <h3 id="thanks">Thanks<a class="anchor" aria-label="anchor" href="#thanks"></a>

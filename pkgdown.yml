@@ -2,14 +2,14 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  mirai-map: mirai-map.html
-  mirai-promises: mirai-promises.html
-  mirai-serialization: mirai-serialization.html
-  mirai-xparallel: mirai-xparallel.html
   mirai: mirai.html
-  packages: packages.html
-  questions: questions.html
-last_built: 2025-07-10T08:57Z
+  v01-map: v01-map.html
+  v02-promises: v02-promises.html
+  v03-serialization: v03-serialization.html
+  v04-parallel: v04-parallel.html
+  v05-packages: v05-packages.html
+  v06-questions: v06-questions.html
+last_built: 2025-07-15T07:32Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles

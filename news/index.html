@@ -19,12 +19,12 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -46,14 +46,14 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/dev/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.4.0" id="mirai-240">mirai 2.4.0<a class="anchor" aria-label="anchor" href="#mirai-240"></a></h2><p class="text-muted">CRAN release: 2025-06-25</p>
 <div class="section level5">
 <h5 id="behavioural-changes-2-4-0">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-2-4-0"></a></h5>
-<ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task. For previous behaviour use: <code>with(daemons(1L, dispatcher = FALSE, autoexit = NA), mirai(...))</code>.</li>
+<ul><li>An ephemeral daemon started by <code><a href="../reference/mirai.html">mirai()</a></code> without setting daemons now exits as soon as the parent process does rather than finish the task.</li>
 <li>Change in <code><a href="../reference/daemon.html">daemon()</a></code> defaults:
 <ul><li>Argument <code>autoexit</code> default of <code>TRUE</code> now ensures daemons are terminated along with the parent process. Set to <code>NA</code> to retain the previous behaviour of having them automatically exit after completing any in-progress tasks.</li>
 <li>Argument <code>dispatcher</code> now defaults to <code>TRUE</code>.</li>

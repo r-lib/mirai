@@ -4,18 +4,20 @@ in a parallel process, locally or distributed over the network. Modern
 networking and concurrency, built on 'nanonext' and 'NNG', ensures reliable
 scheduling over fast inter-process communications or TCP/IP secured by TLS.
 Launch remote resources via SSH or cluster managers for distributed
-computing. The queued architecture scales efficiently to millions of tasks
-over thousands of connections, requiring no storage on the file system.
-Innovative features include event-driven promises, asynchronous parallel map,
-and seamless serialization of otherwise non-exportable reference objects."><meta property="og:description" content="Designed for simplicity, a 'mirai' evaluates an R expression asynchronously
+computing. Scales efficiently to millions of tasks over thousands of
+connections, requiring no storage on the file system due to its inherently
+queued architecture. Innovative features include event-driven promises,
+asynchronous parallel map, and seamless serialization of otherwise
+non-exportable reference objects."><meta property="og:description" content="Designed for simplicity, a 'mirai' evaluates an R expression asynchronously
 in a parallel process, locally or distributed over the network. Modern
 networking and concurrency, built on 'nanonext' and 'NNG', ensures reliable
 scheduling over fast inter-process communications or TCP/IP secured by TLS.
 Launch remote resources via SSH or cluster managers for distributed
-computing. The queued architecture scales efficiently to millions of tasks
-over thousands of connections, requiring no storage on the file system.
-Innovative features include event-driven promises, asynchronous parallel map,
-and seamless serialization of otherwise non-exportable reference objects."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+computing. Scales efficiently to millions of tasks over thousands of
+connections, requiring no storage on the file system due to its inherently
+queued architecture. Innovative features include event-driven promises,
+asynchronous parallel map, and seamless serialization of otherwise
+non-exportable reference objects."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -35,12 +37,12 @@ and seamless serialization of otherwise non-exportable reference objects."><meta
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/mirai-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/mirai-xparallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -62,7 +64,7 @@ and seamless serialization of otherwise non-exportable reference objects."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>mirai: Minimalist Async Evaluation Framework for R</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/dev/release/R/mirai-package.R" class="external-link"><code>R/mirai-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/mirai-package.R" class="external-link"><code>R/mirai-package.R</code></a></small>
       <div class="d-none name"><code>mirai-package.Rd</code></div>
     </div>
 
@@ -72,10 +74,11 @@ in a parallel process, locally or distributed over the network. Modern
 networking and concurrency, built on 'nanonext' and 'NNG', ensures reliable
 scheduling over fast inter-process communications or TCP/IP secured by TLS.
 Launch remote resources via SSH or cluster managers for distributed
-computing. The queued architecture scales efficiently to millions of tasks
-over thousands of connections, requiring no storage on the file system.
-Innovative features include event-driven promises, asynchronous parallel map,
-and seamless serialization of otherwise non-exportable reference objects.</p>
+computing. Scales efficiently to millions of tasks over thousands of
+connections, requiring no storage on the file system due to its inherently
+queued architecture. Innovative features include event-driven promises,
+asynchronous parallel map, and seamless serialization of otherwise
+non-exportable reference objects.</p>
     </div>
 
 
