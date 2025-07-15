@@ -39,10 +39,10 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.026   0.290   4.008
+#>   0.002   0.005   4.005
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.008   0.003   8.011
+#>   0.004   0.006   8.011
 daemons(0)
 #> [1] 0
 ```
@@ -54,13 +54,13 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 18.34921
+#> [1] 18.85852
 #> 
 #> [[2]]
-#> [1] 20.92965 18.65826
+#> [1] 19.02842 19.22156
 #> 
 #> [[3]]
-#> [1] 22.05289 17.32964 21.19244
+#> [1] 20.44371 17.17930 18.05175
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the function `do` below:
 
@@ -73,16 +73,16 @@ ml <- mirai_map(
   do = nanonext::random
 )
 ml
-#> < mirai map [2/3] >
+#> < mirai map [0/3] >
 ml[]
 #> $a
-#> [1] "67"
+#> [1] "8d"
 #> 
 #> $b
-#> [1] e6 51
+#> [1] 95 2c
 #> 
 #> $c
-#> [1] "23b40b"
+#> [1] "e6c1ca"
 ```
 
 ### 3. Collecting Results
