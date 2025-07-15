@@ -30,8 +30,7 @@ Imports:
     nanonext (>= 1.6.2.9002)
 Suggests: 
     cli,
-    litedown,
-    rstudioapi
+    litedown
 Enhances: 
     parallel,
     promises
