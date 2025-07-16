@@ -5,7 +5,7 @@
 * `race_mirai()` now returns the integer index of the first resolved 'mirai' instead of the entire list.
   Returns immediately if any mirai is already resolved, and returns `0L` for empty lists.
   This enables efficient removal from the list via `remaining <- remaining[-idx]`.
-* Adds `workbench_config()` to launch remote daemons using the default-configured Kubernetes or traditional cluster on Posit Workbench.
+* Adds `cloud_config()` to launch remote daemons using a cloud / cloud-based managed platform. Currently supports Posit Workbench.
 * New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
   This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
 
