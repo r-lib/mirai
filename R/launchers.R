@@ -115,7 +115,7 @@ launch_remote <- function(
       lapply(
         cmds,
         function(cmd) submit_job(
-          sprintf("mirai_daemon_%d", random(4L)),
+          sprintf("mirai_daemon_%s", random(3L)),
           cluster = cluster,
           command = cmd,
           container = container
