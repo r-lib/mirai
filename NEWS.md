@@ -8,7 +8,7 @@
 
 #### New Features
 
-* Adds `workbench_config()` to launch remote daemons using the default-configured Kubernetes or traditional cluster on Posit Workbench.
+* Adds `cloud_config()` to launch remote daemons using a cloud / cloud-based managed platform. Currently supports Posit Workbench.
 
 #### Updates
 

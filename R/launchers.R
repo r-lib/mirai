@@ -395,28 +395,37 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
 }
 
-#' Workbench Remote Launch Configuration
+#' Cloud Remote Launch Configuration
 #'
-#' Generates a remote configuration for launching daemons using the default
-#' configured Kubernetes or traditional cluster in Posit Workbench.
+#' Generates a remote configuration for launching daemons via cloud /
+#' cloud-based managed platforms.
+#'
+#' @param platform \[default "posit"\] character name of the platform
+#'   (case-insensitive). Currently the only option is "posit" to use the Posit
+#'   Workbench launcher.
 #'
 #' @inherit remote_config return
 #'
 #' @seealso [ssh_config()], [cluster_config()], and [remote_config()] for other
-#'   remote launch configurations.
+#'   types of remote launch configuration.
 #'
 #' @examples
-#' tryCatch(workbench_config(), error = identity)
+#' tryCatch(cloud_config(), error = identity)
 #'
 #' \dontrun{
 #'
-#' # Launch 2 daemons using the Workbench default:
-#' daemons(n = 2, url = host_url(), remote = workbench_config())
+#' # Launch 2 daemons using the Posit Workbench default:
+#' daemons(n = 2, url = host_url(), remote = cloud_config(platform = "posit"))
 #' }
 #'
 #' @export
 #'
-workbench_config <- function() {
+cloud_config <- function(platform = "posit") {
+  switch(
+    tolower(platform),
+    posit = TRUE,
+    stop(._[["platform_unsupported"]])
+  )
   get_info <- .subset2(rstudio(), ".rs.api.launcher.getInfo")
   cluster <- get_info()[["clusters"]][[1L]]
   list(name = cluster[["name"]], image = cluster[["defaultImage"]])
