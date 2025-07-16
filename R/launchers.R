@@ -95,22 +95,28 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   if (is.null(tls)) tls <- envir[["tls"]]
 
   if (length(remote) == 2L) {
-    tools <- posit_tools()
-    is.environment(tools) || stop(._[["posit_api"]])
-    submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
-    new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
-    cluster <- remote[["name"]]
-    container <- new_container(remote[["image"]])
-    lapply(
-      seq_len(n),
-      function(x) submit_job(
-        sprintf("mirai_daemon_%d", x),
-        cluster = cluster,
-        command = launch_remote(),
-        container = container
+    platform <- remote[["platform"]]
+    args <- remote[["args"]]
+    platform == "posit" && {
+      tools <- posit_tools()
+      is.environment(tools) || stop(._[["posit_api"]])
+      submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
+      new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
+      cluster <- args[["name"]]
+      container <- new_container(args[["image"]])
+      cmds <- launch_remote(n)
+      lapply(
+        cmds,
+        function(cmd) submit_job(
+          sprintf("mirai_daemon_%d", random(4L)),
+          cluster = cluster,
+          command = cmd,
+          container = container
+        )
       )
-    )
-    return(invisible())
+      return(cmds)
+    }
+    stop(._[["platform_unsupported"]])
   }
 
   command <- remote[["command"]]
@@ -437,8 +443,9 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' @export
 #'
 cloud_config <- function(platform = "posit") {
-  switch(
-    tolower(platform),
+  platform <- tolower(platform)
+  args <- switch(
+    platform,
     posit = {
       tools <- posit_tools()
       is.environment(tools) || stop(._[["posit_api"]])
@@ -448,6 +455,7 @@ cloud_config <- function(platform = "posit") {
     },
     stop(._[["platform_unsupported"]])
   )
+  list(platform = platform, args = args)
 }
 
 #' URL Constructors
