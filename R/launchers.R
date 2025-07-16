@@ -103,7 +103,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
       lapply(
         cmds,
         function(cmd) submit_job(
-          sprintf("mirai_daemon_%d", random(4L)),
+          sprintf("mirai_daemon_%s", random(3L)),
           cluster = cluster,
           command = cmd,
           container = container
