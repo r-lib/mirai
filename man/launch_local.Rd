@@ -67,11 +67,10 @@ Daemons must already be set for launchers to work.
 These functions may be used to re-launch daemons that have exited after
 reaching time or task limits.
 
-The generated command for non-dispatcher daemons contain the argument \code{rs}
-specifying the length 7 L'Ecuyer-CMRG random seed supplied to the daemon. The
-values will be different each time the function is called. For dispatcher
-daemons, the equivalent random seed is obtained automatically from
-dispatcher, and hence \code{rs} is not specified in this case.
+For non-dispatcher daemons using the default seed strategy, the generated
+command contains the argument \code{rs} specifying the length 7 L'Ecuyer-CMRG
+random seed supplied to the daemon. The values will be different each time
+the function is called.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
