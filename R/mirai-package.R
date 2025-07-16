@@ -92,7 +92,7 @@ cli_enabled <- FALSE
     n_zero = "the number of daemons must be zero or greater",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     platform_unsupported = "`platform` is currently not supported",
-    rstudio_api = "cannot be used outside of a Posit Workbench environment",
+    posit_api = "this launch configuration can only be used from Posit Workbench",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     synchronous = "daemons cannot be launched for synchronous compute profiles",

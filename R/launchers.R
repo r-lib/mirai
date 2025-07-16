@@ -90,8 +90,10 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   tls <- envir[["tls"]]
 
   if (length(remote) == 2L) {
-    submit_job <- .subset2(rstudio(), ".rs.api.launcher.submitJob")
-    new_container <- .subset2(rstudio(), ".rs.api.launcher.newContainer")
+    tools <- posit_tools()
+    is.environment(tools) || stop(._[["posit_api"]])
+    submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
+    new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
     cluster <- remote[["name"]]
     container <- new_container(remote[["image"]])
     lapply(
@@ -423,12 +425,15 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 cloud_config <- function(platform = "posit") {
   switch(
     tolower(platform),
-    posit = TRUE,
+    posit = {
+      tools <- posit_tools()
+      is.environment(tools) || stop(._[["posit_api"]])
+      get_info <- .subset2(tools, ".rs.api.launcher.getInfo")
+      cluster <- get_info()[["clusters"]][[1L]]
+      list(name = cluster[["name"]], image = cluster[["defaultImage"]])
+    },
     stop(._[["platform_unsupported"]])
   )
-  get_info <- .subset2(rstudio(), ".rs.api.launcher.getInfo")
-  cluster <- get_info()[["clusters"]][[1L]]
-  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
 }
 
 #' URL Constructors
@@ -514,11 +519,11 @@ find_dot <- function(args) {
   sel
 }
 
-rstudio <- function() {
-  idx <- match("tools:rstudio", search())
-  is.na(idx) && stop(._[["rstudio_api"]])
+posit_tools <- function() {
+  idx <- match("tools:rstudio", search(), nomatch = 0L)
+  idx || return()
   tools <- as.environment(idx)
   feature_available <- .subset2(tools, ".rs.api.launcher.jobsFeatureAvailable")
-  is.function(feature_available) && feature_available() || stop(._[["rstudio_api"]])
+  is.function(feature_available) && feature_available() || return()
   tools
 }
