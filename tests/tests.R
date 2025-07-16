@@ -87,6 +87,8 @@ is.null(mirai:::posit_tools()) && {
   test_type("list", cfg)
   test_zero(daemons(url = local_url(), dispatcher = FALSE))
   test_class("miraiLaunchCmd", launch_remote(n = 2L, remote = cfg))
+  cfg$platform <- "wrong"
+  test_error(launch_remote(n = 2L, remote = cfg), "not supported")
   test_zero(daemons(0))
   detach()
   test_error(cloud_config(platform = "posit"), "can only be used from Posit Workbench")
