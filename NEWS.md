@@ -1,5 +1,3 @@
-# mirai (development version)
-
 # mirai 2.4.1
 
 #### New Features
