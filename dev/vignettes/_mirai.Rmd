@@ -589,11 +589,11 @@ The CA may be a public CA or internal to an organisation.
   - If the certificate and private key have been imported as character strings `cert` and `key` respectively, then the 'tls' argument may be specified as the character vector `c(cert, key)`.
   - Alternatively, the certificate may be copied to a new text file, with the private key appended, in which case the path/filename of this file may be provided to the 'tls' argument.
 
-4. When launching daemons, the certificate chain to the CA should be supplied to the 'tls' argument of `daemon()` or `launch_remote()`.
+4. When launching daemons, the certificate chain to the CA should be supplied to the 'tlscert' argument of `launch_remote()` or `daemons()` to pass through to `daemon()`.
   - The certificate chain should comprise multiple certificates, each between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` markers. The first one should be the newly-generated TLS certificate, the same supplied to `daemons()`, and the final one should be a CA root certificate.
   - These are the only certificates required if the certificate was signed directly by a CA. If not, then the intermediate certificates should be included in a certificate chain that starts with the TLS certificate and ends with the certificate of the CA.
-  - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to the relevant 'tls' argument.
-  - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tls' argument may also be specified as a path/filename (assuming these are the same on each machine).
+  - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to the relevant 'tlscert' argument.
+  - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tlscert' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
 ### 8. Compute Profiles
 
