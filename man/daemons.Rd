@@ -14,6 +14,7 @@ daemons(
   serial = NULL,
   tls = NULL,
   pass = NULL,
+  tlscert = NULL,
   .compute = NULL
 )
 }
@@ -68,6 +69,12 @@ comprising [i] the TLS certificate (optionally certificate chain) and
 \item{pass}{[default NULL] (required only if the private key supplied to
 \code{tls} is encrypted with a password) For security, should be provided
 through a function that returns this value, rather than directly.}
+
+\item{tlscert}{[default NULL] (required for secure TLS connections \strong{only}
+if \code{tls} is supplied). \strong{Either} the character path to a file containing
+X.509 certificate(s) in PEM format, comprising the certificate authority
+certificate chain, \strong{or} a length 2 character vector comprising [i] the
+certificate authority certificate chain and [ii] the empty string \code{""}.}
 
 \item{.compute}{[default NULL] character value for the compute profile
 to use (each has its own independent set of daemons), or NULL to use the

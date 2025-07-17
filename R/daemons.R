@@ -76,6 +76,11 @@
 #' @param pass \[default NULL\] (required only if the private key supplied to
 #'   `tls` is encrypted with a password) For security, should be provided
 #'   through a function that returns this value, rather than directly.
+#' @param tlscert \[default NULL\] (required for secure TLS connections **only**
+#'   if `tls` is supplied). **Either** the character path to a file containing
+#'   X.509 certificate(s) in PEM format, comprising the certificate authority
+#'   certificate chain, **or** a length 2 character vector comprising \[i\] the
+#'   certificate authority certificate chain and \[ii\] the empty string `""`.
 #'
 #' @return The integer number of daemons launched locally (zero if specifying
 #'   `url` or using a remote launcher).
@@ -225,6 +230,7 @@ daemons <- function(
   serial = NULL,
   tls = NULL,
   pass = NULL,
+  tlscert = NULL,
   .compute = NULL
 ) {
   missing(n) && missing(url) && return(status(.compute))
@@ -243,13 +249,13 @@ daemons <- function(
       switch(
         parse_dispatcher(dispatcher),
         {
-          tls <- configure_tls(url, tls, pass, envir)
+          tls <- configure_tls(url, tls, pass, tlscert, envir)
           sock <- req_socket(url, tls = tls)
           check_store_sock_url(envir, sock)
         },
         {
           cv <- cv()
-          tls <- configure_tls(url, tls, pass, envir, returnconfig = FALSE)
+          tls <- configure_tls(url, tls, pass, tlscert, envir, config = FALSE)
           urld <- local_url()
           sock <- req_socket(urld)
           if (is.null(serial)) serial <- .[["serial"]]
@@ -522,16 +528,18 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(url, tls, pass, envir, returnconfig = TRUE) {
+configure_tls <- function(url, tls, pass, tlscert, envir, config = TRUE) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
     `[[<-`(envir, "tls", cert[["client"]])
     tls <- cert[["server"]]
+  } else if (length(tlscert)) {
+    `[[<-`(envir, "tls", tlscert)
   }
   cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
-  returnconfig || return(tls)
+  config || return(tls)
   cfg
 }
 
