@@ -1,5 +1,10 @@
 # mirai (development version)
 
+#### Updates
+
+* `daemon()` argument `tls` is renamed `tlscert` to allow supplying custom TLS certificates in a call to `daemons()`.
+  Previously they could only be supplied to `launch_remote()`.
+
 # mirai 2.4.1
 
 #### New Features

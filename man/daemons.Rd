@@ -37,7 +37,7 @@ and should normally be kept on (for details see Dispatcher section below).}
 
 \item{...}{(optional) additional arguments passed through to
 \code{\link[=daemon]{daemon()}} if launching daemons. These include \code{asyncdial}, \code{autoexit},
-\code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime} and \code{walltime}.}
+\code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime}, \code{walltime} and \code{tlscert}.}
 
 \item{seed}{[default NULL] (optional) The default of \code{NULL} initializes
 L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel

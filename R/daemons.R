@@ -49,7 +49,7 @@
 #'   and should normally be kept on (for details see Dispatcher section below).
 #' @param ... (optional) additional arguments passed through to
 #'   [daemon()] if launching daemons. These include `asyncdial`, `autoexit`,
-#'   `cleanup`, `output`, `maxtasks`, `idletime` and `walltime`.
+#'   `cleanup`, `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
 #' @param seed \[default NULL\] (optional) The default of `NULL` initializes
 #'   L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 #'   package. Results are statistically-sound, although generally
@@ -578,8 +578,8 @@ parse_tls <- function(tls)
   switch(
     length(tls) + 1L,
     "",
-    sprintf(",tls=\"%s\"", tls),
-    sprintf(",tls=c(\"%s\",\"%s\")", tls[1L], tls[2L])
+    sprintf(",tlscert=\"%s\"", tls),
+    sprintf(",tlscert=c(\"%s\",\"%s\")", tls[1L], tls[2L])
   )
 
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
