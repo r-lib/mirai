@@ -51,10 +51,9 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(...)
-  output <- attr(dots, "output")
   if (is.null(tls)) tls <- envir[["tls"]]
   for (i in seq_len(n))
-    launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls), output)
+    launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls))
   n
 }
 

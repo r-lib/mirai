@@ -547,10 +547,7 @@ parse_dots <- function(...) {
     function(x) is.logical(x) || is.numeric(x)
   ))]
   length(dots) || return("")
-  dnames <- names(dots)
-  out <- sprintf(",%s", paste(dnames, dots, sep = "=", collapse = ","))
-  is.logical(dots[["output"]]) && dots[["output"]] && return(`attr<-`(out, "output", ""))
-  out
+  sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
 }
 
 parse_tls <- function(tls)
@@ -598,14 +595,8 @@ wa5 <- function(urld, url, dots)
     dots
   ))
 
-launch_daemon <- function(args, output)
-  system2(
-    .command,
-    args = c("-e", args),
-    stdout = output,
-    stderr = output,
-    wait = FALSE
-  )
+launch_daemon <- function(args)
+  system2(.command, args = c("-e", args), wait = FALSE)
 
 query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
   r <- send(sock, command, mode = send_mode, block = block)
@@ -619,12 +610,9 @@ launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL)
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
   write_args <- if (is.character(arg)) wa5 else wa4
-  output <- attr(dots, "output")
   system2(
     .command,
     args = c("--default-packages=NULL", "--vanilla", "-e", write_args(urld, arg, dots)),
-    stdout = output,
-    stderr = output,
     wait = FALSE
   )
   if (is.null(serial)) serial <- .[["serial"]]
@@ -650,9 +638,8 @@ launch_daemons <- function(seq, dots, envir) {
   urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
-  output <- attr(dots, "output")
   for (i in seq)
-    launch_daemon(wa2(urld, dots, maybe_next_stream(envir)), output)
+    launch_daemon(wa2(urld, dots, maybe_next_stream(envir)))
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
   sync <- 0L
