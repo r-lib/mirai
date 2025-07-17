@@ -3,7 +3,8 @@
 #### Updates
 
 * `daemons()` gains a `tlscert` argument to specify TLS certificates to pass to the daemon.
-  This now only needs to be set once and replaces use of the `tls` argument at `launch_local()` and `launch_remote()`.
+  This replaces use of the `tls` argument at `launch_local()` and `launch_remote()`.
+* The `tls` argument at `launch_local()` and `launch_remote()` is deprecated.
 
 # mirai 2.4.1
 
