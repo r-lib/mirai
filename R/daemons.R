@@ -247,8 +247,8 @@ daemons <- function(
 
       switch(
         parse_dispatcher(dispatcher),
-        create_sock(envir, url, cfg),
-        launch_dispatcher(url, dots, envir, serial, tls = tls, pass = pass),
+        create_sock(envir, url, cfg[[2L]]),
+        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass),
         stop(._[["dispatcher_args"]])
       )
       create_profile(envir, .compute, 0L, dots)
@@ -500,7 +500,7 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(url, tls, pass, tlscert, envir) {
+configure_tls <- function(url, tls, pass, tlscert, envir, config = TRUE) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
@@ -510,8 +510,8 @@ configure_tls <- function(url, tls, pass, tlscert, envir) {
   } else if (length(tlscert)) {
     `[[<-`(envir, "tls", tlscert)
   }
-  length(tls) || return()
-  tls_config(server = tls, pass = pass)
+  cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
+  list(tls, cfg)
 }
 
 create_profile <- function(envir, .compute, n, dots) {
