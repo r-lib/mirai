@@ -243,7 +243,6 @@ daemons <- function(
       url <- url[1L]
       envir <- init_envir_stream(seed)
       dots <- parse_dots(...)
-      output <- attr(dots, "output")
 
       switch(
         parse_dispatcher(dispatcher),
@@ -253,9 +252,7 @@ daemons <- function(
         },
         {
           tls <- configure_tls(url, tls, pass, tlscert, envir, config = FALSE)
-          urld <- local_url()
-          args <- wa5(urld, url, dots)
-          launch_dispatcher(envir, urld, args, output, serial, tls = tls, pass = pass)
+          launch_dispatcher(url, dots, envir, serial, tls = tls, pass = pass)
         },
         stop(._[["dispatcher_args"]])
       )
@@ -290,17 +287,12 @@ daemons <- function(
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
-      urld <- local_url()
       dots <- parse_dots(...)
-      output <- attr(dots, "output")
 
       switch(
         parse_dispatcher(dispatcher),
-        launch_daemons(seq_len(n), urld, dots, envir, output),
-        {
-          args <- wa4(urld, n, dots)
-          launch_dispatcher(envir, urld, args, output, serial)
-        },
+        launch_daemons(seq_len(n), dots, envir),
+        launch_dispatcher(n, dots, envir, serial),
         stop(._[["dispatcher_args"]])
       )
       create_profile(envir, .compute, n, dots)
@@ -627,13 +619,16 @@ query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, bloc
   recv(sock, mode = recv_mode, block = block)
 }
 
-launch_dispatcher <- function(envir, urld, args, output, serial, tls = NULL, pass = NULL) {
+launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL) {
   cv <- cv()
+  urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
+  write_args <- if (is.character(arg)) wa5 else wa4
+  output <- attr(dots, "output")
   system2(
     .command,
-    args = c("--default-packages=NULL", "--vanilla", "-e", args),
+    args = c("--default-packages=NULL", "--vanilla", "-e", write_args(urld, arg, dots)),
     stdout = output,
     stderr = output,
     wait = FALSE
@@ -656,10 +651,12 @@ launch_dispatcher <- function(envir, urld, args, output, serial, tls = NULL, pas
   `[[<-`(envir, "url", res[2L])
 }
 
-launch_daemons <- function(seq, urld, dots, envir, output) {
+launch_daemons <- function(seq, dots, envir) {
   cv <- cv()
+  urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
+  output <- attr(dots, "output")
   for (i in seq)
     launch_daemon(wa2(urld, dots, maybe_next_stream(envir)), output)
   `[[<-`(envir, "sock", sock)
