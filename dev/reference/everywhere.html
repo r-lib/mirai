@@ -109,9 +109,10 @@ to use (each has its own independent set of daemons), or NULL to use the
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If using dispatcher, this function forces a synchronization point at
 dispatcher, whereby the <code>everywhere()</code> call must have been evaluated on all
-daemons prior to subsequent evaluations taking place. It is an error to call
-<code>everywhere()</code> successively without at least one <code><a href="mirai.html">mirai()</a></code> call in between,
-as an ordinary mirai call is required to exit each synchronization point.</p>
+daemons prior to subsequent evaluations taking place.</p>
+<p>It is an error to call <code>everywhere()</code> successively without at least one
+<code><a href="mirai.html">mirai()</a></code> call in between, as an ordinary mirai call is required to exit each
+synchronization point.</p>
     </div>
     <div class="section level2">
     <h2 id="evaluation">Evaluation<a class="anchor" aria-label="anchor" href="#evaluation"></a></h2>
@@ -139,16 +140,16 @@ being found.</p>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># export common data by a super-assignment expression:</span></span></span>
 <span class="r-in"><span><span class="fu">everywhere</span><span class="op">(</span><span class="va">y</span> <span class="op">&lt;&lt;-</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co"># '...' variables are assigned to the global environment</span></span></span>
 <span class="r-in"><span><span class="co"># '.expr' may be specified as an empty {} in such cases:</span></span></span>
 <span class="r-in"><span><span class="fu">everywhere</span><span class="op">(</span><span class="op">{</span><span class="op">}</span>, a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">-</span> <span class="va">y</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="co"># everywhere() returns a list of mirai which may be waited for and inspected</span></span></span>
-<span class="r-in"><span><span class="va">mlist</span> <span class="op">&lt;-</span> <span class="fu">everywhere</span><span class="op">(</span><span class="st">"just a normal operation"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">mlist</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mlist</span> <span class="op">&lt;-</span> <span class="fu">everywhere</span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"error"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">mlist</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">-</span> <span class="va">y</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># everywhere() returns a mirai_map object:</span></span></span>
+<span class="r-in"><span><span class="va">mp</span> <span class="op">&lt;-</span> <span class="fu">everywhere</span><span class="op">(</span><span class="st">"just a normal operation"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mp</span></span></span>
+<span class="r-in"><span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># loading a package on all daemons</span></span></span>
