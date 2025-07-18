@@ -489,9 +489,10 @@ host_url <- function(tls = FALSE, port = 0) {
 #' @rdname host_url
 #' @export
 #'
-local_url <- function(tcp = FALSE, port = 0)
-  if (tcp) sprintf("tcp://127.0.0.1:%d", as.integer(port)) else
-    sprintf("%s%s", .urlscheme, random(12L))
+local_url <- function(tcp = FALSE, port = 0) {
+  tcp && return(sprintf("tcp://127.0.0.1:%d", as.integer(port)))
+  sprintf("%s%s", .urlscheme, random(12L))
+}
 
 #' @export
 #'
