@@ -76,9 +76,8 @@ dispatcher <- function(
   `[[<-`(envir, "stream", res)
   if (auto) {
     dots <- parse_dots(...)
-    output <- attr(dots, "output")
     for (i in seq_len(n))
-      launch_daemon(wa3(url, dots), output)
+      launch_daemon(wa3(url, dots))
     for (i in seq_len(n))
       while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
