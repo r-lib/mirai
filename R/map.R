@@ -248,9 +248,7 @@ print.mirai_map <- function(x, ...) {
 #'
 .flat <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
-      i <= xlen
-    ) {
+    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else {
       is_error_value(xi) && {
         stop_mirai(x)
         stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
@@ -275,14 +273,7 @@ print.mirai_map <- function(x, ...) {
 #'
 .progress <- compiler::compile(
   quote(
-    if (i == 0L)
-      cat(sprintf("\r[ 0 / %d .... ]", xlen), file = stderr()) else if (
-      i < xlen
-    )
-      cat(sprintf("\r[ %d / %d .... ]", i, xlen), file = stderr()) else if (
-      i == xlen
-    )
-      cat(sprintf("\r[ %d / %d done ]\n", i, xlen), file = stderr())
+    cat(sprintf("\r[ %d / %d %s ]", i, xlen, if (i < xlen) "...." else "done"), file = stderr())
   )
 )
 
@@ -291,7 +282,7 @@ print.mirai_map <- function(x, ...) {
 #'
 .stop <- compiler::compile(
   quote(
-    if (is_error_value(xi)) {
+    is_error_value(xi) && {
       stop_mirai(x)
       stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
     }
@@ -327,9 +318,7 @@ mmap <- function(x, dots) {
 
 flat_cli <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else if (
-      i <= xlen
-    ) {
+    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else {
       is_error_value(xi) && {
         stop_mirai(x)
         iname <- names(x)[i]
@@ -368,7 +357,7 @@ progress_cli <- compiler::compile(
         total = xlen,
         auto_terminate = TRUE,
         .envir = .
-      ) else if (i <= xlen) cli::cli_progress_update(.envir = .)
+      ) else cli::cli_progress_update(.envir = .)
   )
 )
 
