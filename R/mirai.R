@@ -594,7 +594,7 @@ ephemeral_daemon <- function(data, timeout) {
     cv = NA
   )
   `attr<-`(.subset2(aio, "aio"), "sock", sock)
-  aio
+  invisible(aio)
 }
 
 deparse_safe <- function(x)
