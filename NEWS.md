@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Adds `cloud_config()` to launch remote daemons using a cloud / cloud-based managed platform. Currently supports Posit Workbench.
+
 #### Updates
 
 * `daemons()` gains a `tlscert` argument to specify custom TLS certificates to pass to the daemon.
