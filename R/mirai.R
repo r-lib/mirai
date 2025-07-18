@@ -202,9 +202,11 @@ mirai <- function(
 #'
 #' If using dispatcher, this function forces a synchronization point at
 #' dispatcher, whereby the [everywhere()] call must have been evaluated on all
-#' daemons prior to subsequent evaluations taking place. It is an error to call
-#' [everywhere()] successively without at least one [mirai()] call in between,
-#' as an ordinary mirai call is required to exit each synchronization point.
+#' daemons prior to subsequent evaluations taking place.
+#'
+#' It is an error to call [everywhere()] successively without at least one
+#' [mirai()] call in between, as an ordinary mirai call is required to exit each
+#' synchronization point.
 #'
 #' @inheritParams mirai
 #'
@@ -216,16 +218,16 @@ mirai <- function(
 #' daemons(1)
 #' # export common data by a super-assignment expression:
 #' everywhere(y <<- 3)
+#' mirai(y)[]
 #' # '...' variables are assigned to the global environment
 #' # '.expr' may be specified as an empty {} in such cases:
 #' everywhere({}, a = 1, b = 2)
-#' m <- mirai(a + b - y == 0L)
-#' m[]
-#' # everywhere() returns a list of mirai which may be waited for and inspected
-#' mlist <- everywhere("just a normal operation")
-#' collect_mirai(mlist)
-#' mlist <- everywhere(stop("error"))
-#' collect_mirai(mlist)
+#' mirai(a + b - y == 0L)[]
+#'
+#' # everywhere() returns a mirai_map object:
+#' mp <- everywhere("just a normal operation")
+#' mp
+#' mp[]
 #' daemons(0)
 #'
 #' # loading a package on all daemons
