@@ -131,7 +131,7 @@ mirai_map(
 mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 
 # named matrix multiple map: arguments passed to function by name
-mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z")))
+(mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z"))))
 mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 
 # dataframe multiple map: using a function taking '...' arguments
