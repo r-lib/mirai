@@ -109,7 +109,7 @@
 #' mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 #'
 #' # named matrix multiple map: arguments passed to function by name
-#' mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z")))
+#' (mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z"))))
 #' mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 #'
 #' # dataframe multiple map: using a function taking '...' arguments
@@ -186,7 +186,7 @@ mirai_map <- function(
           seq_len(dx[1L]),
           function(i)
             mirai(
-              .expr = do.call(.f, c(as.vector(.x, mode = "list"), .args), quote = TRUE),
+              .expr = do.call(.f, c(`storage.mode<-`(.x, "list"), .args), quote = TRUE),
               ...,
               .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
               .compute = .compute
