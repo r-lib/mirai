@@ -204,6 +204,13 @@ mirai <- function(
 #' dispatcher, whereby the [everywhere()] call must have been evaluated on all
 #' daemons prior to subsequent mirai evaluations taking place.
 #'
+#' Calling [everywhere()] does not affect the RNG stream for mirai calls when
+#' using a reproducible `seed` value at [daemons()]. This allows the seed
+#' associated for each mirai call to be the same, regardless of the number of
+#' daemons actually used to evaluate the code. Note that this means the code
+#' evaluated in an [everywhere()] call is itself non-reproducible if it should
+#' involve random numbers.
+#'
 #' @inheritParams mirai
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
@@ -260,7 +267,12 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
   xlen <- if (is.null(envir[["dispatcher"]]))
     max(stat(envir[["sock"]], "pipes"), envir[["n"]]) else
       max(status(.compute)[["connections"]], 1L)
-  on.exit(.mark(FALSE))
+  seed <- envir[["seed"]]
+  `[[<-`(envir, "seed", NULL)
+  on.exit({
+    .mark(FALSE)
+    `[[<-`(envir, "seed", seed)
+  })
   .mark()
   vec <- lapply(
     seq_len(xlen),
