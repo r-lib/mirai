@@ -407,10 +407,12 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_equal(1L, launch_local())
   test_type("character", launch_remote())
   Sys.sleep(0.5)
+  test_true(all(everywhere(TRUE)[.flat]))
   m <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   Sys.sleep(0.5)
   test_equal(4L, daemons(4, dispatcher = FALSE, seed = 1234L))
+  test_true(all(everywhere(TRUE)[.flat]))
   n <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   test_identical(m, n)

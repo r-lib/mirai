@@ -39,6 +39,11 @@ options are persisted regardless of a daemon's \code{cleanup} setting.
 If using dispatcher, this function forces a synchronization point at
 dispatcher, whereby the \code{\link[=everywhere]{everywhere()}} call must have been evaluated on all
 daemons prior to subsequent mirai evaluations taking place.
+
+Calling \code{\link[=everywhere]{everywhere()}} does not affect the RNG stream for mirai calls when
+using a reproducible \code{seed} value at \code{\link[=daemons]{daemons()}}. This allows the seed
+associated for each mirai call to be the same, regardless of the number of
+daemons actually used to evaluate the code.
 }
 \section{Evaluation}{
 

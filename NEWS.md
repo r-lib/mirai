@@ -2,10 +2,12 @@
 
 #### Updates
 
+* Enhancements to `everywhere()`:
+  + Consecutive `everywhere()` calls are now permissible again when using dispatcher (change of behaviour in v2.4.1) (#354).
+  + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).
 * `daemons()` gains a `tlscert` argument to specify custom TLS certificates to pass to the daemon.
-  This replaces use of the `tls` argument at `launch_local()` and `launch_remote()`.
+  This replaces use of the `tls` argument at `launch_local()` and `launch_remote()` (#344).
 * The `tls` argument at `launch_local()` and `launch_remote()` is deprecated.
-* `everywhere()` is less prescriptive on its use, with consecutive calls now permissible when using dispatcher (#354).
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
 
 # mirai 2.4.1
