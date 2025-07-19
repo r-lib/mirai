@@ -397,7 +397,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   for (i in seq_len(10000L)) {q[[i]] <- mirai({Sys.sleep(0.001); rnorm(1)}); attr(q[[i]], "status") <- status()}
   test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
   test_true(all(as.logical(lapply(lapply(q, attr, "status"), is.list))))
-  test_equal(daemons()[["mirai"]][["completed"]], 20008L)
+  test_equal(daemons()[["mirai"]][["completed"]], 20009L)
   test_zero(daemons(0))
 }
 # reproducible RNG tests
