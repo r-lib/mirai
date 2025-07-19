@@ -110,6 +110,12 @@ to use (each has its own independent set of daemons), or NULL to use the
     <p>If using dispatcher, this function forces a synchronization point at
 dispatcher, whereby the <code>everywhere()</code> call must have been evaluated on all
 daemons prior to subsequent mirai evaluations taking place.</p>
+<p>Calling <code>everywhere()</code> does not affect the RNG stream for mirai calls when
+using a reproducible <code>seed</code> value at <code><a href="daemons.html">daemons()</a></code>. This allows the seed
+associated for each mirai call to be the same, regardless of the number of
+daemons actually used to evaluate the code. Note that this means the code
+evaluated in an <code>everywhere()</code> call is itself non-reproducible if it should
+involve random numbers.</p>
     </div>
     <div class="section level2">
     <h2 id="evaluation">Evaluation<a class="anchor" aria-label="anchor" href="#evaluation"></a></h2>
