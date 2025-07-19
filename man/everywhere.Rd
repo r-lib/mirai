@@ -43,7 +43,9 @@ daemons prior to subsequent mirai evaluations taking place.
 Calling \code{\link[=everywhere]{everywhere()}} does not affect the RNG stream for mirai calls when
 using a reproducible \code{seed} value at \code{\link[=daemons]{daemons()}}. This allows the seed
 associated for each mirai call to be the same, regardless of the number of
-daemons actually used to evaluate the code.
+daemons actually used to evaluate the code. Note that this means the code
+evaluated in an \code{\link[=everywhere]{everywhere()}} call is itself non-reproducible if it should
+involve random numbers.
 }
 \section{Evaluation}{
 

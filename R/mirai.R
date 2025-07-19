@@ -207,7 +207,9 @@ mirai <- function(
 #' Calling [everywhere()] does not affect the RNG stream for mirai calls when
 #' using a reproducible `seed` value at [daemons()]. This allows the seed
 #' associated for each mirai call to be the same, regardless of the number of
-#' daemons actually used to evaluate the code.
+#' daemons actually used to evaluate the code. Note that this means the code
+#' evaluated in an [everywhere()] call is itself non-reproducible if it should
+#' involve random numbers.
 #'
 #' @inheritParams mirai
 #'
