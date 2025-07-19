@@ -5,6 +5,7 @@
 * `daemons()` gains a `tlscert` argument to specify custom TLS certificates to pass to the daemon.
   This replaces use of the `tls` argument at `launch_local()` and `launch_remote()`.
 * The `tls` argument at `launch_local()` and `launch_remote()` is deprecated.
+* `everywhere()` is less prescriptive on its use, with consecutive calls now permissible when using dispatcher (#354).
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
 
 # mirai 2.4.1
