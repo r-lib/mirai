@@ -452,6 +452,66 @@ require_daemons <- function(.compute = NULL, call = environment()) {
   daemons_set(.compute = .compute) || .[["require_daemons"]](call)
 }
 
+
+#' With Daemons
+#'
+#' Evaluate an expression using a specific compute profile.
+#'
+#' Will error if the specified compute profile is not yet set up.
+#'
+#' @inheritParams require_daemons
+#' @param expr an expression to evaluate.
+#'
+#' @return The return value of `expr`.
+#'
+#' @examplesIf interactive()
+#' daemons(1, dispatcher = FALSE, .compute = "gpu")
+#' status()
+#'
+#' with_daemons("gpu", {
+#'   m <- mirai("running on gpu")
+#'   status()
+#' })
+#'
+#' m[]
+#' status()
+#' daemons(0, .compute = "gpu")
+#'
+#' @export
+#'
+with_daemons <- function(.compute, expr) {
+  require_daemons(.compute = .compute, call = environment())
+  prev_profile <- .[["cp"]]
+  `[[<-`(., "cp", .compute)
+  on.exit(`[[<-`(., "cp", prev_profile))
+  expr
+}
+
+#' @param frame \[default parent.frame()\] the frame (environment) to which the
+#'   daemons compute profile is scoped.
+#'
+#' @examplesIf interactive()
+#' daemons(1, dispatcher = FALSE, .compute = "gpu")
+#'
+#' gpu_func <- function(.compute = "gpu") {
+#'   local_daemons(.compute)
+#'   mirai("running on gpu")
+#' }
+#' m <- gpu_func()
+#' m[]
+#' daemons(0, .compute = "gpu")
+#'
+#' @rdname with_daemons
+#' @export
+#'
+local_daemons <- function(.compute, frame = parent.frame()) {
+  require_daemons(.compute = .compute, call = frame)
+  prev_profile <- .[["cp"]]
+  `[[<-`(., "cp", .compute)
+  expr <- as.call(list(function() `[[<-`(., "cp", prev_profile)))
+  do.call(on.exit, list(expr, TRUE, FALSE), envir = frame)
+}
+
 #' Create Serialization Configuration
 #'
 #' Returns a serialization configuration, which may be set to perform custom

@@ -115,9 +115,16 @@ connection && {
   test_type("integer", nextstream(.compute = "new"))
   test_true(require_daemons("new", call = environment()))
   Sys.sleep(1.5)
-  test_type("list", everywhere({}, as.environment(df), .compute = "new"))
-  mn <- mirai("test1", .compute = "new")
-  mp <- mirai(b + 1, .compute = "new")
+  run_checks_on <- function(.compute, check) {
+    local_daemons(.compute)
+    check
+  }
+  run_checks_on("new", test_type("list", everywhere({}, as.environment(df))))
+  test_zero(status()$connections)
+  with_daemons("new", {
+    mn <- mirai("test1")
+    mp <- mirai(b + 1)
+  })
   Sys.sleep(1L)
   if (!unresolved(mn$data)) test_equal(mn$data, "test1")
   if (!unresolved(mp$data)) test_equal(mp$data, 3)
@@ -412,10 +419,13 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai_map(1:12, rnorm)[]
   test_zero(daemons(0))
   Sys.sleep(0.5)
-  test_equal(4L, daemons(4, dispatcher = FALSE, seed = 1234L))
-  test_true(all(everywhere(TRUE)[.flat]))
-  n <- mirai_map(1:12, rnorm)[]
-  test_zero(daemons(0))
+  test_equal(4L, daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
+  with_daemons("gpu", {
+    test_true(all(everywhere(TRUE)[.flat]))
+    n <- mirai_map(1:12, rnorm)[]
+    test_zero(daemons(0))
+  })
+  test_true(!daemons_set("gpu"))
   test_identical(m, n)
 }
 test_zero(daemons(0))

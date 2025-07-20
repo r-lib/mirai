@@ -1,5 +1,10 @@
 # mirai (development version)
 
+#### New Features
+
+* New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
+  This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
+
 #### Updates
 
 * `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
