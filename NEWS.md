@@ -2,7 +2,7 @@
 
 #### Behavioural Changes
 
-* `require_daemons()` arguments have been updated to `.compute` first followed by `.call` for ease of use.
+* `require_daemons()` arguments have been updated to `.compute` first for ease of use, followed by `...` and `.call`.
 
 #### Updates
 
