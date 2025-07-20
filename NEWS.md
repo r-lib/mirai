@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Behavioural Changes
+
+* `require_daemons()` arguments have been updated to `.compute` first followed by `.call` for ease of use.
+
 #### Updates
 
 * Enhancements to `everywhere()`:
