@@ -84,7 +84,7 @@ connection && {
   test_print(d)
   test_error(daemons(1L), "daemons already set")
   test_true(daemons_set())
-  test_true(require_daemons())
+  test_true(require_daemons("default", .call = environment()))
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
   if (!is_mirai_error(me)) test_true(is_error_value(me))
   if (is_mirai_error(me)) test_type("list", me$stack.trace)
@@ -333,7 +333,7 @@ connection && requireNamespace("promises", quietly = TRUE) && Sys.getenv("NOT_CR
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   test_equal(daemons(1, cleanup = FALSE, maxtasks = 2L, id = 125L), 1L)
-  test_true(daemons_set())
+  test_true(daemons_set("default"))
   test_equal(mirai(1)[], mirai(1)[])
   m <- mirai(0L)
   Sys.sleep(1L)
