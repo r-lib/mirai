@@ -20,7 +20,8 @@ to use (each has its own independent set of daemons), or NULL to use the
 daemons compute profile is scoped.}
 }
 \value{
-The return value of \code{expr}.
+For \strong{with_daemons}: the return value of \code{expr}. \cr
+For \strong{local_daemons}: invisible NULL.
 }
 \description{
 Evaluate an expression using a specific compute profile.
@@ -37,13 +38,9 @@ with_daemons("gpu", {
   m <- mirai("running on gpu")
   status()
 })
-
 m[]
+
 status()
-daemons(0, .compute = "gpu")
-\dontshow{\}) # examplesIf}
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-daemons(1, dispatcher = FALSE, .compute = "gpu")
 
 gpu_func <- function(.compute = "gpu") {
   local_daemons(.compute)
@@ -51,6 +48,7 @@ gpu_func <- function(.compute = "gpu") {
 }
 m <- gpu_func()
 m[]
+
 daemons(0, .compute = "gpu")
 \dontshow{\}) # examplesIf}
 }

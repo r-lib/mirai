@@ -462,7 +462,8 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #' @inheritParams require_daemons
 #' @param expr an expression to evaluate.
 #'
-#' @return The return value of `expr`.
+#' @return For **with_daemons**: the return value of `expr`. \cr
+#'   For **local_daemons**: invisible NULL.
 #'
 #' @examplesIf interactive()
 #' daemons(1, dispatcher = FALSE, .compute = "gpu")
@@ -472,9 +473,17 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #'   m <- mirai("running on gpu")
 #'   status()
 #' })
-#'
 #' m[]
+#'
 #' status()
+#'
+#' gpu_func <- function(.compute = "gpu") {
+#'   local_daemons(.compute)
+#'   mirai("running on gpu")
+#' }
+#' m <- gpu_func()
+#' m[]
+#'
 #' daemons(0, .compute = "gpu")
 #'
 #' @export
@@ -489,17 +498,6 @@ with_daemons <- function(.compute, expr) {
 
 #' @param frame \[default parent.frame()\] the frame (environment) to which the
 #'   daemons compute profile is scoped.
-#'
-#' @examplesIf interactive()
-#' daemons(1, dispatcher = FALSE, .compute = "gpu")
-#'
-#' gpu_func <- function(.compute = "gpu") {
-#'   local_daemons(.compute)
-#'   mirai("running on gpu")
-#' }
-#' m <- gpu_func()
-#' m[]
-#' daemons(0, .compute = "gpu")
 #'
 #' @rdname with_daemons
 #' @export
