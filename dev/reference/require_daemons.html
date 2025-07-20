@@ -62,24 +62,28 @@ error for the user to set daemons, with a clickable function link if the
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">require_daemons</span><span class="op">(</span>call <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">require_daemons</span><span class="op">(</span>.compute <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span>, .call <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-call">call<a class="anchor" aria-label="anchor" href="#arg-call"></a></dt>
+<dl><dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
+<dd><p>[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>reserved, but not currently used.</p></dd>
+
+
+<dt id="arg--call">.call<a class="anchor" aria-label="anchor" href="#arg--call"></a></dt>
 <dd><p>(only used if the <a href="https://CRAN.R-project.org/package=cli" class="external-link"><span class="pkg">cli</span></a> package is installed) the
 execution environment of a currently running function, e.g.
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>. The function will be mentioned in error messages as the
 source of the error.</p></dd>
-
-
-<dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.</p>
-<p><strong>or</strong> a 'miraiCluster' to obtain its status.</p></dd>
 
 </dl></div>
     <div class="section level2">
