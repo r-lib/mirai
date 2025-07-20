@@ -72,9 +72,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 76
+#> [1] 15
 m$data
-#> [1] 76
+#> [1] 15
 ```
 
 → `daemons()`:
@@ -215,6 +215,9 @@ processing, and making it possible for mirai to be the first
 
 [Travers Ching](https://github.com/traversc) for a novel idea in
 extending the original custom serialization support in the package.
+
+[Hadley Wickham](https://github.com/hadley) for original implementations
+of the scoped helper functions, on which ours are based.
 
 [Henrik Bengtsson](https://github.com/HenrikBengtsson/) for valuable
 insights leading to the interface accepting broader usage patterns.
