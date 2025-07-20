@@ -12,10 +12,9 @@ execution environment of a currently running function, e.g.
 \code{environment()}. The function will be mentioned in error messages as the
 source of the error.}
 
-\item{.compute}{[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.
-
-\strong{or} a 'miraiCluster' to obtain its status.}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 Logical \code{TRUE}, or else errors.

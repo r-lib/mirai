@@ -398,7 +398,7 @@ status <- function(.compute = NULL) {
 #' Returns a logical value, whether or not daemons have been set for a given
 #' compute profile.
 #'
-#' @inheritParams status
+#' @inheritParams mirai
 #'
 #' @return Logical `TRUE` or `FALSE`.
 #'
@@ -425,7 +425,7 @@ daemons_set <- function(.compute = NULL) {
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.
-#' @inheritParams status
+#' @inheritParams mirai
 #'
 #' @return Logical `TRUE`, or else errors.
 #'
