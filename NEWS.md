@@ -1,11 +1,9 @@
 # mirai (development version)
 
-#### Behavioural Changes
-
-* `require_daemons()` arguments have been updated to `.compute` first for ease of use, followed by `...` and `.call`.
-
 #### Updates
 
+* `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
+  Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
 * Enhancements to `everywhere()`:
   + Consecutive `everywhere()` calls are now permissible again when using dispatcher (change of behaviour in v2.4.1) (#354).
   + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).

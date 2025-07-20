@@ -161,7 +161,7 @@ mirai_map <- function(
   .promise = NULL,
   .compute = NULL
 ) {
-  require_daemons(.compute = .compute, .call = environment())
+  require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
 
   dx <- dim(.x)
