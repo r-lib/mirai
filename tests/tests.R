@@ -84,7 +84,7 @@ connection && {
   test_print(d)
   test_error(daemons(1L), "daemons already set")
   test_true(daemons_set())
-  test_true(require_daemons("default", .call = environment()))
+  test_true(require_daemons("default", call = environment()))
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
   if (!is_mirai_error(me)) test_true(is_error_value(me))
   if (is_mirai_error(me)) test_type("list", me$stack.trace)

@@ -421,14 +421,18 @@ daemons_set <- function(.compute = NULL) {
 #' error for the user to set daemons, with a clickable function link if the
 #' \CRANpkg{cli} package is available.
 #'
-#' @inheritParams daemon
 #' @inheritParams mirai
-#' @param .call (only used if the \CRANpkg{cli} package is installed) the
+#' @param call (only used if the \CRANpkg{cli} package is installed) the
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.
 #'
 #' @return Logical `TRUE`, or else errors.
+#'
+#' @note
+#' Previously the arguments were reversed with `call` coming before `.compute`.
+#' Specifying an environment to the first argument works for the time being,
+#' although is deprecated and will be defunct in a future version.
 #'
 #' @examplesIf interactive()
 #' daemons(1)
@@ -437,9 +441,15 @@ daemons_set <- function(.compute = NULL) {
 #'
 #' @export
 #'
-require_daemons <- function(.compute = NULL, ..., .call = environment()) {
+require_daemons <- function(.compute = NULL, call = environment()) {
   ensure_cli_initialized()
-  daemons_set(.compute = .compute) || .[["require_daemons"]](.call)
+  is.environment(.compute) && {
+    .call <- .compute
+    .compute <- call
+    call <- .call
+    TRUE
+  }
+  daemons_set(.compute = .compute) || .[["require_daemons"]](call)
 }
 
 #' Create Serialization Configuration
