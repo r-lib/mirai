@@ -18,7 +18,7 @@
 #'   'tls+tcp://10.75.32.70:5555'.
 #' @param dispatcher \[default TRUE\] logical value, which should be set to
 #'   TRUE if using dispatcher and FALSE otherwise.
-#' @param ... reserved but not currently used.
+#' @param ... reserved, but not currently used.
 #' @param asyncdial \[default FALSE\] whether to perform dials asynchronously.
 #'   The default FALSE will error if a connection is not immediately possible
 #'   (for instance if [daemons()] has yet to be called on the host, or the

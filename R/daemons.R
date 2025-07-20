@@ -398,7 +398,7 @@ status <- function(.compute = NULL) {
 #' Returns a logical value, whether or not daemons have been set for a given
 #' compute profile.
 #'
-#' @inheritParams status
+#' @inheritParams mirai
 #'
 #' @return Logical `TRUE` or `FALSE`.
 #'
@@ -421,11 +421,12 @@ daemons_set <- function(.compute = NULL) {
 #' error for the user to set daemons, with a clickable function link if the
 #' \CRANpkg{cli} package is available.
 #'
-#' @param call (only used if the \CRANpkg{cli} package is installed) the
+#' @inheritParams daemon
+#' @inheritParams mirai
+#' @param .call (only used if the \CRANpkg{cli} package is installed) the
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.
-#' @inheritParams status
 #'
 #' @return Logical `TRUE`, or else errors.
 #'
@@ -436,9 +437,9 @@ daemons_set <- function(.compute = NULL) {
 #'
 #' @export
 #'
-require_daemons <- function(call = environment(), .compute = NULL) {
+require_daemons <- function(.compute = NULL, ..., .call = environment()) {
   ensure_cli_initialized()
-  daemons_set(.compute = .compute) || .[["require_daemons"]](call)
+  daemons_set(.compute = .compute) || .[["require_daemons"]](.call)
 }
 
 #' Create Serialization Configuration

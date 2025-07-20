@@ -28,7 +28,7 @@ port to connect to, e.g. 'tcp://hostname:5555' or
 \item{dispatcher}{[default TRUE] logical value, which should be set to
 TRUE if using dispatcher and FALSE otherwise.}
 
-\item{...}{reserved but not currently used.}
+\item{...}{reserved, but not currently used.}
 
 \item{asyncdial}{[default FALSE] whether to perform dials asynchronously.
 The default FALSE will error if a connection is not immediately possible

@@ -4,18 +4,19 @@
 \alias{require_daemons}
 \title{Require Daemons}
 \usage{
-require_daemons(call = environment(), .compute = NULL)
+require_daemons(.compute = NULL, ..., .call = environment())
 }
 \arguments{
-\item{call}{(only used if the \CRANpkg{cli} package is installed) the
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
+
+\item{...}{reserved, but not currently used.}
+
+\item{.call}{(only used if the \CRANpkg{cli} package is installed) the
 execution environment of a currently running function, e.g.
 \code{environment()}. The function will be mentioned in error messages as the
 source of the error.}
-
-\item{.compute}{[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.
-
-\strong{or} a 'miraiCluster' to obtain its status.}
 }
 \value{
 Logical \code{TRUE}, or else errors.

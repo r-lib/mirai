@@ -13,6 +13,7 @@
 #' tasks are only sent to daemons that can begin immediate execution of the
 #' task.
 #'
+#' @inheritParams daemons
 #' @param host the character URL dispatcher should dial in to, typically an IPC
 #'   address.
 #' @param url (optional) the character URL dispatcher should listen at (and
@@ -21,8 +22,6 @@
 #'   use secure TLS connections.
 #' @param n (optional) if specified, the integer number of daemons to launch. In
 #'   this case, a local url is automatically generated.
-#' @param ... (optional) additional arguments passed through to [daemon()].
-#'   These include `asyncdial`, `autoexit`, and `cleanup`.
 #'
 #' @return Invisible NULL.
 #'

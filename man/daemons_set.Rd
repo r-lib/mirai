@@ -7,10 +7,9 @@
 daemons_set(.compute = NULL)
 }
 \arguments{
-\item{.compute}{[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.
-
-\strong{or} a 'miraiCluster' to obtain its status.}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 Logical \code{TRUE} or \code{FALSE}.
