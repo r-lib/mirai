@@ -11,7 +11,7 @@ require_daemons(.compute = NULL, ..., .call = environment())
 to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 
-\item{...}{not used, but reserved.}
+\item{...}{reserved, but not currently used.}
 
 \item{.call}{(only used if the \CRANpkg{cli} package is installed) the
 execution environment of a currently running function, e.g.

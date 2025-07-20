@@ -421,8 +421,8 @@ daemons_set <- function(.compute = NULL) {
 #' error for the user to set daemons, with a clickable function link if the
 #' \CRANpkg{cli} package is available.
 #'
+#' @inheritParams daemon
 #' @inheritParams mirai
-#' @param ... not used, but reserved.
 #' @param .call (only used if the \CRANpkg{cli} package is installed) the
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
