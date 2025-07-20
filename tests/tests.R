@@ -84,7 +84,7 @@ connection && {
   test_print(d)
   test_error(daemons(1L), "daemons already set")
   test_true(daemons_set())
-  test_true(require_daemons("default", call = environment()))
+  test_true(require_daemons(parent.frame()))
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
   if (!is_mirai_error(me)) test_true(is_error_value(me))
   if (is_mirai_error(me)) test_type("list", me$stack.trace)
@@ -113,6 +113,7 @@ connection && {
   test_equal(1L, daemons(1L, dispatcher = FALSE, maxtasks = 10L, walltime = 10000L, idletime = 20000L, cleanup = FALSE, output = TRUE, .compute = "new"))
   test_type("character", nextget("url", .compute = "new"))
   test_type("integer", nextstream(.compute = "new"))
+  test_true(require_daemons("new", call = environment()))
   Sys.sleep(1.5)
   test_type("list", everywhere({}, as.environment(df), .compute = "new"))
   mn <- mirai("test1", .compute = "new")

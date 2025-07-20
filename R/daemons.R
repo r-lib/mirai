@@ -445,7 +445,7 @@ require_daemons <- function(.compute = NULL, call = environment()) {
   ensure_cli_initialized()
   is.environment(.compute) && {
     .call <- .compute
-    .compute <- call
+    .compute <- if (is.character(call)) call
     call <- .call
     TRUE
   }
