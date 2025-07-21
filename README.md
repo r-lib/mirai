@@ -72,9 +72,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 1
+#> [1] 76
 m$data
-#> [1] 1
+#> [1] 76
 ```
 
 → `daemons()`:
@@ -184,7 +184,7 @@ to be used seamlessly across parallel processes.
   Allows queries using the Apache Arrow format to be handled seamlessly
 over ADBC database connections hosted in background processes.
 
-[<img alt="Polars" src="https://r-universe.dev/avatars/rpolars.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
+[<img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
   R Polars is a pioneer of mirai’s serialization registration mechanism,
 which allows transparent use of Polars objects across parallel
 processes, with no user configuration required.
