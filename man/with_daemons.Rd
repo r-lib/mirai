@@ -42,8 +42,8 @@ m[]
 
 status()
 
-gpu_func <- function(.compute = "gpu") {
-  local_daemons(.compute)
+gpu_func <- function() {
+  local_daemons("gpu")
   mirai("running on gpu")
 }
 m <- gpu_func()
