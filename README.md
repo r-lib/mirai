@@ -72,9 +72,9 @@ m$data
 # do other work
 
 m[]
-#> [1] 78
+#> [1] 1
 m$data
-#> [1] 78
+#> [1] 1
 ```
 
 → `daemons()`:
@@ -183,6 +183,11 @@ to be used seamlessly across parallel processes.
 [<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
   Allows queries using the Apache Arrow format to be handled seamlessly
 over ADBC database connections hosted in background processes.
+
+[<img alt="Polars" src="https://r-universe.dev/avatars/rpolars.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
+  R Polars is a pioneer of mirai’s serialization registration mechanism,
+which allows transparent use of Polars objects across parallel
+processes, with no user configuration required.
 
 [<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/)
   Targets, a make-like pipeline tool, uses crew as its default
