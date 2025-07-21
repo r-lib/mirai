@@ -167,6 +167,8 @@ We would like to thank in particular:
 
 [Travers Ching](https://github.com/traversc) for a novel idea in extending the original custom serialization support in the package.
 
+[Hadley Wickham](https://github.com/hadley) for original implementations of the scoped helper functions, on which ours are based.
+
 [Henrik Bengtsson](https://github.com/HenrikBengtsson/) for valuable insights leading to the interface accepting broader usage patterns.
 
 [Daniel Falbel](https://github.com/dfalbel/) for discussion around an efficient solution to serialization and transmission of torch tensors.

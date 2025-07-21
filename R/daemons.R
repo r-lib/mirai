@@ -449,7 +449,65 @@ require_daemons <- function(.compute = NULL, call = environment()) {
     call <- .call
     TRUE
   }
-  daemons_set(.compute = .compute) || .[["require_daemons"]](call)
+  daemons_set(.compute = .compute) || .[["require_daemons"]](.compute, call)
+}
+
+
+#' With Daemons
+#'
+#' Evaluate an expression using a specific compute profile.
+#'
+#' Will error if the specified compute profile is not yet set up.
+#'
+#' @inheritParams require_daemons
+#' @param expr an expression to evaluate.
+#'
+#' @return For **with_daemons**: the return value of `expr`. \cr
+#'   For **local_daemons**: invisible NULL.
+#'
+#' @examplesIf interactive()
+#' daemons(1, dispatcher = FALSE, .compute = "gpu")
+#' status()
+#'
+#' with_daemons("gpu", {
+#'   m <- mirai("running on gpu")
+#'   status()
+#' })
+#' m[]
+#'
+#' status()
+#'
+#' gpu_func <- function() {
+#'   local_daemons("gpu")
+#'   mirai("running on gpu")
+#' }
+#' m <- gpu_func()
+#' m[]
+#'
+#' daemons(0, .compute = "gpu")
+#'
+#' @export
+#'
+with_daemons <- function(.compute, expr) {
+  require_daemons(.compute = .compute, call = environment())
+  prev_profile <- .[["cp"]]
+  `[[<-`(., "cp", .compute)
+  on.exit(`[[<-`(., "cp", prev_profile))
+  expr
+}
+
+#' @param frame \[default parent.frame()\] the frame (environment) to which the
+#'   daemons compute profile is scoped.
+#'
+#' @rdname with_daemons
+#' @export
+#'
+local_daemons <- function(.compute, frame = parent.frame()) {
+  require_daemons(.compute = .compute, call = frame)
+  prev_profile <- .[["cp"]]
+  `[[<-`(., "cp", .compute)
+  expr <- as.call(list(function() `[[<-`(., "cp", prev_profile)))
+  do.call(on.exit, list(expr, TRUE, FALSE), envir = frame)
 }
 
 #' Create Serialization Configuration
@@ -699,10 +757,24 @@ dispatcher_status <- function(envir) {
   out
 }
 
-stop_d_cli <- function(call)
-  cli::cli_abort("No daemons set - use e.g. {.run mirai::daemons(6)} to set 6 local daemons.", call = call)
+stop_d_cli <- function(.compute, call)
+  cli::cli_abort(
+    if (is.character(.compute)) c(
+      sprintf("No daemons set for the '%s' compute profile.", .compute),
+      sprintf("Use e.g. {.run mirai::daemons(6, .compute = \"%s\")} to set 6 local daemons.", .compute)
+    ) else c(
+      "No daemons set.",
+      "Use e.g. {.run mirai::daemons(6)} to set 6 local daemons."
+    ),
+    call = call
+  )
 
-stop_d <- function(call)
-  stop("No daemons set - use e.g. mirai::daemons(6) to set 6 local daemons.", call. = FALSE)
+stop_d <- function(.compute, call)
+  stop(
+    if (is.character(.compute))
+      sprintf("No daemons set for the '%s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%s\") to set 6 local daemons.", .compute, .compute) else
+      "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons.",
+    call. = FALSE
+  )
 
 ._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))
