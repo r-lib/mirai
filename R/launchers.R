@@ -18,11 +18,11 @@
 #'
 #'   **or** for `launch_remote` only, a 'miraiCluster' or 'miraiNode'.
 #' @param ... (optional) arguments passed through to [daemon()]. These include
-#'   `autoexit`, `cleanup`, `output`, `maxtasks`, `idletime` and `walltime`.
-#'   Only supply to override arguments originally provided to [daemons()],
-#'   otherwise those will be used instead.
-#' @param tls \[default NULL\] deprecated. Supply the certificates to the
-#'   `tlscert` argument of [daemons()] when setting up daemons instead.
+#'   `asycdial`, `autoexit`, `cleanup`, `output`, `maxtasks`, `idletime`,
+#'   `walltime` and `tlscert`. Only supply to override arguments originally
+#'   provided to [daemons()], otherwise those will be used instead.
+#' @param tls \[default NULL\] deprecated. Specify `tlscert` as a `...` argument
+#'   to [daemons()] when setting up daemons instead.
 #'
 #' @return For **launch_local**: Integer number of daemons launched.
 #'
