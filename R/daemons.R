@@ -599,7 +599,7 @@ parse_dispatcher <- function(x) {
 }
 
 parse_dots <- function(envir, ...) {
-  ...length() || return("")
+  missing(..1) && return("")
   dots <- list(...)
   if (any(names(dots) == "tlscert"))
     `[[<-`(envir, "tls", dots[["tlscert"]])
