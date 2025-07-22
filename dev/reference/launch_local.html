@@ -102,14 +102,14 @@ daemon on the remote machine.</p>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>(optional) arguments passed through to <code><a href="daemon.html">daemon()</a></code>. These include
-<code>autoexit</code>, <code>cleanup</code>, <code>output</code>, <code>maxtasks</code>, <code>idletime</code> and <code>walltime</code>.
-Only supply to override arguments originally provided to <code><a href="daemons.html">daemons()</a></code>,
-otherwise those will be used instead.</p></dd>
+<code>asycdial</code>, <code>autoexit</code>, <code>cleanup</code>, <code>output</code>, <code>maxtasks</code>, <code>idletime</code>,
+<code>walltime</code> and <code>tlscert</code>. Only supply to override arguments originally
+provided to <code><a href="daemons.html">daemons()</a></code>, otherwise those will be used instead.</p></dd>
 
 
 <dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
-<dd><p>[default NULL] deprecated. Supply the certificates to the
-<code>tlscert</code> argument of <code><a href="daemons.html">daemons()</a></code> when setting up daemons instead.</p></dd>
+<dd><p>[default NULL] deprecated. Specify <code>tlscert</code> as a <code>...</code> argument
+to <code><a href="daemons.html">daemons()</a></code> when setting up daemons instead.</p></dd>
 
 
 <dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>

@@ -64,8 +64,8 @@
 <li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
 </ul></li>
 <li>
-<code><a href="../reference/daemons.html">daemons()</a></code> gains a <code>tlscert</code> argument to specify custom TLS certificates to pass to the daemon. This replaces use of the <code>tls</code> argument at <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
-<li>The <code>tls</code> argument at <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
+<code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
+<li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
 <li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
 </ul></div>
 </div>
