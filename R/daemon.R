@@ -43,12 +43,13 @@
 #'   limit) i.e. the minimum amount of real time elapsed before exiting.
 #' @param maxtasks \[default Inf\] integer maximum number of tasks to execute
 #'   (task limit) before exiting.
-#' @param tls \[default NULL\] required for secure TLS connections over
+#' @param tlscert \[default NULL\] required for secure TLS connections over
 #'   'tls+tcp://'. **Either** the character path to a file containing X.509
 #'   certificate(s) in PEM format, comprising the certificate authority
 #'   certificate chain starting with the TLS certificate and ending with the CA
 #'   certificate, **or** a length 2 character vector comprising \[i\] the
 #'   certificate authority certificate chain and \[ii\] the empty string `""`.
+#' @param tls deprecated, please use `tlscert` instead.
 #' @param id \[default NULL\] (optional) integer daemon ID provided to
 #'   dispatcher to track connection status. Causes [status()] to report this ID
 #'   under `$events` when the daemon connects and disconnects.
@@ -91,7 +92,8 @@ daemon <- function(
   idletime = Inf,
   walltime = Inf,
   maxtasks = Inf,
-  tls = NULL,
+  tlscert = NULL,
+  tls = tlscert,
   id = NULL,
   rs = NULL
 ) {

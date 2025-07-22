@@ -623,8 +623,8 @@ parse_tls <- function(tls)
   switch(
     length(tls) + 1L,
     "",
-    sprintf(",tls=\"%s\"", tls),
-    sprintf(",tls=c(\"%s\",\"%s\")", tls[1L], tls[2L])
+    sprintf(",tlscert=\"%s\"", tls),
+    sprintf(",tlscert=c(\"%s\",\"%s\")", tls[1L], tls[2L])
   )
 
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
