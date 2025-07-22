@@ -236,7 +236,7 @@ daemons <- function(
     if (is.null(envir)) {
       url <- url[1L]
       envir <- init_envir_stream(seed)
-      dots <- parse_dots(...)
+      dots <- parse_dots(envir, ...)
       cfg <- configure_tls(url, tls, pass, envir)
 
       switch(
@@ -251,8 +251,6 @@ daemons <- function(
         launch_remote(
           n = n,
           remote = remote,
-          ...,
-          tls = envir[["tls"]],
           .compute = .compute
         )
         on.exit()
@@ -276,7 +274,7 @@ daemons <- function(
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
-      dots <- parse_dots(...)
+      dots <- parse_dots(envir, ...)
 
       switch(
         parse_dispatcher(dispatcher),
@@ -600,19 +598,17 @@ parse_dispatcher <- function(x) {
   is.character(x) && x == "none" || return(3L)
 }
 
-parse_dots <- function(...) {
+parse_dots <- function(envir, ...) {
   ...length() || return("")
   dots <- list(...)
-  out <- ""
   if (any(names(dots) == "tlscert"))
-    out <- parse_tls(dots[["tlscert"]])
+    `[[<-`(envir, "tls", dots[["tlscert"]])
   dots <- dots[as.logical(lapply(
     dots,
     function(x) is.logical(x) || is.numeric(x)
   ))]
-  if (length(dots))
-    out <- sprintf(",%s%s", paste(names(dots), dots, sep = "=", collapse = ","), out)
-  out
+  length(dots) || return("")
+  sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
 }
 
 parse_tls <- function(tls)

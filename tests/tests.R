@@ -305,7 +305,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
     on.exit(unlink(file))
     cat(cert[["server"]], file = file)
     daemons(url = "tls+tcp://127.0.0.1:0", tls = file, tlscert = cert[["client"]]) == 0L &&
-      nzchar(nextget("dots")) &&
+      is.character(nextget("tls")) &&
       daemons(0L) == 0L
   }
   test_true(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
