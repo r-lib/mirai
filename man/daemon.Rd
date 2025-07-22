@@ -15,7 +15,8 @@ daemon(
   idletime = Inf,
   walltime = Inf,
   maxtasks = Inf,
-  tls = NULL,
+  tlscert = NULL,
+  tls = tlscert,
   id = NULL,
   rs = NULL
 )
@@ -61,12 +62,14 @@ limit) i.e. the minimum amount of real time elapsed before exiting.}
 \item{maxtasks}{[default Inf] integer maximum number of tasks to execute
 (task limit) before exiting.}
 
-\item{tls}{[default NULL] required for secure TLS connections over
+\item{tlscert}{[default NULL] required for secure TLS connections over
 'tls+tcp://'. \strong{Either} the character path to a file containing X.509
 certificate(s) in PEM format, comprising the certificate authority
 certificate chain starting with the TLS certificate and ending with the CA
 certificate, \strong{or} a length 2 character vector comprising [i] the
 certificate authority certificate chain and [ii] the empty string \code{""}.}
+
+\item{tls}{deprecated, please use \code{tlscert} instead.}
 
 \item{id}{[default NULL] (optional) integer daemon ID provided to
 dispatcher to track connection status. Causes \code{\link[=status]{status()}} to report this ID

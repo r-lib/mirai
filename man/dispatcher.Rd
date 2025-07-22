@@ -18,9 +18,9 @@ use secure TLS connections.}
 \item{n}{(optional) if specified, the integer number of daemons to launch. In
 this case, a local url is automatically generated.}
 
-\item{...}{(optional) additional arguments passed through to
-\code{\link[=daemon]{daemon()}} if launching daemons. These include \code{asyncdial}, \code{autoexit},
-\code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime} and \code{walltime}.}
+\item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}} if
+launching daemons. These include \code{asyncdial}, \code{autoexit}, \code{cleanup},
+\code{output}, \code{maxtasks}, \code{idletime}, \code{walltime} and \code{tlscert}.}
 }
 \value{
 Invisible NULL.

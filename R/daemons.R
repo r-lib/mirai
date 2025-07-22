@@ -47,9 +47,9 @@
 #' @param dispatcher \[default TRUE\] logical value, whether to use dispatcher.
 #'   Dispatcher runs in a separate process to ensure optimal scheduling,
 #'   and should normally be kept on (for details see Dispatcher section below).
-#' @param ... (optional) additional arguments passed through to
-#'   [daemon()] if launching daemons. These include `asyncdial`, `autoexit`,
-#'   `cleanup`, `output`, `maxtasks`, `idletime` and `walltime`.
+#' @param ... (optional) additional arguments passed through to [daemon()] if
+#'   launching daemons. These include `asyncdial`, `autoexit`, `cleanup`,
+#'   `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
 #' @param seed \[default NULL\] (optional) The default of `NULL` initializes
 #'   L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 #'   package. Results are statistically-sound, although generally
@@ -76,11 +76,6 @@
 #' @param pass \[default NULL\] (required only if the private key supplied to
 #'   `tls` is encrypted with a password) For security, should be provided
 #'   through a function that returns this value, rather than directly.
-#' @param tlscert \[default NULL\] (required for secure TLS connections **only**
-#'   if `tls` is supplied). **Either** the character path to a file containing
-#'   X.509 certificate(s) in PEM format, comprising the certificate authority
-#'   certificate chain, **or** a length 2 character vector comprising \[i\] the
-#'   certificate authority certificate chain and \[ii\] the empty string `""`.
 #'
 #' @return The integer number of daemons launched locally (zero if specifying
 #'   `url` or using a remote launcher).
@@ -230,7 +225,6 @@ daemons <- function(
   serial = NULL,
   tls = NULL,
   pass = NULL,
-  tlscert = NULL,
   .compute = NULL
 ) {
   missing(n) && missing(url) && return(status(.compute))
@@ -242,8 +236,8 @@ daemons <- function(
     if (is.null(envir)) {
       url <- url[1L]
       envir <- init_envir_stream(seed)
-      dots <- parse_dots(...)
-      cfg <- configure_tls(url, tls, pass, tlscert, envir)
+      dots <- parse_dots(envir, ...)
+      cfg <- configure_tls(url, tls, pass, envir)
 
       switch(
         parse_dispatcher(dispatcher),
@@ -257,8 +251,6 @@ daemons <- function(
         launch_remote(
           n = n,
           remote = remote,
-          ...,
-          tls = envir[["tls"]],
           .compute = .compute
         )
         on.exit()
@@ -282,7 +274,7 @@ daemons <- function(
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
-      dots <- parse_dots(...)
+      dots <- parse_dots(envir, ...)
 
       switch(
         parse_dispatcher(dispatcher),
@@ -569,15 +561,13 @@ register_serial <- function(class, sfunc, ufunc) {
 
 # internals --------------------------------------------------------------------
 
-configure_tls <- function(url, tls, pass, tlscert, envir, config = TRUE) {
+configure_tls <- function(url, tls, pass, envir, config = TRUE) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
   if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
     `[[<-`(envir, "tls", cert[["client"]])
     tls <- cert[["server"]]
-  } else if (length(tlscert)) {
-    `[[<-`(envir, "tls", tlscert)
   }
   cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
   list(tls, cfg)
@@ -608,9 +598,11 @@ parse_dispatcher <- function(x) {
   is.character(x) && x == "none" || return(3L)
 }
 
-parse_dots <- function(...) {
+parse_dots <- function(envir, ...) {
   ...length() || return("")
   dots <- list(...)
+  if (any(names(dots) == "tlscert"))
+    `[[<-`(envir, "tls", dots[["tlscert"]])
   dots <- dots[as.logical(lapply(
     dots,
     function(x) is.logical(x) || is.numeric(x)
@@ -623,8 +615,8 @@ parse_tls <- function(tls)
   switch(
     length(tls) + 1L,
     "",
-    sprintf(",tls=\"%s\"", tls),
-    sprintf(",tls=c(\"%s\",\"%s\")", tls[1L], tls[2L])
+    sprintf(",tlscert=\"%s\"", tls),
+    sprintf(",tlscert=c(\"%s\",\"%s\")", tls[1L], tls[2L])
   )
 
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
