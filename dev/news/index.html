@@ -60,9 +60,11 @@
 <ul><li>
 <code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
 <li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
-<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are now permissible again when using dispatcher (change of behaviour in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
+<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are now permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
 <li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
 </ul></li>
+<li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> now supports Arrow Tables and Polars DataFrames (<a href="https://github.com/r-lib/mirai/issues/366" class="external-link">#366</a>).</li>
 <li>
 <code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
 <li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
