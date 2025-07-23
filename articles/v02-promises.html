@@ -109,7 +109,7 @@ promise object.</p>
 promise instead registers an action to be taken as soon as a mirai
 resolves. This will happen automatically if the R session is idle at the
 top prompt, or if within a loop or function where
-<code><a href="https://r-lib.github.io/later/reference/run_now.html" class="external-link">later::run_now()</a></code> is being called periodically to service
+<code><a href="https://later.r-lib.org/reference/run_now.html" class="external-link">later::run_now()</a></code> is being called periodically to service
 promise actions (e.g. in Shiny).</p>
 <p>For a mirai promise, the mirai’s value is passed to the
 <code>onFulfilled</code> argument of <code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code> if no
