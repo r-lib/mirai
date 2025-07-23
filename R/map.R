@@ -179,37 +179,35 @@ mirai_map <- function(
       ),
       names(.x)
     )
+  } else if (is.data.frame(.x)) {
+    rn <- attr(.x, "row.names", exact = TRUE)
+    `names<-`(
+      lapply(
+        seq_len(dx[1L]),
+        function(i)
+          mirai(
+            .expr = do.call(.f, c(.x, .args), quote = TRUE),
+            ...,
+            .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
+            .compute = .compute
+          )
+      ),
+      if (is.character(rn)) rn
+    )
   } else {
-    if (is.matrix(.x)) {
-      `names<-`(
-        lapply(
-          seq_len(dx[1L]),
-          function(i)
-            mirai(
-              .expr = do.call(.f, c(`storage.mode<-`(.x, "list"), .args), quote = TRUE),
-              ...,
-              .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
-              .compute = .compute
-            )
-        ),
-        dimnames(.x)[[1L]]
-      )
-    } else {
-      rn <- attr(.x, "row.names", exact = TRUE)
-      `names<-`(
-        lapply(
-          seq_len(dx[1L]),
-          function(i)
-            mirai(
-              .expr = do.call(.f, c(.x, .args), quote = TRUE),
-              ...,
-              .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
-              .compute = .compute
-            )
-        ),
-        if (is.character(rn)) rn
-      )
-    }
+    `names<-`(
+      lapply(
+        seq_len(dx[1L]),
+        function(i)
+          mirai(
+            .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
+            ...,
+            .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
+            .compute = .compute
+          )
+      ),
+      if (is.matrix(.x)) dimnames(.x)[[1L]]
+    )
   }
 
   if (length(.promise))

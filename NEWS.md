@@ -10,8 +10,9 @@
 * `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
   Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
 * Enhancements to `everywhere()`:
-  + Consecutive `everywhere()` calls are now permissible again when using dispatcher (change of behaviour in v2.4.1) (#354).
+  + Consecutive `everywhere()` calls are now permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
   + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).
+* `mirai_map()` now supports Arrow Tables and Polars DataFrames (#366).
 * `daemon()` gains a `tlscert` argument for custom TLS certificates.
   The change in argument name lets this be passed when making a `daemons()` call (#344).
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
