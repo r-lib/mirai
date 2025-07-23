@@ -180,21 +180,7 @@ mirai_map <- function(
       names(.x)
     )
   } else {
-    if (is.matrix(.x)) {
-      `names<-`(
-        lapply(
-          seq_len(dx[1L]),
-          function(i)
-            mirai(
-              .expr = do.call(.f, c(`storage.mode<-`(.x, "list"), .args), quote = TRUE),
-              ...,
-              .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
-              .compute = .compute
-            )
-        ),
-        dimnames(.x)[[1L]]
-      )
-    } else {
+    if (is.data.frame(.x)) {
       rn <- attr(.x, "row.names", exact = TRUE)
       `names<-`(
         lapply(
@@ -208,6 +194,20 @@ mirai_map <- function(
             )
         ),
         if (is.character(rn)) rn
+      )
+    } else {
+      `names<-`(
+        lapply(
+          seq_len(dx[1L]),
+          function(i)
+            mirai(
+              .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
+              ...,
+              .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
+              .compute = .compute
+            )
+        ),
+        dimnames(.x)[[1L]]
       )
     }
   }
