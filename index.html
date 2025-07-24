@@ -90,11 +90,10 @@
 </h3>
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br></p>
 <p>mirai — <em>future</em> in Japanese — allows you to perform computationally intensive tasks without blocking the R session.</p>
-<p>→ Run R code in the background, with the results available back in your session</p>
+<p>→ Run R code in the background, with results available once ready</p>
 <p>→ Distribute workloads across local or remote machines</p>
 <p>→ Execute tasks on different compute resources based on requirements</p>
-<p>→ Perform actions as soon as tasks complete through integration with promises</p>
-<p><br></p>
+<p>→ Perform actions as soon as tasks complete via promises</p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -105,7 +104,7 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p>→ <code><a href="reference/mirai.html">mirai()</a></code>: Evaluate R expressions asynchronously in parallel processes. Returns immediately; never blocks.</p>
+<p>→ <code><a href="reference/mirai.html">mirai()</a></code>: Evaluate an R expression asynchronously in a parallel processes, never blocking.</p>
 <p>→ <code><a href="reference/daemons.html">daemons()</a></code>: Set and launch persistent background processes, local or remote, on which to run mirai tasks.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
@@ -164,12 +163,12 @@
 </ul>
 </div>
 <div class="section level3">
-<h3 id="core-features">Core Features<a class="anchor" aria-label="anchor" href="#core-features"></a>
+<h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li><p><strong>Distributed Execution</strong>: Run tasks across networks and clusters using various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque, PBS, LSF, etc.)</p></li>
 <li><p><strong>Compute Profiles</strong>: Manage different sets of daemons independently, allowing tasks with different requirements to be executed on appropriate resources.</p></li>
-<li><p><strong>Promises Integration</strong>: Perform actions as soon as tasks complete, based on the returned values — using event-driven promises — providing the lowest latency and highest levels of responsiveness.</p></li>
+<li><p><strong>Promises Integration</strong>: Event-driven promises perform actions as soon as tasks complete, based on the returned values, providing the highest performance and lowest latency.</p></li>
 <li><p><strong>Serialization Support</strong>: Native serialization support for reference objects such as Arrow Tables, Polars DataFrames or torch tensors.</p></li>
 <li><p><strong>Error Handling</strong>: Robust error handling and reporting, with full stack traces for debugging.</p></li>
 <li><p><strong>RNG Management</strong>: L’Ecuyer-CMRG RNG streams for reproducible random number generation in parallel execution.</p></li>
@@ -181,8 +180,8 @@
 <p>mirai serves as a foundation for asynchronous and parallel computing in the R ecosystem:</p>
 <p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Implements the first official alternative communications backend for R — the ‘MIRAI’ parallel cluster — fulfilling a feature request by R-Core at R Project Sprint 2023.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Event-driven promises for ‘mirai’ and ‘mirai_map’ objects provide the lowest latency and highest responsiveness for performance-critical applications.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, supporting ExtendedTask and the next level of responsiveness and scalability for Shiny apps.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Promises for ‘mirai’ and ‘mirai_map’ objects are event-driven, providing the lowest latency and highest responsiveness for performance-critical applications.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, with full ExtendedTask support, providing the next level of responsiveness and scalability for Shiny apps.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46"></a>   The built-in async evaluator behind the <code>@async</code> tag in plumber2; also provides an async backend for Plumber.</p>
 <p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Allows Torch tensors and complex objects such as models and optimizers to be used seamlessly across parallel processes.</p>
 <p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Allows queries using the Apache Arrow format to be handled seamlessly over ADBC database connections hosted in background processes.</p>
