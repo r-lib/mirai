@@ -81,11 +81,9 @@ dispatcher <- function(
     for (i in seq_len(n)) {
       launch_daemon(wa3(url, dots))
     }
-    for (i in seq_len(n)) {
-      while(!until(cv, .limit_long)) {
+    for (i in seq_len(n))
+      while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
-      }
-    }
 
     changes <- read_monitor(m)
     for (item in changes) {

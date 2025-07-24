@@ -695,8 +695,9 @@ launch_daemons <- function(seq, dots, envir) {
   urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
-  for (i in seq)
+  for (i in seq) {
     launch_daemon(wa2(urld, dots, maybe_next_stream(envir)))
+  }
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
   sync <- 0L

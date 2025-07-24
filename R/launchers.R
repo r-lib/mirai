@@ -124,14 +124,15 @@ launch_remote <- function(
       if (length(args) == 1L) {
         args <- args[[1L]]
       } else if (n == 1L || n == length(args)) {
-        cmds <- character(length(args))
-        for (i in seq_along(args)) {
-          cmds[i] <- sprintf(
-            "%s -e %s",
-            rscript,
-            write_args(url, dots, maybe_next_stream(envir), tls)
+        cmds <- as.character(
+          lapply(seq_along(args), function(i)
+            sprintf(
+              "%s -e %s",
+              rscript,
+              write_args(url, dots, maybe_next_stream(envir), tls)
+            )
           )
-        }
+        )
 
         for (i in seq_along(args)) {
           system2(
@@ -148,14 +149,15 @@ launch_remote <- function(
     }
   }
 
-  cmds <- character(n)
-  for (i in seq_len(n)) {
-    cmds[i] <- sprintf(
-      "%s -e %s",
-      rscript,
-      write_args(url, dots, maybe_next_stream(envir), tls)
+  cmds <- as.character(
+    lapply(seq_len(n), function(i)
+      sprintf(
+        "%s -e %s",
+        rscript,
+        write_args(url, dots, maybe_next_stream(envir), tls)
+      )
     )
-  }
+  )
 
   if (length(command)) {
     for (cmd in cmds) {
