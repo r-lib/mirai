@@ -111,8 +111,9 @@ as.promise.mirai <- function(x) {
 as.promise.mirai_map <- function(x) {
   promise <- attr(x, "promise")
 
-  if (is.null(promise))
+  if (is.null(promise)) {
     attr(x, "promise") <- promise <- promises::promise_all(.list = x)
+  }
 
   promise
 }

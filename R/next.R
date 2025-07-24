@@ -69,7 +69,7 @@ nextget <- function(x, .compute = "default") ..[[.compute]][[x]]
 #' @rdname nextstream
 #' @export
 #'
-nextcode <- function(xc)
+nextcode <- function(xc) {
   sprintf(
     "%d | Daemon %s",
     xc,
@@ -81,6 +81,7 @@ nextcode <- function(xc)
       "task limit reached"
     )
   )
+}
 
 # internals --------------------------------------------------------------------
 

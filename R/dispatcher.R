@@ -45,8 +45,11 @@ dispatcher <- function(
   raio <- recv_aio(sock, mode = 1L, cv = cv)
   wait(cv) || return()
   res <- collect_aio(raio)
-  if (nzchar(res[[1L]])) Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]]) else
+  if (nzchar(res[[1L]])) {
+    Sys.setenv(R_DEFAULT_PACKAGES = res[[1L]])
+  } else {
     Sys.unsetenv("R_DEFAULT_PACKAGES")
+  }
 
   tls <- NULL
   auto <- is.null(url)
@@ -75,23 +78,26 @@ dispatcher <- function(
   `[[<-`(envir, "stream", res)
   if (auto) {
     dots <- parse_dots(...)
-    for (i in seq_len(n))
+    for (i in seq_len(n)) {
       launch_daemon(wa3(url, dots))
+    }
     for (i in seq_len(n))
       while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
 
     changes <- read_monitor(m)
-    for (item in changes)
+    for (item in changes) {
       item > 0 && {
         outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
         send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
       }
+    }
   } else {
     listener <- attr(psock, "listener")[[1L]]
     url <- opt(listener, "url")
-    if (parse_url(url)[["port"]] == "0")
+    if (parse_url(url)[["port"]] == "0") {
       url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
+    }
   }
 
   send(sock, c(Sys.getpid(), url), mode = 2L, block = TRUE)
@@ -113,10 +119,10 @@ dispatcher <- function(
           } else {
             id <- as.character(-item)
             if (length(outq[[id]])) {
-              outq[[id]][["msgid"]] &&
-                send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
-              if (length(outq[[id]][["dmnid"]]))
+              outq[[id]][["msgid"]] && send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
+              if (length(outq[[id]][["dmnid"]])) {
                 events <- c(events, outq[[id]][["dmnid"]])
+              }
               outq[[id]] <- NULL
             }
           }
@@ -140,20 +146,23 @@ dispatcher <- function(
             events <- integer()
           } else {
             found <- FALSE
-            for (item in outq)
+            for (item in outq) {
               item[["msgid"]] == id && {
                 send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
                 `[[<-`(item, "msgid", -1L)
                 found <- TRUE
                 break
               }
-            if (!found)
-              for (i in seq_along(inq))
+            }
+            if (!found) {
+              for (i in seq_along(inq)) {
                 inq[[i]][["msgid"]] == id && {
                   inq[[i]] <- NULL
                   found <- TRUE
                   break
                 }
+              }
+            }
           }
           send(ctx, found, mode = 2L, block = TRUE)
         } else {
@@ -176,8 +185,9 @@ dispatcher <- function(
         .read_marker(value) && {
             send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
             send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
-            if (length(outq[[id]][["dmnid"]]))
+            if (length(outq[[id]][["dmnid"]])) {
               events <- c(events, outq[[id]][["dmnid"]])
+            }
             outq[[id]] <- NULL
           next
         }
@@ -191,8 +201,8 @@ dispatcher <- function(
         `[[<-`(outq[[id]], "msgid", 0L)
       }
 
-      if (length(inq))
-        for (item in outq)
+      if (length(inq)) {
+        for (item in outq) {
           item[["msgid"]] || {
             if (.read_marker(inq[[1L]][["req"]])) {
               item[["sync"]] && next
@@ -206,6 +216,8 @@ dispatcher <- function(
             inq[[1L]] <- NULL
             break
           }
+        }
+      }
     }
   )
 }

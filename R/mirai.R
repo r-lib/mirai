@@ -151,31 +151,32 @@ mirai <- function(
 
   expr <- substitute(.expr)
   globals <- list(...)
-  length(globals) &&
-    {
-      gn <- names(globals)
-      if (is.null(gn)) {
-        is.environment(globals[[1L]]) || stop(._[["named_dots"]])
-        globals <- as.list.environment(globals[[1L]], all.names = TRUE)
-        globals[[".Random.seed"]] <- NULL
-      }
-      all(nzchar(gn)) || stop(._[["named_dots"]])
+  length(globals) && {
+    gn <- names(globals)
+    if (is.null(gn)) {
+      is.environment(globals[[1L]]) || stop(._[["named_dots"]])
+      globals <- as.list.environment(globals[[1L]], all.names = TRUE)
+      globals[[".Random.seed"]] <- NULL
     }
-  if (length(envir[["seed"]]))
+    all(nzchar(gn)) || stop(._[["named_dots"]])
+  }
+  if (length(envir[["seed"]])) {
     globals[[".Random.seed"]] <- next_stream(envir)
+  }
   data <- list(
     ._mirai_globals_. = globals,
     .expr = if (
       is.symbol(expr) &&
-        exists(as.character(expr), envir = parent.frame()) &&
-        is.language(.expr)
-    )
-      .expr else expr
+      exists(as.character(expr), envir = parent.frame()) &&
+      is.language(.expr)
+    ) .expr else expr
   )
   if (length(.args)) {
-    if (is.environment(.args))
-      .args <- as.list.environment(.args, all.names = TRUE) else
+    if (is.environment(.args)) {
+      .args <- as.list.environment(.args, all.names = TRUE)
+    } else {
       length(names(.args)) && all(nzchar(names(.args))) || stop(._[["named_args"]])
+    }
     data <- c(.args, data)
   }
 
@@ -257,16 +258,17 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
     as.expression(
       if (
         is.symbol(expr) &&
-          exists(as.character(expr), envir = parent.frame()) &&
-          is.language(.expr)
-      )
-        .expr else expr
+        exists(as.character(expr), envir = parent.frame()) &&
+        is.language(.expr)
+      ) .expr else expr
     )
   )
 
-  xlen <- if (is.null(envir[["dispatcher"]]))
-    max(stat(envir[["sock"]], "pipes"), envir[["n"]]) else
-      max(status(.compute)[["connections"]], 1L)
+  xlen <- if (is.null(envir[["dispatcher"]])) {
+    max(stat(envir[["sock"]], "pipes"), envir[["n"]])
+  } else {
+    max(status(.compute)[["connections"]], 1L)
+  }
   seed <- envir[["seed"]]
   `[[<-`(envir, "seed", NULL)
   on.exit({
@@ -556,10 +558,7 @@ on_daemon <- function() !is.null(.[["sock"]])
 #' @export
 #'
 print.mirai <- function(x, ...) {
-  cat(
-    if (.unresolved(x)) "< mirai [] >\n" else "< mirai [$data] >\n",
-    file = stdout()
-  )
+  cat(if (.unresolved(x)) "< mirai [] >\n" else "< mirai [$data] >\n", file = stdout())
   invisible(x)
 }
 
@@ -583,8 +582,9 @@ print.miraiInterrupt <- function(x, ...) {
 
 #' @exportS3Method utils::.DollarNames
 #'
-.DollarNames.miraiError <- function(x, pattern = "")
+.DollarNames.miraiError <- function(x, pattern = "") {
   grep(pattern, names(attributes(x)), value = TRUE, fixed = TRUE)
+}
 
 # internals --------------------------------------------------------------------
 
@@ -610,21 +610,21 @@ ephemeral_daemon <- function(data, timeout) {
   invisible(aio)
 }
 
-deparse_safe <- function(x)
-  if (length(x))
-    deparse(x, width.cutoff = 500L, backtick = TRUE, control = NULL, nlines = 1L)
+deparse_safe <- function(x) {
+  length(x) || return()
+  deparse(x, width.cutoff = 500L, backtick = TRUE, control = NULL, nlines = 1L)
+}
 
 mk_interrupt_error <- function() .miraiInterrupt
 
 mk_mirai_error <- function(cnd, sc) {
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
   call <- deparse_safe(.subset2(cnd, "call"))
-  msg <- if (
-    is.null(call) ||
-      call == "eval(._mirai_.[[\".expr\"]], envir = ._mirai_., enclos = .GlobalEnv)"
-  )
-    sprintf("Error: %s", .subset2(cnd, "message")) else
+  msg <- if (is.null(call) || call == "eval(._mirai_.[[\".expr\"]], envir = ._mirai_., enclos = .GlobalEnv)") {
+    sprintf("Error: %s", .subset2(cnd, "message"))
+  } else {
     sprintf("Error in %s: %s", call, .subset2(cnd, "message"))
+  }
   idx <- max(which(as.logical(lapply(
     sc,
     `==`,

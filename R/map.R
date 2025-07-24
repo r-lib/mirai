@@ -167,53 +167,49 @@ mirai_map <- function(
   dx <- dim(.x)
   vec <- if (is.null(dx)) {
     `names<-`(
-      lapply(
-        .x,
-        function(x)
-          mirai(
-            .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
-            ...,
-            .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
-            .compute = .compute
-          )
+      lapply(.x, function(x)
+        mirai(
+          .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
+          ...,
+          .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
+          .compute = .compute
+        )
       ),
       names(.x)
     )
   } else if (is.data.frame(.x)) {
     rn <- attr(.x, "row.names", exact = TRUE)
     `names<-`(
-      lapply(
-        seq_len(dx[1L]),
-        function(i)
-          mirai(
-            .expr = do.call(.f, c(.x, .args), quote = TRUE),
-            ...,
-            .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
-            .compute = .compute
-          )
+      lapply(seq_len(dx[1L]), function(i)
+        mirai(
+          .expr = do.call(.f, c(.x, .args), quote = TRUE),
+          ...,
+          .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
+          .compute = .compute
+        )
       ),
       if (is.character(rn)) rn
     )
   } else {
     `names<-`(
-      lapply(
-        seq_len(dx[1L]),
-        function(i)
-          mirai(
-            .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
-            ...,
-            .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
-            .compute = .compute
-          )
+      lapply(seq_len(dx[1L]), function(i)
+        mirai(
+          .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
+          ...,
+          .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
+          .compute = .compute
+        )
       ),
       if (is.matrix(.x)) dimnames(.x)[[1L]]
     )
   }
 
   if (length(.promise))
-    if (is.list(.promise))
-      lapply(vec, promises::then, .promise[[1L]], .promise[2L][[1L]]) else
+    if (is.list(.promise)) {
+      lapply(vec, promises::then, .promise[[1L]], .promise[2L][[1L]])
+    } else {
       lapply(vec, promises::then, .promise)
+    }
 
   `class<-`(vec, "mirai_map")
 }
@@ -316,7 +312,11 @@ mmap <- function(x, dots) {
 
 flat_cli <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else {
+    if (i == 0L) {
+      xi <- TRUE
+    } else if (i == 1L) {
+      typ <<- typeof(xi)
+    } else {
       is_error_value(xi) && {
         stop_mirai(x)
         iname <- names(x)[i]
@@ -349,13 +349,11 @@ flat_cli <- compiler::compile(
 
 progress_cli <- compiler::compile(
   quote(
-    if (i == 0L)
-      cli::cli_progress_bar(
-        type = NULL,
-        total = xlen,
-        auto_terminate = TRUE,
-        .envir = .
-      ) else cli::cli_progress_update(.envir = .)
+    if (i == 0L) {
+      cli::cli_progress_bar(type = NULL, total = xlen, auto_terminate = TRUE, .envir = .)
+    } else {
+      cli::cli_progress_update(.envir = .)
+    }
   )
 )
 
