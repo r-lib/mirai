@@ -92,26 +92,10 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   if (length(remote) == 2L) {
     platform <- remote[["platform"]]
     args <- remote[["args"]]
-    platform == "posit" && {
-      tools <- posit_tools()
-      is.environment(tools) || stop(._[["posit_api"]])
-      submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
-      new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
-      cluster <- args[["name"]]
-      container <- new_container(args[["image"]])
-      cmds <- launch_remote(n)
-      lapply(
-        cmds,
-        function(cmd) submit_job(
-          sprintf("mirai_daemon_%s", random(3L)),
-          cluster = cluster,
-          command = cmd,
-          container = container
-        )
-      )
-      return(cmds)
-    }
-    stop(._[["platform_unsupported"]])
+    platform != "posit" && stop(._[["platform_unsupported"]])
+    tools <- posit_tools()
+    is.environment(tools) || stop(._[["posit_api"]])
+    return(posit_workbench_launch(n, args, tools))
   }
 
   command <- remote[["command"]]
@@ -534,4 +518,21 @@ posit_tools <- function() {
   feature_available <- .subset2(tools, ".rs.api.launcher.jobsFeatureAvailable")
   is.function(feature_available) && feature_available() || return()
   tools
+}
+
+posit_workbench_launch <- function(n, args, tools) {
+  submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
+  new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
+  cluster <- args[["name"]]
+  container <- new_container(args[["image"]])
+  cmds <- launch_remote(n)
+  lapply(cmds, function(cmd)
+    submit_job(
+      sprintf("mirai_daemon_%s", random(3L)),
+      cluster = cluster,
+      command = cmd,
+      container = container
+    )
+  )
+  cmds
 }
