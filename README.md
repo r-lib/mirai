@@ -23,17 +23,13 @@ for R <br /><br />
 mirai — *future* in Japanese — allows you to perform computationally
 intensive tasks without blocking the R session.
 
-→ Run R code in the background, with the results available back in your
-session
+→ Run R code in the background, with results available once ready
 
 → Distribute workloads across local or remote machines
 
 → Execute tasks on different compute resources based on requirements
 
-→ Perform actions as soon as tasks complete through integration with
-promises
-
-<br />
+→ Perform actions as soon as tasks complete via promises
 
 ### Installation
 
@@ -43,8 +39,8 @@ install.packages("mirai")
 
 ### Quick Start
 
-→ `mirai()`: Evaluate R expressions asynchronously in parallel
-processes. Returns immediately; never blocks.
+→ `mirai()`: Evaluate an R expression asynchronously in a parallel
+processes, never blocking.
 
 → `daemons()`: Set and launch persistent background processes, local or
 remote, on which to run mirai tasks.
@@ -110,7 +106,7 @@ experience.
 - Proven track record for heavy-duty workloads in the life sciences
   industry
 
-### Core Features
+### Key Features
 
 1.  **Distributed Execution**: Run tasks across networks and clusters
     using various deployment methods (SSH, HPC clusters using Slurm,
@@ -120,9 +116,9 @@ experience.
     independently, allowing tasks with different requirements to be
     executed on appropriate resources.
 
-3.  **Promises Integration**: Perform actions as soon as tasks complete,
-    based on the returned values — using event-driven promises —
-    providing the lowest latency and highest levels of responsiveness.
+3.  **Promises Integration**: Event-driven promises perform actions as
+    soon as tasks complete, based on the returned values, providing the
+    highest performance and lowest latency.
 
 4.  **Serialization Support**: Native serialization support for
     reference objects such as Arrow Tables, Polars DataFrames or torch
@@ -149,13 +145,14 @@ at R Project Sprint 2023.
 core tidyverse package.
 
 [<img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36" />](https://mirai.r-lib.org/articles/v02-promises.html)
-  Event-driven promises for ‘mirai’ and ‘mirai_map’ objects provide the
-lowest latency and highest responsiveness for performance-critical
-applications.
+  Promises for ‘mirai’ and ‘mirai_map’ objects are event-driven,
+providing the lowest latency and highest responsiveness for
+performance-critical applications.
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
-  The primary async backend for Shiny, supporting ExtendedTask and the
-next level of responsiveness and scalability for Shiny apps.
+  The primary async backend for Shiny, with full ExtendedTask support,
+providing the next level of responsiveness and scalability for Shiny
+apps.
 
 [<img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   The built-in async evaluator behind the `@async` tag in plumber2; also

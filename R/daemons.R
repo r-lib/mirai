@@ -239,12 +239,10 @@ daemons <- function(
       dots <- parse_dots(envir, ...)
       cfg <- configure_tls(url, tls, pass, envir)
 
-      switch(
-        parse_dispatcher(dispatcher),
-        create_sock(envir, url, cfg[[2L]]),
-        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass),
-        stop(._[["dispatcher_args"]])
-      )
+      if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
+      if (dispatcher)
+        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass) else
+          create_sock(envir, url, cfg[[2L]])
       create_profile(envir, .compute, 0L, dots)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
@@ -276,12 +274,10 @@ daemons <- function(
       envir <- init_envir_stream(seed)
       dots <- parse_dots(envir, ...)
 
-      switch(
-        parse_dispatcher(dispatcher),
-        launch_daemons(seq_len(n), dots, envir),
-        launch_dispatcher(n, dots, envir, serial),
-        stop(._[["dispatcher_args"]])
-      )
+      if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
+      if (dispatcher)
+        launch_dispatcher(n, dots, envir, serial) else
+          launch_daemons(seq_len(n), dots, envir)
       create_profile(envir, .compute, n, dots)
     } else {
       stop(sprintf(._[["daemons_set"]], .compute))
@@ -592,11 +588,6 @@ init_envir_stream <- function(seed) {
 
 req_socket <- function(url, tls = NULL)
   `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", 0L)
-
-parse_dispatcher <- function(x) {
-  is.logical(x) && return(1L + (!is.na(x) && x))
-  is.character(x) && x == "none" || return(3L)
-}
 
 parse_dots <- function(envir, ...) {
   missing(..1) && return("")
