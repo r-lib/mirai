@@ -52,8 +52,9 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   write_args <- if (is.null(envir[["dispatcher"]])) wa2 else wa3
   dots <- if (missing(..1)) envir[["dots"]] else parse_dots(envir, ...)
   if (is.null(tls)) tls <- envir[["tls"]]
-  for (i in seq_len(n))
+  for (i in seq_len(n)) {
     launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls))
+  }
   n
 }
 
@@ -115,31 +116,30 @@ launch_remote <- function(
         purl <- parse_url(url)
         purl[["hostname"]] == "127.0.0.1" || stop(._[["localhost"]])
         prefix <- sprintf("-R %s:127.0.0.1:%s", purl[["port"]], purl[["port"]])
-        for (i in seq_along(args))
+        for (i in seq_along(args)) {
           args[[i]][1L] <- sprintf("%s %s", prefix, args[[i]][1L])
+        }
       }
 
       if (length(args) == 1L) {
         args <- args[[1L]]
       } else if (n == 1L || n == length(args)) {
         cmds <- character(length(args))
-        for (i in seq_along(args))
+        for (i in seq_along(args)) {
           cmds[i] <- sprintf(
             "%s -e %s",
             rscript,
             write_args(url, dots, maybe_next_stream(envir), tls)
           )
+        }
 
-        for (i in seq_along(args))
+        for (i in seq_along(args)) {
           system2(
             command,
-            args = `[<-`(
-              args[[i]],
-              find_dot(args[[i]]),
-              if (quote) shQuote(cmds[i]) else cmds[i]
-            ),
+            args = `[<-`(args[[i]], find_dot(args[[i]]), if (quote) shQuote(cmds[i]) else cmds[i]),
             wait = FALSE
           )
+        }
 
         return(`class<-`(cmds, "miraiLaunchCmd"))
       } else {
@@ -149,15 +149,16 @@ launch_remote <- function(
   }
 
   cmds <- character(n)
-  for (i in seq_len(n))
+  for (i in seq_len(n)) {
     cmds[i] <- sprintf(
       "%s -e %s",
       rscript,
       write_args(url, dots, maybe_next_stream(envir), tls)
     )
+  }
 
-  if (length(command))
-    for (cmd in cmds)
+  if (length(command)) {
+    for (cmd in cmds) {
       system2(
         command,
         args = if (is.null(quote)) {
@@ -168,6 +169,8 @@ launch_remote <- function(
         },
         wait = FALSE
       )
+    }
+  }
 
   `class<-`(cmds, "miraiLaunchCmd")
 }

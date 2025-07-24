@@ -206,8 +206,7 @@ daemon <- function(
 
 # internals --------------------------------------------------------------------
 
-handle_mirai_error <- function(cnd)
-  invokeRestart("mirai_error", cnd, sys.calls())
+handle_mirai_error <- function(cnd) invokeRestart("mirai_error", cnd, sys.calls())
 
 handle_mirai_interrupt <- function(cnd) invokeRestart("mirai_interrupt")
 
@@ -244,10 +243,11 @@ do_cleanup <- function() {
   options(.[["op"]])
 }
 
-snapshot <- function()
-  `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
+snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
 
-flag_value_auto <- function(autoexit)
-  { isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL)) } && return(autoexit) || is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
+flag_value_auto <- function(autoexit) {
+  (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit) ||
+    is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
+}
 
 flag_value <- function() isNamespaceLoaded("covr") || return(tools::SIGTERM)

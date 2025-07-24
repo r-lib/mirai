@@ -240,17 +240,15 @@ daemons <- function(
       cfg <- configure_tls(url, tls, pass, envir)
 
       if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
-      if (dispatcher)
-        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass) else
-          create_sock(envir, url, cfg[[2L]])
+      if (dispatcher) {
+        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
+      } else {
+        create_sock(envir, url, cfg[[2L]])
+      }
       create_profile(envir, .compute, 0L, dots)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
-        launch_remote(
-          n = n,
-          remote = remote,
-          .compute = .compute
-        )
+        launch_remote(n = n, remote = remote, .compute = .compute)
         on.exit()
       }
     } else {
@@ -275,9 +273,11 @@ daemons <- function(
       dots <- parse_dots(envir, ...)
 
       if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
-      if (dispatcher)
-        launch_dispatcher(n, dots, envir, serial) else
-          launch_daemons(seq_len(n), dots, envir)
+      if (dispatcher) {
+        launch_dispatcher(n, dots, envir, serial)
+      } else {
+        launch_daemons(seq_len(n), dots, envir)
+      }
       create_profile(envir, .compute, n, dots)
     } else {
       stop(sprintf(._[["daemons_set"]], .compute))
@@ -586,8 +586,9 @@ init_envir_stream <- function(seed) {
   `[[<-`(envir, "seed", seed)
 }
 
-req_socket <- function(url, tls = NULL)
+req_socket <- function(url, tls = NULL) {
   `opt<-`(socket("req", listen = url, tls = tls), "req:resend-time", 0L)
+}
 
 parse_dots <- function(envir, ...) {
   missing(..1) && return("")
@@ -602,17 +603,18 @@ parse_dots <- function(envir, ...) {
   sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
 }
 
-parse_tls <- function(tls)
+parse_tls <- function(tls) {
   switch(
     length(tls) + 1L,
     "",
     sprintf(",tlscert=\"%s\"", tls),
     sprintf(",tlscert=c(\"%s\",\"%s\")", tls[1L], tls[2L])
   )
+}
 
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
 
-wa2 <- function(url, dots, rs, tls = NULL)
+wa2 <- function(url, dots, rs, tls = NULL) {
   shQuote(sprintf(
     "mirai::daemon(\"%s\",dispatcher=FALSE%s%s,rs=c(%s))",
     url,
@@ -620,16 +622,18 @@ wa2 <- function(url, dots, rs, tls = NULL)
     parse_tls(tls),
     paste0(rs, collapse = ",")
   ))
+}
 
-wa3 <- function(url, dots, rs = NULL, tls = NULL)
+wa3 <- function(url, dots, rs = NULL, tls = NULL) {
   shQuote(sprintf(
     "mirai::daemon(\"%s\"%s%s)",
     url,
     dots,
     parse_tls(tls)
   ))
+}
 
-wa4 <- function(urld, n, dots)
+wa4 <- function(urld, n, dots) {
   shQuote(sprintf(
     ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d%s)",
     libp(),
@@ -637,8 +641,9 @@ wa4 <- function(urld, n, dots)
     n,
     dots
   ))
+}
 
-wa5 <- function(urld, url, dots)
+wa5 <- function(urld, url, dots) {
   shQuote(sprintf(
     ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
     libp(),
@@ -646,9 +651,9 @@ wa5 <- function(urld, url, dots)
     url,
     dots
   ))
+}
 
-launch_daemon <- function(args)
-  system2(.command, args = c("-e", args), wait = FALSE)
+launch_daemon <- function(args) system2(.command, args = c("-e", args), wait = FALSE)
 
 query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
   r <- send(sock, command, mode = send_mode, block = block)
@@ -701,8 +706,7 @@ launch_daemons <- function(seq, dots, envir) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-sub_real_port <- function(port, url)
-  sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
+sub_real_port <- function(port, url) sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
 
 create_sock <- function(envir, url, tls) {
   sock <- req_socket(url, tls = tls)
@@ -740,7 +744,7 @@ dispatcher_status <- function(envir) {
   out
 }
 
-stop_d_cli <- function(.compute, call)
+stop_d_cli <- function(.compute, call) {
   cli::cli_abort(
     if (is.character(.compute)) c(
       sprintf("No daemons set for the '%s' compute profile.", .compute),
@@ -751,13 +755,15 @@ stop_d_cli <- function(.compute, call)
     ),
     call = call
   )
+}
 
-stop_d <- function(.compute, call)
+stop_d <- function(.compute, call) {
   stop(
     if (is.character(.compute))
       sprintf("No daemons set for the '%s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%s\") to set 6 local daemons.", .compute, .compute) else
-      "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons.",
+        "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons.",
     call. = FALSE
   )
+}
 
 ._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))

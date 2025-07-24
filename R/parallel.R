@@ -111,8 +111,10 @@ make_cluster <- function(n, url = NULL, remote = NULL, ...) {
 #' @rdname make_cluster
 #' @export
 #'
-stop_cluster <- function(cl)
-  daemons(0L, .compute = attr(cl, "id")) || return(invisible())
+stop_cluster <- function(cl) {
+  daemons(0L, .compute = attr(cl, "id"))
+  invisible()
+}
 
 #' @exportS3Method parallel::stopCluster
 #'
@@ -127,7 +129,7 @@ sendData.miraiNode <- function(node, data) {
 
   value <- data[["data"]]
   tagged <- !is.null(value[["tag"]])
-  if (tagged) set_cv(envir) else unset_cv(envir)
+  `[[<-`(envir, "cv", if (tagged) envir[["cvs"]])
 
   m <- mirai(
     do.call(node, data, quote = TRUE),
@@ -188,15 +190,12 @@ print.miraiNode <- function(x, ...) {
 
 # internals --------------------------------------------------------------------
 
-create_node <- function(node, id)
+create_node <- function(node, id) {
   `attributes<-`(
     new.env(hash = FALSE, parent = emptyenv()),
     list(class = "miraiNode", node = node, id = id)
   )
-
-set_cv <- function(envir) `[[<-`(envir, "cv", envir[["cvs"]])
-
-unset_cv <- function(envir) `[[<-`(envir, "cv", NULL)
+}
 
 node_unresolved <- function(node) {
   m <- .subset2(node, "mirai")
