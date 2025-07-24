@@ -41,6 +41,8 @@ mirai — *future* in Japanese — allows you to perform computationally intensi
  
 → Perform actions as soon as tasks complete via promises
 
+<br />
+
 ### Installation
 
 ```{r}
@@ -51,7 +53,7 @@ install.packages("mirai")
 
 ### Quick Start
 
-→ `mirai()`: Evaluate an R expression asynchronously in a parallel processes, never blocking.
+→ `mirai()`: Evaluate an R expression asynchronously in a parallel processes.
 
 → `daemons()`: Set and launch persistent background processes, local or remote, on which to run mirai tasks.
 
@@ -106,17 +108,17 @@ mirai is designed from the ground up to provide a production-grade experience.
 
 ### Key Features
 
-1. **Distributed Execution**: Run tasks across networks and clusters using various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque, PBS, LSF, etc.)
+→ Distributed Execution: Run tasks across networks and clusters using various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque, PBS, LSF, etc.)
 
-1. **Compute Profiles**: Manage different sets of daemons independently, allowing tasks with different requirements to be executed on appropriate resources.
+→ Compute Profiles: Manage different sets of daemons independently, allowing tasks with different requirements to be executed on appropriate resources.
 
-1. **Promises Integration**: Event-driven promises perform actions as soon as tasks complete, based on the returned values, providing the highest performance and lowest latency.
+→ Promises Integration: An event-driven implementation performs actions on returned values as soon as tasks complete, ensuring minimal latency.
 
-1. **Serialization Support**: Native serialization support for reference objects such as Arrow Tables, Polars DataFrames or torch tensors.
+→ Serialization Support: Native serialization support for reference objects such as Arrow Tables, Polars DataFrames or torch tensors.
 
-1. **Error Handling**: Robust error handling and reporting, with full stack traces for debugging.
+→ Error Handling: Robust error handling and reporting, with full stack traces for debugging.
 
-1. **RNG Management**: L'Ecuyer-CMRG RNG streams for reproducible random number generation in parallel execution.
+→ RNG Management: L'Ecuyer-CMRG RNG streams for reproducible random number generation in parallel execution.
 
 ### Powering the Ecosystem
 

@@ -31,6 +31,8 @@ intensive tasks without blocking the R session.
 
 → Perform actions as soon as tasks complete via promises
 
+<br />
+
 ### Installation
 
 ``` r
@@ -40,7 +42,7 @@ install.packages("mirai")
 ### Quick Start
 
 → `mirai()`: Evaluate an R expression asynchronously in a parallel
-processes, never blocking.
+processes.
 
 → `daemons()`: Set and launch persistent background processes, local or
 remote, on which to run mirai tasks.
@@ -108,27 +110,25 @@ experience.
 
 ### Key Features
 
-1.  **Distributed Execution**: Run tasks across networks and clusters
-    using various deployment methods (SSH, HPC clusters using Slurm,
-    SGE, Torque, PBS, LSF, etc.)
+→ Distributed Execution: Run tasks across networks and clusters using
+various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque,
+PBS, LSF, etc.)
 
-2.  **Compute Profiles**: Manage different sets of daemons
-    independently, allowing tasks with different requirements to be
-    executed on appropriate resources.
+→ Compute Profiles: Manage different sets of daemons independently,
+allowing tasks with different requirements to be executed on appropriate
+resources.
 
-3.  **Promises Integration**: Event-driven promises perform actions as
-    soon as tasks complete, based on the returned values, providing the
-    highest performance and lowest latency.
+→ Promises Integration: An event-driven implementation performs actions
+on returned values as soon as tasks complete, ensuring minimal latency.
 
-4.  **Serialization Support**: Native serialization support for
-    reference objects such as Arrow Tables, Polars DataFrames or torch
-    tensors.
+→ Serialization Support: Native serialization support for reference
+objects such as Arrow Tables, Polars DataFrames or torch tensors.
 
-5.  **Error Handling**: Robust error handling and reporting, with full
-    stack traces for debugging.
+→ Error Handling: Robust error handling and reporting, with full stack
+traces for debugging.
 
-6.  **RNG Management**: L’Ecuyer-CMRG RNG streams for reproducible
-    random number generation in parallel execution.
+→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible random
+number generation in parallel execution.
 
 ### Powering the Ecosystem
 
