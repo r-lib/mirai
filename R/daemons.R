@@ -609,7 +609,7 @@ parse_tls <- function(tls) {
 
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
 
-wa2 <- function(url, dots, rs, tls = NULL) {
+args_daemon_direct <- function(url, dots, rs, tls = NULL) {
   shQuote(sprintf(
     "mirai::daemon(\"%s\",dispatcher=FALSE%s%s,rs=c(%s))",
     url,
@@ -619,11 +619,11 @@ wa2 <- function(url, dots, rs, tls = NULL) {
   ))
 }
 
-wa3 <- function(url, dots, rs = NULL, tls = NULL) {
+args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
   shQuote(sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls)))
 }
 
-wa4 <- function(urld, n, dots) {
+args_dispatcher_local <- function(urld, n, dots) {
   shQuote(sprintf(
     ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d%s)",
     libp(),
@@ -633,7 +633,7 @@ wa4 <- function(urld, n, dots) {
   ))
 }
 
-wa5 <- function(urld, url, dots) {
+args_dispatcher_remote <- function(urld, url, dots) {
   shQuote(sprintf(
     ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\"%s)",
     libp(),
@@ -656,7 +656,7 @@ launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL)
   urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
-  write_args <- if (is.character(arg)) wa5 else wa4
+  write_args <- if (is.character(arg)) args_dispatcher_remote else args_dispatcher_local
   system2(
     .command,
     args = c("--default-packages=NULL", "--vanilla", "-e", write_args(urld, arg, dots)),
@@ -690,7 +690,7 @@ launch_daemons <- function(seq, dots, envir) {
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
   for (i in seq) {
-    launch_daemon(wa2(urld, dots, maybe_next_stream(envir)))
+    launch_daemon(args_daemon_direct(urld, dots, maybe_next_stream(envir)))
   }
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)

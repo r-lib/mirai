@@ -74,7 +74,7 @@ dispatcher <- function(host, url = NULL, n = NULL, ...) {
   if (auto) {
     dots <- parse_dots(...)
     for (i in seq_len(n)) {
-      launch_daemon(wa3(url, dots))
+      launch_daemon(args_daemon_disp(url, dots))
     }
     for (i in seq_len(n))
       while(!until(cv, .limit_long))
