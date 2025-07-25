@@ -17,6 +17,7 @@
   The change in argument name lets this be passed when making a `daemons()` call (#344).
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
+* Requires nanonext >= [1.6.2.9000].
 
 # mirai 2.4.1
 
