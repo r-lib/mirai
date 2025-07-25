@@ -42,7 +42,7 @@ install.packages("mirai")
 ### Quick Start
 
 → `mirai()`: Evaluate an R expression asynchronously in a parallel
-processes.
+process.
 
 → `daemons()`: Set and launch persistent background processes, local or
 remote, on which to run mirai tasks.
