@@ -118,14 +118,10 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
       if (length(args) == 1L) {
         args <- args[[1L]]
       } else if (n == 1L || n == length(args)) {
-        cmds <- unlist(
-          lapply(seq_along(args), function(i)
-            sprintf(
-              "%s -e %s",
-              rscript,
-              write_args(url, dots, maybe_next_stream(envir), tls)
-            )
-          )
+        cmds <- sprintf(
+          "%s -e %s",
+          rscript,
+          lapply(seq_along(args), function(i) write_args(url, dots, maybe_next_stream(envir), tls))
         )
 
         for (i in seq_along(args)) {
@@ -143,14 +139,10 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
     }
   }
 
-  cmds <- unlist(
-    lapply(seq_len(n), function(i)
-      sprintf(
-        "%s -e %s",
-        rscript,
-        write_args(url, dots, maybe_next_stream(envir), tls)
-      )
-    )
+  cmds <- sprintf(
+    "%s -e %s",
+    rscript,
+    lapply(seq_len(n), function(i) write_args(url, dots, maybe_next_stream(envir), tls))
   )
 
   if (length(command)) {
@@ -312,14 +304,8 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
   hostnames <- lapply(premotes, .subset2, "hostname")
   ports <- lapply(premotes, .subset2, "port")
 
-  args <- vector(mode = "list", length = length(remotes))
-  for (i in seq_along(args)) {
-    args[[i]] <- c(
-      sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports[[i]]),
-      hostnames[[i]],
-      "."
-    )
-  }
+  ssh_args <- sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports)
+  args <- lapply(seq_along(remotes), function(i) c(ssh_args[i], hostnames[[i]], "."))
 
   list(command = command, args = args, rscript = rscript, quote = TRUE, tunnel = isTRUE(tunnel))
 }

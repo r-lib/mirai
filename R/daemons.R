@@ -760,7 +760,7 @@ stop_d_cli <- function(.compute, call) {
 stop_d <- function(.compute, call) {
   stop(
     if (is.character(.compute)) {
-      sprintf("No daemons set for the '%s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%s\") to set 6 local daemons.", .compute, .compute)
+      sprintf("No daemons set for the '%1$s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%1$s\") to set 6 local daemons.", .compute)
     } else {
       "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons."
     },
