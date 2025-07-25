@@ -60,6 +60,25 @@ for (i in 0:4)
 test_null(register_serial("test_klass1", serialize, unserialize))
 test_null(register_serial(c("test_klass2", "test_klass3"), list(serialize, serialize), list(unserialize, unserialize)))
 test_equal(length(mirai:::.[["serial"]][[3L]]), 3L)
+# cloud launcher tests
+test_error(cloud_config(platform = ""), "not supported")
+is.null(mirai:::posit_tools()) && {
+  ns <- new.env(parent = emptyenv())
+  `[[<-`(ns, ".rs.api.launcher.jobsFeatureAvailable", function() TRUE)
+  `[[<-`(ns, ".rs.api.launcher.getInfo", function() list(clusters = list(list(name = "Kubernetes", defaultImage = "1.a.b.reg.prov.com/int-r-sess:ubuntu2204-20250609"))))
+  `[[<-`(ns, ".rs.api.launcher.newContainer", function(image) image)
+  `[[<-`(ns, ".rs.api.launcher.submitJob", function(...) NULL)
+  attach(ns, name = "tools:rstudio")
+  cfg <- cloud_config(platform = "posit")
+  test_type("list", cfg)
+  test_zero(daemons(url = local_url(), dispatcher = FALSE))
+  test_class("miraiLaunchCmd", launch_remote(n = 2L, remote = cfg))
+  cfg$platform <- "wrong"
+  test_error(launch_remote(n = 2L, remote = cfg), "not supported")
+  test_zero(daemons(0))
+  detach()
+  test_error(cloud_config(platform = "posit"), "can only be used from Posit Workbench")
+}
 # mirai and daemons tests
 connection && {
   Sys.sleep(1L)
