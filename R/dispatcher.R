@@ -27,12 +27,7 @@
 #'
 #' @export
 #'
-dispatcher <- function(
-  host,
-  url = NULL,
-  n = NULL,
-  ...
-) {
+dispatcher <- function(host, url = NULL, n = NULL, ...) {
   n <- if (is.numeric(n)) as.integer(n) else length(url)
   n > 0L || stop(._[["missing_url"]])
 

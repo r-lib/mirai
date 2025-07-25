@@ -153,14 +153,7 @@
 #'
 #' @export
 #'
-mirai_map <- function(
-  .x,
-  .f,
-  ...,
-  .args = list(),
-  .promise = NULL,
-  .compute = NULL
-) {
+mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
 
@@ -242,7 +235,11 @@ print.mirai_map <- function(x, ...) {
 #'
 .flat <- compiler::compile(
   quote(
-    if (i == 0L) xi <- TRUE else if (i == 1L) typ <<- typeof(xi) else {
+    if (i == 0L) {
+      xi <- TRUE
+    } else if (i == 1L) {
+      typ <<- typeof(xi)
+    } else {
       is_error_value(xi) && {
         stop_mirai(x)
         stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
@@ -250,11 +247,7 @@ print.mirai_map <- function(x, ...) {
       typeof(xi) != typ && {
         stop_mirai(x)
         stop(
-          sprintf(
-            "Cannot flatten outputs of differing type: %s / %s",
-            typ,
-            typeof(xi)
-          ),
+          sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
           call. = FALSE
         )
       }

@@ -82,13 +82,7 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
 #' @rdname launch_local
 #' @export
 #'
-launch_remote <- function(
-  n = 1L,
-  remote = remote_config(),
-  ...,
-  tls = NULL,
-  .compute = NULL
-) {
+launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .compute = NULL) {
   if (is.null(.compute)) .compute <- .[["cp"]]
   if (!is.numeric(n) && inherits(n, c("miraiCluster", "miraiNode"))) {
     .compute <- attr(n, "id")
@@ -124,7 +118,7 @@ launch_remote <- function(
       if (length(args) == 1L) {
         args <- args[[1L]]
       } else if (n == 1L || n == length(args)) {
-        cmds <- as.character(
+        cmds <- unlist(
           lapply(seq_along(args), function(i)
             sprintf(
               "%s -e %s",
@@ -149,7 +143,7 @@ launch_remote <- function(
     }
   }
 
-  cmds <- as.character(
+  cmds <- unlist(
     lapply(seq_len(n), function(i)
       sprintf(
         "%s -e %s",
@@ -229,12 +223,7 @@ launch_remote <- function(
 #'
 #' @export
 #'
-remote_config <- function(
-  command = NULL,
-  args = c("", "."),
-  rscript = "Rscript",
-  quote = FALSE
-) {
+remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript", quote = FALSE) {
   if (is.list(args)) lapply(args, find_dot) else find_dot(args)
   list(command = command, args = args, rscript = rscript, quote = quote, tunnel = FALSE)
 }
@@ -318,13 +307,7 @@ remote_config <- function(
 #'
 #' @export
 #'
-ssh_config <- function(
-  remotes,
-  tunnel = FALSE,
-  timeout = 10,
-  command = "ssh",
-  rscript = "Rscript"
-) {
+ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", rscript = "Rscript") {
   premotes <- lapply(remotes, parse_url)
   hostnames <- lapply(premotes, .subset2, "hostname")
   ports <- lapply(premotes, .subset2, "port")
@@ -413,11 +396,7 @@ ssh_config <- function(
 #'
 #' @export
 #'
-cluster_config <- function(
-    command = "sbatch",
-    options = "",
-    rscript = "Rscript"
-) {
+cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript") {
   command <- command[[1L]]
   options <- sub("^[ \t]+", "", options, perl = TRUE)
   options <- gsub("\n[ \t]+", "\n", options, perl = TRUE)
