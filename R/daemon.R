@@ -141,7 +141,7 @@ daemon <- function(
         xc <- 1L
         break
       }
-      cancel <- recv_aio(sock, mode = 8L, cv = NA)
+      cancel <- recv_aio(sock, mode = 8L, cv = substitute())
       data <- eval_mirai(m)
       stop_aio(cancel)
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
@@ -214,8 +214,6 @@ eval_mirai <- function(._mirai_.) {
   withRestarts(
     withCallingHandlers(
       {
-        on.exit(.interrupt(FALSE))
-        .interrupt()
         list2env(._mirai_.[["._mirai_globals_."]], envir = .GlobalEnv)
         eval(._mirai_.[[".expr"]], envir = ._mirai_., enclos = .GlobalEnv)
       },
