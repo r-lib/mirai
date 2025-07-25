@@ -375,10 +375,7 @@ status <- function(.compute = NULL) {
   envir <- ..[[.compute]]
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
   is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
-  list(
-    connections = as.integer(stat(envir[["sock"]], "pipes")),
-    daemons = envir[["url"]]
-  )
+  list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
 }
 
 #' Query if Daemons are Set
@@ -432,9 +429,9 @@ daemons_set <- function(.compute = NULL) {
 require_daemons <- function(.compute = NULL, call = environment()) {
   ensure_cli_initialized()
   is.environment(.compute) && {
-    .call <- .compute
+    temp <- .compute
     .compute <- if (is.character(call)) call
-    call <- .call
+    call <- temp
     TRUE
   }
   daemons_set(.compute = .compute) || .[["require_daemons"]](.compute, call)
@@ -551,7 +548,7 @@ serial_config <- serial_config
 register_serial <- function(class, sfunc, ufunc) {
   cfg <- serial_config(class, sfunc, ufunc)
   reg <- .[["serial"]]
-  `[[<-`(., "serial", lapply(1:3, function(i) c(reg[[i]], cfg[[i]])))
+  `[[<-`(., "serial", lapply(seq_along(cfg), function(i) c(reg[[i]], cfg[[i]])))
   invisible()
 }
 
@@ -593,12 +590,10 @@ req_socket <- function(url, tls = NULL) {
 parse_dots <- function(envir, ...) {
   missing(..1) && return("")
   dots <- list(...)
-  if (any(names(dots) == "tlscert"))
+  if (any(names(dots) == "tlscert")) {
     `[[<-`(envir, "tls", dots[["tlscert"]])
-  dots <- dots[as.logical(lapply(
-    dots,
-    function(x) is.logical(x) || is.numeric(x)
-  ))]
+  }
+  dots <- dots[as.logical(lapply(dots, function(x) is.logical(x) || is.numeric(x)))]
   length(dots) || return("")
   sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
 }
@@ -625,12 +620,7 @@ wa2 <- function(url, dots, rs, tls = NULL) {
 }
 
 wa3 <- function(url, dots, rs = NULL, tls = NULL) {
-  shQuote(sprintf(
-    "mirai::daemon(\"%s\"%s%s)",
-    url,
-    dots,
-    parse_tls(tls)
-  ))
+  shQuote(sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls)))
 }
 
 wa4 <- function(urld, n, dots) {
@@ -679,12 +669,16 @@ launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL)
   `[[<-`(envir, "dispatcher", urld)
   data <- list(Sys.getenv("R_DEFAULT_PACKAGES"), tls, pass, serial, envir[["stream"]])
   sync <- 0L
+
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+
   pipe_notify(sock, NULL, add = TRUE)
   req <- request(.context(sock), data, send_mode = 1L, recv_mode = 2L, cv = cv)
+
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+
   res <- collect_aio(req)
   `[[<-`(envir, "pid", as.integer(res[1L]))
   `[[<-`(envir, "url", res[2L])
@@ -713,15 +707,19 @@ create_sock <- function(envir, url, tls) {
   sock <- req_socket(url, tls = tls)
   listener <- attr(sock, "listener")[[1L]]
   url <- opt(listener, "url")
-  if (parse_url(url)[["port"]] == "0")
+  if (parse_url(url)[["port"]] == "0") {
     url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
+  }
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", url)
 }
 
 send_signal <- function(envir) {
-  signals <- if (is.null(envir[["dispatcher"]])) stat(envir[["sock"]], "pipes") else
+  signals <- if (is.null(envir[["dispatcher"]])) {
+    stat(envir[["sock"]], "pipes")
+  } else {
     query_dispatcher(envir[["sock"]], c(0L, 0L))[1L]
+  }
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
     msleep(10L)
@@ -740,8 +738,9 @@ dispatcher_status <- function(envir) {
       completed = status[4L] - status[2L] - status[3L]
     )
   )
-  if (length(status) > 4L)
+  if (length(status) > 4L) {
     out <- c(out, list(events = status[5:length(status)]))
+  }
   out
 }
 
@@ -760,9 +759,11 @@ stop_d_cli <- function(.compute, call) {
 
 stop_d <- function(.compute, call) {
   stop(
-    if (is.character(.compute))
-      sprintf("No daemons set for the '%s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%s\") to set 6 local daemons.", .compute, .compute) else
-        "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons.",
+    if (is.character(.compute)) {
+      sprintf("No daemons set for the '%s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%s\") to set 6 local daemons.", .compute, .compute)
+    } else {
+      "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons."
+    },
     call. = FALSE
   )
 }

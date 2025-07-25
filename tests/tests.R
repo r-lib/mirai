@@ -425,7 +425,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   with_daemons("gpu", {
     test_true(all(everywhere(TRUE)[.flat]))
     n <- mirai_map(1:12, rnorm)[]
-    test_zero(daemons(0))
+    test_zero(daemons(NULL))
   })
   test_true(!daemons_set("gpu"))
   test_identical(m, n)
