@@ -16,6 +16,7 @@
 * `daemon()` gains a `tlscert` argument for custom TLS certificates.
   The change in argument name lets this be passed when making a `daemons()` call (#344).
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
+* `as.promise()` method for mirai robustly handles high-throughput cases with many short-lived mirai (#377).
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
 * Requires nanonext >= [1.6.2.9000].
 
