@@ -20,10 +20,11 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br />
 
-mirai — *future* in Japanese — allows you to perform computationally
-intensive tasks without blocking the R session.
+mirai is a comprehensive solution for performing
+computationally-intensive tasks efficiently.
 
-→ Run R code in the background, with results available once ready
+→ Run R code in parallel in the background, without blocking your
+session
 
 → Distribute workloads across local or remote machines
 
