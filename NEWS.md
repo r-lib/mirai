@@ -7,6 +7,8 @@
 
 #### Updates
 
+* Improved behaviour when using `serial_config()` custom serialization.
+  If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks @dipterix, #378).
 * `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
   Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
 * Enhancements to `everywhere()`:
@@ -18,7 +20,7 @@
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
 * `as.promise()` method for mirai made robust for high-throughput scenarios (#377).
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
-* Requires nanonext >= [1.6.2.9000].
+* Requires nanonext >= [1.6.2.9001].
 
 # mirai 2.4.1
 
