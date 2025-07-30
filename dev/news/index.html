@@ -57,7 +57,8 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>
+<ul><li>Improved behaviour when using <code><a href="../reference/serial_config.html">serial_config()</a></code> custom serialization. If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks <a href="https://github.com/dipterix" class="external-link">@dipterix</a>, <a href="https://github.com/r-lib/mirai/issues/378" class="external-link">#378</a>).</li>
+<li>
 <code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
 <li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
 <ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are now permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
@@ -71,7 +72,7 @@
 <li>
 <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for mirai made robust for high-throughput scenarios (<a href="https://github.com/r-lib/mirai/issues/377" class="external-link">#377</a>).</li>
 <li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
-<li>Requires nanonext &gt;= [1.6.2.9000].</li>
+<li>Requires nanonext &gt;= [1.6.2.9001].</li>
 </ul></div>
 </div>
     <div class="section level2">
