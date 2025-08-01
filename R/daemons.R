@@ -260,13 +260,15 @@ daemons <- function(
     is.numeric(n) || stop(._[["numeric_n"]])
     n <- as.integer(n)
 
-    if (n == 0L) {
+    n == 0L && {
       is.null(envir) && return(0L)
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
       ..[[.compute]] <- NULL -> envir
-    } else if (is.null(envir)) {
+      return(0L)
+    }
+    if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
@@ -284,7 +286,6 @@ daemons <- function(
     }
   }
 
-  is.null(envir) && return(0L)
   `class<-`(envir[["n"]], c("miraiDaemons", .compute))
 }
 
