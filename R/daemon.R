@@ -141,18 +141,15 @@ daemon <- function(
         xc <- 1L
         break
       }
-      cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-      data <- eval_mirai(m)
-      stop_aio(cancel)
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
         .mark()
-        send(sock, data, mode = 1L, block = TRUE)
+        send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
         aio <- recv_aio(sock, mode = 8L, cv = cv)
         xc <- 2L + (task >= maxtasks)
         wait(cv)
         break
       }
-      send(sock, data, mode = 1L, block = TRUE)
+      send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
       if (cleanup) do_cleanup()
       task <- task + 1L
     }
@@ -168,8 +165,7 @@ daemon <- function(
         xc <- 1L
         break
       }
-      data <- eval_mirai(m)
-      send(ctx, data, mode = 1L, block = TRUE)
+      send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
       if (cleanup) do_cleanup()
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
         xc <- 2L + (task >= maxtasks)
@@ -200,8 +196,8 @@ daemon <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
-  data <- eval_mirai(recv(sock, mode = 1L, block = TRUE))
-  send(sock, data, mode = 1L, block = TRUE) || until(cv, .limit_short)
+  m <- recv(sock, mode = 1L, block = TRUE)
+  send(sock, eval_mirai(m), mode = 1L, block = TRUE) || until(cv, .limit_short)
 }
 
 # internals --------------------------------------------------------------------
@@ -223,6 +219,12 @@ eval_mirai <- function(._mirai_.) {
     mirai_error = mk_mirai_error,
     mirai_interrupt = mk_interrupt_error
   )
+}
+
+eval_mirai_with_cancel <- function(._mirai_., sock) {
+  cancel <- recv_aio(sock, mode = 8L, cv = substitute())
+  on.exit(stop_aio(cancel))
+  eval_mirai(._mirai_.)
 }
 
 dial_sync_socket <- function(sock, url, autostart = NA, tls = NULL) {
