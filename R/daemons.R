@@ -77,8 +77,8 @@
 #'   `tls` is encrypted with a password) For security, should be provided
 #'   through a function that returns this value, rather than directly.
 #'
-#' @return The integer number of daemons launched locally (zero if specifying
-#'   `url` or using a remote launcher).
+#' @return Invisibly, the character compute profile created, or else NULL when
+#'   resetting daemons.
 #'
 #' @section Local Daemons:
 #'
@@ -261,12 +261,12 @@ daemons <- function(
     n <- as.integer(n)
 
     n == 0L && {
-      is.null(envir) && return(0L)
+      is.null(envir) && return(invisible())
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
       ..[[.compute]] <- NULL -> envir
-      return(0L)
+      return(invisible())
     }
     if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
@@ -286,7 +286,7 @@ daemons <- function(
     }
   }
 
-  `class<-`(envir[["n"]], c("miraiDaemons", .compute))
+  invisible(`class<-`(.compute, "miraiDaemons"))
 }
 
 #' @export
@@ -325,7 +325,7 @@ print.miraiDaemons <- function(x, ...) print(unclass(x))
 #'
 with.miraiDaemons <- function(data, expr, ...) {
   prev_profile <- .[["cp"]]
-  `[[<-`(., "cp", class(data)[2L])
+  `[[<-`(., "cp", data)
   on.exit({
     daemons(0L)
     `[[<-`(., "cp", prev_profile)
