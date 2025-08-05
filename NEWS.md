@@ -1,5 +1,10 @@
 # mirai (development version)
 
+#### Behavioural Changes
+
+* `daemons()` creating new daemons returns invisibly the character compute profile created.
+  `daemons(0)` or `daemons(NULL)` resetting daemons returns invisible NULL (thanks @eliocamp, #384).
+
 #### New Features
 
 * New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
