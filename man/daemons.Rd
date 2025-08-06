@@ -74,8 +74,8 @@ to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 }
 \value{
-The integer number of daemons launched locally (zero if specifying
-\code{url} or using a remote launcher).
+Invisibly, the character compute profile created, or else NULL when
+resetting daemons.
 }
 \description{
 Set daemons, or persistent background processes, to receive \code{\link[=mirai]{mirai()}}

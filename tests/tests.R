@@ -1,8 +1,9 @@
-# minitest - a minimal testing framework v0.0.2 --------------------------------
+# minitest - a minimal testing framework v0.0.3 --------------------------------
 test_library <- function(package) library(package = package, character.only = TRUE)
 test_true <- function(x) invisible(isTRUE(x) || {print(x); stop("the above was returned instead of TRUE")})
 test_null <- function(x) invisible(is.null(x) || {print(x); stop("the above was returned instead of NULL")})
 test_zero <- function(x) invisible(x == 0L || {print(x); stop("the above was returned instead of 0L")})
+test_nzchar <- function(x) invisible(is.character(x) && nzchar(x) || {print(x); stop("the above was returned instead of a string")})
 test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
 test_class <- function(class, x) invisible(inherits(x, class) || {stop("object of class '", paste(class(x), collapse = ", "), "' was returned instead of '", class, "'")})
 test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
@@ -17,7 +18,7 @@ connection <- !is_error_value(collect_mirai(mirai(TRUE, .timeout = 2000L)))
 test_type("list", status())
 test_zero(status()[["connections"]])
 test_zero(status()[["daemons"]])
-test_zero(daemons(0L))
+test_null(daemons(0L))
 test_error(mirai(), "missing expression, perhaps wrap in {}?")
 test_error(mirai(a, 1), "all `...` arguments must be named")
 test_error(mirai(a, .args = list(1)), "all items in `.args` must be named")
@@ -81,7 +82,7 @@ connection && {
   m <- mirai(mirai::on_daemon(), .timeout = 2000L)
   if (!is_error_value(m[])) test_true(m[])
   Sys.sleep(1L)
-  test_equal(1L, d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
+  test_equal("default", d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
   test_print(d)
   test_error(daemons(1L), "daemons already set")
   test_true(daemons_set())
@@ -109,9 +110,9 @@ connection && {
   test_print(mlc)
   test_error(launch_remote(1L, remote = remote_config(command = "echo", args = "invalid")), "must be an element")
   test_error(launch_remote(3L, remote = remote_config(command = "echo", args = list(c("test", "."), c("test", ".")))), "must equal the length")
-  test_zero(daemons(0L))
+  test_null(daemons(0L))
   Sys.sleep(1L)
-  test_equal(1L, daemons(1L, dispatcher = FALSE, maxtasks = 10L, walltime = 10000L, idletime = 20000L, cleanup = FALSE, output = TRUE, .compute = "new"))
+  test_equal("new", daemons(1L, dispatcher = FALSE, maxtasks = 10L, walltime = 10000L, idletime = 20000L, cleanup = FALSE, output = TRUE, .compute = "new"))
   test_type("character", nextget("url", .compute = "new"))
   test_type("integer", nextstream(.compute = "new"))
   test_true(require_daemons("new", call = environment()))
@@ -133,21 +134,21 @@ connection && {
   test_type("integer", status(.compute = "new")[["connections"]])
   test_error(mirai_map(1:2, "a function", .compute = "new"), "must be of type function, not character")
   test_error(daemons(url = local_url(), .compute = "new"), "daemons already set")
-  test_zero(daemons(0L, .compute = "new"))
+  test_null(daemons(0L, .compute = "new"))
 }
 # additional daemons tests
 connection && {
   Sys.sleep(1L)
-  test_zero(daemons(url = value <- local_url(), dispatcher = FALSE))
+  test_nzchar(daemons(url = value <- local_url(), dispatcher = FALSE))
   test_identical(status()$daemons, value)
   test_identical(nextget("url"), value)
   test_type("character", launch_remote(remote = remote_config(command = "echo", args = list(c("Test out:", ".", ">/dev/null")), rscript = "/usr/lib/R/bin/Rscript")))
   test_error(launch_remote(remote = ssh_config("ssh://127.0.0.1:5456", tunnel = TRUE)), "127.0.0.1")
-  test_zero(daemons(0L))
+  test_null(daemons(0L))
   Sys.sleep(1L)
-  test_zero(daemons(n = 2L, url = value <- "ws://:0", dispatcher = "none", remote = remote_config(quote = TRUE)))
+  test_nzchar(daemons(n = 2L, url = value <- "ws://:0", dispatcher = "none", remote = remote_config(quote = TRUE)))
   test_true(status()$daemons != value)
-  test_zero(daemons(0L))
+  test_null(daemons(0L))
 }
 # mirai_map tests
 connection && {
@@ -161,7 +162,7 @@ connection && {
   test_equal(length(m), 3L)
   test_true(all(as.logical(lapply(m, is.numeric))))
   Sys.sleep(1L)
-  daemons(1, dispatcher = FALSE)
+  test_nzchar(daemons(1, dispatcher = FALSE))
   mp <- mirai_map(list(x = "a"), function(...) do(...), do = function(x, y) sprintf("%s%s", x, y), .args = list("b"))
   test_print(mp)
   test_identical(collect_mirai(mp)[["x"]], "ab")
@@ -173,7 +174,7 @@ connection && {
   test_type("language", mirai_map(list(quote(1+2)), identity)[][[1]])
   test_class("Date", mirai_map(data.frame(x = as.Date("2020-01-01")), identity)[][[1]])
   test_true(is_mirai_error(mirai_map(1:2, function(x) daemons(1))[][[1]]))
-  test_zero(daemons(0L))
+  test_null(daemons(0L))
 }
 # parallel cluster tests
 library(parallel)
@@ -244,10 +245,10 @@ connection && {
 # advanced daemons and dispatcher tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
-  test_zero(daemons(url = "ws://:0", correctype = 0L, token = TRUE))
-  test_zero(daemons(0L))
+  test_nzchar(daemons(url = "ws://:0", correctype = 0L, token = TRUE))
+  test_null(daemons(0L))
   test_zero(with(daemons(url = "tcp://:0", correcttype = c(1, 0), token = TRUE), {8L - 9L + 1L}))
-  test_zero(daemons(n = 2, "ws://:0"))
+  test_nzchar(daemons(n = 2, "ws://:0"))
   test_type("integer", nextget("pid"))
   test_equal(length(nextget("url")), 1L)
   Sys.sleep(1L)
@@ -258,16 +259,16 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(status[["mirai"]][["awaiting"]])
   test_zero(status[["mirai"]][["executing"]])
   test_zero(status[["mirai"]][["completed"]])
-  test_zero(daemons(0))
-  test_equal(daemons(2, correcttype = NA), 2L)
+  test_null(daemons(0))
+  test_nzchar(daemons(2, correcttype = NA))
   test_equal(daemons()[["connections"]], 2L)
   test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
   test_true(res[[1L]] != res[[2L]])
   test_equal(2L, daemons()[["connections"]])
   Sys.sleep(0.5)
-  test_zero(daemons(0L))
+  test_null(daemons(0L))
   Sys.sleep(1L)
-  test_zero(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
+  test_nzchar(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
   test_type("character", launch_remote(remote = ssh_config(c("ssh://remotehost", "ssh://remotenode"), tunnel = TRUE, command = "echo")))
   test_equal(launch_local(), 1L)
   Sys.sleep(1L)
@@ -276,20 +277,20 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai("Seattle", .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
-  test_zero(daemons(0))
+  test_null(daemons(0))
   Sys.sleep(0.5)
-  test_zero(daemons(n = 1L, url = local_url(), dispatcher = TRUE))
+  test_nzchar(daemons(n = 1L, url = local_url(), dispatcher = TRUE))
   task <- mirai(substitute())
   url <- nextget("url")
   test_equal(3L, daemon(url = url, maxtasks = 1L, cleanup = 0L, dispatcher = TRUE))
-  test_zero(daemons(n = 0L))
+  test_null(daemons(n = 0L))
   test_type("integer", .Random.seed)
 }
 # TLS tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
-  test_zero(daemons(url = host_url(), pass = "test", serial = cfg))
+  test_nzchar(daemons(url = host_url(), pass = "test", serial = cfg))
   if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
   test_equal(launch_local(1L), 1L)
   Sys.sleep(1L)
@@ -299,15 +300,15 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(sum(collect_mirai(mm, ".flat")))
   m <- mirai(b, .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], 2L)
-  test_zero(daemons(0))
+  test_null(daemons(0))
   test_tls <- function(cert) {
     file <- tempfile()
     on.exit(unlink(file))
     cat(cert[["server"]], file = file)
-    daemons(url = "tls+tcp://127.0.0.1:0", tls = file, tlscert = cert[["client"]]) == 0L &&
+    nzchar(daemons(url = "tls+tcp://127.0.0.1:0", tls = file, tlscert = cert[["client"]])) &&
       is.character(nextget("tls")) &&
       grepl("cert.pem", launch_remote(tlscert = "cert.pem"), fixed = TRUE) &&
-      daemons(0L) == 0L
+      is.null(daemons(0L))
   }
   test_true(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
 }
@@ -315,7 +316,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
 connection && requireNamespace("promises", quietly = TRUE) && Sys.getenv("NOT_CRAN") == "true" && {
   run_now <- getNamespace("later")[["run_now"]]
   Sys.sleep(0.5)
-  test_equal(daemons(1, notused = "wrongtype"), 1L)
+  test_nzchar(daemons(1, notused = "wrongtype"))
   test_true(grepl("://", launch_remote(1L), fixed = TRUE))
   test_true(promises::is.promise(p1 <- promises::as.promise(mirai("completed"))))
   test_true(promises::is.promise(p2 <- promises::`%...>%`(mirai(Sys.sleep(0.1)), identity())))
@@ -337,12 +338,12 @@ connection && requireNamespace("promises", quietly = TRUE) && Sys.getenv("NOT_CR
   test_identical(names(mp[]), c("a", "b"))
   test_class("errorValue", mirai_map(1, function(x) stop(x), .promise = list(identity, identity))[][[1L]])
   run_now(1L)
-  test_zero(daemons(NULL))
+  test_null(daemons(NULL))
 }
 # mirai daemon limits tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
-  test_equal(daemons(1, cleanup = FALSE, maxtasks = 2L, id = 125L), 1L)
+  test_nzchar(daemons(1, cleanup = FALSE, maxtasks = 2L, id = 125L))
   test_true(daemons_set("default"))
   test_equal(mirai(1)[], mirai(1)[])
   m <- mirai(0L)
@@ -357,8 +358,8 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   res <- status()
   test_zero(res$connections)
   test_identical(res$events, c(129L, -129L))
-  test_zero(daemons(0))
-  test_equal(daemons(1, dispatcher = FALSE, maxtasks = 1L), 1L)
+  test_null(daemons(0))
+  test_nzchar(daemons(1, dispatcher = FALSE, maxtasks = 1L))
   test_zero(mirai(0L)[])
   Sys.sleep(0.5)
   test_zero(status()$connections)
@@ -366,13 +367,13 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(mirai(0)[])
   Sys.sleep(1L)
   test_zero(status()$connections)
-  test_zero(daemons(0))
+  test_null(daemons(0))
 }
 # mirai cancellation tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   Sys.unsetenv("R_DEFAULT_PACKAGES")
-  test_equal(daemons(1, dispatcher = TRUE, cleanup = FALSE), 1L)
+  test_nzchar(daemons(1, dispatcher = TRUE, cleanup = FALSE))
   m1 <- mirai({ Sys.sleep(1); res <<- "m1 done" })
   m2 <- mirai({ Sys.sleep(1); res <<- "m2 done" })
   Sys.sleep(0.1)
@@ -390,14 +391,14 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_equal(status()$connections, 1L)
   test_equal(length(nextget("url")), 1L)
   test_class("miraiLaunchCmd", launch_remote(1))
-  test_zero(daemons(0))
+  test_null(daemons(0))
 }
 # additional stress testing
 connection && Sys.getenv("NOT_CRAN") == "true" && {
   Sys.sleep(0.5)
   q <- vector(mode = "list", length = 10000L)
   Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
-  test_equal(daemons(4), 4L)
+  test_nzchar(daemons(4))
   Sys.unsetenv("R_DEFAULT_PACKAGES")
   test_class("mirai_map", everywhere(a <<- FALSE))
   test_true(all(everywhere(a <<- TRUE)[.flat]))
@@ -409,26 +410,26 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
   test_true(all(as.logical(lapply(lapply(q, attr, "status"), is.list))))
   test_equal(daemons()[["mirai"]][["completed"]], 20020L)
-  test_zero(daemons(0))
+  test_null(daemons(0))
 }
 # reproducible RNG tests
 connection && Sys.getenv("NOT_CRAN") == "true" && {
-  test_equal(2L, daemons(2, seed = 1234L))
+  test_nzchar(daemons(2, seed = 1234L))
   test_equal(1L, launch_local())
   test_type("character", launch_remote())
   Sys.sleep(0.5)
   test_true(all(everywhere(TRUE)[.flat]))
   m <- mirai_map(1:12, rnorm)[]
-  test_zero(daemons(0))
+  test_null(daemons(0))
   Sys.sleep(0.5)
-  test_equal(4L, daemons(4, dispatcher = "none", seed = 1234L, .compute = "gpu"))
+  test_equal("gpu", daemons(4, dispatcher = "none", seed = 1234L, .compute = "gpu"))
   with_daemons("gpu", {
     test_true(all(everywhere(TRUE)[.flat]))
     n <- mirai_map(1:12, rnorm)[]
-    test_zero(daemons(NULL))
+    test_null(daemons(NULL))
   })
   test_true(!daemons_set("gpu"))
   test_identical(m, n)
 }
-test_zero(daemons(0))
+test_null(daemons(0))
 Sys.sleep(1L)

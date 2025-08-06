@@ -62,15 +62,15 @@ It can be seen that this time, the arrow table is handled seamlessly.
 This is the case even when the object is deeply nested inside lists or other structures.
 
 Multiple serialization functions may be registered to handle different object classes.
-As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
+As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires polars >= 1.0.0), in the following way:
 ```{r}
 #| label: polars
 daemons(
   n = 1,
   serial = serial_config(
-    c("ArrowTabular", "RPolarsDataFrame"),
-    list(arrow::write_to_raw, function(x) polars::as_polars_df(x)$to_raw_ipc()),
-    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
+    c("ArrowTabular", "polars_data_frame"),
+    list(arrow::write_to_raw, \(x) x$serialize()),
+    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$deserialize_df)
   )
 )
 

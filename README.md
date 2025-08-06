@@ -50,9 +50,7 @@ remote, on which to run mirai tasks.
 
 ``` r
 library(mirai)
-
 daemons(5)
-#> [1] 5
 
 m <- mirai({
   Sys.sleep(1)
@@ -75,7 +73,6 @@ mp[.flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
 daemons(0)
-#> [1] 0
 ```
 
 ### Design Concepts
