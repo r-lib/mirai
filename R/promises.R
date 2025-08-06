@@ -51,17 +51,18 @@ as.promise.mirai <- function(x) {
         if (unresolved(x)) .keep(x, environment()) else resolve(.subset2(x, "value"))
       }
     )$then(
-      onFulfilled = function(value, .visible) {
-        is_error_value(value) && !is_mirai_interrupt(value) &&
-          stop(if (is_mirai_error(value)) value else nng_error(value))
-        value
-      }
+      onFulfilled = handle_fulfilled
     )
-
     `[[<-`(x, "promise", promise)
   }
 
   promise
+}
+
+handle_fulfilled <- function(value, .visible) {
+  is_error_value(value) && !is_mirai_interrupt(value) &&
+    stop(if (is_mirai_error(value)) value else nng_error(value))
+  value
 }
 
 #' Make mirai_map Promise
