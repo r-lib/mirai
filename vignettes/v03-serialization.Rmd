@@ -21,7 +21,6 @@ Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
 library(mirai)
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
-#> [1] 1
 everywhere(library(arrow))
 
 x <- as_arrow_table(iris)
@@ -31,7 +30,6 @@ m[]
 #> 'miraiError' chr Error: Invalid <Table>, external pointer to null
 
 daemons(0)
-#> [1] 0
 ```
 However, `serial_config()` can be used to create custom serialization configurations, specifying functions that hook into R's native serialization mechanism for reference objects ('refhooks').
 
@@ -46,7 +44,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(library(arrow))
 
@@ -67,24 +64,22 @@ m[]
 #> [1] "some text"
 
 daemons(0)
-#> [1] 0
 ```
 It can be seen that this time, the arrow table is handled seamlessly.
 This is the case even when the object is deeply nested inside lists or other structures.
 
 Multiple serialization functions may be registered to handle different object classes.
-As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires `polars` >= 0.16.4), in the following way:
+As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires polars >= 1.0.0), in the following way:
 
 ``` r
 daemons(
   n = 1,
   serial = serial_config(
-    c("ArrowTabular", "RPolarsDataFrame"),
-    list(arrow::write_to_raw, function(x) polars::as_polars_df(x)$to_raw_ipc()),
-    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$read_ipc)
+    c("ArrowTabular", "polars_data_frame"),
+    list(arrow::write_to_raw, \(x) x$serialize()),
+    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$deserialize_df)
   )
 )
-#> [1] 1
 
 x <- polars::as_polars_df(iris)
 
@@ -109,7 +104,6 @@ m[]
 #> [1] "some text"
 
 daemons(0)
-#> [1] 0
 ```
 
 ### 2. Serialization: Torch
@@ -134,7 +128,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(library(torch))
 ```
@@ -179,35 +172,35 @@ The returned model is an object containing many tensor elements.
 m$data$parameters$conv1.weight
 #> torch_tensor
 #> (1,1,.,.) = 
-#>  -0.0749 -0.1770  0.1144  0.0556  0.0455
-#>   0.0785 -0.1295  0.0139 -0.0754  0.0812
-#>  -0.0612 -0.0092  0.1769  0.0133 -0.1885
-#>   0.1001  0.1398 -0.0314 -0.0528 -0.0436
-#>  -0.0696 -0.1872 -0.1604  0.0281  0.0350
+#>   0.0908  0.0460  0.1045 -0.0790  0.0880
+#>  -0.0069  0.1784 -0.1328  0.1755 -0.1033
+#>  -0.1428 -0.0733  0.0696  0.1000 -0.1565
+#>   0.0460  0.0485  0.1853  0.0970 -0.1119
+#>  -0.0799 -0.0552 -0.0889  0.0086  0.1952
 #> 
 #> (2,1,.,.) = 
-#>  -0.1088  0.0795  0.0859  0.1022 -0.1603
-#>  -0.1867  0.0720 -0.1304 -0.1380  0.1889
-#>   0.0529 -0.0230  0.0702 -0.0014 -0.0511
-#>  -0.0224  0.0065  0.0108 -0.0455  0.0442
-#>   0.0455  0.0641  0.0429 -0.0660 -0.0283
+#>  -0.0831 -0.1367  0.0896 -0.1574 -0.1586
+#>  -0.1490 -0.0808 -0.1637 -0.1876  0.0190
+#>  -0.1224  0.0978 -0.0446  0.1532 -0.1613
+#>  -0.1477 -0.0427  0.1231  0.0174 -0.1507
+#>   0.1036  0.1193  0.1798  0.1320  0.0741
 #> 
 #> (3,1,.,.) = 
-#>  -0.1508  0.1257 -0.0118  0.1994  0.1525
-#>  -0.0877 -0.0659  0.1862 -0.0205  0.1314
-#>   0.0674 -0.0554  0.1397 -0.1026 -0.0433
-#>  -0.1998  0.1090 -0.0288  0.0015  0.1272
-#>  -0.0879 -0.0436  0.0435 -0.0061 -0.0218
+#>  -0.0074  0.1343 -0.0903  0.1079  0.1009
+#>  -0.1618  0.1391  0.1301 -0.0983 -0.1804
+#>  -0.1534  0.0612  0.1402 -0.0081  0.0157
+#>   0.1846  0.1652  0.1725 -0.0199 -0.0243
+#>   0.0234  0.0039  0.0280 -0.1897  0.0476
 #> 
 #> (4,1,.,.) = 
-#>   0.1629  0.0172 -0.0721  0.1160 -0.1692
-#>   0.0489 -0.0214  0.1613  0.1808  0.0268
-#>  -0.0446 -0.1501  0.0983  0.0154  0.1968
-#>   0.1489 -0.1057  0.0011 -0.0853 -0.0962
-#>   0.1582  0.0314 -0.1106 -0.1843  0.1558
+#>  -0.0248  0.0536  0.1141 -0.1415  0.0791
+#>  -0.1637  0.0823 -0.1708 -0.1474 -0.1588
+#>  -0.0692  0.1054  0.0048 -0.0694  0.1760
+#>   0.0049  0.1237  0.1670  0.1171 -0.0228
+#>  -0.1769 -0.1000  0.1073  0.1777 -0.0203
 #> 
 #> (5,1,.,.) = 
-#>  -0.1799 -0.0279 -0.1179  0.1431 -0.0512
+#>  -0.0123  0.1480  0.1773 -0.0896 -0.1685
 #> ... [the output was truncated (use n=-1 to disable)]
 #> [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]
 ```
@@ -237,7 +230,6 @@ optim[]
 #>     step_helper: function (closure, loop_fun)
 
 daemons(0)
-#> [1] 0
 ```
 Above, tensors and complex objects containing tensors were passed seamlessly between host and daemon processes, in the same way as any other R object.
 
@@ -262,7 +254,6 @@ cfg <- serial_config(
 )
 
 daemons(1, serial = cfg)
-#> [1] 1
 
 everywhere(
   {
@@ -352,7 +343,6 @@ As before, `everywhere()` can be used to cleanly tear down the databases, prior 
 ``` r
 everywhere(dbDisconnect(con))
 daemons(0)
-#> [1] 0
 ```
 
 ### 4. Shiny / mirai / DBI / ADBC Integrated Example

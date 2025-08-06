@@ -72,7 +72,6 @@ The following example was raised as being potentially counter-intuitive, given t
 ``` r
 library(mirai)
 daemons(4)
-#> [1] 4
 
 vec <- 1:3
 vec2 <- 4:6
@@ -80,10 +79,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1] -0.03203249  0.06758411 -1.15134665
+#> [1] 0.2112876 0.9041800 0.7834014
 #> 
 #> [[2]]
-#> [1] -1.52548151  0.47057627  0.09368248
+#> [1] -0.3150949 -1.5628536 -0.3860887
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {
@@ -105,7 +104,6 @@ mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [1] -1.8150926  0.3304096 -1.1421557
 
 daemons(0)
-#> [1] 0
 ```
 
 The reason the change in random seed persists in all circumstances is due to this being a special case, arising from the use of L'Ecuyer CMRG streams to provide parallel-safe random numbers.
