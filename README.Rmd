@@ -60,7 +60,6 @@ install.packages("mirai")
 ```{r}
 #| label: exec
 library(mirai)
-
 daemons(5)
 
 m <- mirai({
