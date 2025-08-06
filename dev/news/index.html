@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+<div class="section level5">
+<h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
+<ul><li>
+<code><a href="../reference/daemons.html">daemons()</a></code> creating new daemons returns invisibly the character compute profile created. <code>daemons(0)</code> or <code>daemons(NULL)</code> resetting daemons returns invisible NULL (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
+</ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>New <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. This works with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
