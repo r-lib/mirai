@@ -202,6 +202,13 @@ eval_mirai <- function(._mirai_.) {
   withRestarts(
     withCallingHandlers(
       {
+        if (is_otel_tracing && !is.null(._mirai_.[[".otel"]])) {
+          prtctx <- otel::extract_http_context(._mirai_.[[".otel"]])
+          otel::start_local_active_span(
+            "mirai::daemon->eval",
+            options = list(parent = prtctx)
+          )
+        }
         list2env(._mirai_.[["._mirai_globals_."]], envir = .GlobalEnv)
         eval(._mirai_.[[".expr"]], envir = ._mirai_., enclos = .GlobalEnv)
       },
