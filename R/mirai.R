@@ -164,7 +164,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       exists(as.character(expr), envir = parent.frame()) &&
       is.language(.expr)
     ) .expr else expr,
-    ._globals_. = globals
+    ._globals_. = globals,
+    ._otel_. = NULL
   )
   if (length(.args)) {
     if (is.environment(.args)) {
@@ -176,6 +177,12 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
   }
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
+
+  if (is_otel_tracing) {
+    otel::local_active_span(envir[["otel_span"]])
+    spn <- otel::start_local_active_span("mirai::mirai")
+    data[["._otel_."]] <- otel::pack_http_context()
+  }
 
   request(
     .context(envir[["sock"]]),
