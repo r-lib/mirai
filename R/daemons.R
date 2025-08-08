@@ -12,23 +12,18 @@
 #' Use `daemons(0)` to reset daemon connections:
 #' \itemize{
 #'   \item All connected daemons and/or dispatchers exit automatically.
-#'   \item \pkg{mirai} reverts to the default behaviour of creating a new
+#'   \item Any as yet unresolved 'mirai' will return an 'errorValue' 19
+#'   (Connection reset).
+#'   \item [mirai()] reverts to the default behaviour of creating a new
 #'   background process for each request.
-#'   \item Any unresolved 'mirai' will return an 'errorValue' 19 (Connection
-#'   reset) after a reset.
-#'   \item Daemons must be reset before calling `daemons()` with revised
-#'   settings for a compute profile. Daemons may be added at any time by using
-#'   [launch_local()] or [launch_remote()] without needing to revise daemons
-#'   settings.
 #' }
 #'
 #' If the host session ends, all connected dispatcher and daemon processes
-#' automatically exit as soon as their connections are dropped (unless the
-#' daemons were started with `autoexit = FALSE`).
+#' automatically exit as soon as their connections are dropped.
 #'
-#' To reset persistent daemons started with `autoexit = FALSE`, use
-#' `daemons(NULL)` instead, which also sends exit signals to all connected
-#' daemons prior to resetting.
+#' Calling [daemons()] implicitly resets any existing daemons for the compute
+#' profile with `daemons(0)`. Instead, [launch_local()] or [launch_remote()] may
+#' be used to add daemons at any time without resetting daemons.
 #'
 #' For historical reasons, `daemons()` with no arguments (other than
 #' optionally `.compute`) returns the value of [status()].
@@ -252,7 +247,8 @@ daemons <- function(
         on.exit()
       }
     } else {
-      stop(sprintf(._[["daemons_set"]], .compute))
+      daemons(0, .compute = .compute)
+      return(eval(match.call()))
     }
   } else {
     signal <- is.null(n)
@@ -282,7 +278,8 @@ daemons <- function(
       }
       create_profile(envir, .compute, n, dots)
     } else {
-      stop(sprintf(._[["daemons_set"]], .compute))
+      daemons(0, .compute = .compute)
+      return(eval(match.call()))
     }
   }
 

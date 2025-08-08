@@ -76,8 +76,8 @@
 #' Setting to FALSE allows the daemon to persist indefinitely even when there is
 #' no longer a socket connection. This allows a host session to end and a new
 #' session to connect at the URL where the daemon is dialled in. Daemons must be
-#' terminated with `daemons(NULL)` in this case, which sends explicit exit
-#' signals to all connected daemons.
+#' terminated with `daemons(NULL)` in this case instead of `daemons(0)`. This
+#' sends explicit exit signals to all connected daemons.
 #'
 #' @export
 #'

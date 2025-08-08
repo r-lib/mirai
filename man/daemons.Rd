@@ -89,23 +89,18 @@ scheduling.
 Use \code{daemons(0)} to reset daemon connections:
 \itemize{
 \item All connected daemons and/or dispatchers exit automatically.
-\item \pkg{mirai} reverts to the default behaviour of creating a new
+\item Any as yet unresolved 'mirai' will return an 'errorValue' 19
+(Connection reset).
+\item \code{\link[=mirai]{mirai()}} reverts to the default behaviour of creating a new
 background process for each request.
-\item Any unresolved 'mirai' will return an 'errorValue' 19 (Connection
-reset) after a reset.
-\item Daemons must be reset before calling \code{daemons()} with revised
-settings for a compute profile. Daemons may be added at any time by using
-\code{\link[=launch_local]{launch_local()}} or \code{\link[=launch_remote]{launch_remote()}} without needing to revise daemons
-settings.
 }
 
 If the host session ends, all connected dispatcher and daemon processes
-automatically exit as soon as their connections are dropped (unless the
-daemons were started with \code{autoexit = FALSE}).
+automatically exit as soon as their connections are dropped.
 
-To reset persistent daemons started with \code{autoexit = FALSE}, use
-\code{daemons(NULL)} instead, which also sends exit signals to all connected
-daemons prior to resetting.
+Calling \code{\link[=daemons]{daemons()}} implicitly resets any existing daemons for the compute
+profile with \code{daemons(0)}. Instead, \code{\link[=launch_local]{launch_local()}} or \code{\link[=launch_remote]{launch_remote()}} may
+be used to add daemons at any time without resetting daemons.
 
 For historical reasons, \code{daemons()} with no arguments (other than
 optionally \code{.compute}) returns the value of \code{\link[=status]{status()}}.
