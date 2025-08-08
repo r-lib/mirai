@@ -115,6 +115,7 @@ daemon <- function(
   task <- 1L
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
+  `[[<-`(., "id", random(5))
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -202,10 +203,11 @@ eval_mirai <- function(._mirai_.) {
   withRestarts(
     withCallingHandlers(
       {
-        if (is_otel_tracing && !is.null(._mirai_.[[".otel"]])) {
+        if (otel_tracing && !is.null(._mirai_.[[".otel"]])) {
           prtctx <- otel::extract_http_context(._mirai_.[[".otel"]])
           otel::start_local_active_span(
             "mirai::daemon->eval",
+            attributes = otel::as_attributes(list(daemon = .[["id"]])),
             options = list(parent = prtctx)
           )
         }
