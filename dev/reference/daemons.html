@@ -172,20 +172,15 @@ resetting daemons.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Use <code>daemons(0)</code> to reset daemon connections:</p><ul><li><p>All connected daemons and/or dispatchers exit automatically.</p></li>
-<li><p><span class="pkg">mirai</span> reverts to the default behaviour of creating a new
+<li><p>Any as yet unresolved 'mirai' will return an 'errorValue' 19
+(Connection reset).</p></li>
+<li><p><code><a href="mirai.html">mirai()</a></code> reverts to the default behaviour of creating a new
 background process for each request.</p></li>
-<li><p>Any unresolved 'mirai' will return an 'errorValue' 19 (Connection
-reset) after a reset.</p></li>
-<li><p>Daemons must be reset before calling <code>daemons()</code> with revised
-settings for a compute profile. Daemons may be added at any time by using
-<code><a href="launch_local.html">launch_local()</a></code> or <code><a href="launch_local.html">launch_remote()</a></code> without needing to revise daemons
-settings.</p></li>
 </ul><p>If the host session ends, all connected dispatcher and daemon processes
-automatically exit as soon as their connections are dropped (unless the
-daemons were started with <code>autoexit = FALSE</code>).</p>
-<p>To reset persistent daemons started with <code>autoexit = FALSE</code>, use
-<code>daemons(NULL)</code> instead, which also sends exit signals to all connected
-daemons prior to resetting.</p>
+automatically exit as soon as their connections are dropped.</p>
+<p>Calling <code>daemons()</code> implicitly resets any existing daemons for the compute
+profile with <code>daemons(0)</code>. Instead, <code><a href="launch_local.html">launch_local()</a></code> or <code><a href="launch_local.html">launch_remote()</a></code> may
+be used to add daemons at any time without resetting daemons.</p>
 <p>For historical reasons, <code>daemons()</code> with no arguments (other than
 optionally <code>.compute</code>) returns the value of <code><a href="status.html">status()</a></code>.</p>
     </div>
