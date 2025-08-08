@@ -155,9 +155,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
-  if (length(envir[["seed"]])) {
-    globals[[".Random.seed"]] <- next_stream(envir)
-  }
+  if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
+
   data <- list(
     ._expr_. = if (
       is.symbol(expr) &&
@@ -165,8 +164,13 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       is.language(.expr)
     ) .expr else expr,
     ._globals_. = globals,
-    ._otel_. = NULL
+    ._otel_. = if (otel_tracing) {
+      if (length(envir)) otel::local_active_span(envir[["otel_span"]])
+      spn <- otel::start_local_active_span("mirai::mirai")
+      otel::pack_http_context()
+    }
   )
+
   if (length(.args)) {
     if (is.environment(.args)) {
       .args <- as.list.environment(.args, all.names = TRUE)
@@ -177,12 +181,6 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
   }
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
-
-  if (otel_tracing) {
-    otel::local_active_span(envir[["otel_span"]])
-    spn <- otel::start_local_active_span("mirai::mirai")
-    data[["._otel_."]] <- otel::pack_http_context()
-  }
 
   request(
     .context(envir[["sock"]]),
