@@ -154,17 +154,22 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
-  if (length(envir[["seed"]])) {
-    globals[[".Random.seed"]] <- next_stream(envir)
-  }
+  if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
+
   data <- list(
     ._mirai_globals_. = globals,
     .expr = if (
       is.symbol(expr) &&
       exists(as.character(expr), envir = parent.frame()) &&
       is.language(.expr)
-    ) .expr else expr
+    ) .expr else expr,
+    .otel = if (otel_tracing) {
+      if (length(envir)) otel::local_active_span(envir[["otel_span"]])
+      spn <- otel::start_local_active_span("mirai::mirai")
+      otel::pack_http_context()
+    }
   )
+
   if (length(.args)) {
     if (is.environment(.args)) {
       .args <- as.list.environment(.args, all.names = TRUE)
