@@ -257,7 +257,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (is_otel_tracing) {
+      if (otel_tracing) {
         envir[["otel_span"]][["end"]]()
       }
       ..[[.compute]] <- NULL -> envir
@@ -295,7 +295,7 @@ daemons <- function(
     )
   })
 
-  if (is_otel_tracing) {
+  if (otel_tracing) {
     envir[["otel_span"]] <- otel::start_span(
       "mirai::daemons",
       attributes = otel::as_attributes(list(compute_profile = .compute))
