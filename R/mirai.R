@@ -178,7 +178,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
-  if (is_otel_tracing) {
+  if (otel_tracing) {
     otel::local_active_span(envir[["otel_span"]])
     spn <- otel::start_local_active_span("mirai::mirai")
     data[["._otel_."]] <- otel::pack_http_context()

@@ -38,7 +38,7 @@
 # tested implicitly
 
 .onLoad <- function(libname, pkgname) {
-  is_otel_tracing <<- requireNamespace("otel", quietly = TRUE) && otel::is_tracing_enabled()
+  otel_tracing <<- requireNamespace("otel", quietly = TRUE) && otel::is_tracing_enabled()
   switch(
     Sys.info()[["sysname"]],
     Linux = {
@@ -87,5 +87,5 @@
   hash = TRUE
 )
 
-is_otel_tracing <- FALSE
+otel_tracing <- FALSE
 otel_tracer_name <- "org.r-lib.mirai"
