@@ -261,9 +261,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (otel_tracing) {
-        envir[["otel_span"]][["end"]]()
-      }
+      if (otel_tracing) .subset2(envir[["otel_span"]], "end")()
       ..[[.compute]] <- NULL -> envir
       return(invisible())
     }
@@ -280,17 +278,20 @@ daemons <- function(
         launch_daemons(seq_len(n), dots, envir)
       }
       create_profile(envir, .compute, n, dots)
-      if (otel_tracing) {
-        envir[["otel_span"]] <- otel::start_span(
-          "mirai::daemons",
-          attributes = otel::as_attributes(list(compute_profile = .compute))
-        )
-      }
     } else {
       daemons(0, .compute = .compute)
       return(eval(match.call()))
     }
   }
+  if (otel_tracing) `[[<-`(
+    envir, "otel_span", otel::start_span(
+      "mirai::daemons",
+      attributes = otel::as_attributes(list(
+        url = envir[["url"]],
+        compute_profile = .compute
+      ))
+    )
+  )
 
   invisible(`class<-`(.compute, "miraiDaemons"))
 }
