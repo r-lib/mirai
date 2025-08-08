@@ -9,8 +9,9 @@
 
 #### New Features
 
-* New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
+* Adds `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
+* Adds `cloud_config()` to launch remote daemons using a cloud / cloud-based managed platform. Currently supports Posit Workbench.
 
 #### Updates
 
