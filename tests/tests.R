@@ -84,7 +84,6 @@ connection && {
   Sys.sleep(1L)
   test_equal("default", d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
   test_print(d)
-  test_error(daemons(1L), "daemons already set")
   test_true(daemons_set())
   test_true(require_daemons(parent.frame()))
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
@@ -133,7 +132,6 @@ connection && {
   Sys.sleep(1L)
   test_type("integer", status(.compute = "new")[["connections"]])
   test_error(mirai_map(1:2, "a function", .compute = "new"), "must be of type function, not character")
-  test_error(daemons(url = local_url(), .compute = "new"), "daemons already set")
   test_null(daemons(0L, .compute = "new"))
 }
 # additional daemons tests
@@ -259,7 +257,6 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(status[["mirai"]][["awaiting"]])
   test_zero(status[["mirai"]][["executing"]])
   test_zero(status[["mirai"]][["completed"]])
-  test_null(daemons(0))
   test_nzchar(daemons(2, correcttype = NA))
   test_equal(daemons()[["connections"]], 2L)
   test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
@@ -277,8 +274,6 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai("Seattle", .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
-  test_null(daemons(0))
-  Sys.sleep(0.5)
   test_nzchar(daemons(n = 1L, url = local_url(), dispatcher = TRUE))
   task <- mirai(substitute())
   url <- nextget("url")

@@ -4,6 +4,8 @@
 
 * `daemons()` creating new daemons returns invisibly the character compute profile created.
   `daemons(0)` or `daemons(NULL)` resetting daemons returns invisible NULL (thanks @eliocamp, #384).
+* Calling `daemons()` will now reset any existing daemons for the same compute profile rather than error.
+  This means that an explicit `daemons(0)` is no longer required before applying new settings (#383).
 
 #### New Features
 
