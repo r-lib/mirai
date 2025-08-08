@@ -248,7 +248,7 @@ daemons <- function(
       }
     } else {
       daemons(0, .compute = .compute)
-      return(eval(match.call(expand.dots = FALSE)))
+      return(eval(match.call()))
     }
   } else {
     signal <- is.null(n)
@@ -279,7 +279,7 @@ daemons <- function(
       create_profile(envir, .compute, n, dots)
     } else {
       daemons(0, .compute = .compute)
-      return(eval(match.call(expand.dots = FALSE)))
+      return(eval(match.call()))
     }
   }
 
