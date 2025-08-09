@@ -22,7 +22,6 @@ test_null(daemons(0L))
 test_error(mirai(), "missing expression, perhaps wrap in {}?")
 test_error(mirai(a, 1), "all `...` arguments must be named")
 test_error(mirai(a, .args = list(1)), "all items in `.args` must be named")
-test_error(mirai_map(1:2, identity))
 test_error(daemons(url = "URL"), "Invalid argument")
 test_error(daemons(-1), "zero or greater")
 test_error(daemons(raw(0L)), "must be numeric")
@@ -150,14 +149,13 @@ connection && {
 # mirai_map tests
 connection && {
   Sys.sleep(1L)
-  m <- with(daemons(1, dispatcher = FALSE, .compute = "ml"), {
-    if (is.null(tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) NULL)))
-      mirai_map(1:3, rnorm, .args = list(mean = 20, 2))[]
-  })
+  m <- if (is.null(tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) NULL)))
+    mirai_map(1:3, rnorm, .args = list(mean = 20, 2))[]
   test_true(!is_mirai_map(m))
   test_type("list", m)
   test_equal(length(m), 3L)
   test_true(all(as.logical(lapply(m, is.numeric))))
+  test_null(daemons(0))
   Sys.sleep(1L)
   test_nzchar(daemons(1, dispatcher = FALSE))
   mp <- mirai_map(list(x = "a"), function(...) do(...), do = function(x, y) sprintf("%s%s", x, y), .args = list("b"))

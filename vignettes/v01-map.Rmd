@@ -20,7 +20,7 @@ A `mirai_map()` call returns almost immediately on the other hand.
 The results of a mirai_map `x` may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai.
 This waits for all asynchronous operations to complete if still in progress.
 
-Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case (rather than launching potentially too many *ephemeral daemons* if the map is over a large number of elements).
+`daemons()` should have been set prior to `mirai_map()`. If not, then a single (non-dispatcher) local daemon is launched. This ensures that a map always proceeds, but in this case sequentially rather than in parallel.
 
 ### 2. Key Advantages
 
@@ -38,10 +38,10 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.004   0.016   4.009
+#>   0.006   0.004   4.007
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.005   0.015   8.009
+#>   0.006   0.004   8.010
 daemons(0)
 ```
 `.args` is used to specify further constant arguments to `.f` - the `mean` and `sd` in the example below:
@@ -52,13 +52,13 @@ with(
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 21.59418
+#> [1] 24.66414
 #> 
 #> [[2]]
-#> [1] 20.64373 16.25799
+#> [1] 19.22547 22.68882
 #> 
 #> [[3]]
-#> [1] 18.89357 20.91331 17.67060
+#> [1] 19.09580 21.02673 21.21549
 ```
 Use `...` to further specify objects referenced but not defined in `.f` - the function `do` below:
 
@@ -70,16 +70,16 @@ ml <- mirai_map(
   do = nanonext::random
 )
 ml
-#> < mirai map [2/3] >
+#> < mirai map [0/3] >
 ml[]
 #> $a
-#> [1] "4e"
+#> [1] "bb"
 #> 
 #> $b
-#> [1] 20 dc
+#> [1] b0 99
 #> 
 #> $c
-#> [1] "1a19e8"
+#> [1] "88c109"
 ```
 
 ### 3. Collecting Results

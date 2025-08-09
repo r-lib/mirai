@@ -48,8 +48,9 @@ This simple and transparent behaviour is designed to make full use of
 Facilitates recovery from partial failure by returning all 'miraiError' /
 'errorValue' as the case may be, thus allowing only failures to be re-run.
 
-This function requires daemons to have previously been set, and will error
-otherwise.
+This function will launch one (non-dispatcher) local daemon if daemons have
+not previously been set by the user. This allows \code{\link[=mirai_map]{mirai_map()}} to always
+proceed, although sequentially rather than in parallel in this case.
 }
 \section{Collection Options}{
 

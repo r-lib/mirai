@@ -27,7 +27,7 @@ A `mirai_map()` call returns almost immediately on the other hand.
 The results of a mirai_map `x` may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai.
 This waits for all asynchronous operations to complete if still in progress.
 
-Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case (rather than launching potentially too many *ephemeral daemons* if the map is over a large number of elements).
+`daemons()` should have been set prior to `mirai_map()`. If not, then a single (non-dispatcher) local daemon is launched. This ensures that a map always proceeds, but in this case sequentially rather than in parallel.
 
 ### 2. Key Advantages
 

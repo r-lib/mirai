@@ -16,8 +16,9 @@
 #' Facilitates recovery from partial failure by returning all 'miraiError' /
 #' 'errorValue' as the case may be, thus allowing only failures to be re-run.
 #'
-#' This function requires daemons to have previously been set, and will error
-#' otherwise.
+#' This function will launch one (non-dispatcher) local daemon if daemons have
+#' not previously been set by the user. This allows [mirai_map()] to always
+#' proceed, although sequentially rather than in parallel in this case.
 #'
 #' @param .x a list or atomic vector. Also accepts a matrix or dataframe, in
 #'   which case multiple map is performed over its rows.
@@ -157,6 +158,7 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   if (is.null(.compute)) .compute <- .[["cp"]]
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
+  if (!daemons_set(.compute)) daemons(1L, dispatcher = FALSE, .compute = .compute)
 
   dx <- dim(.x)
   vec <- if (is.null(dx)) {

@@ -6,6 +6,8 @@
   `daemons(0)` or `daemons(NULL)` resetting daemons returns invisible NULL (thanks @eliocamp, #384).
 * Calling `daemons()` will now reset any existing daemons for the same compute profile rather than error.
   This means that an explicit `daemons(0)` is no longer required before applying new settings (#383).
+* `mirai_map()` will automatically create one local daemon if daemons have not already been set.
+  This ensures that the map will always proceed, but sequentially rather than in parallel (#397).
 
 #### New Features
 
