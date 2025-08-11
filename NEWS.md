@@ -26,7 +26,9 @@
   The change in argument name lets this be passed when making a `daemons()` call (#344).
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
 * `as.promise()` method for mirai made robust for high-throughput scenarios (#377).
-* The print method for a `miraiError` now includes the customary additional line break (thanks @sebffischer, #399).
+* `miraiError` enhancements:
+  + The original condition classes are preserved as `$condition.class` (thanks @sebffischer, #400).
+  + The print method now includes the customary additional line break (thanks @sebffischer, #399).
 * A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
 * Requires nanonext >= [1.6.2.9001].
 
