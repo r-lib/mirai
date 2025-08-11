@@ -19,7 +19,7 @@
 * `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
   Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
 * Enhancements to `everywhere()`:
-  + Consecutive `everywhere()` calls are now permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
+  + Consecutive `everywhere()` calls are permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
   + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).
 * `mirai_map()` now supports Arrow Tables and Polars DataFrames (#366).
 * `daemon()` gains a `tlscert` argument for custom TLS certificates.
@@ -27,9 +27,9 @@
 * The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
 * `as.promise()` method for mirai made robust for high-throughput scenarios (#377).
 * `miraiError` enhancements:
-  + The original condition classes are preserved as `$condition.class` (thanks @sebffischer, #400).
-  + The print method now includes the customary additional line break (thanks @sebffischer, #399).
-* A `mirai()` evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (#351).
+  + Preserves the original condition classes and may be re-thrown as the original condition (thanks @sebffischer, #400).
+  + The print method includes the customary additional line break (thanks @sebffischer, #399).
+* A `mirai()` evaluated on an ephemeral daemon returns invisibly, consistent with other cases (#351).
 * Requires nanonext >= [1.6.2.9001].
 
 # mirai 2.4.1
