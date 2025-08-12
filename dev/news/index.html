@@ -67,7 +67,7 @@
 <li>
 <code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
 <li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
-<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are now permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
+<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
 <li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
 </ul></li>
 <li>
@@ -77,8 +77,12 @@
 <li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
 <li>
 <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for mirai made robust for high-throughput scenarios (<a href="https://github.com/r-lib/mirai/issues/377" class="external-link">#377</a>).</li>
-<li>The print method for a <code>miraiError</code> now includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
-<li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon now returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
+<li>
+<code>miraiError</code> enhancements:
+<ul><li>Preserves the original condition classes and may be re-thrown as the original condition (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/400" class="external-link">#400</a>).</li>
+<li>The print method includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
+</ul></li>
+<li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
 <li>Requires nanonext &gt;= [1.6.2.9001].</li>
 </ul></div>
 </div>
