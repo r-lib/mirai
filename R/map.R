@@ -158,7 +158,8 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   if (is.null(.compute)) .compute <- .[["cp"]]
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
-  if (!daemons_set(.compute)) daemons(1L, dispatcher = FALSE, .compute = .compute)
+  if (is.null(.compute)) .compute <- .[["cp"]]
+  if (is.null(..[[.compute]])) daemons(1L, dispatcher = FALSE, .compute = .compute)
 
   dx <- dim(.x)
   vec <- if (is.null(dx)) {
