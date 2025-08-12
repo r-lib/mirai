@@ -4,19 +4,19 @@
 \alias{dispatcher}
 \title{Dispatcher}
 \usage{
-dispatcher(host, url = NULL, n = NULL, ...)
+dispatcher(host, url = NULL, n = 0L, ...)
 }
 \arguments{
 \item{host}{the character URL dispatcher should dial in to, typically an IPC
 address.}
 
-\item{url}{(optional) the character URL dispatcher should listen at (and
-daemons should dial in to), including the port to connect to e.g.
-'tcp://hostname:5555' or 'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to
-use secure TLS connections.}
+\item{url}{the character URL dispatcher should listen at (and daemons should
+dial in to), including the port to connect to e.g. tcp://hostname:5555' or
+'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
+connections.}
 
-\item{n}{(optional) if specified, the integer number of daemons to launch. In
-this case, a local url is automatically generated.}
+\item{n}{[default 0L] if specified, the integer number of daemons to be
+launched locally by the host process.}
 
 \item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}} if
 launching daemons. These include \code{asyncdial}, \code{autoexit}, \code{cleanup},

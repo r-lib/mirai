@@ -621,13 +621,13 @@ args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
   shQuote(sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls)))
 }
 
-args_dispatcher_local <- function(urld, n, dots) {
+args_dispatcher_local <- function(urld, url, n) {
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",n=%d%s)",
+    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",n=%d)",
     libp(),
     urld,
-    n,
-    dots
+    url,
+    n
   ))
 }
 
@@ -654,10 +654,13 @@ launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL)
   urld <- local_url()
   sock <- req_socket(urld)
   pipe_notify(sock, cv, add = TRUE)
-  write_args <- if (is.character(arg)) args_dispatcher_remote else args_dispatcher_local
+  local <- is.numeric(arg)
+  url <- if (local) local_url() else arg
+  n <- if (local) arg else dots
+  write_args <- if (local) args_dispatcher_local else args_dispatcher_remote
   system2(
     .command,
-    args = c("--default-packages=NULL", "--vanilla", "-e", write_args(urld, arg, dots)),
+    args = c("--default-packages=NULL", "--vanilla", "-e", write_args(urld, url, n)),
     wait = FALSE
   )
   if (is.null(serial)) serial <- .[["serial"]]
@@ -672,8 +675,14 @@ launch_dispatcher <- function(arg, dots, envir, serial, tls = NULL, pass = NULL)
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
 
   pipe_notify(sock, NULL, add = TRUE)
-  req <- request(.context(sock), data, send_mode = 1L, recv_mode = 2L, cv = cv)
-
+  send(sock, data, mode = 1L, block = TRUE)
+  if (local) {
+    launch_args <- args_daemon_disp(url, dots)
+    for (i in seq_len(n)) {
+      launch_daemon(launch_args)
+    }
+  }
+  req <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
 

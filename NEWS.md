@@ -18,6 +18,7 @@
   If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks @dipterix, #378).
 * `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
   Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
+* Fixes `daemons(n)` failing to launch local daemons if mirai was installed in a custom user library set by an explicit `.libPaths()` call in '.Rprofile' (thanks @erydit and @dpastoor, #390).
 * Enhancements to `everywhere()`:
   + Consecutive `everywhere()` calls are permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
   + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).

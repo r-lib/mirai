@@ -16,25 +16,28 @@
 #' @inheritParams daemons
 #' @param host the character URL dispatcher should dial in to, typically an IPC
 #'   address.
-#' @param url (optional) the character URL dispatcher should listen at (and
-#'   daemons should dial in to), including the port to connect to e.g.
-#'   'tcp://hostname:5555' or 'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to
-#'   use secure TLS connections.
-#' @param n (optional) if specified, the integer number of daemons to launch. In
-#'   this case, a local url is automatically generated.
+#' @param url the character URL dispatcher should listen at (and daemons should
+#'   dial in to), including the port to connect to e.g. tcp://hostname:5555' or
+#'   'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
+#'   connections.
+#' @param n \[default 0L\] if specified, the integer number of daemons to be
+#'   launched locally by the host process.
 #'
 #' @return Invisible NULL.
 #'
 #' @export
 #'
-dispatcher <- function(host, url = NULL, n = NULL, ...) {
-  n <- if (is.numeric(n)) as.integer(n) else length(url)
-  n > 0L || stop(._[["missing_url"]])
-
+dispatcher <- function(host, url = NULL, n = 0L, ...) {
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
+
+  psock <- socket("poly")
+  on.exit(reap(psock), add = TRUE, after = TRUE)
+  m <- monitor(psock, cv)
+  n && listen(psock, url = url, fail = 2L)
+
   dial_sync_socket(sock, host)
 
   raio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -47,10 +50,7 @@ dispatcher <- function(host, url = NULL, n = NULL, ...) {
   }
 
   tls <- NULL
-  auto <- is.null(url)
-  if (auto) {
-    url <- local_url()
-  } else {
+  if (!n) {
     if (is.character(res[[2L]])) {
       tls <- res[[2L]]
       pass <- res[[3L]]
@@ -61,21 +61,13 @@ dispatcher <- function(host, url = NULL, n = NULL, ...) {
   serial <- res[[4L]]
   res <- res[[5L]]
 
-  psock <- socket("poly")
-  on.exit(reap(psock), add = TRUE, after = TRUE)
-  m <- monitor(psock, cv)
-  listen(psock, url = url, tls = tls, fail = 2L)
-
   inq <- outq <- list()
   events <- integer()
   count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
   `[[<-`(envir, "stream", res)
-  if (auto) {
-    dots <- parse_dots(...)
-    for (i in seq_len(n)) {
-      launch_daemon(args_daemon_disp(url, dots))
-    }
+
+  if (n) {
     for (i in seq_len(n))
       while(!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
@@ -88,13 +80,13 @@ dispatcher <- function(host, url = NULL, n = NULL, ...) {
       }
     }
   } else {
+    listen(psock, url = url, tls = tls, fail = 2L)
     listener <- attr(psock, "listener")[[1L]]
     url <- opt(listener, "url")
     if (parse_url(url)[["port"]] == "0") {
       url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
     }
   }
-
   send(sock, c(Sys.getpid(), url), mode = 2L, block = TRUE)
 
   ctx <- .context(sock)

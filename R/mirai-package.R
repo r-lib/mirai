@@ -74,7 +74,6 @@
     function_required = "`.f` must be of type function, not %s",
     localhost = "SSH tunnelling requires daemons `url` hostname to be `127.0.0.1`",
     missing_expression = "missing expression, perhaps wrap in {}?",
-    missing_url = "`n` must be 1 or greater, or else `url` must be supplied",
     named_args = "all items in `.args` must be named, unless supplying an environment",
     named_dots = "all `...` arguments must be named, unless supplying an environment",
     n_one = "`n` must be 1 or greater",
