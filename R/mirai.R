@@ -626,9 +626,8 @@ mk_mirai_error <- function(cnd, sc) {
   ))))
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
   if (sc[[1L]][[1L]] == ".handleSimpleError") sc <- sc[-1L]
-  sc <- lapply(sc, `attributes<-`, NULL)
-  out <- `attributes<-`(msg, `[[<-`(cnd, "stack.trace", sc))
-  `class<-`(out, c("miraiError", "errorValue", "try-error"))
+  cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
+  `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error", class(cnd)))
 }
 
 .miraiInterrupt <- `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))
