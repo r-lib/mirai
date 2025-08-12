@@ -65,7 +65,7 @@ directly.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dispatcher</span><span class="op">(</span><span class="va">host</span>, url <span class="op">=</span> <span class="cn">NULL</span>, n <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dispatcher</span><span class="op">(</span><span class="va">host</span>, url <span class="op">=</span> <span class="cn">NULL</span>, n <span class="op">=</span> <span class="fl">0L</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -78,15 +78,15 @@ address.</p></dd>
 
 
 <dt id="arg-url">url<a class="anchor" aria-label="anchor" href="#arg-url"></a></dt>
-<dd><p>(optional) the character URL dispatcher should listen at (and
-daemons should dial in to), including the port to connect to e.g.
-'tcp://hostname:5555' or 'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to
-use secure TLS connections.</p></dd>
+<dd><p>the character URL dispatcher should listen at (and daemons should
+dial in to), including the port to connect to e.g. tcp://hostname:5555' or
+'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
+connections.</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>(optional) if specified, the integer number of daemons to launch. In
-this case, a local url is automatically generated.</p></dd>
+<dd><p>[default 0L] if specified, the integer number of daemons to be
+launched locally by the host process.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
