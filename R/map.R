@@ -155,11 +155,14 @@
 #' @export
 #'
 mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
   if (is.null(.compute)) .compute <- .[["cp"]]
-  if (is.null(..[[.compute]])) daemons(1L, dispatcher = FALSE, .compute = .compute)
+  if (is.null(..[[.compute]])) {
+    .compute <- random(10L)
+    dx <- dim(.x)
+    maxtasks <- if (is.null(dx)) length(.x) else dx[1L]
+    daemons(1L, dispatcher = FALSE, maxtasks = maxtasks, .compute = .compute)
+  }
 
   dx <- dim(.x)
   vec <- if (is.null(dx)) {
