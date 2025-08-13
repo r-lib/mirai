@@ -45,8 +45,7 @@
 #' @export
 #'
 launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
+  envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
@@ -83,13 +82,12 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
 #' @export
 #'
 launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
   if (!is.numeric(n) && inherits(n, c("miraiCluster", "miraiNode"))) {
     .compute <- attr(n, "id")
     n <- max(length(n), 1L)
   }
   n <- as.integer(n)
-  envir <- ..[[.compute]]
+  envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp

@@ -140,8 +140,7 @@
 #'
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   missing(.expr) && stop(._[["missing_expression"]])
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
+  envir <- compute_env(.compute)
 
   expr <- substitute(.expr)
   globals <- list(...)
