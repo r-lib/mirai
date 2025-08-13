@@ -89,7 +89,6 @@
 <h3 id="ミライ">ミライ<a class="anchor" aria-label="anchor" href="#%E3%83%9F%E3%83%A9%E3%82%A4"></a>
 </h3>
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br></p>
-<p>mirai is a comprehensive solution for performing computationally-intensive tasks efficiently.</p>
 <p>→ Run R code in parallel in the background, without blocking your session</p>
 <p>→ Distribute workloads across local or remote machines</p>
 <p>→ Execute tasks on different compute resources based on requirements</p>
@@ -109,7 +108,6 @@
 <p>→ <code><a href="reference/daemons.html">daemons()</a></code>: Set and launch persistent background processes, local or remote, on which to run mirai tasks.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 5</span></span>
 <span></span>
@@ -171,13 +169,13 @@
 <p>→ Promises Integration: An event-driven implementation performs actions on returned values as soon as tasks complete, ensuring minimal latency.</p>
 <p>→ Serialization Support: Native serialization support for reference objects such as Arrow Tables, Polars DataFrames or torch tensors.</p>
 <p>→ Error Handling: Robust error handling and reporting, with full stack traces for debugging.</p>
-<p>→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible random number generation in parallel execution.</p>
+<p>→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible parallel random number generation.</p>
 </div>
 <div class="section level3">
 <h3 id="powering-the-ecosystem">Powering the Ecosystem<a class="anchor" aria-label="anchor" href="#powering-the-ecosystem"></a>
 </h3>
 <p>mirai serves as a foundation for asynchronous and parallel computing in the R ecosystem:</p>
-<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Implements the first official alternative communications backend for R — the ‘MIRAI’ parallel cluster — fulfilling a feature request by R-Core at R Project Sprint 2023.</p>
+<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Implements the first official alternative communications backend for R, the ‘MIRAI’ parallel cluster, fulfilling a feature request by R-Core at R Project Sprint 2023.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="promises" src="https://solutions.posit.co/images/brand/posit-icon-fullcolor.svg" width="40" height="36"></a>   Promises for ‘mirai’ and ‘mirai_map’ objects are event-driven, providing the lowest latency and highest responsiveness for performance-critical applications.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   The primary async backend for Shiny, with full ExtendedTask support, providing the next level of responsiveness and scalability for Shiny apps.</p>
