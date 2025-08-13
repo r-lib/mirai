@@ -157,12 +157,12 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     globals[[".Random.seed"]] <- next_stream(envir)
   }
   data <- list(
-    ._mirai_globals_. = globals,
-    .expr = if (
+    ._expr_. = if (
       is.symbol(expr) &&
       exists(as.character(expr), envir = parent.frame()) &&
       is.language(.expr)
-    ) .expr else expr
+    ) .expr else expr,
+    ._globals_. = globals
   )
   if (length(.args)) {
     if (is.environment(.args)) {
@@ -614,14 +614,14 @@ mk_mirai_error <- function(cnd, sc) {
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
   call <- deparse_safe(.subset2(cnd, "call"))
   msg <- if (
-    is.null(call) || call == "eval(._mirai_.[[\".expr\"]], envir = ._mirai_., enclos = .GlobalEnv)"
+    is.null(call) || call == "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = .GlobalEnv)"
   ) {
     sprintf("Error: %s", .subset2(cnd, "message"))
   } else {
     sprintf("Error in %s: %s", call, .subset2(cnd, "message"))
   }
   idx <- max(which(as.logical(lapply(
-    sc, `==`, "eval(._mirai_.[[\".expr\"]], envir = ._mirai_., enclos = .GlobalEnv)"
+    sc, `==`, "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = .GlobalEnv)"
   ))))
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
   if (sc[[1L]][[1L]] == ".handleSimpleError") sc <- sc[-1L]
