@@ -20,9 +20,6 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br />
 
-mirai is a comprehensive solution for performing
-computationally-intensive tasks efficiently.
-
 → Run R code in parallel in the background, without blocking your
 session
 
@@ -42,15 +39,14 @@ install.packages("mirai")
 
 ### Quick Start
 
-→ `mirai()`: Evaluate an R expression asynchronously in a parallel
-process.
+- `mirai()`: Evaluate an R expression asynchronously in a parallel
+  process.
 
-→ `daemons()`: Set and launch persistent background processes, local or
-remote, on which to run mirai tasks.
+- `daemons()`: Set and launch persistent background processes, local or
+  remote, on which to run mirai tasks.
 
 ``` r
 library(mirai)
-
 daemons(5)
 #> [1] 5
 
@@ -77,6 +73,29 @@ mp[.flat]
 daemons(0)
 #> [1] 0
 ```
+
+### Key Features
+
+1.  Distributed Execution: Run tasks across networks and clusters using
+    various deployment methods (SSH, HPC clusters using Slurm, SGE,
+    Torque, PBS, LSF, etc.)
+
+2.  Compute Profiles: Manage different sets of daemons independently,
+    allowing tasks with different requirements to be executed on
+    appropriate resources.
+
+3.  Promises Integration: An event-driven implementation performs
+    actions on returned values as soon as tasks complete, with minimal
+    latency.
+
+4.  Serialization Support: Native serialization support for reference
+    objects such as Arrow Tables, Polars DataFrames or torch tensors.
+
+5.  Error Handling: Robust error handling and reporting, with full stack
+    traces for debugging.
+
+6.  RNG Management: L’Ecuyer-CMRG RNG streams for reproducible parallel
+    random number generation.
 
 ### Design Concepts
 
@@ -109,36 +128,14 @@ experience.
 - Proven track record for heavy-duty workloads in the life sciences
   industry
 
-### Key Features
-
-→ Distributed Execution: Run tasks across networks and clusters using
-various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque,
-PBS, LSF, etc.)
-
-→ Compute Profiles: Manage different sets of daemons independently,
-allowing tasks with different requirements to be executed on appropriate
-resources.
-
-→ Promises Integration: An event-driven implementation performs actions
-on returned values as soon as tasks complete, ensuring minimal latency.
-
-→ Serialization Support: Native serialization support for reference
-objects such as Arrow Tables, Polars DataFrames or torch tensors.
-
-→ Error Handling: Robust error handling and reporting, with full stack
-traces for debugging.
-
-→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible random
-number generation in parallel execution.
-
 ### Powering the Ecosystem
 
 mirai serves as a foundation for asynchronous and parallel computing in
 the R ecosystem:
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
-  Implements the first official alternative communications backend for R
-— the ‘MIRAI’ parallel cluster — fulfilling a feature request by R-Core
+  Implements the first official alternative communications backend for
+R, the ‘MIRAI’ parallel cluster, fulfilling a feature request by R-Core
 at R Project Sprint 2023.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
