@@ -368,9 +368,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #' @export
 #'
 status <- function(.compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
   is.list(.compute) && return(status(attr(.compute, "id")))
-  envir <- ..[[.compute]]
+  envir <- compute_env(.compute)
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
   is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
@@ -393,10 +392,7 @@ status <- function(.compute = NULL) {
 #'
 #' @export
 #'
-daemons_set <- function(.compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  !is.null(..[[.compute]])
-}
+daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 
 #' Require Daemons
 #'
@@ -551,6 +547,8 @@ register_serial <- function(class, sfunc, ufunc) {
 }
 
 # internals --------------------------------------------------------------------
+
+compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
 configure_tls <- function(url, tls, pass, envir, config = TRUE) {
   purl <- parse_url(url)
