@@ -39,11 +39,11 @@ install.packages("mirai")
 
 ### Quick Start
 
-→ `mirai()`: Evaluate an R expression asynchronously in a parallel
-process.
+- `mirai()`: Evaluate an R expression asynchronously in a parallel
+  process.
 
-→ `daemons()`: Set and launch persistent background processes, local or
-remote, on which to run mirai tasks.
+- `daemons()`: Set and launch persistent background processes, local or
+  remote, on which to run mirai tasks.
 
 ``` r
 library(mirai)
@@ -71,6 +71,29 @@ mp[.flat]
 
 daemons(0)
 ```
+
+### Key Features
+
+1.  Distributed Execution: Run tasks across networks and clusters using
+    various deployment methods (SSH, HPC clusters using Slurm, SGE,
+    Torque, PBS, LSF, etc.)
+
+2.  Compute Profiles: Manage different sets of daemons independently,
+    allowing tasks with different requirements to be executed on
+    appropriate resources.
+
+3.  Promises Integration: An event-driven implementation performs
+    actions on returned values as soon as tasks complete, with minimal
+    latency.
+
+4.  Serialization Support: Native serialization support for reference
+    objects such as Arrow Tables, Polars DataFrames or torch tensors.
+
+5.  Error Handling: Robust error handling and reporting, with full stack
+    traces for debugging.
+
+6.  RNG Management: L’Ecuyer-CMRG RNG streams for reproducible parallel
+    random number generation.
 
 ### Design Concepts
 
@@ -102,28 +125,6 @@ experience.
 - Capacity for millions of tasks over thousands of connections
 - Proven track record for heavy-duty workloads in the life sciences
   industry
-
-### Key Features
-
-→ Distributed Execution: Run tasks across networks and clusters using
-various deployment methods (SSH, HPC clusters using Slurm, SGE, Torque,
-PBS, LSF, etc.)
-
-→ Compute Profiles: Manage different sets of daemons independently,
-allowing tasks with different requirements to be executed on appropriate
-resources.
-
-→ Promises Integration: An event-driven implementation performs actions
-on returned values as soon as tasks complete, ensuring minimal latency.
-
-→ Serialization Support: Native serialization support for reference
-objects such as Arrow Tables, Polars DataFrames or torch tensors.
-
-→ Error Handling: Robust error handling and reporting, with full stack
-traces for debugging.
-
-→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible parallel
-random number generation.
 
 ### Powering the Ecosystem
 
