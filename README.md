@@ -20,9 +20,6 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br />
 
-mirai is a comprehensive solution for performing
-computationally-intensive tasks efficiently.
-
 → Run R code in parallel in the background, without blocking your
 session
 
@@ -125,8 +122,8 @@ objects such as Arrow Tables, Polars DataFrames or torch tensors.
 → Error Handling: Robust error handling and reporting, with full stack
 traces for debugging.
 
-→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible random
-number generation in parallel execution.
+→ RNG Management: L’Ecuyer-CMRG RNG streams for reproducible parallel
+random number generation.
 
 ### Powering the Ecosystem
 
@@ -134,8 +131,8 @@ mirai serves as a foundation for asynchronous and parallel computing in
 the R ecosystem:
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
-  Implements the first official alternative communications backend for R
-— the ‘MIRAI’ parallel cluster — fulfilling a feature request by R-Core
+  Implements the first official alternative communications backend for
+R, the ‘MIRAI’ parallel cluster, fulfilling a feature request by R-Core
 at R Project Sprint 2023.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
