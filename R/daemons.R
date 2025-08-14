@@ -241,14 +241,12 @@ daemons <- function(
         create_sock(envir, url, cfg[[2L]])
       }
       create_profile(envir, .compute, 0L, dots)
+      envir <- NULL
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
         on.exit()
       }
-    } else {
-      daemons(0, .compute = .compute)
-      return(eval(match.call()))
     }
   } else {
     signal <- is.null(n)
@@ -277,11 +275,25 @@ daemons <- function(
         launch_daemons(seq_len(n), dots, envir)
       }
       create_profile(envir, .compute, n, dots)
-    } else {
-      daemons(0, .compute = .compute)
-      return(eval(match.call()))
+      envir <- NULL
     }
   }
+
+  is.null(envir) || return({
+    daemons(0, .compute = .compute)
+    daemons(
+      n = n,
+      url = url,
+      remote = remote,
+      dispatcher = dispatcher,
+      ...,
+      seed = seed,
+      serial = serial,
+      tls = tls,
+      pass = pass,
+      .compute = .compute
+    )
+  })
 
   invisible(`class<-`(.compute, "miraiDaemons"))
 }
