@@ -154,7 +154,6 @@
 #' @export
 #'
 mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
 
