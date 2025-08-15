@@ -177,6 +177,7 @@ daemon <- function(
     }
   }
 
+  if (otel_tracing) .[["otel_span"]]$end()
   invisible(xc)
 }
 
