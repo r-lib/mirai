@@ -179,6 +179,7 @@ daemon <- function(
     }
   }
 
+  if (otel_tracing) .[["otel_span"]]$end()
   if (!output) {
     sink(type = "message")
     sink()
