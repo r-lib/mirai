@@ -599,7 +599,7 @@ ephemeral_daemon <- function(data, timeout) {
     send_mode = 1L,
     recv_mode = 1L,
     timeout = timeout,
-    cv = NA
+    cv = substitute()
   )
   `attr<-`(.subset2(aio, "aio"), "sock", sock)
   invisible(aio)
