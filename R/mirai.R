@@ -165,7 +165,11 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     ) .expr else expr,
     ._globals_. = globals,
     ._otel_. = if (otel_tracing) {
-      if (length(envir)) otel::local_active_span(envir[["otel_span"]])
+      if (!otel::get_active_span_context()$get_span_id()) {
+        # Nest the otel span within the mirai daemon iff no active span exists
+        # TODO: Make a link
+        otel::local_active_span(envir[["otel_span"]])
+      }
       spn <- otel::start_local_active_span("mirai::mirai")
       otel::pack_http_context()
     }
