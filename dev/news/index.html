@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,7 @@
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>New <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. This works with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
+<li>Each mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier in each session.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
@@ -84,7 +85,7 @@
 <li>The print method includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
 </ul></li>
 <li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
-<li>Requires nanonext &gt;= [1.6.2.9001].</li>
+<li>Requires nanonext &gt;= [1.6.2.9002].</li>
 </ul></div>
 </div>
     <div class="section level2">
