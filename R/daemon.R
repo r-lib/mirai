@@ -118,13 +118,9 @@ daemon <- function(
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
   if (otel_tracing) {
-    `[[<-`(
-      .,
-      "otel_span",
-      otel::start_span(
-        "mirai::daemon",
-        attributes = otel::as_attributes(list(url = url))
-      )
+    spn <- otel::start_local_active_span(
+      "mirai::daemon",
+      attributes = otel::as_attributes(list(url = url))
     )
   }
 
@@ -179,7 +175,6 @@ daemon <- function(
     }
   }
 
-  if (otel_tracing) .[["otel_span"]]$end()
   if (!output) {
     sink(type = "message")
     sink()
@@ -222,10 +217,11 @@ eval_mirai <- function(._mirai_.) {
       {
         list2env(._mirai_.[["._globals_."]], envir = .GlobalEnv)
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
+          currid <- otel::get_active_span_context()$get_span_id()
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
-          otel::start_local_active_span(
+          spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
-            attributes = otel::as_attributes(list(daemon = .[["otel_span"]]$get_context()$get_span_id())),
+            attributes = otel::as_attributes(list(daemon = currid)),
             options = list(parent = prtctx)
           )
         }
