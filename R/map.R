@@ -159,12 +159,11 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
 
   if (otel_tracing) {
     if (is.null(.compute)) .compute <- .[["cp"]]
-    envir <- ..[[.compute]]
-    parent_span <- envir[["otel_span"]]
-    on.exit(`[[<-`(envir, "otel_span", parent_span))
-    otel::local_active_span(parent_span)
-    spn <- otel::start_local_active_span("mirai::mirai_map")
-    `[[<-`(envir, "otel_span", spn)
+    otel::local_active_span(..[[.compute]][["otel_span"]])
+    spn <- otel::start_local_active_span(
+      "mirai::mirai_map",
+      attributes = otel::as_attributes(list(compute_profile = .compute))
+    )
   }
 
   dx <- dim(.x)
