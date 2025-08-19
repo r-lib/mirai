@@ -156,10 +156,12 @@
 mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
+  if (is.null(.compute)) .compute <- .[["cp"]]
 
   if (otel_tracing) {
-    if (is.null(.compute)) .compute <- .[["cp"]]
-    otel::local_active_span(..[[.compute]][["otel_span"]])
+    if (!otel::get_active_span_context()$is_valid()) {
+      otel::local_active_span(..[[.compute]][["otel_span"]])
+    }
     spn <- otel::start_local_active_span(
       "mirai::mirai_map",
       attributes = otel::as_attributes(list(compute_profile = .compute))
