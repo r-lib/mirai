@@ -296,7 +296,6 @@ daemons <- function(
   })
 
   if (otel_tracing) {
-    envir <- ..[[.compute]]
     `[[<-`(
       envir,
       "otel_span",
