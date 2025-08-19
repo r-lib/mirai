@@ -1,7 +1,7 @@
 Type: Package
 Package: mirai
 Title: Minimalist Async Evaluation Framework for R
-Version: 2.4.1.9001
+Version: 2.4.1.9002
 Authors@R: c(
     person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0750-061X")),
@@ -27,7 +27,7 @@ BugReports: https://github.com/r-lib/mirai/issues
 Depends: 
     R (>= 3.6)
 Imports: 
-    nanonext (>= 1.6.2.9001)
+    nanonext (>= 1.6.2.9002)
 Suggests: 
     cli,
     litedown

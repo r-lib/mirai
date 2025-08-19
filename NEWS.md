@@ -11,6 +11,7 @@
 
 * New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
+* Each mirai now has an attribute `id`, which is a monotonically increasing integer identifier in each session.
 
 #### Updates
 
@@ -31,7 +32,7 @@
   + Preserves the original condition classes and may be re-thrown as the original condition (thanks @sebffischer, #400).
   + The print method includes the customary additional line break (thanks @sebffischer, #399).
 * A `mirai()` evaluated on an ephemeral daemon returns invisibly, consistent with other cases (#351).
-* Requires nanonext >= [1.6.2.9001].
+* Requires nanonext >= [1.6.2.9002].
 
 # mirai 2.4.1
 

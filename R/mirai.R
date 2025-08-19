@@ -9,7 +9,9 @@
 #' This function will return a 'mirai' object immediately.
 #'
 #' The value of a mirai may be accessed at any time at `$data`, and if yet
-#' to resolve, an 'unresolved' logical NA will be returned instead.
+#' to resolve, an 'unresolved' logical NA will be returned instead. Each mirai
+#' has an attribute `id`, which is a monotonically increasing integer identifier
+#' in each session.
 #'
 #' [unresolved()] may be used on a mirai, returning TRUE if a 'mirai' has yet to
 #' resolve and FALSE otherwise. This is suitable for use in control flow
@@ -419,7 +421,7 @@ stop_mirai <- function(x) {
   aio <- .subset2(x, "aio")
   !is.integer(aio) &&
     attr(aio, "id") > 0 &&
-    query_dispatcher(attr(aio, "context"), c(0L, attr(aio, "id")))
+    query_dispatcher(attr(aio, "context"), c(0L, attr(x, "id")))
 }
 
 #' Query if a mirai is Unresolved

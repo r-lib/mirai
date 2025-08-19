@@ -70,6 +70,7 @@ connection && {
     q / m
   }, m = 2L, .args = environment(), .timeout = 2000L)
   test_identical(call_mirai(m), m)
+  test_type("integer", attr(m, "id"))
   if (!is_error_value(m$data)) test_equal(m$data, 3L)
   Sys.sleep(1L)
   `lang obj` <- quote(m + n + 2L)
