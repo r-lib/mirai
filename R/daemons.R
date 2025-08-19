@@ -228,7 +228,7 @@ daemons <- function(
   envir <- ..[[.compute]]
 
   if (is.character(url)) {
-    if (is.null(envir)) {
+    res <- if (is.null(envir)) {
       url <- url[1L]
       envir <- init_envir_stream(seed)
       dots <- parse_dots(envir, ...)
@@ -241,12 +241,12 @@ daemons <- function(
         create_sock(envir, url, cfg[[2L]])
       }
       create_profile(envir, .compute, 0L, dots)
-      envir <- NULL
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
         on.exit()
       }
+      TRUE
     }
   } else {
     signal <- is.null(n)
@@ -262,7 +262,7 @@ daemons <- function(
       ..[[.compute]] <- NULL -> envir
       return(invisible())
     }
-    if (is.null(envir)) {
+    res <- if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
@@ -275,11 +275,10 @@ daemons <- function(
         launch_daemons(seq_len(n), dots, envir)
       }
       create_profile(envir, .compute, n, dots)
-      envir <- NULL
     }
   }
 
-  is.null(envir) || return({
+  is.null(res) && return({
     daemons(0, .compute = .compute)
     daemons(
       n = n,
