@@ -207,9 +207,15 @@ daemon <- function(
 
 # internals --------------------------------------------------------------------
 
-handle_mirai_error <- function(cnd) invokeRestart("mirai_error", cnd, sys.calls())
+handle_mirai_error <- function(cnd) {
+  if (otel_tracing) dynGet("spn")$set_status("error")
+  invokeRestart("mirai_error", cnd, sys.calls())
+}
 
-handle_mirai_interrupt <- function(cnd) invokeRestart("mirai_interrupt")
+handle_mirai_interrupt <- function(cnd) {
+  if (otel_tracing) dynGet("spn")$set_status("unset")
+  invokeRestart("mirai_interrupt")
+}
 
 eval_mirai <- function(._mirai_.) {
   withRestarts(
