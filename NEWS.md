@@ -9,6 +9,7 @@
 
 #### New Features
 
+* Complete observability of mirai requests by emitting OpenTelemetry traces when tracing is enabled by the otelsdk package (#394).
 * New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
 * Each mirai now has an attribute `id`, which is a monotonically increasing integer identifier in each session.
