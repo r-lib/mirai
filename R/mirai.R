@@ -165,9 +165,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       is.language(.expr)
     ) .expr else expr,
     ._globals_. = globals,
-    ._otel_. = if (otel_tracing) {
-      if (!otel::get_active_span_context()$is_valid() && length(envir)) {
-        # Nest the otel span within the mirai::daemons iff no active span exists
+    ._otel_. = if (otel_tracing && length(envir)) {
+      if (!otel::get_active_span_context()$is_valid()) {
         otel::local_active_span(envir[["otel_span"]])
       }
       spn <- otel::start_local_active_span(
@@ -189,7 +188,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
-  request(
+  req <- request(
     .context(envir[["sock"]]),
     data,
     send_mode = 1L,
@@ -198,6 +197,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
+  if (otel_tracing) spn$set_attribute("mirai_id", attr(req, "id"))
+  invisible(req)
 }
 
 #' Evaluate Everywhere
@@ -609,7 +610,7 @@ ephemeral_daemon <- function(data, timeout) {
     stderr = FALSE,
     wait = FALSE
   )
-  aio <- request(
+  req <- request(
     .context(sock),
     data,
     send_mode = 1L,
@@ -617,8 +618,8 @@ ephemeral_daemon <- function(data, timeout) {
     timeout = timeout,
     cv = substitute()
   )
-  `attr<-`(.subset2(aio, "aio"), "sock", sock)
-  invisible(aio)
+  `attr<-`(.subset2(req, "aio"), "sock", sock)
+  invisible(req)
 }
 
 deparse_safe <- function(x) {
