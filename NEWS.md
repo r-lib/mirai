@@ -10,6 +10,7 @@
 
 #### New Features
 
+* Complete observability of mirai requests by emitting OpenTelemetry traces when tracing is enabled by the otelsdk package (#394).
 * Adds `info()` as an alternative to `status()` for retrieving more succinct information statistics, more convenient for programmatic use (thanks @wlandau, #410).
 * Adds `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   These work with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
