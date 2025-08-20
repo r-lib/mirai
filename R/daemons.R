@@ -259,7 +259,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (otel_tracing) envir[["otel_span"]]$set_status("Ok")$end()
+      if (otel_tracing) envir[["otel_span"]]$set_status("ok")$end()
       ..[[.compute]] <- NULL -> envir
       return(invisible())
     }
