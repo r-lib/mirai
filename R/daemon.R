@@ -230,7 +230,7 @@ eval_mirai <- function(._mirai_.) {
             links = list(daemon = dmn_spn),
             options = list(parent = prtctx)
           )
-          dmn_spn$add_event("eval started", attributes = list(span.id = spn$get_context()$get_span_id()))
+          dmn_spn$add_event("eval start", attributes = list(span.id = spn$get_context()$get_span_id()))
         }
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = .GlobalEnv)
       },
