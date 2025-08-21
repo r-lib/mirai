@@ -142,9 +142,8 @@
 #'
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   missing(.expr) && stop(._[["missing_expression"]])
+  envir <- compute_env(.compute)
 
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
   expr <- substitute(.expr)
   globals <- list(...)
   length(globals) && {
@@ -166,12 +165,11 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     ) .expr else expr,
     ._globals_. = globals,
     ._otel_. = if (otel_tracing && length(envir)) {
-      if (!otel::get_active_span_context()$is_valid()) {
-        otel::local_active_span(envir[["otel_span"]])
-      }
+      active <- otel::get_active_span_context()$is_valid()
       spn <- otel::start_local_active_span(
         "mirai::mirai",
-        attributes = otel::as_attributes(list(compute_profile = .compute))
+        links = if (active) list(compute_profile = envir[["otel_span"]]),
+        options = if (!active) list(parent = envir[["otel_span"]])
       )
       otel::pack_http_context()
     }
