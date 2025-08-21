@@ -304,7 +304,7 @@ daemons <- function(
         attributes = otel::as_attributes(list(
           url = envir[["url"]],
           n = envir[["n"]],
-          dispatcher = envir[["dispatcher"]],
+          dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
           compute_profile = .compute
         ))
       )
