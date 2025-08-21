@@ -223,11 +223,10 @@ eval_mirai <- function(._mirai_.) {
       {
         list2env(._mirai_.[["._globals_."]], envir = .GlobalEnv)
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
-          currid <- otel::get_active_span_context()$get_span_id()
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
-            attributes = otel::as_attributes(list(daemon_id = currid)),
+            links = list(daemon = dynGet("spn")),
             options = list(parent = prtctx)
           )
         }
