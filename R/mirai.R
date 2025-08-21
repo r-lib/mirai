@@ -195,7 +195,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
-  if (otel_tracing) spn$set_attribute("mirai_id", attr(req, "id"))
+  if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
   invisible(req)
 }
 

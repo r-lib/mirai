@@ -118,7 +118,7 @@ daemon <- function(
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
   if (otel_tracing) {
-    spn <- otel::start_local_active_span(
+    dmn_spn <- otel::start_local_active_span(
       "mirai::daemon",
       attributes = otel::as_attributes(list(url = url))
     )
@@ -224,11 +224,13 @@ eval_mirai <- function(._mirai_.) {
         list2env(._mirai_.[["._globals_."]], envir = .GlobalEnv)
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
+          dmn_spn <- dynGet("dmn_spn")
           spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
-            links = list(daemon = dynGet("spn")),
+            links = list(daemon = dmn_spn),
             options = list(parent = prtctx)
           )
+          dmn_spn$add_event("eval started", attributes = list(span.id = spn$get_context()$get_span_id()))
         }
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = .GlobalEnv)
       },
