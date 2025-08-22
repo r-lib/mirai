@@ -159,11 +159,9 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   if (is.null(.compute)) .compute <- .[["cp"]]
 
   if (otel_tracing) {
-    active <- otel::get_active_span_context()$is_valid()
     spn <- otel::start_local_active_span(
       "mirai::mirai_map",
-      links = if (active) list(compute_profile = ..[[.compute]][["otel_span"]]),
-      options = if (!active) list(parent = ..[[.compute]][["otel_span"]])
+      links = list(compute_profile = ..[[.compute]][["otel_span"]])
     )
   }
 
