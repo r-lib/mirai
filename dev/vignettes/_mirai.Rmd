@@ -607,3 +607,13 @@ The daemons settings are saved under the named profile.
 To create a 'mirai' task using a specific compute profile, specify the `.compute` argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired `.compute` argument.
+
+### 9. Random Number Generation
+
+mirai employs L'Ecuyer-CMRG streams for random number generation. This is a widely-adopted, statistically-sound method deemed safe for parallel computation, and the same as that employed by base R's own parallel package.
+
+Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
+
+By default (when the `seed` argument to `daemons()` is `NULL`) mirai initiates a new stream for each daemon launched, in the same manner as base R. This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers or workers would cause mirai to be sent to different workers. Secondly, when using dispatcher, mirai are sent dynamically to the next available daemon, and this is not guaranteed to be the same each time.
+
+Supplying an explicit integer `seed` to `daemons()` turns on reproducible RNG. Instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()`. This is slightly computationally wasteful (although posing a negligible effect on performance), but it does guarantee the same results across runs, and regardless of the number of daemons used.

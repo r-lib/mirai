@@ -29,9 +29,8 @@ On the other hand, if your code previously used the `globals` argument to supply
 Note that this would only work in the case of a named list and not the other forms that `globals` can take.
 
 Regardless of using a `mirai()` or `future_promise()`, we recommend that you pass globals explicitly in production code.
-This is as globals detection is never 100% perfect, and there is always some element of guesswork.
-Edge cases can lead to unpredictable failures or silently incorrect results.
-Explicit passing of variables allows for transparent and reliable behaviour, that remains completely robust over time.
+This is as globals detection is never 100% perfect, and there is always some element of guesswork, with edge cases leading to unpredictable results.
+Explicit passing of variables allows for transparent and reliable behaviour, remaining robust over time.
 
 **Capture globals using `environment()`:**
 
@@ -79,10 +78,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1] 0.2112876 0.9041800 0.7834014
+#> [1] 0.38714685 0.09582403 0.85062845
 #> 
 #> [[2]]
-#> [1] -0.3150949 -1.5628536 -0.3860887
+#> [1] 0.3188942 0.2086956 0.5288199
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {
@@ -113,8 +112,7 @@ The random seed is not reset after each mirai call to ensure that however many r
 
 Hence normally, the random seed should be set once on the host process when daemons are created, rather than in each daemon.
 
-If it is required to set the seed in each daemon, this should be done using an independent method and set each time random draws are required.
-Another option would be to set the random seed within a local execution scope to prevent the global random seed on each daemon from being affected.
+For numerical reproducibility, set the `seed` argument to `daemons()` (see the Random Number Generation section of the reference vignette for further details).
 
 ### 3. Accessing package functions during development
 
