@@ -165,11 +165,10 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     ) .expr else expr,
     ._globals_. = globals,
     ._otel_. = if (otel_tracing && length(envir)) {
-      active <- otel::get_active_span_context()$is_valid()
       spn <- otel::start_local_active_span(
         "mirai::mirai",
-        links = if (active) list(compute_profile = envir[["otel_span"]]),
-        options = list(kind = "client", parent = if (!active) envir[["otel_span"]])
+        links = list(compute_profile = envir[["otel_span"]]),
+        options = list(kind = "client")
       )
       otel::pack_http_context()
     }
