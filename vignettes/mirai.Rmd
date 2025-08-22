@@ -83,9 +83,9 @@ unresolved(m)
 # Do other stuff
 
 collect_mirai(m)
-#> [1] 3.981811 3.211179 4.608007 4.129569 2.873390
+#> [1] 2.825820 3.842733 5.808984 4.915793 2.771071
 m[]
-#> [1] 3.981811 3.211179 4.608007 4.129569 2.873390
+#> [1] 2.825820 3.842733 5.808984 4.915793 2.771071
 ```
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
@@ -99,9 +99,9 @@ args <- list(time = 2L, mean = 4)
 m1 <- mirai(.expr = expr, .args = args)
 m2 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 2.439538 5.664712 5.820245 4.405887 4.009880
+#> [1] 5.747155 3.096813 3.011055 3.950488 3.467498
 m2[]
-#> [1] 4.575898 3.943637 3.164972 1.542555 4.505653
+#> [1] 3.812540 2.567866 4.761930 3.714069 2.813790
 ```
 By running the above two calculations in parallel, they take roughly half the time as running sequentially (minus a relatively inconsequential parallelization overhead).
 
@@ -165,9 +165,9 @@ for (i in 1:10) {
 #> iteration 3 successful
 #> iteration 4 successful
 #> iteration 5 successful
+#> Error: random error
 #> iteration 6 successful
 #> iteration 7 successful
-#> Error: random error
 #> iteration 8 successful
 #> iteration 9 successful
 #> iteration 10 successful
@@ -211,8 +211,7 @@ m3$data$stack.trace
 #> [[2]]
 #> f(1)
 ```
-Elements of the original error condition are also accessible via `$` on the error object.
-For example, additional metadata recorded by `rlang::abort()` is preserved:
+A 'miraiError' inherits from the original condition classes and hence can be caught or re-thrown. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
 
 ``` r
 f <- function(x) if (x > 0) stop("positive")
@@ -287,7 +286,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://b1379cc31bd3ab70ab8177ce"
+#> [1] "ipc:///tmp/130164c8ebee629bd7eab602"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -325,7 +324,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://8eea003087abef8dd2dbcca0"
+#> [1] "ipc:///tmp/2ef3f6b12e08ecf8ef29e17f"
 ```
 
 #### Everywhere
@@ -417,7 +416,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.1.71:39247"
+#> [1] "tcp://10.246.62.139:53122"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -592,7 +591,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:44331")'
+#> Rscript -e 'mirai::daemon("tcp://10.246.62.139:53127")'
 daemons(0)
 ```
 
@@ -615,36 +614,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:33845",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
-#> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
-#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
-#> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEA0BKJWPjcIw3arv13ASXaclBtWvNI9+rcMfS6MsaD
-#> qQU15NuudCwzKnWe85TqYCfcFHbZh/n3Oa55zT/uFNd9Qu2sCq+P3+X6VycR2VNg
-#> sRroHze2TICBItL5LqGRk6NF+65VstODhEioG8oHyWI288GUnx2RvhUZda5vv1m7
-#> 8S3iKnTXFDBVf3sGxJnn4GZEfiZCBsCQcjSWuBomQMJOmFLlzcspJlLPDBsXFqud
-#> BuHILT6xGhehRNcTpTz5tU1BXlbhE8jG+kgQEZ4Ixzzztj2VfxC3zJgbgaB0bkmH
-#> Ch2M9Mw0+BmbVgaquz7Px+hfA9ifR/ByCT8EjPwdf+7Byx6xtLvsnnCFDcSUg+St
-#> TqGHWblfdeZDSBXIAwfFbqtGQRgObw1aY5x9u73b4gTtHyTW/WtSnr2slhfGYcph
-#> GKGW45EAAjMNi4EDyCeyqlE6mNeFDXRiyfnFq+fmBGVCpqZJIbrdEd1XX+gnCFqL
-#> 2aB89L2JR0X0A6bN74FpJv5xvr4hIS+xeQTjdXnQu4F0Ddor4OZkAru7tOBbE+w0
-#> zq2HkjAzZbMBRh3378q+mERh+RaZhvLm0nEkdCg9edwLAdtSc3rFwBRn5a+2mLqD
-#> bzrPsjoJUsNd42Sratr+miQ8iaEJoYrM1qUroq6Jzju3Um4rh2lE62ck2vd8+JBZ
-#> f20CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUL5j3PAL4
-#> uGO/brZqyILmGEswJHQwHwYDVR0jBBgwFoAUL5j3PAL4uGO/brZqyILmGEswJHQw
-#> DQYJKoZIhvcNAQELBQADggIBAA5v5NDYSF8MVw7t2q64Pi1QmXWEEk6sl4O0+B05
-#> CXKuxScRdoO1hJMG81kBt16FHwAQtaQaGG7Gkgf2aYbJsbykQXEqpdOfgUn+9DAJ
-#> 6l+rj7kX2STZa6ab2jZp2qnG1Usb7B8qMR0lfMVSl/WYVKH2tTT2t+2Kaigmr8E4
-#> FsUvkxHqjww7Vhn5Tnxlo7CerHMGlh/MtzY1NItTdfglBLSwigXwFFYlikVaOLS0
-#> iUfb/SVpjXdTdg8YBzDPdVrbMVPyHNqqOfmWUvWwXPp7JbB9D/ptCVRL7iiIrvQG
-#> zSBxf1ONTSrG+9juWzGimhlpDjI/4c+Qp3wy0a3W20kpzDnRH+APOWwA4+GixxtS
-#> j8ofbnkc1CEnJ/qau5fAt3JocNcth1UGnsRXFAtrH7KqB+mOnNwY4oD4cVmNRqIo
-#> 19CkKJD+5CVO70z6s0N3CZpL0g8BiKEpnvvzLrktS/1CVquN4XHesMOeeIhu93tX
-#> 4aCA3CCJzCvWoZihzicvT7Ol8jDibCQqnrLVPqravqOLMk9Iz7xUNheMG6njr/Zv
-#> T3O9Dg5nV9FmtIicSHMa1tcGxJ0Z6U/ubpwCFOrbvSV3oHD3SUeIe6CexjPq9Cql
-#> ZtoALoQUdrCCtBuzDeXo3rjo4i4f8MQnQFYjHV4RKDpE5N1t4i9wYK+uqskKet4Y
-#> ncJt
+#> Rscript -e 'mirai::daemon("tls+tcp://10.246.62.139:53131",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xMC4y
+#> NDYuNjIuMTM5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xMC4yNDYuNjIu
+#> MTM5MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQDVROsUMaz/zZopWtvzkfJPyMYpHm3CmFIVkcmn
+#> dfSaOiEqOe34Odcki76GdToIgbUsockBrzUIn0zpuUOWfRnBfbrXu62N8G7QAuJ3
+#> 6nSM8frjOfkxLZs+QyIXsbr1XDh62qbJaW8NlFjqbrc+YejxM+WjtHun6bEgK+N8
+#> 3Cq/AVebylxBn49r6Agh7e8tmFdMWN3TCUZKwXZxi8a+8aIIseejmQ4U8Kpq6RCJ
+#> xt7cbc34P0a39I+oqOLUWfoy70Ytj82uQfZIzyYP0lmTNJGozmz2+/sMpTJUS6zj
+#> CgKuBieG0H2vZe7RZlNPT8ClLle5yG8gFgUqAm3fCJGND3E2PrrXpfmiEE84MjAn
+#> qfEsa/+7heRV7jjLk4IxRZIZw3UV7w/RG8z7vMfCiWYhhIELZmoxauKIOg/mc2eR
+#> upVAeK/nhrqBo+vQ/yfh4GnPy5HkDWvo4POduIYOfi94GXHFaIMkuqy0Ojzoae9r
+#> 4FzZtTaO3uEy1SaywBdc7CEVgE1BJi8ka/+s0GlCs9WXCKrF+dIlHdOSR+1TO4Ko
+#> jqASUlnrupIaC8Q5FgYg8TJDlliK+rfR1kdWQSlvvCxlHbntXyoEQbP80SEuobgW
+#> Y6GIEfWJ+ZNnPDjnveytHNS2tQoNzL6y4qprHz9ksfsqRc3Nke7k3xSjo6rjKeqb
+#> HJQIZQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBTQPSj2
+#> pW0KmX+EV0PSwTCpH/9Q2TAfBgNVHSMEGDAWgBTQPSj2pW0KmX+EV0PSwTCpH/9Q
+#> 2TANBgkqhkiG9w0BAQsFAAOCAgEAqVGgBIV9eugmGGv6FGEf0tmm8HxCf5ywFJ+B
+#> 7KtgoIAq9GeDjKXhpc1H9RHB3Zv5+Baxq2ecnYkVr8qeVLFM/ileiYB3skod0Pgh
+#> uK2hP0qkZO5lWaYu72YiGPM/i/ub33kSOhuEae3c3H0+dEbNa/gizrV08BUXks+D
+#> PsA0eryTL4Cxr+gzh7EuggJokd7OAkYV9ZiE2uw3T6NCx0atb5uMFyHi63Q5bmG7
+#> lsmJ066J8KuB0HwwQZL290PLXuQBGmGijCSo1CESyKCBpmXlSCavj/DGZuPmwzny
+#> G4cWFY0Sft6I5+kNj3QP+nIpOT2C5o5NRPmuK2/OAYuX2jTXtMdG6AooWeCuinOz
+#> raLA7Gj91knOQqwkceVFKdZvvnmUB4niAS9OGxB9hCkJt3NSAJrrM2A5Y7/xLjDj
+#> wElwM1QCCILoxYNqpXSRiRYrvtzaM56zxxkURgP3QzxLPHU4AtQWUJQKpDtSJ8lF
+#> Fbc9czfVEnBsi1RlVCEt2P7I3QxTVjFBkQuFCjlWHpgMq7QYGNLlzRAdkHn03KBp
+#> VzbUUDytJdKERQKJaR24BzG77ptHDS2vejPmnJ1wWGvjjeTDn37KRnkBM/tJOnHc
+#> fhbgkijCfojLOFiTCV+iX3V+Z7XLWlLBihNbGNxF1xXRegQB1WddzC+UVj04fgZa
+#> B2o1ZUQ=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -690,3 +689,13 @@ The daemons settings are saved under the named profile.
 To create a 'mirai' task using a specific compute profile, specify the `.compute` argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired `.compute` argument.
+
+### 9. Random Number Generation
+
+mirai employs L'Ecuyer-CMRG streams for random number generation. This is a widely-adopted, statistically-sound method deemed safe for parallel computation, and the same as that employed by base R's own parallel package.
+
+Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
+
+By default (when the `seed` argument to `daemons()` is `NULL`) mirai initiates a new stream for each daemon launched, in the same manner as base R. This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers or workers would cause mirai to be sent to different workers. Secondly, when using dispatcher, mirai are sent dynamically to the next available daemon, and this is not guaranteed to be the same each time.
+
+Supplying an explicit integer `seed` to `daemons()` turns on reproducible RNG. Instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()`. This is slightly computationally wasteful (although posing a negligible effect on performance), but it does guarantee the same results across runs, and regardless of the number of daemons used.
