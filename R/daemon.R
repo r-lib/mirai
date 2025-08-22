@@ -228,7 +228,7 @@ eval_mirai <- function(._mirai_.) {
           spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
             links = list(daemon = dmn_spn),
-            options = list(parent = prtctx)
+            options = list(kind = "server", parent = prtctx)
           )
           dmn_spn$add_event("eval start", attributes = list(span.id = spn$get_context()$get_span_id()))
         }

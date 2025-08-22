@@ -169,7 +169,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       spn <- otel::start_local_active_span(
         "mirai::mirai",
         links = if (active) list(compute_profile = envir[["otel_span"]]),
-        options = if (!active) list(parent = envir[["otel_span"]])
+        options = list(kind = "client", parent = if (!active) envir[["otel_span"]])
       )
       otel::pack_http_context()
     }
