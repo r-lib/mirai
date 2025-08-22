@@ -123,10 +123,10 @@ take.</p>
 <p>Regardless of using a <code><a href="../reference/mirai.html">mirai()</a></code> or
 <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you pass globals
 explicitly in production code. This is as globals detection is never
-100% perfect, and there is always some element of guesswork. Edge cases
-can lead to unpredictable failures or silently incorrect results.
-Explicit passing of variables allows for transparent and reliable
-behaviour, that remains completely robust over time.</p>
+100% perfect, and there is always some element of guesswork, with edge
+cases leading to unpredictable results. Explicit passing of variables
+allows for transparent and reliable behaviour, remaining robust over
+time.</p>
 <p><strong>Capture globals using
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>:</strong></p>
 <p><code><a href="../reference/mirai.html">mirai()</a></code> allows passing an environment to
@@ -175,10 +175,10 @@ runs.</p>
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 0.2112876 0.9041800 0.7834014</span></span>
+<span><span class="co">#&gt; [1] 0.38714685 0.09582403 0.85062845</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] -0.3150949 -1.5628536 -0.3860887</span></span>
+<span><span class="co">#&gt; [1] 0.3188942 0.2086956 0.5288199</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -211,11 +211,9 @@ in any mirai call, the next random draw follows on in the stream, and
 hence have the desired statistical properties.</p>
 <p>Hence normally, the random seed should be set once on the host
 process when daemons are created, rather than in each daemon.</p>
-<p>If it is required to set the seed in each daemon, this should be done
-using an independent method and set each time random draws are required.
-Another option would be to set the random seed within a local execution
-scope to prevent the global random seed on each daemon from being
-affected.</p>
+<p>For numerical reproducibility, set the <code>seed</code> argument to
+<code><a href="../reference/daemons.html">daemons()</a></code> (see the Random Number Generation section of the
+reference vignette for further details).</p>
 </div>
 <div class="section level3">
 <h3 id="accessing-package-functions-during-development">3. Accessing package functions during development<a class="anchor" aria-label="anchor" href="#accessing-package-functions-during-development"></a>
