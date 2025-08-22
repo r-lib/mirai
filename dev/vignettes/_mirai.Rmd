@@ -187,8 +187,7 @@ m3[]
 
 m3$data$stack.trace
 ```
-Elements of the original error condition are also accessible via `$` on the error object.
-For example, additional metadata recorded by `rlang::abort()` is preserved:
+A 'miraiError' inherits from the original condition classes and hence can be caught or re-thrown. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
 ```{r}
 #| label: metaexample
 f <- function(x) if (x > 0) stop("positive")
