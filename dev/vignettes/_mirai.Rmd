@@ -588,9 +588,44 @@ To create a 'mirai' task using a specific compute profile, specify the `.compute
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired `.compute` argument.
 
+#### `with_daemons()` and `local_daemons()`
+
+`daemons()` returns (invisibly) the compute profile of daemons created as a character string. Supplying this to `with_daemons()` or `local_daemons()` automatically sets the default compute profile of all package functions within the relevant scope.
+
+```{r}
+#| label: withdaemons
+d1 <- daemons(1, .compute = "cpu")
+d2 <- daemons(2, .compute = "gpu")
+
+with_daemons(d1, {
+  s1 <- status()
+  m1 <- mirai(Sys.getpid())
+})
+
+with_daemons(d2, {
+  s2 <- status()
+  m2 <- mirai(Sys.getpid())
+  m3 <- mirai(Sys.getpid(), .compute = "cpu")
+  local_daemons(d1)
+  m4 <- mirai(Sys.getpid())
+})
+
+s1
+m1[]
+
+s2
+m2[] # different to m1
+
+m3[] # same as m1
+m4[] # same as m1
+
+with_daemons("cpu", daemons(0))
+with_daemons("gpu", daemons(0))
+```
+
 #### With Method
 
-`daemons()` has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion. All mirai calls within the `with()` clause default to using the compute profile of the daemons created.
+`daemons()` also has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion. All package functions within the `with()` scope default to using the compute profile of the daemons created.
 
 It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
 
