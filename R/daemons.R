@@ -456,25 +456,33 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #'   For **local_daemons**: invisible NULL.
 #'
 #' @examplesIf interactive()
-#' daemons(1, dispatcher = FALSE, .compute = "gpu")
-#' status()
+#' d1 <- daemons(1, dispatcher = FALSE, .compute = "cpu")
+#' d2 <- daemons(1, dispatcher = FALSE, .compute = "gpu")
 #'
-#' with_daemons("gpu", {
-#'   m <- mirai("running on gpu")
-#'   status()
+#' with_daemons(d1, {
+#'   s1 <- status()
+#'   m1 <- mirai(Sys.getpid())
 #' })
-#' m[]
 #'
-#' status()
+#' with_daemons(d2, {
+#'   s2 <- status()
+#'   m2 <- mirai(Sys.getpid())
+#'   m3 <- mirai(Sys.getpid(), .compute = "cpu")
+#'   local_daemons(d1)
+#'   m4 <- mirai(Sys.getpid())
+#' })
 #'
-#' gpu_func <- function() {
-#'   local_daemons("gpu")
-#'   mirai("running on gpu")
-#' }
-#' m <- gpu_func()
-#' m[]
+#' s1$daemons
+#' m1[]
 #'
-#' daemons(0, .compute = "gpu")
+#' s2$daemons
+#' m2[] # different to m1
+#'
+#' m3[] # same as m1
+#' m4[] # same as m1
+#'
+#' with_daemons("cpu", daemons(0))
+#' with_daemons("gpu", daemons(0))
 #'
 #' @export
 #'

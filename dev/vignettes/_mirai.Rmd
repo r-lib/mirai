@@ -595,7 +595,7 @@ Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` s
 ```{r}
 #| label: withdaemons
 d1 <- daemons(1, .compute = "cpu")
-d2 <- daemons(2, .compute = "gpu")
+d2 <- daemons(1, .compute = "gpu")
 
 with_daemons(d1, {
   s1 <- status()
@@ -610,10 +610,10 @@ with_daemons(d2, {
   m4 <- mirai(Sys.getpid())
 })
 
-s1
+s1$daemons
 m1[]
 
-s2
+s2$daemons
 m2[] # different to m1
 
 m3[] # same as m1
