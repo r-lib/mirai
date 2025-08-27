@@ -155,6 +155,9 @@
 #' Note: further actions such as resetting daemons via `daemons(0)` should
 #' be carried out with the desired `.compute` argument specified.
 #'
+#' @seealso [with_daemons()] and [local_daemons()] for managing the compute
+#'   profile used locally.
+#'
 #' @examplesIf interactive()
 #' # Create 2 local daemons (using dispatcher)
 #' daemons(2)
