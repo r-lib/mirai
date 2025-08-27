@@ -39,7 +39,7 @@ A mirai is either *unresolved* if the result has yet to be received, or *resolve
 For a mirai `m`, the result is available at `m$data` once it has resolved.
 Normally this will be the return value of the evaluated expression.
 If the expression errored, caused the process to crash, or timed out then this will be an 'errorValue' instead.
-See the section [Errors in a mirai](#errors-in-a-mirai) below.
+See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
@@ -161,7 +161,7 @@ for (i in 1:10) {
 By testing the return value of each mirai for errors, error-handling code is able to automate recovery and re-attempts, as above.
 The result is a resilient and fault-tolerant pipeline that minimizes downtime by eliminating interruptions of long computes.
 
-### 3. Errors in a mirai
+### 3. Error Handling
 
 If execution in a mirai fails, the error message is returned as a character string of class 'miraiError' and 'errorValue' to facilitate debugging.
 
@@ -218,7 +218,17 @@ is_error_value(m5$data)
 ```
 `is_error_value()` tests for all mirai execution errors, user interrupts and timeouts.
 
-### 4. Local Daemons
+### 4. Random Number Generation
+
+mirai employs L'Ecuyer-CMRG streams for random number generation in the same way as base R's own parallel package. This is a widely-adopted, statistically-sound method, suitable for parallel computation.
+
+Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
+
+By default (when the `seed` argument to `daemons()` is `NULL`) mirai initiates a new stream for each daemon launched, in the same manner as base R. This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers of daemons would cause mirai tasks to be sent to different daemons. Secondly, when using dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same one on each run.
+
+Supplying an explicit integer `seed` to `daemons()` turns on reproducible RNG. Instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()`. This is slightly computationally wasteful (although posing a negligible effect on performance), but it does guarantee the same results across runs, and regardless of the number of daemons used.
+
+### 5. Local Daemons
 
 Daemons, or persistent background processes, may be set to receive `mirai()` requests.
 
@@ -286,7 +296,7 @@ Requesting the status now shows 6 connections, along with the host URL:
 status()
 ```
 
-#### Everywhere
+#### everywhere()
 
 `everywhere()` may be used to evaluate an expression on all connected daemons and persist the resultant state, regardless of a daemon's 'cleanup' setting.
 ```{r}
@@ -330,7 +340,7 @@ everywhere(
 daemons(0)
 ```
 
-### 5. Remote Daemons
+### 6. Remote Daemons
 
 The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
 
@@ -361,9 +371,9 @@ daemons(0)
 ```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
-### 6. Launching Remote Daemons
+### 7. Launching Remote Daemons
 
-The launcher analogy is appropriate, as these are ways of executing a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
+The launcher analogy is appropriate, as these are ways of deploying a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
 
 The local launcher simply runs an `Rscript` instance via a local shell. The remote launcher uses a method to run this `Rscript` command on a remote machine.
 
@@ -377,7 +387,7 @@ There are currently 3 options for generating remote launch configurations:
 
 The return value of all of these functions is a simple list. This means that they may be pre-constructed, saved and re-used whenever the same configuration is required.
 
-#### i. SSH Direct Connection
+#### SSH Direct Connection
 
 This method is appropriate for internal networks and in trusted, properly-configured environments where it is safe for your machine to accept incoming connections on certain ports.
 In the examples below, the remote daemons connect back directly to port 5555 on the local machine.
@@ -405,7 +415,7 @@ daemons(
 )
 ```
 
-#### ii. SSH Tunnelling
+#### SSH Tunnelling
 
 Use SSH tunnelling to launch daemons on any machine you are able to access via SSH, whether on the local network or the cloud.
 SSH key-based authentication must already be in place, but no other configuration is required.
@@ -436,7 +446,7 @@ daemons(
 )
 ```
 
-#### iii. HPC Cluster Resource Managers
+#### HPC Cluster Resource Managers
 
 `cluster_config()` may be used to deploy daemons using a cluster resource manager / scheduler.
 
@@ -494,7 +504,7 @@ daemons(
 )
 ```
 
-#### iv. Generic Remote Configuration
+#### Generic Remote Configuration
 
 `remote_config()` provides a generic, flexible framework for running any shell command that may be used to deploy daemons.
 
@@ -514,7 +524,7 @@ daemons(
 )
 ```
 
-#### v. Manual Deployment
+#### Manual Deployment
 
 As an alternative to automated launches, calling `launch_remote()` without specifying 'remote' may be used to return the shell commands for deploying daemons manually.
 
@@ -526,7 +536,7 @@ launch_remote()
 daemons(0)
 ```
 
-### 7. TLS Secure Connections
+### 8. TLS Secure Connections
 
 TLS provides a robust solution for securing communications from the local machine to remote daemons.
 
@@ -574,7 +584,7 @@ The CA may be a public CA or internal to an organisation.
   - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to 'tlscert'.
   - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tlscert' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
-### 8. Compute Profiles
+### 9. Compute Profiles
 
 `daemons()` has a `.compute` argument to specify separate sets of daemons (*compute profiles*) that operate totally independently. This is useful for managing tasks with heterogeneous compute requirements:
 
@@ -642,13 +652,3 @@ Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitl
 
 In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
 In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are torn down.
-
-### 9. Random Number Generation
-
-mirai employs L'Ecuyer-CMRG streams for random number generation. This is a widely-adopted, statistically-sound method deemed safe for parallel computation, and the same as that employed by base R's own parallel package.
-
-Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
-
-By default (when the `seed` argument to `daemons()` is `NULL`) mirai initiates a new stream for each daemon launched, in the same manner as base R. This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers or workers would cause mirai to be sent to different workers. Secondly, when using dispatcher, mirai are sent dynamically to the next available daemon, and this is not guaranteed to be the same each time.
-
-Supplying an explicit integer `seed` to `daemons()` turns on reproducible RNG. Instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()`. This is slightly computationally wasteful (although posing a negligible effect on performance), but it does guarantee the same results across runs, and regardless of the number of daemons used.
