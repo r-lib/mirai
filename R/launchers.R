@@ -49,7 +49,7 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
-  dots <- if (missing(..1)) envir[["dots"]] else parse_dots(envir, ...)
+  dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   if (is.null(tls)) tls <- envir[["tls"]]
   for (i in seq_len(n)) {
     launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls))
@@ -91,7 +91,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
-  dots <- if (missing(..1)) envir[["dots"]] else parse_dots(envir, ...)
+  dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   if (is.null(tls)) tls <- envir[["tls"]]
 
   command <- remote[["command"]]

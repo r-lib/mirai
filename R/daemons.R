@@ -606,7 +606,7 @@ req_socket <- function(url, tls = NULL) {
 }
 
 parse_dots <- function(envir, ...) {
-  missing(..1) && return("")
+  ...length() || return("")
   dots <- list(...)
   if (any(names(dots) == "tlscert")) {
     `[[<-`(envir, "tls", dots[["tlscert"]])
