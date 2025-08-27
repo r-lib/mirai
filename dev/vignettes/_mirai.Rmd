@@ -330,26 +330,6 @@ everywhere(
 daemons(0)
 ```
 
-#### With Method
-
-`daemons()` has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion.
-
-It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
-
-```{r}
-#| label: withshiny
-#| eval: false
-with(daemons(4), shiny::runApp(app))
-```
-
-> Note: it is assumed the app is already created.
-Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitly called when the app is printed, however printing occurs only after `with()` has returned, hence the app would run outside of the scope of the `with()` statement.
-
-In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
-In the case of other expressions, be sure to call the results (or collect the values) of all mirai within the expression to ensure that they all complete before the daemons are torn down.
-
-If specifying a [compute profile](#compute-profiles) for the `daemons()` call, all calls with `.compute = NULL` within the `with()` clause will default to this compute profile.
-
 ### 5. Remote Daemons
 
 The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
@@ -607,6 +587,26 @@ The daemons settings are saved under the named profile.
 To create a 'mirai' task using a specific compute profile, specify the `.compute` argument to `mirai()`, which uses the 'default' compute profile if this is `NULL`.
 
 Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` should be specified with the desired `.compute` argument.
+
+#### With Method
+
+`daemons()` has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion. All mirai calls within the `with()` clause default to using the compute profile of the daemons created.
+
+It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
+
+```{r}
+#| label: withshiny
+#| eval: false
+with(daemons(4), shiny::runApp(app))
+# Or:
+with(daemons(4, .compute = "shiny"), shiny::runApp(app))
+```
+
+> Note: it is assumed the app is already created.
+Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitly called when the app is printed, however printing occurs only after `with()` has returned, hence the app would run outside of the scope of the `with()` statement.
+
+In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
+In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are torn down.
 
 ### 9. Random Number Generation
 
