@@ -248,3 +248,7 @@ daemons(
 }
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\code{\link[=with_daemons]{with_daemons()}} and \code{\link[=local_daemons]{local_daemons()}} for managing the compute
+profile used locally.
+}
