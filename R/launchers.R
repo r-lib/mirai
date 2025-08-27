@@ -94,10 +94,8 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   tls <- envir[["tls"]]
 
-  if (length(remote) == 2L) {
-    platform <- remote[["platform"]]
+  if (length(remote) == 2L && remote[["platform"]] == "posit_workbench") {
     args <- remote[["args"]]
-    platform != "posit" && stop(._[["platform_unsupported"]])
     tools <- posit_tools()
     is.environment(tools) || stop(._[["posit_api"]])
     return(posit_workbench_launch(n, args, tools))
@@ -401,14 +399,10 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
 }
 
-#' Cloud Remote Launch Configuration
+#' Posit Workbench Launch Configuration
 #'
-#' Generates a remote configuration for launching daemons via cloud /
-#' cloud-based managed platforms.
-#'
-#' @param platform \[default "posit"\] character name of the platform
-#'   (case-insensitive). Currently the only option is "posit" to use the Posit
-#'   Workbench launcher.
+#' Generates a remote configuration for launching daemons via the default
+#' configured Posit Workbench launcher method.
 #'
 #' @inherit remote_config return
 #'
@@ -416,30 +410,21 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'   types of remote launch configuration.
 #'
 #' @examples
-#' tryCatch(cloud_config(), error = identity)
+#' tryCatch(posit_workbench_config(), error = identity)
 #'
 #' \dontrun{
 #'
 #' # Launch 2 daemons using the Posit Workbench default:
-#' daemons(n = 2, url = host_url(), remote = cloud_config(platform = "posit"))
+#' daemons(n = 2, url = host_url(), remote = posit_workbench_config())
 #' }
 #'
 #' @export
 #'
-cloud_config <- function(platform = "posit") {
-  platform <- tolower(platform)
-  args <- switch(
-    platform,
-    posit = {
-      tools <- posit_tools()
-      is.environment(tools) || stop(._[["posit_api"]])
-      get_info <- .subset2(tools, ".rs.api.launcher.getInfo")
-      cluster <- get_info()[["clusters"]][[1L]]
-      list(name = cluster[["name"]], image = cluster[["defaultImage"]])
-    },
-    stop(._[["platform_unsupported"]])
-  )
-  list(platform = platform, args = args)
+posit_workbench_config <- function() {
+  tools <- posit_tools()
+  is.null(tools) && stop(._[["posit_api"]])
+  args <- posit_get_info(tools)
+  list(platform = "posit_workbench", args = args)
 }
 
 #' URL Constructors
@@ -528,17 +513,37 @@ find_dot <- function(args) {
 }
 
 posit_tools <- function() {
-  idx <- match("tools:rstudio", search(), nomatch = 0L)
-  idx || return()
-  tools <- as.environment(idx)
-  feature_available <- .subset2(tools, ".rs.api.launcher.jobsFeatureAvailable")
-  is.function(feature_available) && feature_available() || return()
-  tools
+  from_json <- get0(".rs.fromJSON")
+  cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  server <- Sys.getenv("RS_SERVER_ADDRESS")
+  is.function(from_json) && nzchar(cookie) && nzchar(server) || return()
+  list(from_json = from_json, cookie = cookie, server = server)
+}
+
+posit_get_info <- function(tools) {
+  info <- ncurl(
+    url = file.path(tools[["server"]], "api", "get_compute_envs"),
+    headers = c(cookie = tools[["cookie"]])
+  )
+  data <- tools[["from_json"]](info[["data"]])
+  cluster <- .subset2(data, c(1L, 1L, 1L))
+  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
 }
 
 posit_workbench_launch <- function(n, args, tools) {
-  submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
-  new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
+  tools <- posit_tools()
+  json <- sprintf(
+    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"name":"mirai_daemon","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
+    args[["name"]],
+    args[["image"]],
+    nextget("url")
+  )
+  info <- ncurl(
+    url = file.path(tools[["server"]], "api", "launch_job"),
+    method = "POST",
+    headers = c(cookie = tools[["cookie"]]),
+    data = json
+  )
   cluster <- args[["name"]]
   container <- new_container(args[["image"]])
   cmds <- launch_remote(n)
