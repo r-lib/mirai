@@ -4,7 +4,10 @@
 \alias{posit_workbench_config}
 \title{Posit Workbench Launch Configuration}
 \usage{
-posit_workbench_config()
+posit_workbench_config(apikey = Sys.getenv("PWB_API_KEY"))
+}
+\arguments{
+\item{apikey}{your 32 character Posit Workbench API key.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

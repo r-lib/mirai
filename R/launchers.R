@@ -94,11 +94,9 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   tls <- envir[["tls"]]
 
-  if (length(remote) == 2L && remote[["platform"]] == "posit_workbench") {
-    args <- remote[["args"]]
-    tools <- posit_tools()
-    is.environment(tools) || stop(._[["posit_api"]])
-    return(posit_workbench_launch(n, args, tools))
+  if (length(remote) == 2L) {
+    remote[["platform"]] == "posit_workbench" || stop(._[["posit_api"]])
+    return(posit_workbench_launch(n, args, Sys.getenv("PWB_API_KEY")))
   }
 
   command <- remote[["command"]]
@@ -404,6 +402,8 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' Generates a remote configuration for launching daemons via the default
 #' configured Posit Workbench launcher method.
 #'
+#' @param apikey your 32 character Posit Workbench API key.
+#'
 #' @inherit remote_config return
 #'
 #' @seealso [ssh_config()], [cluster_config()], and [remote_config()] for other
@@ -420,10 +420,9 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'
 #' @export
 #'
-posit_workbench_config <- function() {
-  tools <- posit_tools()
-  is.null(tools) && stop(._[["posit_api"]])
-  args <- posit_get_info(tools)
+posit_workbench_config <- function(apikey = Sys.getenv("PWB_API_KEY")) {
+  args <- posit_get_info(apikey)
+  is.null(args) && stop(._[["posit_api"]])
   list(platform = "posit_workbench", args = args)
 }
 
@@ -512,48 +511,32 @@ find_dot <- function(args) {
   sel
 }
 
-posit_tools <- function() {
-  from_json <- get0(".rs.fromJSON")
-  cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+posit_get_info <- function(apikey) {
   server <- Sys.getenv("RS_SERVER_ADDRESS")
-  is.function(from_json) && nzchar(cookie) && nzchar(server) || return()
-  list(from_json = from_json, cookie = cookie, server = server)
-}
-
-posit_get_info <- function(tools) {
+  nzchar(server) || return()
   info <- ncurl(
-    url = file.path(tools[["server"]], "api", "get_compute_envs"),
-    headers = c(cookie = tools[["cookie"]])
+    url = file.path(server, "api", "get_compute_envs"),
+    headers = c(Authorization = sprintf("Bearer %s", apikey))
   )
-  data <- tools[["from_json"]](info[["data"]])
-  cluster <- .subset2(data, c(1L, 1L, 1L))
-  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
+  info[["status"]] == 200L || return()
+  json <- info[["data"]]
+  image <- sub('.*"defaultImage"\\s*:\\s*"([^"]*)".*', '\\1', json, perl = TRUE)
+  list(name = "Kubernetes", image = image)
 }
 
-posit_workbench_launch <- function(n, args, tools) {
-  tools <- posit_tools()
+posit_workbench_launch <- function(n, args, apikey) {
+  server <- Sys.getenv("RS_SERVER_ADDRESS")
+  nzchar(server) || return()
   json <- sprintf(
-    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"name":"mirai_daemon","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
+    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"resourceProfile":"default","name":"mirai_daemon","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
     args[["name"]],
     args[["image"]],
     nextget("url")
   )
-  info <- ncurl(
-    url = file.path(tools[["server"]], "api", "launch_job"),
+  res <- ncurl(
+    url = file.path(server, "api", "launch_job"),
     method = "POST",
-    headers = c(cookie = tools[["cookie"]]),
+    headers = c(Authorization = sprintf("Bearer %s", apikey)),
     data = json
   )
-  cluster <- args[["name"]]
-  container <- new_container(args[["image"]])
-  cmds <- launch_remote(n)
-  lapply(cmds, function(cmd)
-    submit_job(
-      sprintf("mirai_daemon_%s", random(3L)),
-      cluster = cluster,
-      command = cmd,
-      container = container
-    )
-  )
-  cmds
 }
