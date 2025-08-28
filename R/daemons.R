@@ -25,9 +25,6 @@
 #' profile with `daemons(0)`. Instead, [launch_local()] or [launch_remote()] may
 #' be used to add daemons at any time without resetting daemons.
 #'
-#' For historical reasons, `daemons()` with no arguments (other than
-#' optionally `.compute`) returns the value of [status()].
-#'
 #' @inheritParams mirai
 #' @param n integer number of daemons to launch.
 #' @param url \[default NULL\] if specified, a character string comprising a URL
@@ -225,8 +222,6 @@ daemons <- function(
   pass = NULL,
   .compute = NULL
 ) {
-  missing(n) && missing(url) && return(status(.compute))
-
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
 
