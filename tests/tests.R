@@ -15,6 +15,7 @@ test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, e
 test_library("mirai")
 connection <- !is_error_value(collect_mirai(mirai(TRUE, .timeout = 2000L)))
 # core tests
+test_null(info())
 test_type("list", status())
 test_zero(status()[["connections"]])
 test_zero(status()[["daemons"]])
@@ -102,6 +103,7 @@ connection && {
   test_true(!unresolved(dm))
   if (!is_error_value(dm$data)) test_class("matrix", dm$data)
   test_print(dm)
+  test_type("integer", info())
   test_type("integer", status()[["connections"]])
   test_type("character", status()[["daemons"]])
   test_type("character", mlc <- launch_remote())

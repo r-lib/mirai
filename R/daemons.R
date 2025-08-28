@@ -373,6 +373,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'   the negative value when it disconnects. Only the events since the previous
 #'   status query are returned.
 #'
+#' @seealso [info()] for more succinct information statistics.
+#'
 #' @examplesIf interactive()
 #' status()
 #' daemons(url = "tcp://[::1]:0")
@@ -395,17 +397,30 @@ status <- function(.compute = NULL) {
 #'
 #' @inheritParams status
 #'
-#' @return Integer vector with the names: connections, cumulative, awaiting,
-#'   executing, completed. Or else `NULL` if the compute profile is yet to be
-#'   set up.
+#' @return Named integer vector or else `NULL` if the compute profile is yet to
+#'   be set up. The names comprise: 'connections', 'cumulative', 'awaiting',
+#'   'executing', and 'completed'. For non-dispatcher daemons: only
+#'   'connections' will be available and the other values will be `NA`.
+#'
+#' @seealso [status()] for more verbose status information.
+#'
+#' @examplesIf interactive()
+#' info()
+#' daemons(1)
+#' info()
+#' daemons(0)
 #'
 #' @export
 #'
 info <- function(.compute = "default") {
   envir <- compute_env(.compute)
   is.null(envir) && return()
-  res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
-  is.object(res) && return()
+  if (is.null(envir[["dispatcher"]])) {
+    res <- c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
+  } else {
+    res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
+    is.object(res) && return()
+  }
   `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
 

@@ -13,10 +13,22 @@ query, or NULL to query the 'default' profile.
 \strong{or} a 'miraiCluster' to obtain its status.}
 }
 \value{
-Integer vector with the names: connections, cumulative, awaiting,
-executing, completed. Or else \code{NULL} if the compute profile is yet to be
-set up.
+Named integer vector or else \code{NULL} if the compute profile is yet to
+be set up. The names comprise: 'connections', 'cumulative', 'awaiting',
+'executing', and 'completed'. For non-dispatcher daemons: only
+'connections' will be available and the other values will be \code{NA}.
 }
 \description{
 Retrieve statistics for the specified compute profile.
+}
+\examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+info()
+daemons(1)
+info()
+daemons(0)
+\dontshow{\}) # examplesIf}
+}
+\seealso{
+\code{\link[=status]{status()}} for more verbose status information.
 }
