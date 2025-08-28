@@ -31,19 +31,19 @@ Will error if the specified compute profile is not yet set up.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-d1 <- daemons(1, dispatcher = FALSE, .compute = "cpu")
-d2 <- daemons(1, dispatcher = FALSE, .compute = "gpu")
+daemons(1, dispatcher = FALSE, .compute = "cpu")
+daemons(1, dispatcher = FALSE, .compute = "gpu")
 
-with_daemons(d1, {
+with_daemons("cpu", {
   s1 <- status()
   m1 <- mirai(Sys.getpid())
 })
 
-with_daemons(d2, {
+with_daemons("gpu", {
   s2 <- status()
   m2 <- mirai(Sys.getpid())
   m3 <- mirai(Sys.getpid(), .compute = "cpu")
-  local_daemons(d1)
+  local_daemons("cpu")
   m4 <- mirai(Sys.getpid())
 })
 

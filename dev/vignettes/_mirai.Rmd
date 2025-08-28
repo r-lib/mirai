@@ -600,23 +600,23 @@ Similarly, functions such as `status()`, `launch_local()` or `launch_remote()` s
 
 #### `with_daemons()` and `local_daemons()`
 
-`daemons()` returns (invisibly) the compute profile of daemons created as a character string. Supplying this to `with_daemons()` or `local_daemons()` automatically sets the default compute profile of all package functions within the relevant scope.
+Supplying a character compute profile to `with_daemons()` or `local_daemons()` automatically sets the default compute profile for all package functions within the relevant scope.
 
 ```{r}
 #| label: withdaemons
-d1 <- daemons(1, .compute = "cpu")
-d2 <- daemons(1, .compute = "gpu")
+daemons(1, .compute = "cpu")
+daemons(1, .compute = "gpu")
 
-with_daemons(d1, {
+with_daemons("cpu", {
   s1 <- status()
   m1 <- mirai(Sys.getpid())
 })
 
-with_daemons(d2, {
+with_daemons("gpu", {
   s2 <- status()
   m2 <- mirai(Sys.getpid())
   m3 <- mirai(Sys.getpid(), .compute = "cpu")
-  local_daemons(d1)
+  local_daemons("cpu")
   m4 <- mirai(Sys.getpid())
 })
 
@@ -635,7 +635,7 @@ with_daemons("gpu", daemons(0))
 
 #### With Method
 
-`daemons()` also has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically torn down upon completion. All package functions within the `with()` scope default to using the compute profile of the daemons created.
+`daemons()` also has a `with()` method, which evaluates an expression with daemons created for the duration of the expression and automatically reset upon completion. All package functions within the `with()` scope default to using the compute profile of the daemons created.
 
 It was originally designed for running a Shiny app with the desired number of daemons, as in the example below:
 
@@ -651,4 +651,4 @@ with(daemons(4, .compute = "shiny"), shiny::runApp(app))
 Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitly called when the app is printed, however printing occurs only after `with()` has returned, hence the app would run outside of the scope of the `with()` statement.
 
 In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
-In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are torn down.
+In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are reset.
