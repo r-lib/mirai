@@ -389,6 +389,25 @@ status <- function(.compute = NULL) {
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
 }
 
+#' Information Statistics
+#'
+#' Retrieve statistics for the specified compute profile.
+#'
+#' @inheritParams status
+#'
+#' @return Integer vector with the names: connections, cumulative, awaiting,
+#'   executing, completed, cumulative, or else NULL if the compute profile has
+#'   not yet been created.
+#'
+#' @export
+#'
+info <- function(.compute = "default") {
+  envir <- compute_env(.compute)
+  res <- if (is.null(envir)) integer(5L) else query_dispatcher(envir[["sock"]], c(0L, 0L))
+  if (is.object(res)) res <- integer(5L)
+  `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
+}
+
 #' Query if Daemons are Set
 #'
 #' Returns a logical value, whether or not daemons have been set for a given
@@ -748,13 +767,13 @@ dispatcher_status <- function(envir) {
     connections = status[1L],
     daemons = envir[["url"]],
     mirai = c(
-      awaiting = status[2L],
-      executing = status[3L],
-      completed = status[4L] - status[2L] - status[3L]
+      awaiting = status[3L],
+      executing = status[4L],
+      completed = status[5L]
     )
   )
-  if (length(status) > 4L) {
-    out <- c(out, list(events = status[5:length(status)]))
+  if (length(status) > 5L) {
+    out <- c(out, list(events = status[6:length(status)]))
   }
   out
 }
