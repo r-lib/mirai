@@ -53,14 +53,15 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
-<ul><li>
-<code><a href="../reference/daemons.html">daemons()</a></code> now returns invisibly logical <code>TRUE</code> when creating daemons and <code>FALSE</code> when resetting them, for simplicity and consistency (<a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
-<li>
-<code><a href="../reference/daemons.html">daemons()</a></code> creating new daemons now resets any existing daemons for the compute profile rather than error. This means that an explicit <code>daemons(0)</code> is no longer required before applying new settings (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/383" class="external-link">#383</a>).</li>
+<ul><li>Behavioural changes for <code><a href="../reference/daemons.html">daemons()</a></code>:
+<ul><li>Returns invisibly logical <code>TRUE</code> when creating daemons and <code>FALSE</code> when resetting, for simplicity and consistency (<a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
+<li>Creating new daemons resets any existing daemons for the compute profile rather than error. This means that an explicit <code>daemons(0)</code> is no longer required before applying new settings (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/383" class="external-link">#383</a>).</li>
+<li>Calling without supplying any arguments now errors rather than return the value of <code><a href="../reference/status.html">status()</a></code>.</li>
+</ul></li>
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. This works with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
+<ul><li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. These work with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
 <li>A mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier unique to each session.</li>
 </ul></div>
 <div class="section level5">
