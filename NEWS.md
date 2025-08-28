@@ -2,36 +2,35 @@
 
 #### Behavioural Changes
 
-* `daemons()` creating new daemons returns invisibly the character compute profile created.
-  `daemons(0)` or `daemons(NULL)` resetting daemons returns invisible NULL (thanks @eliocamp, #384).
-* Calling `daemons()` will now reset any existing daemons for the same compute profile rather than error.
-  This means that an explicit `daemons(0)` is no longer required before applying new settings (#383).
+* `daemons()` now returns invisibly logical `TRUE` when creating daemons and `FALSE` when resetting them, for simplicity and consistency (#384).
+* `daemons()` creating new daemons now resets any existing daemons for the compute profile rather than error.
+  This means that an explicit `daemons(0)` is no longer required before applying new settings (thanks @eliocamp, #383).
 
 #### New Features
 
-* New `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
+* Adds `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
-* Each mirai now has an attribute `id`, which is a monotonically increasing integer identifier in each session.
+* A mirai now has an attribute `id`, which is a monotonically increasing integer identifier unique to each session.
 
 #### Updates
 
-* Improved behaviour when using `serial_config()` custom serialization.
-  If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks @dipterix, #378).
-* `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
-  Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
-* Fixes `daemons(n)` failing to launch local daemons if mirai was installed in a custom user library set by an explicit `.libPaths()` call in '.Rprofile' (thanks @erydit and @dpastoor, #390).
-* Enhancements to `everywhere()`:
-  + Consecutive `everywhere()` calls are permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
-  + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).
-* `mirai_map()` now supports Arrow Tables and Polars DataFrames (#366).
-* `daemon()` gains a `tlscert` argument for custom TLS certificates.
-  The change in argument name lets this be passed when making a `daemons()` call (#344).
-* The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
-* `as.promise()` method for mirai made robust for high-throughput scenarios (#377).
 * `miraiError` enhancements:
   + Preserves the original condition classes and may be re-thrown as the original condition (thanks @sebffischer, #400).
   + The print method includes the customary additional line break (thanks @sebffischer, #399).
+* Fixes `daemons(n)` failing to launch local daemons if mirai was installed in a custom user library set by an explicit `.libPaths()` call in '.Rprofile' (thanks @erydit and @dpastoor, #390).
+* Improved behaviour for `serial_config()` custom serialization.
+  If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks @dipterix, #378).
+* `as.promise()` method for mirai made robust for high-throughput scenarios (#377).
+* `mirai_map()` now supports Arrow Tables and Polars DataFrames (#366).
+* `require_daemons()` arguments are swapped so that `.compute` comes before `call` for ease of use.
+  Previous usage will work for the time being, although is deprecated and will be defunct in a future version.
+* Enhancements to `everywhere()`:
+  + Consecutive `everywhere()` calls are permissible again when using dispatcher (behaviour update in v2.4.1) (#354).
+  + No longer has any effect on the RNG stream when using a reproducible `seed` value at `daemons()` (#356).
 * A `mirai()` evaluated on an ephemeral daemon returns invisibly, consistent with other cases (#351).
+* `daemon()` gains a `tlscert` argument for custom TLS certificates.
+  The change in argument name lets this be passed when making a `daemons()` call (#344).
+* The `tls` argument at `daemon()`, `launch_local()` and `launch_remote()` is deprecated.
 * Requires nanonext >= [1.6.2.9002].
 
 # mirai 2.4.1

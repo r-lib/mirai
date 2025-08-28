@@ -72,8 +72,8 @@
 #'   `tls` is encrypted with a password) For security, should be provided
 #'   through a function that returns this value, rather than directly.
 #'
-#' @return Invisibly, the character compute profile created, or else NULL when
-#'   resetting daemons.
+#' @return Invisibly, logical `TRUE` when creating daemons and `FALSE` when
+#'   resetting.
 #'
 #' @section Local Daemons:
 #'
@@ -249,7 +249,7 @@ daemons <- function(
         launch_remote(n = n, remote = remote, .compute = .compute)
         on.exit()
       }
-      TRUE
+      url
     }
   } else {
     signal <- is.null(n)
@@ -258,12 +258,12 @@ daemons <- function(
     n <- as.integer(n)
 
     n == 0L && {
-      is.null(envir) && return(invisible())
+      is.null(envir) && return(invisible(FALSE))
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
       ..[[.compute]] <- NULL -> envir
-      return(invisible())
+      return(invisible(FALSE))
     }
     res <- if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
@@ -282,7 +282,7 @@ daemons <- function(
   }
 
   is.null(res) && return({
-    daemons(0, .compute = .compute)
+    daemons(0L, .compute = .compute)
     daemons(
       n = n,
       url = url,
@@ -297,7 +297,7 @@ daemons <- function(
     )
   })
 
-  invisible(`class<-`(.compute, "miraiDaemons"))
+  invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
 }
 
 #' @export
@@ -336,7 +336,7 @@ print.miraiDaemons <- function(x, ...) print(unclass(x))
 #'
 with.miraiDaemons <- function(data, expr, ...) {
   prev_profile <- .[["cp"]]
-  `[[<-`(., "cp", data)
+  `[[<-`(., "cp", class(data)[2L])
   on.exit({
     daemons(0L)
     `[[<-`(., "cp", prev_profile)
@@ -445,7 +445,6 @@ require_daemons <- function(.compute = NULL, call = environment()) {
   daemons_set(.compute = .compute) || .[["require_daemons"]](.compute, call)
 }
 
-
 #' With Daemons
 #'
 #' Evaluate an expression using a specific compute profile.
@@ -459,19 +458,19 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #'   For **local_daemons**: invisible NULL.
 #'
 #' @examplesIf interactive()
-#' d1 <- daemons(1, dispatcher = FALSE, .compute = "cpu")
-#' d2 <- daemons(1, dispatcher = FALSE, .compute = "gpu")
+#' daemons(1, dispatcher = FALSE, .compute = "cpu")
+#' daemons(1, dispatcher = FALSE, .compute = "gpu")
 #'
-#' with_daemons(d1, {
+#' with_daemons("cpu", {
 #'   s1 <- status()
 #'   m1 <- mirai(Sys.getpid())
 #' })
 #'
-#' with_daemons(d2, {
+#' with_daemons("gpu", {
 #'   s2 <- status()
 #'   m2 <- mirai(Sys.getpid())
 #'   m3 <- mirai(Sys.getpid(), .compute = "cpu")
-#'   local_daemons(d1)
+#'   local_daemons("cpu")
 #'   m4 <- mirai(Sys.getpid())
 #' })
 #'

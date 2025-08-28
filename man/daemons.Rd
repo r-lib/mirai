@@ -74,8 +74,8 @@ to use (each has its own independent set of daemons), or NULL to use the
 'default' profile.}
 }
 \value{
-Invisibly, the character compute profile created, or else NULL when
-resetting daemons.
+Invisibly, logical \code{TRUE} when creating daemons and \code{FALSE} when
+resetting.
 }
 \description{
 Set daemons, or persistent background processes, to receive \code{\link[=mirai]{mirai()}}
