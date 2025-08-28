@@ -396,15 +396,16 @@ status <- function(.compute = NULL) {
 #' @inheritParams status
 #'
 #' @return Integer vector with the names: connections, cumulative, awaiting,
-#'   executing, completed, cumulative, or else NULL if the compute profile has
-#'   not yet been created.
+#'   executing, completed. Or else `NULL` if the compute profile is yet to be
+#'   set up.
 #'
 #' @export
 #'
 info <- function(.compute = "default") {
   envir <- compute_env(.compute)
-  res <- if (is.null(envir)) integer(5L) else query_dispatcher(envir[["sock"]], c(0L, 0L))
-  if (is.object(res)) res <- integer(5L)
+  is.null(envir) && return()
+  res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
+  is.object(res) && return()
   `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
 

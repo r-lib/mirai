@@ -14,8 +14,8 @@ query, or NULL to query the 'default' profile.
 }
 \value{
 Integer vector with the names: connections, cumulative, awaiting,
-executing, completed, cumulative, or else NULL if the compute profile has
-not yet been created.
+executing, completed. Or else \code{NULL} if the compute profile is yet to be
+set up.
 }
 \description{
 Retrieve statistics for the specified compute profile.
