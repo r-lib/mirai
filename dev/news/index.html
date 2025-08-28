@@ -54,37 +54,38 @@
 <div class="section level5">
 <h5 id="behavioural-changes-development-version">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-development-version"></a></h5>
 <ul><li>
-<code><a href="../reference/daemons.html">daemons()</a></code> creating new daemons returns invisibly the character compute profile created. <code>daemons(0)</code> or <code>daemons(NULL)</code> resetting daemons returns invisible NULL (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
-<li>Calling <code><a href="../reference/daemons.html">daemons()</a></code> will now reset any existing daemons for the same compute profile rather than error. This means that an explicit <code>daemons(0)</code> is no longer required before applying new settings (<a href="https://github.com/r-lib/mirai/issues/383" class="external-link">#383</a>).</li>
+<code><a href="../reference/daemons.html">daemons()</a></code> now returns invisibly logical <code>TRUE</code> when creating daemons and <code>FALSE</code> when resetting them, for simplicity and consistency (<a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
+<li>
+<code><a href="../reference/daemons.html">daemons()</a></code> creating new daemons now resets any existing daemons for the compute profile rather than error. This means that an explicit <code>daemons(0)</code> is no longer required before applying new settings (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/383" class="external-link">#383</a>).</li>
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>New <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. This works with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
-<li>Each mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier in each session.</li>
+<ul><li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. This works with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
+<li>A mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier unique to each session.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Improved behaviour when using <code><a href="../reference/serial_config.html">serial_config()</a></code> custom serialization. If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks <a href="https://github.com/dipterix" class="external-link">@dipterix</a>, <a href="https://github.com/r-lib/mirai/issues/378" class="external-link">#378</a>).</li>
-<li>
-<code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
-<li>Fixes <code>daemons(n)</code> failing to launch local daemons if mirai was installed in a custom user library set by an explicit <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> call in ‘.Rprofile’ (thanks <a href="https://github.com/erydit" class="external-link">@erydit</a> and <a href="https://github.com/dpastoor" class="external-link">@dpastoor</a>, <a href="https://github.com/r-lib/mirai/issues/390" class="external-link">#390</a>).</li>
-<li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
-<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
-<li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
-</ul></li>
-<li>
-<code><a href="../reference/mirai_map.html">mirai_map()</a></code> now supports Arrow Tables and Polars DataFrames (<a href="https://github.com/r-lib/mirai/issues/366" class="external-link">#366</a>).</li>
-<li>
-<code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
-<li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
-<li>
-<code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for mirai made robust for high-throughput scenarios (<a href="https://github.com/r-lib/mirai/issues/377" class="external-link">#377</a>).</li>
-<li>
+<ul><li>
 <code>miraiError</code> enhancements:
 <ul><li>Preserves the original condition classes and may be re-thrown as the original condition (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/400" class="external-link">#400</a>).</li>
 <li>The print method includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
 </ul></li>
+<li>Fixes <code>daemons(n)</code> failing to launch local daemons if mirai was installed in a custom user library set by an explicit <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> call in ‘.Rprofile’ (thanks <a href="https://github.com/erydit" class="external-link">@erydit</a> and <a href="https://github.com/dpastoor" class="external-link">@dpastoor</a>, <a href="https://github.com/r-lib/mirai/issues/390" class="external-link">#390</a>).</li>
+<li>Improved behaviour for <code><a href="../reference/serial_config.html">serial_config()</a></code> custom serialization. If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks <a href="https://github.com/dipterix" class="external-link">@dipterix</a>, <a href="https://github.com/r-lib/mirai/issues/378" class="external-link">#378</a>).</li>
+<li>
+<code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for mirai made robust for high-throughput scenarios (<a href="https://github.com/r-lib/mirai/issues/377" class="external-link">#377</a>).</li>
+<li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> now supports Arrow Tables and Polars DataFrames (<a href="https://github.com/r-lib/mirai/issues/366" class="external-link">#366</a>).</li>
+<li>
+<code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
+<li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
+<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
+<li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
+</ul></li>
 <li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
+<li>
+<code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
+<li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
 <li>Requires nanonext &gt;= [1.6.2.9002].</li>
 </ul></div>
 </div>
