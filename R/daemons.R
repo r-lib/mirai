@@ -249,7 +249,7 @@ daemons <- function(
         launch_remote(n = n, remote = remote, .compute = .compute)
         on.exit()
       }
-      TRUE
+      url
     }
   } else {
     signal <- is.null(n)
