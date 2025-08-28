@@ -8,7 +8,7 @@
 
 #### New Features
 
-* Adds `cloud_config()` to launch remote daemons using a cloud / cloud-based managed platform. Currently supports Posit Workbench.
+* Adds `posit_workbench_config()` to launch remote daemons using the default Posit Workbench launcher (currently only supports Rstudio Pro sessions).
 
 #### Updates
 

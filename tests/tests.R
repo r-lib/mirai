@@ -74,8 +74,7 @@ for (i in 0:4)
 test_null(register_serial("test_klass1", serialize, unserialize))
 test_null(register_serial(c("test_klass2", "test_klass3"), list(serialize, serialize), list(unserialize, unserialize)))
 test_equal(length(mirai:::.[["serial"]][[3L]]), 3L)
-# cloud launcher tests
-test_error(cloud_config(platform = ""), "not supported")
+# Posit workbench launcher tests
 is.null(mirai:::posit_tools()) && {
   ns <- new.env(parent = emptyenv())
   `[[<-`(ns, ".rs.api.launcher.jobsFeatureAvailable", function() TRUE)
@@ -83,15 +82,13 @@ is.null(mirai:::posit_tools()) && {
   `[[<-`(ns, ".rs.api.launcher.newContainer", function(image) image)
   `[[<-`(ns, ".rs.api.launcher.submitJob", function(...) NULL)
   attach(ns, name = "tools:rstudio")
-  cfg <- cloud_config(platform = "posit")
+  cfg <- posit_workbench_config()
   test_type("list", cfg)
-  test_zero(daemons(url = local_url(), dispatcher = FALSE))
+  test_true(daemons(url = local_url(), dispatcher = FALSE))
   test_class("miraiLaunchCmd", launch_remote(n = 2L, remote = cfg))
-  cfg$platform <- "wrong"
-  test_error(launch_remote(n = 2L, remote = cfg), "not supported")
-  test_zero(daemons(0))
+  test_false(daemons(0))
   detach()
-  test_error(cloud_config(platform = "posit"), "can only be used from Posit Workbench")
+  test_error(posit_workbench_config(), "requires Posit Workbench")
 }
 # mirai and daemons tests
 connection && {

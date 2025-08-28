@@ -90,12 +90,9 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   tls <- envir[["tls"]]
 
   if (length(remote) == 2L) {
-    platform <- remote[["platform"]]
-    args <- remote[["args"]]
-    platform != "posit" && stop(._[["platform_unsupported"]])
     tools <- posit_tools()
     is.environment(tools) || stop(._[["posit_api"]])
-    return(posit_workbench_launch(n, args, tools))
+    return(posit_workbench_launch(n, remote, tools))
   }
 
   command <- remote[["command"]]
@@ -387,14 +384,10 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
 }
 
-#' Cloud Remote Launch Configuration
+#' Posit Workbench Launch Configuration
 #'
-#' Generates a remote configuration for launching daemons via cloud /
-#' cloud-based managed platforms.
-#'
-#' @param platform \[default "posit"\] character name of the platform
-#'   (case-insensitive). Currently the only option is "posit" to use the Posit
-#'   Workbench launcher.
+#' Generates a remote configuration for launching daemons via the default
+#' launcher in Posit Workbench. Currently only supports Rstudio Pro sessions.
 #'
 #' @inherit remote_config return
 #'
@@ -402,30 +395,22 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'   types of remote launch configuration.
 #'
 #' @examples
-#' tryCatch(cloud_config(), error = identity)
+#' tryCatch(posit_workbench_config(), error = identity)
 #'
 #' \dontrun{
 #'
 #' # Launch 2 daemons using the Posit Workbench default:
-#' daemons(n = 2, url = host_url(), remote = cloud_config(platform = "posit"))
+#' daemons(n = 2, url = host_url(), remote = posit_workbench_config()
 #' }
 #'
 #' @export
 #'
-cloud_config <- function(platform = "posit") {
-  platform <- tolower(platform)
-  args <- switch(
-    platform,
-    posit = {
-      tools <- posit_tools()
-      is.environment(tools) || stop(._[["posit_api"]])
-      get_info <- .subset2(tools, ".rs.api.launcher.getInfo")
-      cluster <- get_info()[["clusters"]][[1L]]
-      list(name = cluster[["name"]], image = cluster[["defaultImage"]])
-    },
-    stop(._[["platform_unsupported"]])
-  )
-  list(platform = platform, args = args)
+posit_workbench_config <- function() {
+  tools <- posit_tools()
+  is.environment(tools) || stop(._[["posit_api"]])
+  get_info <- .subset2(tools, ".rs.api.launcher.getInfo")
+  cluster <- get_info()[["clusters"]][[1L]]
+  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
 }
 
 #' URL Constructors
@@ -520,15 +505,15 @@ posit_tools <- function() {
   tools
 }
 
-posit_workbench_launch <- function(n, args, tools) {
+posit_workbench_launch <- function(n, remote, tools) {
   submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
   new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
-  cluster <- args[["name"]]
-  container <- new_container(args[["image"]])
+  cluster <- remote[["name"]]
+  container <- new_container(remote[["image"]])
   cmds <- launch_remote(n)
   lapply(cmds, function(cmd)
     submit_job(
-      sprintf("mirai_daemon_%s", random(3L)),
+      sprintf("mirai_daemon_%s", random(4L)),
       cluster = cluster,
       command = cmd,
       container = container
