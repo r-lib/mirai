@@ -101,9 +101,6 @@ automatically exit as soon as their connections are dropped.
 Calling \code{\link[=daemons]{daemons()}} implicitly resets any existing daemons for the compute
 profile with \code{daemons(0)}. Instead, \code{\link[=launch_local]{launch_local()}} or \code{\link[=launch_remote]{launch_remote()}} may
 be used to add daemons at any time without resetting daemons.
-
-For historical reasons, \code{daemons()} with no arguments (other than
-optionally \code{.compute}) returns the value of \code{\link[=status]{status()}}.
 }
 \section{Local Daemons}{
 

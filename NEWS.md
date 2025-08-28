@@ -2,14 +2,16 @@
 
 #### Behavioural Changes
 
-* `daemons()` now returns invisibly logical `TRUE` when creating daemons and `FALSE` when resetting them, for simplicity and consistency (#384).
-* `daemons()` creating new daemons now resets any existing daemons for the compute profile rather than error.
-  This means that an explicit `daemons(0)` is no longer required before applying new settings (thanks @eliocamp, #383).
+* Behavioural changes for `daemons()`:
+  + Returns invisibly logical `TRUE` when creating daemons and `FALSE` when resetting, for simplicity and consistency (#384).
+  + Creating new daemons resets any existing daemons for the compute profile rather than error.
+    This means that an explicit `daemons(0)` is no longer required before applying new settings (thanks @eliocamp, #383).
+  + Calling without supplying any arguments now errors rather than return the value of `status()`.
 
 #### New Features
 
 * Adds `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
-  This works with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
+  These work with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
 * A mirai now has an attribute `id`, which is a monotonically increasing integer identifier unique to each session.
 
 #### Updates

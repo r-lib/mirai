@@ -250,7 +250,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_type("integer", nextget("pid"))
   test_equal(length(nextget("url")), 1L)
   Sys.sleep(1L)
-  status <- daemons()
+  status <- status()
   test_type("list", status)
   test_zero(status[["connections"]])
   test_type("integer", status[["mirai"]])
@@ -258,7 +258,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(status[["mirai"]][["executing"]])
   test_zero(status[["mirai"]][["completed"]])
   test_true(daemons(2, correcttype = NA))
-  test_equal(daemons()[["connections"]], 2L)
+  test_equal(status()[["connections"]], 2L)
   test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
   test_type("double", res[[1L]])
   test_type("double", res[[2L]])
@@ -404,7 +404,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   for (i in seq_len(10000L)) {q[[i]] <- mirai({Sys.sleep(0.001); rnorm(1)}); attr(q[[i]], "status") <- status()}
   test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
   test_true(all(as.logical(lapply(lapply(q, attr, "status"), is.list))))
-  test_equal(daemons()[["mirai"]][["completed"]], 20020L)
+  test_equal(status()[["mirai"]][["completed"]], 20020L)
   test_false(daemons(0))
 }
 # reproducible RNG tests
