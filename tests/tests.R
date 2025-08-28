@@ -355,6 +355,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   res <- status()
   test_zero(res$connections)
   test_identical(res$events, c(129L, -129L))
+  test_equal(info()[["cumulative"]], 2L)
   test_false(daemons(0))
   test_true(daemons(1, dispatcher = FALSE, maxtasks = 1L))
   test_zero(mirai(0L)[])
@@ -364,6 +365,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_zero(mirai(0)[])
   Sys.sleep(1L)
   test_zero(status()$connections)
+  test_true(is.na(info()[["cumulative"]]))
   test_false(daemons(0))
 }
 # mirai cancellation tests
