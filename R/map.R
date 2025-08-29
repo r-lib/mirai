@@ -343,7 +343,13 @@ flat_cli <- compiler::compile(
 progress_cli <- compiler::compile(
   quote(
     if (i == 0L) {
-      cli::cli_progress_bar(type = NULL, total = xlen, auto_terminate = TRUE, .envir = .)
+      options <- .[["collect"]]
+      if (is.list(options)) {
+        do.call(cli::cli_progress_bar, c(list(total = xlen, auto_terminate = TRUE, .envir = .), options))
+      } else {
+        cli::cli_progress_bar(name = .[["collect"]], type = NULL, total = xlen, auto_terminate = TRUE, .envir = .)
+      }
+      `[[<-`(., "collect", NULL)
     } else {
       cli::cli_progress_update(.envir = .)
     }
