@@ -35,13 +35,15 @@ You do not need to anticipate whether an end-user will run the code on their own
 - Exceptionally, a `daemons(n = 1, dispatcher = FALSE, .compute = ...)` call may be used to set up a single dedicated daemon, but only if used with a unique value for `.compute`.
   A representative example of this usage pattern is `logger::appender_async()`, where the logger package's 'namespace' concept maps directly to mirai's 'compute profile'.
 
-2. The shape and contents of a `status()` call must not be used programatically, as this user interface is subject to change at any time. Use `nextget()` where possible instead.
-- An exception is that `status()$connections` may be used to return the total number of daemon connections at any time.
+2. The shape and contents of a `status()` call must not be used programmatically, as this user interface is subject to change at any time. Use `info()` instead.
+- For the value of `status()$daemons`, instead use `nextget("url")`.
 
-3. The functions `unresolved()`, `is_error_value()`, `is_mirai_error()`, and `is_mirai_interrupt()` should be used to test for the relevant state of a mirai or its value.
+3. `info()` may be used programmatically, but only index into the vector using the name rather than position e.g. `info()[["cumulative"]]` rather than `info()[[2]]`. This is in case other values are added at a later date.
+
+4. The functions `unresolved()`, `is_error_value()`, `is_mirai_error()`, and `is_mirai_interrupt()` should be used to test for the relevant state of a mirai or its value.
 - The characteristics of their current implementation, e.g. as a logical NA for an 'unresolvedValue', should not be relied upon, as these are subject to change at any time.
 
-4. For CRAN packages, all examples and tests should respect the following rules when running on CRAN:
+5. For CRAN packages, all examples and tests should respect the following rules when running on CRAN:
 - Use only one daemon (with `dispatcher = FALSE`) to ensure that only one additional process is used, to remain within the 2-core limit.
-- Always reset daemons at the end of each example or test file. Allow at least a one-second sleep to ensure that all background processes have properly exited and that no 'detritus' from the processes remains.
+- Always reset daemons with `daemons(0)` at the end of each example or test file. Then allow at least a one-second sleep to ensure that all background processes have properly exited and that no 'detritus' from the processes remains.
 - Never modify the default value of `asyncdial` or `autoexit` for `daemon()`, in that function or any functions that pass arguments through to it such as `daemons()`. This is to ensure that processes exit as soon as the host process does.

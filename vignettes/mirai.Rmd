@@ -83,9 +83,9 @@ unresolved(m)
 # Do other stuff
 
 collect_mirai(m)
-#> [1] 3.307888 6.442475 3.389184 4.527373 4.014089
+#> [1] 3.614126 3.267931 3.797589 4.172342 3.499741
 m[]
-#> [1] 3.307888 6.442475 3.389184 4.527373 4.014089
+#> [1] 3.614126 3.267931 3.797589 4.172342 3.499741
 ```
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
@@ -99,9 +99,9 @@ args <- list(time = 2L, mean = 4)
 m1 <- mirai(.expr = expr, .args = args)
 m2 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 4.250240 5.332838 2.541758 2.539235 4.079383
+#> [1] 3.828930 4.032457 3.731431 4.134502 5.044937
 m2[]
-#> [1] 4.540019 4.818173 4.995393 3.432707 4.786807
+#> [1] 5.746579 5.359979 4.420764 3.257141 2.625927
 ```
 By running the above two calculations in parallel, they take roughly half the time as running sequentially (minus a relatively inconsequential parallelization overhead).
 
@@ -165,10 +165,10 @@ for (i in 1:10) {
 #> iteration 3 successful
 #> iteration 4 successful
 #> iteration 5 successful
-#> Error: random error
 #> iteration 6 successful
 #> iteration 7 successful
 #> iteration 8 successful
+#> Error: random error
 #> iteration 9 successful
 #> iteration 10 successful
 ```
@@ -280,14 +280,26 @@ This ensures that tasks are dispatched efficiently on a first-in first-out (FIFO
 Tasks are queued at dispatcher and sent to a daemon as soon as it can accept the task for immediate execution.
 Dispatcher employs an event-driven approach that is efficient both in terms of consuming no resources while waiting, whilst also being fully synchronized with events.
 
-To view the current status, `status()` provides:
+To view current statistics, `info()` provides these succinctly in a single integer vector:
 
-1. The number of active connections,
-2. The URL daemons connect to, and
-3. A task summary:
-  - `waiting` number of tasks queued for execution at dispatcher
-  - `assigned` number of tasks sent to a daemon for execution
-  - `complete` number of tasks for which the result has been received (either completed or cancelled)
+- `connections` number of currently active daemon connections
+- `cumulative` total number of daemons to have ever connected
+- `awaiting` number of mirai tasks queued at dispatcher
+- `executing` number of mirai tasks currently being evaluated on a daemon
+- `completed` number of mirai tasks for which have been either completed or cancelled
+
+
+``` r
+info()
+#> connections  cumulative    awaiting   executing   completed 
+#>           6           6           0           0           0
+```
+
+The `status()` function provides a slightly more verbose output:
+
+1. `connections`: the number of active connections.
+2. `daemons`: the URL daemons connect to.
+3. `mirai`: a task summary of `awaiting`, `assigned` and `completed`.
 
 
 ``` r
@@ -296,7 +308,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/c895c7cb897d39cc4fb675c7"
+#> [1] "ipc:///tmp/5eb58b485e6908355beea5d4"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -334,7 +346,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/d108975ffdd97636aa4917d5"
+#> [1] "ipc:///tmp/6a1760a896c47257ea051352"
 ```
 
 #### everywhere()
@@ -407,7 +419,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://10.154.6.168:53496"
+#> [1] "tcp://192.168.4.117:52216"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -582,7 +594,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://10.154.6.168:53501")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.4.117:52220")'
 daemons(0)
 ```
 
@@ -605,36 +617,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://10.154.6.168:53505",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4x
-#> NTQuNi4xNjgxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
-#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjE1NC42LjE2
-#> ODERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEAt+0D565J93EPpz5UFhz9U1YAlWAseOuoEAzFOL5q
-#> lZQAwqdBBrEPTtFsbgydylK/O72u3TFiU+yhUZjIF/yU8Tb3BhTJxLYE69nZniB7
-#> Geea/3Ow0al/I0JqkJw1eeABmXaHlUNIGU5SLRATP6CnXSq3XwGfpHYFnsoiGULw
-#> ICqH3/1F6hEsv5JRShSwNkb7KxqAxtBI/CEumywf9nTyZBIZtuFXV7zkNr40fLtH
-#> AeBeOQ1gHBe8y1ypxHd7W6fBfeUFrNVQ7AesVdvsVxB8ki9Le+aoE4+fBONmCxR8
-#> cV/VQXoCZNK7cd7eeSfNO2/WfSQj8FfmWTZUBynqgo0lPuQUpOHPHU/gblzl8EPW
-#> y2GDj5eZ1326i0PnEO2fqeASYpyXirIkQAGnw2DGYe8+sZSYevK7xosfsdttAxwB
-#> ksSBgYDZ0GSKH+mZTKFFFCP08H4QJq62JednwOneJHCj4WASf2UsQGvNVm0u/atk
-#> YpeZ2BAImGvWVC2kzGe4yebad+Qzgp41K4Gwj59MFlsqnzuhl0BZ+TWZ6ojA183E
-#> xCOBKeo6BKDfEsX6GVibyQ4YoLBcYqaYkgYLKjli/fo/fJtycuDwNUKpdQ/dzkEw
-#> vsMzl1aH9ehwcriqUVRoP5E/7jbFcYJ4kFIwuZjXxX80tl3fxtvCfbS6x8485Wu5
-#> XF8CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUP+/oqK8L
-#> KHBu0TJARZAtpYQR3B4wHwYDVR0jBBgwFoAUP+/oqK8LKHBu0TJARZAtpYQR3B4w
-#> DQYJKoZIhvcNAQELBQADggIBAEXTVwayN1YWrwc+7aPCLWzD3jrMfGPhJjqKg8iI
-#> EjIzNXX1y5ML/14jlCzzHZ5jcz6iZMmGiEzV8CrJxt2nhyeqi9Fq/6gXL9mGiHNo
-#> GkwYdG0j47/qhFurHcE4R1dy4xuTvZNlYxxfjhmM64hV1naA/pKQuMJhCeD8rRVV
-#> qTm3HMoyJzS2m7V4ATjgDiBKnSrlzs1pZ/mSUF8InvJM/FnSdzG0guy4ZI1jcDpO
-#> 5Vj+LMse97IXrhQ4szPih+6fP5jdo5+Kp2le3KkwdzhOyvX2WZEZxMSbM+5+3yFE
-#> PoNK+aMSFFMa2Co/G3Kz9bMvHZu1cxwXVoiSSC1TjhcDUINIy44fLgDb8gGO3Wtl
-#> RQlcRDCxWdpUdsmnLtGy9yEScoR5YUIwiUBJJbdHrhdQomtkkYm5qTFdMRjkLew2
-#> sMbdCdBzou3iWWNyfFP4lZe+SdZfQTdQRy2j8mnSal8rmU6Kdn1zXIHs3hnwWSkU
-#> 0vf1716GDW1s3jG7/zBzgOf8NWkmMhYd9dlspu2JguUVgwc1YNq39DUni1KHkltk
-#> EjHGo1TTTQhQC0G7N/n9gVb6s+3VABuBEM2WkRFieTjauVttlwvHY1wZ49R7D8CX
-#> nT9EyiwMOm+HHxNITp5WsJhaRDRQgVlwOxW8iZJP+Jo460MC24y8etD47CQ+5OVD
-#> KFj1
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.4.117:52224",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
+#> MTY4LjQuMTE3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjQu
+#> MTE3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQDAJtR1jJ42G3cSANYOtfnoFh7LRGfkVwtZ+8lF
+#> S+PTDlaoZLfrv4RB2uUU3IfayHCohZWesD3Z/wdMjOtl/7RUQUuhCkOS4IALBVTR
+#> /3N2MuxWaV+UJ5rZprOeUDaJ7ivTs+Rw8iKvlrf4RnaFbrIFh1gRRmG4kBNjetq0
+#> /MR50fnEslnsqZZfPH9DQ3L0khMyObrLxqQLOxw8q+OB/SK/Vj/1f12ShixkIZr7
+#> dlYJBdEb9dtpGo+9VQGRJD02NA4K8rOLRpdeOQfJwW7cnjyjdYwzlE7plWJvKHt6
+#> JMsptpTmmm7bHEKqJPa4e9MmSc590r1Tv/LRAjfJT/hfv58xU6dYYMFqU3vNXBbg
+#> /602dpaaJcwpA+DWVPFjiYYmeHdOTfu9dPH0DeS4rw7DDkxyj+hdEctXi8bOjzoV
+#> SAkzl3Gcte88P88cq9VBAJAm/h+ED+8gzoyJtkJTa2U8/+mLhlRJL5zgs00E063R
+#> W8WYS8JsSsgIAD4dL57GjvKnDy5BwSp0hTrUJDObYPtleJA9feEFp5rky46C9unl
+#> SKlN/CY2BDyKtn9hvBINnvvxCN+l4uFwzAXmffn1nDnsFYJbslacoNffjmpd7co5
+#> B+23VLPfFDCs3kO2kFW3E5G2Ia257o5j5yV3PAYLXxP6tBbbbp96FeU0kQ5Q7lOz
+#> Hx1Z9QIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS1jr7L
+#> /qFQoD+A+cozIMbvwQAypzAfBgNVHSMEGDAWgBS1jr7L/qFQoD+A+cozIMbvwQAy
+#> pzANBgkqhkiG9w0BAQsFAAOCAgEApxYPvsD9PdlJYnpuW7QzHFcasn6dBzB+3niK
+#> BYmOUipj1RTUuv5frBHiQrmVY6cc2JRcXMvVRm8vprl5G8lCac+xa7YQ218qtO1d
+#> cwyyHCUlgu0jqvWKIAOpUuuNDNCumThBl3ayab8TLmBqUEYk3YykpK3t2HdwNRxw
+#> bKYfpBKJBqNc504xGT1FGtFG5hEUZSDLyrpwefnTtk/olohe0ZFIWh/Ym/Cto1x7
+#> 0qo42zD+0XiB53czAay5iYUQzpaOo43cIOShB4GK4gvTEjJojpw/zgnPrh+wOWy0
+#> Aiy/9TLdoQRKrsIwHEYD9c+KhuC33Kvrx8u4RthVYjq1S4aJYLuMb+pd2AZUH4oe
+#> HEXUWo2BcGv34AkPBBn0CNs/TJLRt8PCjGlQaOee9H3BB2B9gv3e/1Gf+HuYxZGz
+#> vBiW2XuRXImunZ8njks+kWSZg1m6hhUC+Ol/G4XOv5y48nwaDBg30xpLpj+dAcbc
+#> jjKLK2xYVyvXtXPn0HKiWVkyFgu4+cGFhCcGRLCyiO6CrAta/Ez0DeRg5A1GZn8S
+#> n5oQqNtQ7AY14JlPhTGDiQ7ZymQqDPreMKbThiWB6vtPPXIUa4hpUMlaG+ZSPsU3
+#> xEkkXEp2n+HqIKPrPRaS1PLDquOAiXKy2plpMrO0+ohg6KvTulWv1R32tlAcwSyH
+#> cPTN9d8=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -704,19 +716,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "ipc:///tmp/1c5004093cf7035f0503b410"
+#> [1] "ipc:///tmp/c1b4401e989ad6586c72901a"
 m1[]
-#> [1] 9911
+#> [1] 5236
 
 s2$daemons
-#> [1] "ipc:///tmp/2ebf4d2e0afcc381361dce59"
+#> [1] "ipc:///tmp/9ba7a9bde09d3e4bfe55fdc2"
 m2[] # different to m1
-#> [1] 9934
+#> [1] 5259
 
 m3[] # same as m1
-#> [1] 9911
+#> [1] 5236
 m4[] # same as m1
-#> [1] 9911
+#> [1] 5236
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))

@@ -249,17 +249,27 @@ This ensures that tasks are dispatched efficiently on a first-in first-out (FIFO
 Tasks are queued at dispatcher and sent to a daemon as soon as it can accept the task for immediate execution.
 Dispatcher employs an event-driven approach that is efficient both in terms of consuming no resources while waiting, whilst also being fully synchronized with events.
 
-To view the current status, `status()` provides:
+To view current statistics, `info()` provides these succinctly in a single integer vector:
 
-1. The number of active connections,
-2. The URL daemons connect to, and
-3. A task summary:
-  - `waiting` number of tasks queued for execution at dispatcher
-  - `assigned` number of tasks sent to a daemon for execution
-  - `complete` number of tasks for which the result has been received (either completed or cancelled)
+- `connections` number of currently active daemon connections
+- `cumulative` total number of daemons to have ever connected
+- `awaiting` number of mirai tasks queued at dispatcher
+- `executing` number of mirai tasks currently being evaluated on a daemon
+- `completed` number of mirai tasks for which have been either completed or cancelled
 
 ```{r}
-#| label: daemons3
+#| label: info
+info()
+```
+
+The `status()` function provides a slightly more verbose output:
+
+1. `connections`: the number of active connections.
+2. `daemons`: the URL daemons connect to.
+3. `mirai`: a task summary of `awaiting`, `assigned` and `completed`.
+
+```{r}
+#| label: status
 status()
 ```
 
