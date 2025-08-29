@@ -80,6 +80,7 @@
     n_zero = "the number of daemons must be zero or greater",
     not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
+    posit_api = "requires Posit Workbench (Rstudio Pro session)",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     within_map = "cannot create local daemons from within mirai map"
