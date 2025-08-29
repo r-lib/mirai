@@ -378,9 +378,9 @@ call_mirai <- call_aio_
 collect_mirai <- function(x, options = NULL) {
   is.list(x) && length(options) || return(collect_aio_(x))
 
-  if (is.list(options)) {
-    `[[<-`(., "collect", options[[1L]])
-    options <- c(".stop", ".progress")
+  if (length(names(options))) {
+    `[[<-`(., "progress", options[[".progress"]])
+    options <- names(options)
   }
   dots <- mget(options, envir = .)
   mmap(x, dots)
