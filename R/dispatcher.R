@@ -63,7 +63,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
 
   inq <- outq <- list()
   events <- integer()
-  count <- 0L
+  connections <- count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
   `[[<-`(envir, "stream", res)
 
@@ -75,6 +75,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
     changes <- read_monitor(m)
     for (item in changes) {
       item > 0 && {
+        connections <- connections + 1L
         outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
         send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
       }
@@ -100,6 +101,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
       is.null(changes) || {
         for (item in changes) {
           if (item > 0) {
+            connections <- connections + 1L
             outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
             send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
             cv_signal(cv)
@@ -123,11 +125,14 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
         if (value[1L] == 0L) {
           id <- readBin(value, integer(), n = 2L)[2L]
           if (id == 0L) {
+            awaiting <- length(inq)
+            executing <- sum(as.logical(unlist(lapply(outq, .subset2, "msgid"), use.names = FALSE)))
             found <- c(
               length(outq),
-              length(inq),
-              sum(as.logical(unlist(lapply(outq, .subset2, "msgid"), use.names = FALSE))),
-              count,
+              connections,
+              awaiting,
+              executing,
+              count - awaiting - executing,
               events
             )
             events <- integer()

@@ -46,3 +46,6 @@ status()
 daemons(0)
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\code{\link[=info]{info()}} for more succinct information statistics.
+}

@@ -368,6 +368,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'   the negative value when it disconnects. Only the events since the previous
 #'   status query are returned.
 #'
+#' @seealso [info()] for more succinct information statistics.
+#'
 #' @examplesIf interactive()
 #' status()
 #' daemons(url = "tcp://[::1]:0")
@@ -382,6 +384,48 @@ status <- function(.compute = NULL) {
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
   is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
+}
+
+#' Information Statistics
+#'
+#' Retrieve statistics for the specified compute profile.
+#'
+#' The returned statistics are:
+#'
+#' - Connections: active daemon connections.
+#' - Cumulative: total daemons that have ever connected.
+#' - Awaiting: mirai tasks currently queued for execution at dispatcher.
+#' - Executing: mirai tasks currently being evaluated on a daemon.
+#' - Completed: mirai tasks that have been completed or cancelled.
+#'
+#' For non-dispatcher daemons: only 'connections' will be available and the
+#' other values will be `NA`.
+#'
+#' @inheritParams mirai
+#'
+#' @return Named integer vector or else `NULL` if the compute profile is yet to
+#'   be set up.
+#'
+#' @seealso [status()] for more verbose status information.
+#'
+#' @examplesIf interactive()
+#' info()
+#' daemons(1)
+#' info()
+#' daemons(0)
+#'
+#' @export
+#'
+info <- function(.compute = NULL) {
+  envir <- compute_env(.compute)
+  is.null(envir) && return()
+  if (is.null(envir[["dispatcher"]])) {
+    res <- c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
+  } else {
+    res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
+    is.object(res) && return()
+  }
+  `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
 
 #' Query if Daemons are Set
@@ -743,13 +787,13 @@ dispatcher_status <- function(envir) {
     connections = status[1L],
     daemons = envir[["url"]],
     mirai = c(
-      awaiting = status[2L],
-      executing = status[3L],
-      completed = status[4L] - status[2L] - status[3L]
+      awaiting = status[3L],
+      executing = status[4L],
+      completed = status[5L]
     )
   )
-  if (length(status) > 4L) {
-    out <- c(out, list(events = status[5:length(status)]))
+  if (length(status) > 5L) {
+    out <- c(out, list(events = status[6:length(status)]))
   }
   out
 }
