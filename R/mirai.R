@@ -354,6 +354,15 @@ call_mirai <- call_aio_
 #' @return An object (the return value of the 'mirai'), or a list of such
 #'   objects (the same length as `x`, preserving names).
 #'
+#' @section Options:
+#'
+#' As an alternative to a character vector, a list where the names are the
+#' collection options is also accepted. The value for `.progress` is passed to
+#' the cli progress bar - if a character value as the name, and if a list as
+#' named parameters to `cli::cli_progress_bar`. Examples:
+#' `c(.stop = TRUE, .progress = "bar name")` or
+#' `c(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
+#'
 #' @inheritSection call_mirai Alternatively
 #' @inheritSection mirai Errors
 #'
@@ -378,6 +387,10 @@ call_mirai <- call_aio_
 collect_mirai <- function(x, options = NULL) {
   is.list(x) && length(options) || return(collect_aio_(x))
 
+  if (length(names(options))) {
+    `[[<-`(., "progress", options[[".progress"]])
+    options <- names(options)
+  }
   dots <- mget(options, envir = .)
   mmap(x, dots)
 }

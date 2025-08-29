@@ -28,6 +28,17 @@ still in progress, blocking but interruptible.
 
 \code{x[]} is an equivalent way to wait for and return the value of a mirai \code{x}.
 }
+\section{Options}{
+
+
+As an alternative to a character vector, a list where the names are the
+collection options is also accepted. The value for \code{.progress} is passed to
+the cli progress bar - if a character value as the name, and if a list as
+named parameters to \code{cli::cli_progress_bar}. Examples:
+\code{c(.stop = TRUE, .progress = "bar name")} or
+\code{c(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))}
+}
+
 \section{Alternatively}{
 
 
