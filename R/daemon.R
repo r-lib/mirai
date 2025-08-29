@@ -115,6 +115,12 @@ daemon <- function(
   task <- 1L
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
+  if (otel_tracing) {
+    dmn_spn <- otel::start_local_active_span(
+      "mirai::daemon",
+      attributes = otel::as_attributes(list(url = url))
+    )
+  }
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -194,15 +200,30 @@ daemon <- function(
 
 # internals --------------------------------------------------------------------
 
-handle_mirai_error <- function(cnd) invokeRestart("mirai_error", cnd, sys.calls())
+handle_mirai_error <- function(cnd) {
+  if (otel_tracing) dynGet("spn")$set_status("error")
+  invokeRestart("mirai_error", cnd, sys.calls())
+}
 
-handle_mirai_interrupt <- function(cnd) invokeRestart("mirai_interrupt")
+handle_mirai_interrupt <- function(cnd) {
+  if (otel_tracing) dynGet("spn")$set_status("unset")
+  invokeRestart("mirai_interrupt")
+}
 
 eval_mirai <- function(._mirai_.) {
   withRestarts(
     withCallingHandlers(
       {
         list2env(._mirai_.[["._globals_."]], envir = .GlobalEnv)
+        if (otel_tracing && length(._mirai_.[["._otel_."]])) {
+          prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
+          dmn_spn <- dynGet("dmn_spn")
+          spn <- otel::start_local_active_span(
+            "mirai::daemon->eval",
+            links = list(daemon = dmn_spn),
+            options = list(kind = "server", parent = prtctx)
+          )
+        }
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = .GlobalEnv)
       },
       error = handle_mirai_error,
