@@ -4,22 +4,32 @@
 \alias{info}
 \title{Information Statistics}
 \usage{
-info(.compute = "default")
+info(.compute = NULL)
 }
 \arguments{
-\item{.compute}{[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.
-
-\strong{or} a 'miraiCluster' to obtain its status.}
+\item{.compute}{[default NULL] character value for the compute profile
+to use (each has its own independent set of daemons), or NULL to use the
+'default' profile.}
 }
 \value{
 Named integer vector or else \code{NULL} if the compute profile is yet to
-be set up. The names comprise: 'connections', 'cumulative', 'awaiting',
-'executing', and 'completed'. For non-dispatcher daemons: only
-'connections' will be available and the other values will be \code{NA}.
+be set up.
 }
 \description{
 Retrieve statistics for the specified compute profile.
+}
+\details{
+The returned statistics are:
+\itemize{
+\item Connections: active daemon connections.
+\item Cumulative: total daemons that have ever connected.
+\item Awaiting: mirai tasks currently queued for execution at dispatcher.
+\item Executing: mirai tasks currently being evaluated on a daemon.
+\item Completed: mirai tasks that have been completed or cancelled.
+}
+
+For non-dispatcher daemons: only 'connections' will be available and the
+other values will be \code{NA}.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

@@ -395,12 +395,21 @@ status <- function(.compute = NULL) {
 #'
 #' Retrieve statistics for the specified compute profile.
 #'
-#' @inheritParams status
+#' The returned statistics are:
+#'
+#' - Connections: active daemon connections.
+#' - Cumulative: total daemons that have ever connected.
+#' - Awaiting: mirai tasks currently queued for execution at dispatcher.
+#' - Executing: mirai tasks currently being evaluated on a daemon.
+#' - Completed: mirai tasks that have been completed or cancelled.
+#'
+#' For non-dispatcher daemons: only 'connections' will be available and the
+#' other values will be `NA`.
+#'
+#' @inheritParams mirai
 #'
 #' @return Named integer vector or else `NULL` if the compute profile is yet to
-#'   be set up. The names comprise: 'connections', 'cumulative', 'awaiting',
-#'   'executing', and 'completed'. For non-dispatcher daemons: only
-#'   'connections' will be available and the other values will be `NA`.
+#'   be set up.
 #'
 #' @seealso [status()] for more verbose status information.
 #'
@@ -412,7 +421,7 @@ status <- function(.compute = NULL) {
 #'
 #' @export
 #'
-info <- function(.compute = "default") {
+info <- function(.compute = NULL) {
   envir <- compute_env(.compute)
   is.null(envir) && return()
   if (is.null(envir[["dispatcher"]])) {
