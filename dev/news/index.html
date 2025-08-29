@@ -61,7 +61,8 @@
 </ul></div>
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
-<ul><li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. These work with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
+<ul><li>Adds <code><a href="../reference/info.html">info()</a></code> as an alternative to <code><a href="../reference/status.html">status()</a></code> for retrieving more succinct information statistics, more convenient for programmatic use (thanks <a href="https://github.com/wlandau" class="external-link">@wlandau</a>, <a href="https://github.com/r-lib/mirai/issues/410" class="external-link">#410</a>).</li>
+<li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. These work with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
 <li>A mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier unique to each session.</li>
 </ul></div>
 <div class="section level5">

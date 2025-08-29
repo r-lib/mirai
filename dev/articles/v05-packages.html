@@ -151,25 +151,30 @@ profile’.</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
 <li>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not be
-used programatically, as this user interface is subject to change at any
-time. Use <code><a href="../reference/nextstream.html">nextget()</a></code> where possible instead.</li>
+used programmatically, as this user interface is subject to change at
+any time. Use <code><a href="../reference/info.html">info()</a></code> instead.</li>
 </ol>
 <ul>
-<li>An exception is that <code>status()$connections</code> may be used
-to return the total number of daemon connections at any time.</li>
+<li>For the value of <code>status()$daemons</code>, instead use
+<code>nextget("url")</code>.</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
+<li><p><code><a href="../reference/info.html">info()</a></code> may be used programmatically, but only index
+into the vector using the name rather than position
+e.g. <code>info()[["cumulative"]]</code> rather than
+<code>info()[[2]]</code>. This is in case other values are added at a
+later date.</p></li>
+<li><p>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
 <code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>, <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
 <code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> should be used to test for the
-relevant state of a mirai or its value.</li>
+relevant state of a mirai or its value.</p></li>
 </ol>
 <ul>
 <li>The characteristics of their current implementation, e.g. as a
 logical NA for an ‘unresolvedValue’, should not be relied upon, as these
 are subject to change at any time.</li>
 </ul>
-<ol start="4" style="list-style-type: decimal">
+<ol start="5" style="list-style-type: decimal">
 <li>For CRAN packages, all examples and tests should respect the
 following rules when running on CRAN:</li>
 </ol>
@@ -177,9 +182,10 @@ following rules when running on CRAN:</li>
 <li>Use only one daemon (with <code>dispatcher = FALSE</code>) to ensure
 that only one additional process is used, to remain within the 2-core
 limit.</li>
-<li>Always reset daemons at the end of each example or test file. Allow
-at least a one-second sleep to ensure that all background processes have
-properly exited and that no ‘detritus’ from the processes remains.</li>
+<li>Always reset daemons with <code>daemons(0)</code> at the end of each
+example or test file. Then allow at least a one-second sleep to ensure
+that all background processes have properly exited and that no
+‘detritus’ from the processes remains.</li>
 <li>Never modify the default value of <code>asyncdial</code> or
 <code>autoexit</code> for <code><a href="../reference/daemon.html">daemon()</a></code>, in that function or any
 functions that pass arguments through to it such as
