@@ -17,6 +17,7 @@
 
 #### Updates
 
+* `stop_mirai()` is more efficient and responsive, especially for 'mirai_map' objects (#417).
 * `miraiError` enhancements:
   + Preserves the original condition classes and may be re-thrown as the original condition (thanks @sebffischer, #400).
   + The print method includes the customary additional line break (thanks @sebffischer, #399).
