@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.4.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,6 +68,8 @@
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
 <ul><li>
+<code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> is more efficient and responsive, especially for ‘mirai_map’ objects (<a href="https://github.com/r-lib/mirai/issues/417" class="external-link">#417</a>).</li>
+<li>
 <code>miraiError</code> enhancements:
 <ul><li>Preserves the original condition classes and may be re-thrown as the original condition (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/400" class="external-link">#400</a>).</li>
 <li>The print method includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
@@ -88,7 +90,7 @@
 <li>
 <code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
 <li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
-<li>Requires nanonext &gt;= [1.6.2.9002].</li>
+<li>Requires nanonext &gt;= [1.6.2.9003].</li>
 </ul></div>
 </div>
     <div class="section level2">
