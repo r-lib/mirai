@@ -426,16 +426,7 @@ collect_mirai <- function(x, options = NULL) {
 #'
 #' @export
 #'
-stop_mirai <- function(x) {
-  is.list(x) &&
-    return(invisible(rev(as.logical(lapply(rev(unclass(x)), stop_mirai)))))
-
-  stop_aio(x)
-  aio <- .subset2(x, "aio")
-  !is.integer(aio) &&
-    attr(aio, "id") > 0 &&
-    query_dispatcher(attr(aio, "context"), c(0L, attr(x, "id")))
-}
+stop_mirai <- stop_request
 
 #' Query if a mirai is Unresolved
 #'
