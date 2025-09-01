@@ -226,7 +226,7 @@ eval_mirai <- function(._mirai_.) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
-            links = list(daemon = dynGet("spn")),
+            links = list(daemon = otel::get_active_span()),
             options = list(kind = "server", parent = prtctx)
           )
         }
