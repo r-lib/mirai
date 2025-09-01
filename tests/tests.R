@@ -431,5 +431,25 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_false(daemons_set("gpu"))
   test_identical(m, n)
 }
+connection && requireNamespace("otel", quietly = TRUE) && Sys.getenv("NOT_CRAN") == "true" && {
+  record <- tryCatch(
+    otelsdk::with_otel_record({
+      ns <- getNamespace("mirai")
+      unlockBinding("otel_tracing", ns)
+      ns[["otel_tracing"]] <- TRUE
+      lockBinding("otel_tracing", ns)
+      url <- local_url()
+      test_true(daemons(url = url, dispatcher = FALSE))
+      mp <- mirai_map(1:3, rnorm)
+      m1 <- mirai(stop("error"))
+      m2 <- mirai(getNamespace("rlang")$interrupt())
+      test_equal(daemon(url = url, maxtasks = 5L, dispatcher = FALSE), 3L)
+      test_true(is_error_value(m2[]))
+      test_false(daemons(0))
+    }),
+    error = function(cnd) NULL
+  )
+  length(record) && test_equal(length(record$traces), 13L)
+}
 test_false(daemons(0))
 Sys.sleep(1L)
