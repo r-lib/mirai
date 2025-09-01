@@ -78,7 +78,6 @@
     named_dots = "all `...` arguments must be named, unless supplying an environment",
     n_one = "`n` must be 1 or greater",
     n_zero = "the number of daemons must be zero or greater",
-    not_found = "compute profile `%s` not found",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",

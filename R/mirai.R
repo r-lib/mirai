@@ -243,9 +243,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' @export
 #'
 everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
+  require_daemons(.compute = .compute, call = environment())
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
-  is.null(envir) && stop(sprintf(._[["not_found"]], .compute))
 
   expr <- substitute(.expr)
   .expr <- c(
@@ -262,7 +262,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
   xlen <- if (is.null(envir[["dispatcher"]])) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
-    max(status(.compute)[["connections"]], 1L)
+    max(info(.compute)[[1L]])
   }
   seed <- envir[["seed"]]
   on.exit({
@@ -276,7 +276,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
   )
   .mark(FALSE)
   m <- mirai({})
-  envir[["everywhere"]] <- c(vec, list(m))
+  `[[<-`(envir, "everywhere",  c(vec, list(m)))
   invisible(`class<-`(vec, "mirai_map"))
 }
 
