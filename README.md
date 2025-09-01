@@ -17,9 +17,19 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 
 ### ミライ
 
-**Minimalist Async Evaluation Framework for R**
+<br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
+for R <br /><br />
 
-Async • Distributed • Reactive
+→ Run R code in parallel in the background, without blocking your
+session
+
+→ Distribute workloads across local or remote machines
+
+→ Execute tasks on different compute resources based on requirements
+
+→ Perform actions as soon as tasks complete via promises
+
+<br />
 
 ### Installation
 
@@ -64,27 +74,37 @@ daemons(0)
 
 ### Design Philosophy
 
-**Advanced Architecture**: Built on
-[nanonext](https://github.com/r-lib/nanonext/) and
-[NNG](https://nng.nanomsg.org/), leveraging modern networking and
-concurrency over IPC, TCP/IP and secure TLS transports.
+→ Advanced Architecture
 
-**Superior Performance**: Delivers 1,000x greater responsiveness than
-alternatives, with zero-latency event-driven promises optimized for
-real-time applications.
+- Built on [nanonext](https://github.com/r-lib/nanonext/) and
+  [NNG](https://nng.nanomsg.org/)
+- Modern networking and concurrency over IPC, TCP/IP and secure TLS
+  transports
 
-**For Production**: Provides correct defaults, requiring explicit
-evaluation with no reliance on global variables, ensuring 100%
-transparent and deterministic results.
+→ Superior Performance
 
-**Reliable at Scale**: Proven capacity for millions of concurrent tasks
-across thousands of connections, demonstrated in demanding real-world
-life sciences workflows.
+- Delivers 1,000x greater responsiveness than alternatives
+- Zero-latency event-driven promises optimized for real-time
+  applications
 
-**Modular Flexibility**: Deploy across local, remote (SSH, SSH
-tunneling), and HPC environments (Slurm, SGE, PBS, LSF), with modular
-compute profiles allowing seamless distribution to your compute of
-choice.
+→ For Production
+
+- Requires explicit evaluation with no reliance on global variables
+- A set of correct defaults ensures 100% transparent and deterministic
+  results
+
+→ Reliable at Scale
+
+- Proven capacity for millions of concurrent tasks across thousands of
+  connections
+- Demonstrated through demanding, real-world life sciences workflows
+
+→ Modular Flexibility
+
+- Deploy across local, remote (SSH), and HPC environments (Slurm, SGE,
+  PBS, LSF)
+- Modular compute profiles allow seamless distribution to your compute
+  of choice
 
 ### Powers the R Ecosystem
 
