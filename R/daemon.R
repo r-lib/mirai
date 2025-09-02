@@ -99,13 +99,15 @@ daemon <- function(
 ) {
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
-  on.exit(reap(sock))
+  on.exit({
+    reap(sock)
+    `[[<-`(., "sock", NULL)
+  })
+  `[[<-`(., "sock", sock)
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value_auto(autoexit))
   if (length(tls)) tls <- tls_config(client = tls)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tls)
 
-  `[[<-`(., "sock", sock)
-  on.exit(`[[<-`(., "sock", NULL), add = TRUE)
   if (!output) {
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
     sink(file = devnull)
@@ -167,6 +169,11 @@ daemon <- function(
     }
   }
 
+  if (!output) {
+    sink(type = "message")
+    sink()
+    close.connection(devnull)
+  }
   invisible(xc)
 }
 
