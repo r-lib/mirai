@@ -85,7 +85,7 @@ daemons(0)
 → Advanced Architecture
 
 - Modern networking and concurrency over IPC, TCP/IP and secure TLS transports
-- Professional queuing and scheduling built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://nng.nanomsg.org/)
+- Professional queuing and scheduling built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://github.com/nanomsg/nng/)
 
 → Superior Performance
 

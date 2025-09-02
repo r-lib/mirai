@@ -79,7 +79,7 @@ daemons(0)
   transports
 - Professional queuing and scheduling built on
   [nanonext](https://github.com/r-lib/nanonext/) and
-  [NNG](https://nng.nanomsg.org/)
+  [NNG](https://github.com/nanomsg/nng/)
 
 → Superior Performance
 
