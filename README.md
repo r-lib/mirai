@@ -77,7 +77,7 @@ daemons(0)
 
 - Modern networking and concurrency over IPC, TCP/IP and secure TLS
   transports
-- Professional queuing and scheduling built on
+- Professional task queuing and scheduling built on
   [nanonext](https://github.com/r-lib/nanonext/) and
   [NNG](https://github.com/nanomsg/nng/)
 
@@ -89,14 +89,16 @@ daemons(0)
 
 → For Production
 
-- Simplicity of explicit evaluation with no reliance on global variables
-- Robust solution ensuring 100% transparent and deterministic results
+- Clean user interface with explicit object passing and no hidden
+  options
+- Simplicity ensures robustness with 100% transparent and deterministic
+  results
 
 → Reliable at Scale
 
 - Proven capacity for millions of concurrent tasks across thousands of
   connections
-- Enhanced observability enabled by OpenTelemetry integration
+- Enhanced observability afforded by OpenTelemetry integration
 
 → Modular Flexibility
 
