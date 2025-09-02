@@ -155,17 +155,25 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
-  if (length(envir[["seed"]])) {
-    globals[[".Random.seed"]] <- next_stream(envir)
-  }
+  if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
+
   data <- list(
     ._expr_. = if (
       is.symbol(expr) &&
       exists(as.character(expr), envir = parent.frame()) &&
       is.language(.expr)
     ) .expr else expr,
-    ._globals_. = globals
+    ._globals_. = globals,
+    ._otel_. = if (otel_tracing && length(envir)) {
+      spn <- otel::start_local_active_span(
+        "mirai::mirai",
+        links = list(compute_profile = envir[["otel_span"]]),
+        options = list(kind = "client")
+      )
+      otel::pack_http_context()
+    }
   )
+
   if (length(.args)) {
     if (is.environment(.args)) {
       .args <- as.list.environment(.args, all.names = TRUE)
@@ -177,7 +185,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
-  request(
+  req <- request(
     .context(envir[["sock"]]),
     data,
     send_mode = 1L,
@@ -186,6 +194,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
+  if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
+  invisible(req)
 }
 
 #' Evaluate Everywhere
@@ -597,7 +607,7 @@ ephemeral_daemon <- function(data, timeout) {
     stderr = FALSE,
     wait = FALSE
   )
-  aio <- request(
+  req <- request(
     .context(sock),
     data,
     send_mode = 1L,
@@ -605,8 +615,8 @@ ephemeral_daemon <- function(data, timeout) {
     timeout = timeout,
     cv = substitute()
   )
-  `attr<-`(.subset2(aio, "aio"), "sock", sock)
-  invisible(aio)
+  `attr<-`(.subset2(req, "aio"), "sock", sock)
+  invisible(req)
 }
 
 deparse_safe <- function(x) {

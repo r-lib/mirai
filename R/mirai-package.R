@@ -21,6 +21,13 @@
 #'  This may be overriden, if desired, by specifying 'url' in the [daemons()]
 #'  interface and launching daemons using [launch_local()].
 #'
+#' @section OpenTelemetry:
+#'
+#' mirai provides comprehensive OpenTelemetry tracing support for observing
+#' asynchronous operations and distributed computation. Please refer to the
+#' OpenTelemetry vignette for further details:
+#' `vignette("v05-opentelemetry", package = "mirai")`
+#'
 #' @section Reference Manual:
 #'
 #' `vignette("mirai", package = "mirai")`
@@ -38,6 +45,7 @@
 # tested implicitly
 
 .onLoad <- function(libname, pkgname) {
+  otel_tracing <<- requireNamespace("otel", quietly = TRUE) && otel::is_tracing_enabled()
   switch(
     Sys.info()[["sysname"]],
     Linux = {
@@ -85,3 +93,6 @@
   ),
   hash = TRUE
 )
+
+otel_tracing <- FALSE
+otel_tracer_name <- "org.r-lib.mirai"

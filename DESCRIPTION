@@ -30,7 +30,8 @@ Imports:
     nanonext (>= 1.7.0)
 Suggests: 
     cli,
-    litedown
+    litedown,
+    otel
 Enhances: 
     parallel,
     promises

@@ -27,6 +27,11 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      - name: Install additional packages
+        run: |
+          pak::pak(c("r-lib/otelsdk", "rlang"))
+        shell: Rscript {0}
+
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(
