@@ -101,9 +101,8 @@ mirai::mirai (top level) ──link→ mirai::daemons
 
 **Status Values**:
 
-- `'ok'` - Operation completed successfully
-- `'error'` - Operation failed with an error
-- `'unset'` - Operation was interrupted
+- `'ok'` or `'unset'` - Operation completed successfully
+- `'error'` - Operation failed with an error or was interrupted
 
 ### 5. Monitoring and Observability
 
