@@ -20,14 +20,13 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br />
 
-→ Run R code in parallel in the background, without blocking your
-session
+→ Run R code in parallel without blocking your session
 
 → Distribute workloads across local or remote machines
 
-→ Execute tasks on different compute resources based on requirements
+→ Execute tasks on different compute resources as required
 
-→ Perform actions as soon as tasks complete via promises
+→ Perform actions reactively as soon as tasks complete
 
 <br />
 
@@ -76,28 +75,28 @@ daemons(0)
 
 → Advanced Architecture
 
-- Built on [nanonext](https://github.com/r-lib/nanonext/) and
-  [NNG](https://nng.nanomsg.org/)
 - Modern networking and concurrency over IPC, TCP/IP and secure TLS
   transports
+- Professional queuing and scheduling built on
+  [nanonext](https://github.com/r-lib/nanonext/) and
+  [NNG](https://nng.nanomsg.org/)
 
 → Superior Performance
 
-- Delivers 1,000x greater responsiveness than alternatives
-- Zero-latency event-driven promises optimized for real-time
+- Delivers 1,000x greater responsiveness over alternatives
+- Zero-latency, event-driven promises optimized for real-time
   applications
 
 → For Production
 
-- Requires explicit evaluation with no reliance on global variables
-- A set of correct defaults ensures 100% transparent and deterministic
-  results
+- Simplicity of explicit evaluation with no reliance on global variables
+- Robust solution ensuring 100% transparent and deterministic results
 
 → Reliable at Scale
 
-- Proven capacity for millions of concurrent tasks across thousands of
+- Capacity for millions of concurrent tasks across thousands of
   connections
-- Demonstrated through demanding, real-world life sciences workflows
+- Proven track record in demanding, real-world life sciences workflows
 
 → Modular Flexibility
 
