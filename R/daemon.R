@@ -213,7 +213,7 @@ handle_mirai_error <- function(cnd) {
 }
 
 handle_mirai_interrupt <- function(cnd) {
-  if (otel_tracing) otel::get_active_span()$set_status("unset")
+  if (otel_tracing) otel::get_active_span()$set_status("error", "interrupt")
   invokeRestart("mirai_interrupt")
 }
 
