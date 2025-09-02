@@ -28,6 +28,15 @@ This may be overriden, if desired, by specifying 'url' in the \code{\link[=daemo
 interface and launching daemons using \code{\link[=launch_local]{launch_local()}}.
 }
 
+\section{OpenTelemetry}{
+
+
+mirai provides comprehensive OpenTelemetry tracing support for observing
+asynchronous operations and distributed computation. Please refer to the
+OpenTelemetry vignette for further details:
+\code{vignette("v05-opentelemetry", package = "mirai")}
+}
+
 \section{Reference Manual}{
 
 
