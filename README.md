@@ -96,7 +96,7 @@ daemons(0)
 
 - Proven capacity for millions of concurrent tasks across thousands of
   connections
-- Comprehensive observability provided through OpenTelemetry integration
+- Enhanced observability enabled by OpenTelemetry integration
 
 → Modular Flexibility
 
