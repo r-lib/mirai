@@ -76,8 +76,8 @@ daemons(0)
 → Advanced Architecture
 
 - Modern networking and concurrency over IPC, TCP/IP and secure TLS
-  transports
-- Professional task queuing and scheduling built on
+  connections
+- Professional task queues and scheduling built on
   [nanonext](https://github.com/r-lib/nanonext/) and
   [NNG](https://github.com/nanomsg/nng/)
 
@@ -89,10 +89,10 @@ daemons(0)
 
 → For Production
 
-- Clean user interface with explicit object passing and no hidden
-  options
-- Simplicity ensures robustness with 100% transparent and deterministic
-  results
+- Clear delineation of local and evaluation environments with explicit
+  object passing
+- Simplicity in user interface supports 100% transparent and robust
+  operation
 
 → Reliable at Scale
 
@@ -104,8 +104,7 @@ daemons(0)
 
 - Deploy across local, remote (SSH), and HPC environments (Slurm, SGE,
   PBS, LSF)
-- Modular compute profiles allow seamless distribution to your compute
-  of choice
+- Compute profiles allow seamless distribution to your compute of choice
 
 ### Powers the R Ecosystem
 
