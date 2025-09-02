@@ -94,6 +94,12 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
   if (is.null(tls)) tls <- envir[["tls"]]
 
+  if (length(remote) == 2L) {
+    tools <- posit_tools()
+    is.environment(tools) || stop(._[["posit_api"]])
+    return(posit_workbench_launch(n, remote, tools))
+  }
+
   command <- remote[["command"]]
   rscript <- remote[["rscript"]]
   quote <- remote[["quote"]]
@@ -392,6 +398,35 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
 }
 
+#' Posit Workbench Launch Configuration
+#'
+#' Generates a remote configuration for launching daemons via the default
+#' launcher in Posit Workbench. Currently only supports Rstudio Pro sessions.
+#'
+#' @inherit remote_config return
+#'
+#' @seealso [ssh_config()], [cluster_config()], and [remote_config()] for other
+#'   types of remote launch configuration.
+#'
+#' @examples
+#' tryCatch(posit_workbench_config(), error = identity)
+#'
+#' \dontrun{
+#'
+#' # Launch 2 daemons using the Posit Workbench default:
+#' daemons(n = 2, url = host_url(), remote = posit_workbench_config()
+#' }
+#'
+#' @export
+#'
+posit_workbench_config <- function() {
+  tools <- posit_tools()
+  is.environment(tools) || stop(._[["posit_api"]])
+  get_info <- .subset2(tools, ".rs.api.launcher.getInfo")
+  cluster <- get_info()[["clusters"]][[1L]]
+  list(name = cluster[["name"]], image = cluster[["defaultImage"]])
+}
+
 #' URL Constructors
 #'
 #' `host_url()` constructs a valid host URL (at which daemons may connect) based
@@ -475,4 +510,30 @@ find_dot <- function(args) {
   sel <- args == "."
   any(sel) || stop(._[["dot_required"]], call. = FALSE)
   sel
+}
+
+posit_tools <- function() {
+  idx <- match("tools:rstudio", search(), nomatch = 0L)
+  idx || return()
+  tools <- as.environment(idx)
+  feature_available <- .subset2(tools, ".rs.api.launcher.jobsFeatureAvailable")
+  is.function(feature_available) && feature_available() || return()
+  tools
+}
+
+posit_workbench_launch <- function(n, remote, tools) {
+  submit_job <- .subset2(tools, ".rs.api.launcher.submitJob")
+  new_container <- .subset2(tools, ".rs.api.launcher.newContainer")
+  cluster <- remote[["name"]]
+  container <- new_container(remote[["image"]])
+  cmds <- launch_remote(n)
+  lapply(cmds, function(cmd)
+    submit_job(
+      sprintf("mirai_daemon_%s", random(4L)),
+      cluster = cluster,
+      command = cmd,
+      container = container
+    )
+  )
+  cmds
 }

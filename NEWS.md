@@ -10,6 +10,7 @@
 
 #### New Features
 
+* Adds `posit_workbench_config()` to launch remote daemons using the default Posit Workbench launcher (currently only supports Rstudio Pro sessions).
 * Adds `info()` as an alternative to `status()` for retrieving more succinct information statistics, more convenient for programmatic use (thanks @wlandau, #410).
 * Adds `with_daemons()` and `local_daemons()` helper functions for using a particular compute profile.
   These work with daemons that are already set up unlike the existing `with.miraiDaemons()` method, which creates a new scope and tears it down when finished (#360).
