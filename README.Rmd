@@ -99,8 +99,8 @@ daemons(0)
 
 → Reliable at Scale
 
-- Capacity for millions of concurrent tasks across thousands of connections
-- Proven track record in demanding, real-world life sciences workflows
+- Proven capacity for millions of concurrent tasks across thousands of connections
+- Comprehensive observability provided through OpenTelemetry integration
 
 → Modular Flexibility
 
