@@ -1,0 +1,132 @@
+---
+title: "OpenTelemetry"
+vignette: >
+  %\VignetteIndexEntry{OpenTelemetry}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+### 1. Introduction
+
+mirai provides comprehensive OpenTelemetry (otel) tracing support for observing asynchronous operations and distributed computation.
+
+When the `otel` and `otelsdk` packages are installed and tracing is enabled, mirai automatically creates spans to track the lifecycle of daemon management, async operations, and task execution.
+
+This enables detailed monitoring of:
+
+- Task submission and completion times
+- Daemon lifecycle and performance
+- Error tracking and debugging
+- Distributed tracing across network boundaries
+
+### 2. Automatic Tracing Setup
+
+Tracing is automatically enabled when:
+
+1. The `otel` and `otelsdk` packages are installed and available
+2. OpenTelemetry tracing is configured and enabled (see <https://otelsdk.r-lib.org/reference/collecting.html>)
+
+No additional configuration is required - mirai will automatically detect the presence of OpenTelemetry and begin creating spans.
+
+### 3. Span Types and Hierarchy
+
+mirai creates several types of spans to represent different operations:
+
+#### 3.1 Core Span Types
+
+**`mirai::daemons`** - Root span for daemon management
+
+- **Kind**: `internal`
+- **Attributes**: `url`, `n` (number of daemons), `dispatcher` (true/false), `compute_profile`
+- **Lifecycle**: Created when `daemons()` is called, ended when daemons are reset
+
+**`mirai::daemon`** - Individual daemon process span
+
+- **Kind**: `internal` 
+- **Lifecycle**: Tracks the lifetime of a single daemon process
+
+**`mirai::mirai_map`** - Parallel map operation span
+
+- **Kind**: `internal`
+- **Lifecycle**: Encompasses the entire map operation across multiple mirai tasks
+
+**`mirai::mirai`** - Client-side async task span
+
+- **Kind**: `client`
+- **Attributes**: `mirai.id` (unique task identifier)
+- **Lifecycle**: Created when `mirai()` is called, ended as soon as it returns
+
+**`mirai::daemon->eval`** - Server-side task evaluation span
+
+- **Kind**: `server`
+- **Lifecycle**: Tracks for the duration of actual mirai evaluation on the daemon
+
+#### 3.2 Span Relationships and Context Propagation
+
+The spans form a distributed structure that traces the complete lifecycle of async operations:
+
+```
+mirai::daemons (compute profile - top level)
+
+mirai::daemon (daemon process 1 - top level)
+mirai::daemon (daemon process 2 - top level) 
+mirai::daemon (daemon process N - top level)
+
+mirai::mirai_map (top level)
+├── mirai::mirai (task 1) ──link→ mirai::daemons
+├── mirai::mirai (task 2) ──link→ mirai::daemons  
+└── mirai::mirai (task N) ──link→ mirai::daemons
+    └── mirai::daemon->eval ──link→ mirai::daemon
+    
+mirai::mirai (top level) ──link→ mirai::daemons
+└── mirai::daemon->eval ──link→ mirai::daemon
+```
+
+**Context Propagation**: The context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
+
+**Span Links**: Tasks are linked to their compute profile's `mirai::daemons` span on the client side, and to each `mirai::daemon` span on the server side, showing exactly where each evaluation happened.
+
+### 4. Status and Error Tracking
+
+`mirai::daemon->eval` spans automatically track the success or failure of operations:
+
+**Status Values**:
+
+- `'ok'` - Operation completed successfully
+- `'error'` - Operation failed with an error
+- `'unset'` - Operation was interrupted
+
+### 5. Monitoring and Observability
+
+The OpenTelemetry spans provide rich observability into mirai operations:
+
+**Performance Monitoring**:
+
+- Track task execution times from submission to completion
+- Monitor daemon utilization and load balancing
+- Identify bottlenecks in distributed computation
+
+**Error Analysis**:
+
+- Correlate errors with specific tasks and daemons
+- Track error rates across different types of operations
+- Debug issues in distributed environments
+
+**Distributed Tracing**:
+
+- Follow task execution across network boundaries
+- Understand the complete lifecycle of async operations
+- Correlate client-side requests with server-side execution
+
+### 6. Integration with Observability Platforms
+
+mirai's OpenTelemetry implementation works seamlessly with any OpenTelemetry-compatible observability platform, including:
+
+- Grafana
+- Pydantic Logfire
+- Jaeger
+- Any of those listed at <https://otelsdk.r-lib.org/reference/collecting.html>.
+
+The tracer name used by mirai is `"org.r-lib.mirai"`, making it easy to filter and identify mirai-related traces in your observability platform.
