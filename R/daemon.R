@@ -208,12 +208,12 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 handle_mirai_error <- function(cnd) {
-  if (otel_tracing) otel::get_active_span()$set_status("error")
+  if (otel_tracing) otel::get_active_span()$set_status("error", "miraiError")
   invokeRestart("mirai_error", cnd, sys.calls())
 }
 
 handle_mirai_interrupt <- function(cnd) {
-  if (otel_tracing) otel::get_active_span()$set_status("error", "interrupt")
+  if (otel_tracing) otel::get_active_span()$set_status("error", "miraiInterrupt")
   invokeRestart("mirai_interrupt")
 }
 
