@@ -70,7 +70,7 @@ See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
-#### mirai (cont'd)
+#### mirai (advanced)
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
 So, the following would be equivalent to the above:
@@ -182,11 +182,15 @@ Streams essentially cut into the RNG's period (a very long sequence of pseudo-ra
 
 **By default, when the `seed` argument to `daemons()` is `NULL`**: mirai initiates a new stream for each daemon launched, in the same manner as base R.
 
-This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers of daemons would cause mirai tasks to be sent to different daemons. Secondly, when using dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same one on each run.
+- Guarantees that the results are statistically-sound, although does not guarantee numerical reproducibility between parallel runs
+- Using different numbers of daemons would cause mirai tasks to be sent to different daemons
+- With dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same on each run
 
 **Supply an explicit integer `seed` to `daemons()` for reproducible RNG**: instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()` call.
 
-This is slightly computationally wasteful, although with a negligible impact on performance. It does, however, guarantee the same deterministic results across runs, and regardless of the number of daemons used.
+- Guarantees the same deterministic, reproducible results across runs
+- This is regardless of the number of daemons used
+- This is slightly computationally wasteful, although with a negligible impact on performance
 
 ### 4. Local Daemons
 

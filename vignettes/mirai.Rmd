@@ -53,9 +53,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.498545 5.696231 4.374360 4.319025 4.662034
+#> [1] 4.897650 4.096580 5.078189 5.236960 3.512786
 m$data
-#> [1] 4.498545 5.696231 4.374360 4.319025 4.662034
+#> [1] 4.897650 4.096580 5.078189 5.236960 3.512786
 ```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
@@ -67,7 +67,7 @@ See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
-#### mirai (cont'd)
+#### mirai (advanced)
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
 So, the following would be equivalent to the above:
@@ -79,7 +79,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.641819 2.877191 4.247936 3.039205 2.846181
+#> [1] 5.617032 4.966253 3.991497 6.033833 2.806785
 ```
 
 The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
@@ -200,11 +200,15 @@ Streams essentially cut into the RNG's period (a very long sequence of pseudo-ra
 
 **By default, when the `seed` argument to `daemons()` is `NULL`**: mirai initiates a new stream for each daemon launched, in the same manner as base R.
 
-This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers of daemons would cause mirai tasks to be sent to different daemons. Secondly, when using dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same one on each run.
+- Guarantees that the results are statistically-sound, although does not guarantee numerical reproducibility between parallel runs
+- Using different numbers of daemons would cause mirai tasks to be sent to different daemons
+- With dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same on each run
 
 **Supply an explicit integer `seed` to `daemons()` for reproducible RNG**: instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()` call.
 
-This is slightly computationally wasteful, although with a negligible impact on performance. It does, however, guarantee the same deterministic results across runs, and regardless of the number of daemons used.
+- Guarantees the same deterministic, reproducible results across runs
+- This is regardless of the number of daemons used
+- This is slightly computationally wasteful, although with a negligible impact on performance
 
 ### 4. Local Daemons
 
@@ -255,7 +259,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/3f06e9a3f84102cbe318de89"
+#> [1] "ipc:///tmp/a3511b61eb7b8c39a2ac1b13"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -293,7 +297,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/733d09795f3db0459da53953"
+#> [1] "ipc:///tmp/05efdcdc660d0a53ed49ec88"
 ```
 
 #### everywhere()
@@ -366,7 +370,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.3.157:52727"
+#> [1] "tcp://192.168.3.157:55701"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -541,7 +545,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.3.157:52731")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.3.157:55705")'
 daemons(0)
 ```
 
@@ -564,36 +568,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.3.157:52735",tlscert=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.3.157:55709",tlscert=c("-----BEGIN CERTIFICATE-----
 #> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
 #> MTY4LjMuMTU3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
 #> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjMu
 #> MTU3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQC7c9oobFuabR6CaD9M9A5MHuhH+CC2W83gNQID
-#> vwEny/nEmigF559FftqbDLyIK9ORRIypwhzkwnwpVqVtQau5TyG7cgkme3vUaTSq
-#> L+UqzZkURQzjyDF4ZAYPl4oK5XvX28tzciNUsSbFWxp0S8LkRXG7DLPkAv432OVr
-#> mwUrzW+h8HcmgULQGNcYXQemQYtQpnmAbWDgedDfQrz5PxhXmNWR5rVFGIkGrsZa
-#> ttx8FNFXnS26tYB0vowwH0FJ0ZZOF7Aq/Xi67W9/Z9FWw9peNYamAuCGlwz6SI5S
-#> DnEKoBYCp/syXYCAedzJVbDH0vGp7GEhdCKocyIqvBEGeWpH/DbDZXypv6uOkcDk
-#> BhxeIGRYrTm5r/P5Jb3WcnE2dqcDfbIg+T6xli5WeszwzgVxhsp0MfBwY1SCZ2fq
-#> pg1INcAbXxjmqKpuNos0Ii42q7AXU6f8a2Se1PhqpIgQXqaX0Lt1N0IN1zH4GNXA
-#> jrxo7iYxnjn8WDExeLhh0ARFA6TMGojzS5AxgcnhlXpYc/2TTDBVguGfcOHDxeDL
-#> 5CKdzGay5sp+ab8ZUK+mEoccGtCTdsgr9yTIHH+SVW5Bi1R+2/AOm5MsNSp+hohl
-#> ORvUBDOQLDRXIVhM1bg4A0MaKl6gw8KXMFQB4cvG3iyOwCs9X/fjEnqRHAxMdZC9
-#> kEXybwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRxPdUM
-#> GhofmJJaa6ws9HTd7mGn+jAfBgNVHSMEGDAWgBRxPdUMGhofmJJaa6ws9HTd7mGn
-#> +jANBgkqhkiG9w0BAQsFAAOCAgEAkofvJRQ9DPsbz/2lxJHSrH8s9Ilr7/S7vGLY
-#> xO4hNtk+xxUsehmrG/EqtP3VeczPH/G+2CusLimgRA8ggAfscJ4q/bdtp8x7d9pq
-#> Xy3k/vM1KufsoIWTxFVdQTAsEzF0IdtmOoTOL3bbQwCa1vhheOfT+nfKDjIFYyp5
-#> 7nj1c5LJUpnCV5P82HdQ9jUOrHaxLFBGGrJbzM2EKnbTwEAHlj6CdgSFkRfQRwMw
-#> 40YVWHpXk/qi7wPjEMnHZ4y5m9JKHEoIbZPRoSFoVauYNJmhL72DqkFsiQp0Sm7Z
-#> 8A7nZalMZjC5eZiXYJu6auCmzz/Oqz76phtok3oOjgk6aQEG70tt1rf5XAJDe0nh
-#> czeu0DapWOBxsCNXZEM92In0r1RLljb2rv7Omnd1NB5ZloegE81ruVLsTnAePeRv
-#> NGF+noknV+14Cx/rSlI/w6MZne2wo/cJqb0Ue4MiKNbqc3PfkDqxy42JhoLgqGyg
-#> Ka2oeDQVdYVw2ISeE94gSa1vHZ61rv3iv0XYCPWEq8LtHDgDxYNtIxabEuU+zIpJ
-#> xw25BIORiOmvGIEGVaUTTQtTzWJIz49ZH07SLr7mQDnuKJhqGEBrWSuNsvpLs3HQ
-#> Sq/EUBQoAzw4XI4aDv2N1dELOHlp2vVUQ1U81PkIgH7LH84ytvnCFRr7U5WyxAra
-#> 4fFlOUg=
+#> DQEBAQUAA4ICDwAwggIKAoICAQCD1jE9NqWz8P2lRwOQXLUWq+wuX7GWPXTzR26C
+#> PQkDwq9x/MCWxPCyufLgVAetBk2cS6ixX8gcOgPQ7/mT24YHm38OkJ7gweUAnjb8
+#> 40zVQbw9JCzdHI4AhNVjtDs0tr8qPEyFDmJ+U56tI2L3lEiYSBkEayUEPZqj2NyY
+#> jo0z2pqW3BbQ1tRRGQQ3ndKT91Qh33Hrq6xDHdo5S6JsyM6+X/4fz3ohr1a96ea9
+#> l/SVk1QXxmll7ZiqLFlxkX7J2IuKP8xn4VkvTupKuTNL+FW0rIDYRx2bRf8gPJS7
+#> JXw7pusiYHbNvzLi9g8mSJVtU1aEavyDCZiCkBPHzjkfg91LODvdCTrTzzRSAQeo
+#> Pao0b/GsnFAmeMAIIA1atIr1T+V/2kTGkxDB75xcDrdWkl0WL7Dx66FelS+noe5x
+#> QPmHlkYUQpgtm/SB+dzW5IyQAs3jEGauVGZVHcWxbdoJBqKjsgHnaVAJ/T9BYKUw
+#> zOBlzWjZb2nQadtS30hTPJBuX+paxmxwYUfFBiTQFr0dQFMQXxj28mVz8hwSk+QV
+#> a6OuYRbWduLvCT7b668L1ImoY3nC0DbKXGaL5ZHlQU7roNAgVehytQBj3zAemhlm
+#> q7m8dzSSbkfJ9gy7/llVmClXBpjc4tr6fD2tXHMfHUNrjnMl++hazcoSdLieeioM
+#> SMhkWwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBT30xuU
+#> UMV5Vj0t1y/TX+vIsUeaZjAfBgNVHSMEGDAWgBT30xuUUMV5Vj0t1y/TX+vIsUea
+#> ZjANBgkqhkiG9w0BAQsFAAOCAgEAbO5wt61zmmHHQXbyo2UT0q/yr3al8rJJw/LF
+#> +sAAKdAqgY9jcoLQwkRh4I5zU9Qwsn1mlOpuDPB47+JrE3gDENCdlR0SnZl0F2Wl
+#> inqrSwReIgwL5YpSIZOgKHSJjyVbov6f7eZis9Z054X9Nlw04hz3sIIQ6HaYQ5Zd
+#> msufQASGc9qH8lwAoPw2C6fKA4VrE98zHlvtk98fGv0Upi0xCiPr3T4/0g2H733D
+#> 56f01t5Eo6B2kuu9/BTJBpcdUa4IkroJLQ6mtHTVTChfHeopzJT6Kcv3xvOioyTp
+#> QHlEZbaLRyrI4ItQYAbzLgQ6gmPTekqfytLi1DSTrHbGhA4buldsGQHGV8+C/LYb
+#> 9iAbJoI7vq+czT6OzBreyBNeMPTd5nh97Uzn9JNoRFuqJkQ5mWJWO83iPRindZ8a
+#> f+4F2rizoZrHyBXQiu36XWAR71Mu5027FdE5RkZ8INNNvjlp8wEIUV4WIJUhd27i
+#> gW7d1tWO+YYjkD+N0tNEVZtB7xo2wJ3RuaKfS36Yp54P8HZdVJQr1vzVceb3ZpRA
+#> QadknMqVXTMVvpygQxhCTXiXyIqSS4yzKJZGSJQ7z7IEWBzFU8fF2uFvx9ZQ5sma
+#> mu21Zl2/fjOwYiTF2etFue/xJvvc8NFduIxgRf9DJchAQ8G7wKhqnAf/wXiH1sfA
+#> 9Li/iIk=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -663,19 +667,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "ipc:///tmp/d386f78e5fe648848e2ca1da"
+#> [1] "ipc:///tmp/0dab26920a871b96948d8f37"
 m1[]
-#> [1] 6680
+#> [1] 14269
 
 s2$daemons
-#> [1] "ipc:///tmp/003748b45cfbbc3d081d8978"
+#> [1] "ipc:///tmp/df937735e3b736e564a4aa50"
 m2[] # different to m1
-#> [1] 6703
+#> [1] 14295
 
 m3[] # same as m1
-#> [1] 6680
+#> [1] 14269
 m4[] # same as m1
-#> [1] 6680
+#> [1] 14269
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
