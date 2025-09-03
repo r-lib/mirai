@@ -86,7 +86,8 @@ daemons(0)
 ⚡️ **Extreme Performance**
 
 - Scales to millions of tasks across thousands of connections
-- Delivers 1,000x greater responsiveness over alternatives
+- Delivers 1,000x greater efficiency and responsiveness over
+  alternatives
 - Zero-latency, event-driven promises optimized for real-time
   applications
 
@@ -103,7 +104,7 @@ daemons(0)
 - Deploy across local, remote (SSH), and HPC environments (Slurm, SGE,
   PBS, LSF)
 - Compute profiles manage independent daemon pools and resource types
-- Distribute workload to the optimal resources using multiple compute
+- Distribute workload to optimal resources using multiple compute
   profiles
 
 ### Powers the R Ecosystem
