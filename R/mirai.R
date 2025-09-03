@@ -627,6 +627,7 @@ deparse_safe <- function(x) {
 mk_interrupt_error <- function() .miraiInterrupt
 
 mk_mirai_error <- function(cnd, sc) {
+  cnd[["condition.class"]] <- class(cnd)
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
   call <- deparse_safe(.subset2(cnd, "call"))
   msg <- if (
@@ -642,7 +643,7 @@ mk_mirai_error <- function(cnd, sc) {
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
   if (sc[[1L]][[1L]] == ".handleSimpleError") sc <- sc[-1L]
   cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
-  `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error", class(cnd)))
+  `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 
 .miraiInterrupt <- `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))

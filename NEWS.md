@@ -20,7 +20,7 @@
 
 * `stop_mirai()` is more efficient and responsive, especially for 'mirai_map' objects (#417).
 * `miraiError` enhancements:
-  + Preserves the original condition classes and may be re-thrown as the original condition (thanks @sebffischer, #400).
+  + The original condition classes are preserved as `$condition.class` (thanks @sebffischer, #400).
   + The print method includes the customary additional line break (thanks @sebffischer, #399).
 * Fixes `daemons(n)` failing to launch local daemons if mirai was installed in a custom user library set by an explicit `.libPaths()` call in '.Rprofile' (thanks @erydit and @dpastoor, #390).
 * Improved behaviour for `serial_config()` custom serialization.

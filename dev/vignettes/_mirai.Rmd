@@ -143,7 +143,7 @@ m3[]
 
 m3$data$stack.trace
 ```
-A 'miraiError' inherits from the original condition classes and hence can be caught or re-thrown. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
+The original condition classes are preserved at `$condition.class` on the error object. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
 ```{r}
 #| label: metaexample
 f <- function(x) if (x > 0) stop("positive")
@@ -152,6 +152,7 @@ m4 <- mirai(rlang::abort("aborted", meta_uid = "UID001"))
 m4[]
 
 m4$data$meta_uid
+m4$data$condition.class
 ```
 If a daemon instance is sent a user interrupt, the mirai will resolve to an object of class 'miraiInterrupt' and 'errorValue'.
 
