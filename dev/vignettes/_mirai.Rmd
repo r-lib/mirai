@@ -13,17 +13,18 @@ knitr::opts_chunk$set(
   comment = "#>",
   out.width = "100%"
 )
+set.seed(1234L)
 ```
 
 This is a reference vignette of the package's core functionality. Other package vignettes cover additional features.
 
-### 1. The mirai Concept
+### 1. Introduction
 
 mirai (Japanese for 'future') implements the concept of *futures* in R.
 
 Futures are an abstraction that represent the result of code evaluation that will be available at some point in the future. The actual code evaluation is sent to and performed in a separate R process (*daemon*), and the result is sent back to the main (*host*) process when it completes.
 
-#### mirai creation
+#### mirai
 
 The package has one main function: `mirai()` to create a mirai object.
 
@@ -35,7 +36,30 @@ This requires that:
 - Package functions be namespaced using `::`, or `library()` calls be made within the expression.
 - Other functions/data/objects required by the expression should be passed explicitly via `...` or `.args`.
 
-#### mirai collection
+The following mimics an expensive calculation that eventually returns a random value.
+
+```{r}
+#| label: exec
+library(mirai)
+
+m <- mirai(
+  {
+    Sys.sleep(time)
+    rnorm(5L, mean)
+  },
+  time = 2L,
+  mean = 4.5
+)
+
+m
+m$data
+unresolved(m)
+
+# Do work whilst unresolved
+
+m[]
+m$data
+```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
 
@@ -45,6 +69,38 @@ If the expression errored, crashed, or timed out then this will be an 'errorValu
 See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
+
+#### mirai (cont'd)
+
+For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
+So, the following would be equivalent to the above:
+
+```{r}
+#| label: equiv
+expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
+args <- list(time = 2L, mean = 4)
+
+m1 <- mirai(.expr = expr, .args = args)
+m1[]
+```
+
+The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
+Here `environment()`, which is the calling environment, is passed directly to '.args'.
+This is a convenient method for passing in objects existing in the environment, such as the `x` and `file` provided to the `write.csv.async()` function.
+```{r}
+#| label: exec2
+write.csv.async <- function(x, file) {
+  mirai(write.csv(x, file), .args = environment())
+}
+
+m <- write.csv.async(x = rnorm(1e6), file = tempfile())
+
+while (unresolved(m)) {
+  cat("Writing file...\n")
+  Sys.sleep(0.5) # or do other work
+}
+cat("Write complete:", is.null(m$data))
+```
 
 #### daemons
 
@@ -61,111 +117,7 @@ Instead, `daemons()` sets up persistent daemons on which to evaluate mirai expre
 
 How to set up and launch daemons is covered in sections below, starting with [local daemons](#local-daemons).
 
-### 2. Example Use Cases
-
-#### Parallelize compute-intensive tasks
-
-Multiple long computes (model fits etc.) can be performed in parallel on available computing cores.
-
-The following mimics an expensive calculation that eventually returns a random value.
-
-```{r}
-#| label: exec
-library(mirai)
-
-args <- list(time = 2L, mean = 4)
-
-m <- mirai(
-  {
-    Sys.sleep(time)
-    rnorm(5L, mean)
-  },
-  time = args$time,
-  mean = args$mean
-)
-
-m
-m$data
-unresolved(m)
-
-# Do other stuff
-
-collect_mirai(m)
-m[]
-```
-
-For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
-So, the following would be equivalent to the above:
-
-```{r}
-#| label: equiv
-expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
-args <- list(time = 2L, mean = 4)
-
-m1 <- mirai(.expr = expr, .args = args)
-m2 <- mirai(.expr = expr, .args = args)
-m1[]
-m2[]
-```
-By running the above two calculations in parallel, they take roughly half the time as running sequentially (minus a relatively inconsequential parallelization overhead).
-
-#### Unblock I/O-bound Operations
-
-Problem: high-frequency real-time data cannot be written to file/database synchronously without disrupting the execution flow of ingesting the data.
-
-Solution: cache data in memory and use `mirai()` to perform periodic write operations asynchronously from a separate process.
-
-Below, '.args' is used to pass `environment()`, which is the calling environment.
-This provides a convenient method of passing in existing objects, as as the `x` and `file` arguments to the `write.cv.async()` function.
-```{r}
-#| label: exec2
-library(mirai)
-
-write.cv.async <- function(x, file) {
-  mirai(write.csv(x, file), .args = environment())
-}
-
-m <- write.cv.async(x = rnorm(1e6), file = tempfile())
-
-while (unresolved(m)) {
-  cat("Writing file...\n")
-  Sys.sleep(0.5)
-}
-cat("Write complete:", is.null(m$data))
-```
-
-#### Resilient Pipelines
-
-Code that can potentially fail is isolated in a separate process to ensure continued uptime.
-
-As part of a data science / machine learning pipeline, iterations of model training may periodically fail for stochastic reasons (e.g. problematic graphics cards memory management).
-
-Running each iteration in a mirai isolates this potentially problematic code such that it doesn't bring down the entire pipeline, even if it fails.
-```{r}
-#| label: exec3r
-library(mirai)
-
-run_iteration <- function(i) {
-  # simulates a stochastic error rate
-  if (runif(1) < 0.1) stop("random error\n", call. = FALSE)
-  sprintf("iteration %d successful\n", i)
-}
-
-for (i in 1:10) {
-
-  m <- mirai(run_iteration(i), environment())
-  while (is_error_value(m[])) {
-    cat(m$data)
-    m <- mirai(run_iteration(i), environment())
-  }
-  cat(m$data)
-
-}
-```
-By testing the return value of each mirai for errors, error-handling code is able to automate recovery and re-attempts, as above.
-The result is a resilient and fault-tolerant pipeline that minimizes downtime by eliminating interruptions of long computes.
-
-### 3. Error Handling
+### 2. Error Handling
 
 If execution in a mirai fails, the error message is returned as a character string of class 'miraiError' and 'errorValue' to facilitate debugging.
 
@@ -222,7 +174,7 @@ is_error_value(m5$data)
 ```
 `is_error_value()` tests for all mirai execution errors, user interrupts and timeouts.
 
-### 4. Random Number Generation
+### 3. Random Number Generation
 
 mirai employs L'Ecuyer-CMRG streams for random number generation in the same way as base R's own parallel package. This is a widely-adopted, statistically-sound method, suitable for parallel computation.
 
@@ -236,7 +188,7 @@ This guarantees that the results are statistically-sound, although it does not g
 
 This is slightly computationally wasteful, although with a negligible impact on performance. It does, however, guarantee the same deterministic results across runs, and regardless of the number of daemons used.
 
-### 5. Local Daemons
+### 4. Local Daemons
 
 Daemons, or persistent background processes, may be set to receive `mirai()` requests.
 
@@ -358,7 +310,7 @@ everywhere(
 daemons(0)
 ```
 
-### 6. Remote Daemons
+### 5. Remote Daemons
 
 The daemons interface may also be used to send tasks for computation to remote daemon processes on the network.
 
@@ -389,7 +341,7 @@ daemons(0)
 ```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
-### 7. Launching Remote Daemons
+### 6. Launching Remote Daemons
 
 > The launcher analogy is appropriate, as these are ways of deploying a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through its own communications (TCP or TLS over TCP).
 
@@ -554,7 +506,7 @@ launch_remote()
 daemons(0)
 ```
 
-### 8. TLS Secure Connections
+### 7. TLS Secure Connections
 
 TLS provides a robust solution for securing communications from the local machine to remote daemons.
 
@@ -602,7 +554,7 @@ The CA may be a public CA or internal to an organisation.
   - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to 'tlscert'.
   - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tlscert' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
-### 9. Compute Profiles
+### 8. Compute Profiles
 
 `daemons()` has a `.compute` argument to specify separate sets of daemons (*compute profiles*) that operate totally independently. This is useful for managing tasks with heterogeneous compute requirements:
 
