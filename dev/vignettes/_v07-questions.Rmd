@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   out.width = "100%"
 )
+set.seed(1234L)
 ```
 This vignette is designed to provide a knowledgebase for questions posed by the community, and will be added to over time.
 

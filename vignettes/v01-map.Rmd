@@ -38,48 +38,48 @@ daemons(4)
 vec <- c(1, 1, 4, 4, 1, 1, 1, 1)
 system.time(mirai_map(vec, Sys.sleep)[])
 #>    user  system elapsed 
-#>   0.004   0.016   4.009
+#>   0.004   0.009   4.005
 system.time(parLapply(cl, vec, Sys.sleep))
 #>    user  system elapsed 
-#>   0.005   0.015   8.009
+#>   0.052   0.106   8.270
 daemons(0)
 ```
 `.args` is used to specify further constant arguments to `.f` - the `mean` and `sd` in the example below:
 
 ``` r
 with(
-  daemons(3, dispatcher = FALSE),
+  daemons(3, seed = 1234L),
   mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[]
 )
 #> [[1]]
-#> [1] 21.59418
+#> [1] 19.86409
 #> 
 #> [[2]]
-#> [1] 20.64373 16.25799
+#> [1] 19.55834 22.30159
 #> 
 #> [[3]]
-#> [1] 18.89357 20.91331 17.67060
+#> [1] 20.62193 23.06144 19.61896
 ```
-Use `...` to further specify objects referenced but not defined in `.f` - the function `do` below:
+Use `...` to further specify objects referenced but not defined in `.f` - the function `fn` below:
 
 ``` r
 daemons(4)
 ml <- mirai_map(
   c(a = 1, b = 2, c = 3),
-  function(x) do(x, as.logical(x %% 2)),
-  do = nanonext::random
+  function(x) fn(x, as.logical(x %% 2)),
+  fn = nanonext::random
 )
 ml
-#> < mirai map [2/3] >
+#> < mirai map [0/3] >
 ml[]
 #> $a
-#> [1] "4e"
+#> [1] "05"
 #> 
 #> $b
-#> [1] 20 dc
+#> [1] 28 e2
 #> 
 #> $c
-#> [1] "1a19e8"
+#> [1] "d96dd9"
 ```
 
 ### 3. Collecting Results
