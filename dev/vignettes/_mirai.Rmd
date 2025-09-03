@@ -23,30 +23,34 @@ mirai (Japanese for 'future') implements the concept of *futures* in R.
 
 Futures are an abstraction that represent the result of code evaluation that will be available at some point in the future. The actual code evaluation is sent to and performed in a separate R process (*daemon*), and the result is sent back to the main (*host*) process when it completes.
 
+#### mirai creation
+
 The package has one main function: `mirai()` to create a mirai object.
 
 This function returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue with other things.
 
-As the mirai expression is sent to another process, it must be self-contained.
-This means that any functions and variables used in it must be available in that process as well.
+mirai adopts a clear and explicit model for evaluation: as the mirai expression is sent to another process, it must be self-contained.
 This requires that:
 
 - Package functions be namespaced using `::`, or `library()` calls be made within the expression.
-- Other functions/data/objects required by the expression should be passed via `...` or `.args` to be sent along to the daemon.
+- Other functions/data/objects required by the expression should be passed explicitly via `...` or `.args`.
+
+#### mirai collection
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
 
-For a mirai `m`, the result is available at `m$data` once it has resolved.
+The result of a mirai `m` is available at `m$data` once it has resolved.
 Normally this will be the return value of the evaluated expression.
-If the expression errored, caused the process to crash, or timed out then this will be an 'errorValue' instead.
+If the expression errored, crashed, or timed out then this will be an 'errorValue' instead.
 See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
-When a developer or code author writes a `mirai()` call, they should not be concerned about where or how execution of that code actually happens.
-It is simply meant to be executed on the resources that are available to it at the time it is run.
+#### daemons
 
-Instead, it is for the end-user running the code to declare the resources available for evaluating mirai calls. This is done using the package's other main function: `daemons()`.
+When writing a `mirai()` call, you should not be concerned about where or how execution of that code actually happens.
+
+It is for the end-user running the code to declare the resources available for evaluating mirai calls. This is done using the package's other main function: `daemons()`.
 
 If daemons have not been set, each `mirai()` call will by default create a new local background process (*ephemeral daemon*) on which to perform its evaluation.
 
@@ -224,9 +228,13 @@ mirai employs L'Ecuyer-CMRG streams for random number generation in the same way
 
 Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
 
-By default (when the `seed` argument to `daemons()` is `NULL`) mirai initiates a new stream for each daemon launched, in the same manner as base R. This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers of daemons would cause mirai tasks to be sent to different daemons. Secondly, when using dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same one on each run.
+**By default, when the `seed` argument to `daemons()` is `NULL`**: mirai initiates a new stream for each daemon launched, in the same manner as base R.
 
-Supplying an explicit integer `seed` to `daemons()` turns on reproducible RNG. Instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()`. This is slightly computationally wasteful (although posing a negligible effect on performance), but it does guarantee the same results across runs, and regardless of the number of daemons used.
+This guarantees that the results are statistically-sound, although it does not guarantee numerical reproducibility between parallel runs. Firstly, using different numbers of daemons would cause mirai tasks to be sent to different daemons. Secondly, when using dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same one on each run.
+
+**Supply an explicit integer `seed` to `daemons()` for reproducible RNG**: instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()` call.
+
+This is slightly computationally wasteful, although with a negligible impact on performance. It does, however, guarantee the same deterministic results across runs, and regardless of the number of daemons used.
 
 ### 5. Local Daemons
 
@@ -383,7 +391,7 @@ Closing the connection causes all connected daemons to exit automatically. If us
 
 ### 7. Launching Remote Daemons
 
-The launcher analogy is appropriate, as these are ways of deploying a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through it's own communications (TCP or TLS over TCP).
+> The launcher analogy is appropriate, as these are ways of deploying a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through its own communications (TCP or TLS over TCP).
 
 The local launcher simply runs an `Rscript` instance via a local shell. The remote launcher uses a method to run this `Rscript` command on a remote machine.
 
