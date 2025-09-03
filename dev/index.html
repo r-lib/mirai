@@ -137,53 +137,52 @@
 <div class="section level3">
 <h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
 </h3>
-<p>→ Advanced Architecture</p>
+<p>⚙️ <strong>Modern Foundation</strong></p>
 <ul>
-<li>Modern networking and concurrency over IPC, TCP/IP and secure TLS connections</li>
-<li>Professional task queues and scheduling built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://github.com/nanomsg/nng/" class="external-link">NNG</a>
+<li>Architected on current communication technologies (IPC, TCP, secure TLS)</li>
+<li>Professional queueing and scheduling built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://github.com/nanomsg/nng/" class="external-link">NNG</a>
 </li>
+<li>Engineered for custom serialization of cross-language data formats (e.g. torch, Arrow)</li>
 </ul>
-<p>→ Superior Performance</p>
+<p>⚡️ <strong>Extreme Performance</strong></p>
 <ul>
+<li>Scales to millions of tasks across thousands of connections</li>
 <li>Delivers 1,000x greater responsiveness over alternatives</li>
 <li>Zero-latency, event-driven promises optimized for real-time applications</li>
 </ul>
-<p>→ For Production</p>
+<p>🚀 <strong>Production First</strong></p>
 <ul>
-<li>Clear delineation of local and evaluation environments with explicit object passing</li>
-<li>Simplicity in user interface supports 100% transparent and robust operation</li>
+<li>Clear evaluation model with clean environment separation and explicit object passing</li>
+<li>Transparent and robust operation from minimal complexity and no hidden state</li>
+<li>Enhanced observability through OpenTelemetry integration</li>
 </ul>
-<p>→ Reliable at Scale</p>
-<ul>
-<li>Proven capacity for millions of concurrent tasks across thousands of connections</li>
-<li>Enhanced observability afforded by OpenTelemetry integration</li>
-</ul>
-<p>→ Modular Flexibility</p>
+<p>🌐 <strong>Deploy Everywhere</strong></p>
 <ul>
 <li>Deploy across local, remote (SSH), and HPC environments (Slurm, SGE, PBS, LSF)</li>
-<li>Compute profiles allow seamless distribution to your compute of choice</li>
+<li>Compute profiles manage independent daemon pools and resource types</li>
+<li>Distribute workload to the optimal resources using multiple compute profiles</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="powers-the-r-ecosystem">Powers the R Ecosystem<a class="anchor" aria-label="anchor" href="#powers-the-r-ecosystem"></a>
 </h3>
 <p>mirai serves as a foundation for asynchronous and parallel computing in the R ecosystem:</p>
-<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   Implements the first official alternative communications backend for R, the ‘MIRAI’ parallel cluster, fulfilling a feature request by R-Core.</p>
-<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for the purrr functional programming toolkit, a core tidyverse package.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny with full ExtendedTask support, providing next-level responsiveness and scalability.</p>
+<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   The first official alternative communications backend for R, the ‘MIRAI’ parallel cluster, a feature request by R-Core.</p>
+<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for purrr, a core tidyverse package.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny with full ExtendedTask support.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46"></a>   Built-in async evaluator enabling the <code>@async</code> tag in plumber2.</p>
-<p><a href="https://tune.tidymodels.org/" class="external-link"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46"></a>   A core parallel processing infrastructure provider for tidymodels.</p>
+<p><a href="https://tune.tidymodels.org/" class="external-link"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46"></a>   Core parallel processing infrastructure provider for tidymodels.</p>
 <p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Seamless use of torch tensors, models and optimizers across parallel processes.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Query databases seamlessly over ADBC connections in the Arrow format.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46"></a>   R Polars leverages mirai’s serialization registration mechanism for transparent use of all Polars objects.</p>
+<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Query databases over ADBC connections natively in the Arrow data format.</p>
+<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46"></a>   R Polars leverages mirai’s serialization registration mechanism for transparent use of Polars objects.</p>
 <p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Targets uses crew as its default high-performance computing backend. Crew is a distributed worker launcher extending mirai to different computing platforms.</p>
 </div>
 <div class="section level3">
-<h3 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
+<h3 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h3>
 <p><a href="https://github.com/wlandau/" class="external-link">Will Landau</a> for being instrumental in shaping development of the package, from initiating the original request for persistent daemons, through to orchestrating robustness testing for the high performance computing requirements of crew and targets.</p>
 <p><a href="https://github.com/jcheng5/" class="external-link">Joe Cheng</a> for integrating the ‘promises’ method to work seamlessly within Shiny, and prototyping event-driven promises.</p>
-<p><a href="https://github.com/ltierney/" class="external-link">Luke Tierney</a> of R Core, for discussion on L’Ecuyer-CMRG streams to ensure statistical independence in parallel processing, and making it possible for mirai to be the first ‘alternative communications backend for R’.</p>
+<p><a href="https://github.com/ltierney/" class="external-link">Luke Tierney</a> of R Core, for discussion on L’Ecuyer-CMRG streams to ensure statistical independence in parallel processing, and reviewing mirai’s implementation as the first ‘alternative communications backend for R’.</p>
 <p><a href="https://github.com/traversc" class="external-link">Travers Ching</a> for a novel idea in extending the original custom serialization support in the package.</p>
 <p><a href="https://github.com/hadley" class="external-link">Hadley Wickham</a>, <a href="https://github.com/HenrikBengtsson/" class="external-link">Henrik Bengtsson</a>, <a href="https://github.com/dfalbel/" class="external-link">Daniel Falbel</a>, and <a href="https://github.com/krlmlr/" class="external-link">Kirill Müller</a> for many deep insights and discussions.</p>
 </div>
