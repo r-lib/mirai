@@ -433,7 +433,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
 }
 connection && requireNamespace("otel", quietly = TRUE) && Sys.getenv("NOT_CRAN") == "true" && {
   record <- tryCatch(
-    otelsdk::with_otel_record({
+    getNamespace("otelsdk")$with_otel_record({
       ns <- getNamespace("mirai")
       unlockBinding("otel_tracing", ns)
       ns[["otel_tracing"]] <- TRUE
