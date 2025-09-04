@@ -374,13 +374,6 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'     been received (either completed or cancelled).
 #'   }
 #'
-#' @section Events:
-#'
-#'   If dispatcher is used combined with daemon IDs, an additional element
-#'   **events** will report the positive integer ID when the daemon connects and
-#'   the negative value when it disconnects. Only the events since the previous
-#'   status query are returned.
-#'
 #' @seealso [info()] for more succinct information statistics.
 #'
 #' @examplesIf interactive()
@@ -795,7 +788,7 @@ send_signal <- function(envir) {
 dispatcher_status <- function(envir) {
   status <- query_dispatcher(envir[["sock"]], c(0L, 0L))
   is.object(status) && return(status)
-  out <- list(
+  list(
     connections = status[1L],
     daemons = envir[["url"]],
     mirai = c(
@@ -804,10 +797,6 @@ dispatcher_status <- function(envir) {
       completed = status[5L]
     )
   )
-  if (length(status) > 5L) {
-    out <- c(out, list(events = status[6:length(status)]))
-  }
-  out
 }
 
 stop_d_cli <- function(.compute, call) {

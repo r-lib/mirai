@@ -62,7 +62,6 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
   res <- res[[5L]]
 
   inq <- outq <- list()
-  events <- integer()
   connections <- count <- 0L
   envir <- new.env(hash = FALSE, parent = emptyenv())
   `[[<-`(envir, "stream", res)
@@ -109,9 +108,6 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
             id <- as.character(-item)
             if (length(outq[[id]])) {
               outq[[id]][["msgid"]] && send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
-              if (length(outq[[id]][["dmnid"]])) {
-                events <- c(events, outq[[id]][["dmnid"]])
-              }
               outq[[id]] <- NULL
             }
           }
@@ -132,10 +128,8 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
               connections,
               awaiting,
               executing,
-              count - awaiting - executing,
-              events
+              count - awaiting - executing
             )
-            events <- integer()
           } else {
             found <- FALSE
             for (item in outq) {
@@ -177,16 +171,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
         .read_marker(value) && {
             send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
             send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
-            if (length(outq[[id]][["dmnid"]])) {
-              events <- c(events, outq[[id]][["dmnid"]])
-            }
             outq[[id]] <- NULL
-          next
-        }
-        as.logical(value[1L]) || {
-          dmnid <- readBin(value, integer(), n = 2L)[2L]
-          events <- c(events, dmnid)
-          `[[<-`(outq[[id]], "dmnid", -dmnid)
           next
         }
         send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
