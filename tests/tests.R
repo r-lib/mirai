@@ -86,7 +86,7 @@ connection && {
   test_true(d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
   test_print(d)
   test_true(daemons_set())
-  test_true(require_daemons(parent.frame()))
+  test_true(suppressWarnings(require_daemons(parent.frame())))
   me <- mirai(mirai::mirai(), .timeout = 2000L)[]
   test_notnull(me)
   if (is_mirai_error(me)) test_type("list", me$stack.trace)
