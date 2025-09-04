@@ -15,7 +15,7 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,8 +31,9 @@ unless deploying manually on remote resources."><meta property="og:image" conten
     <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -54,7 +55,7 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Daemon Instance</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/daemon.R" class="external-link"><code>R/daemon.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/daemon.R" class="external-link"><code>R/daemon.R</code></a></small>
       <div class="d-none name"><code>daemon.Rd</code></div>
     </div>
 
@@ -79,8 +80,9 @@ unless deploying manually on remote resources.</p>
 <span>  idletime <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  walltime <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  maxtasks <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  tlscert <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tls <span class="op">=</span> <span class="va">tlscert</span>,</span>
 <span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rs <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -101,7 +103,7 @@ TRUE if using dispatcher and FALSE otherwise.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>reserved but not currently used.</p></dd>
+<dd><p>reserved, but not currently used.</p></dd>
 
 
 <dt id="arg-asyncdial">asyncdial<a class="anchor" aria-label="anchor" href="#arg-asyncdial"></a></dt>
@@ -149,19 +151,23 @@ limit) i.e. the minimum amount of real time elapsed before exiting.</p></dd>
 (task limit) before exiting.</p></dd>
 
 
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>[default NULL] (optional) integer daemon ID provided to
-dispatcher to track connection status. Causes <code><a href="status.html">status()</a></code> to report this ID
-under <code>$events</code> when the daemon connects and disconnects.</p></dd>
-
-
-<dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
+<dt id="arg-tlscert">tlscert<a class="anchor" aria-label="anchor" href="#arg-tlscert"></a></dt>
 <dd><p>[default NULL] required for secure TLS connections over
 'tls+tcp://'. <strong>Either</strong> the character path to a file containing X.509
 certificate(s) in PEM format, comprising the certificate authority
 certificate chain starting with the TLS certificate and ending with the CA
 certificate, <strong>or</strong> a length 2 character vector comprising [i] the
 certificate authority certificate chain and [ii] the empty string <code>""</code>.</p></dd>
+
+
+<dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
+<dd><p>deprecated, please use <code>tlscert</code> instead.</p></dd>
+
+
+<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
+<dd><p>[default NULL] (optional) integer daemon ID provided to
+dispatcher to track connection status. Causes <code><a href="status.html">status()</a></code> to report this ID
+under <code>$events</code> when the daemon connects and disconnects.</p></dd>
 
 
 <dt id="arg-rs">rs<a class="anchor" aria-label="anchor" href="#arg-rs"></a></dt>
@@ -199,8 +205,8 @@ the host process.</p>
 <p>Setting to FALSE allows the daemon to persist indefinitely even when there is
 no longer a socket connection. This allows a host session to end and a new
 session to connect at the URL where the daemon is dialled in. Daemons must be
-terminated with <code>daemons(NULL)</code> in this case, which sends explicit exit
-signals to all connected daemons.</p>
+terminated with <code>daemons(NULL)</code> in this case instead of <code>daemons(0)</code>. This
+sends explicit exit signals to all connected daemons.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

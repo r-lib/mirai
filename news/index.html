@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,8 +23,9 @@
     <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -46,9 +47,54 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.5.0" id="mirai-250">mirai 2.5.0<a class="anchor" aria-label="anchor" href="#mirai-250"></a></h2><p class="text-muted">CRAN release: 2025-09-04</p>
+<div class="section level5">
+<h5 id="behavioural-changes-2-5-0">Behavioural Changes<a class="anchor" aria-label="anchor" href="#behavioural-changes-2-5-0"></a></h5>
+<ul><li>Behavioural changes for <code><a href="../reference/daemons.html">daemons()</a></code>:
+<ul><li>Returns invisibly logical <code>TRUE</code> when creating daemons and <code>FALSE</code> when resetting, for simplicity and consistency (<a href="https://github.com/r-lib/mirai/issues/384" class="external-link">#384</a>).</li>
+<li>Creating new daemons resets any existing daemons for the compute profile rather than error. This means that an explicit <code>daemons(0)</code> is no longer required before applying new settings (thanks <a href="https://github.com/eliocamp" class="external-link">@eliocamp</a>, <a href="https://github.com/r-lib/mirai/issues/383" class="external-link">#383</a>).</li>
+<li>Calling without supplying any arguments now errors rather than return the value of <code><a href="../reference/status.html">status()</a></code>.</li>
+</ul></li>
+</ul></div>
+<div class="section level5">
+<h5 id="new-features-2-5-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-5-0"></a></h5>
+<ul><li>Complete observability of mirai requests by emitting OpenTelemetry traces when tracing is enabled by the otelsdk package (<a href="https://github.com/r-lib/mirai/issues/394" class="external-link">#394</a>).</li>
+<li>Adds <code><a href="../reference/info.html">info()</a></code> as an alternative to <code><a href="../reference/status.html">status()</a></code> for retrieving more succinct information statistics, more convenient for programmatic use (thanks <a href="https://github.com/wlandau" class="external-link">@wlandau</a>, <a href="https://github.com/r-lib/mirai/issues/410" class="external-link">#410</a>).</li>
+<li>Adds <code><a href="../reference/with_daemons.html">with_daemons()</a></code> and <code><a href="../reference/with_daemons.html">local_daemons()</a></code> helper functions for using a particular compute profile. These work with daemons that are already set up unlike the existing <code><a href="../reference/with.miraiDaemons.html">with.miraiDaemons()</a></code> method, which creates a new scope and tears it down when finished (<a href="https://github.com/r-lib/mirai/issues/360" class="external-link">#360</a>).</li>
+<li>A mirai now has an attribute <code>id</code>, which is a monotonically increasing integer identifier unique to each session.</li>
+</ul></div>
+<div class="section level5">
+<h5 id="updates-2-5-0">Updates<a class="anchor" aria-label="anchor" href="#updates-2-5-0"></a></h5>
+<ul><li>
+<code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> is more efficient and responsive, especially for ‘mirai_map’ objects (<a href="https://github.com/r-lib/mirai/issues/417" class="external-link">#417</a>).</li>
+<li>
+<code>miraiError</code> enhancements:
+<ul><li>The original condition classes are preserved as <code>$condition.class</code> (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/400" class="external-link">#400</a>).</li>
+<li>The print method includes the customary additional line break (thanks <a href="https://github.com/sebffischer" class="external-link">@sebffischer</a>, <a href="https://github.com/r-lib/mirai/issues/399" class="external-link">#399</a>).</li>
+</ul></li>
+<li>Fixes <code>daemons(n)</code> failing to launch local daemons if mirai was installed in a custom user library set by an explicit <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code> call in ‘.Rprofile’ (thanks <a href="https://github.com/erydit" class="external-link">@erydit</a> and <a href="https://github.com/dpastoor" class="external-link">@dpastoor</a>, <a href="https://github.com/r-lib/mirai/issues/390" class="external-link">#390</a>).</li>
+<li>Improved behaviour for <code><a href="../reference/serial_config.html">serial_config()</a></code> custom serialization. If the serialization hook function errors or otherwise fails to return a raw vector, this will error out rather than be silently ignored (thanks <a href="https://github.com/dipterix" class="external-link">@dipterix</a>, <a href="https://github.com/r-lib/mirai/issues/378" class="external-link">#378</a>).</li>
+<li>
+<code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for mirai made robust for high-throughput scenarios (<a href="https://github.com/r-lib/mirai/issues/377" class="external-link">#377</a>).</li>
+<li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> now supports Arrow Tables and Polars DataFrames (<a href="https://github.com/r-lib/mirai/issues/366" class="external-link">#366</a>).</li>
+<li>
+<code><a href="../reference/require_daemons.html">require_daemons()</a></code> arguments are swapped so that <code>.compute</code> comes before <code>call</code> for ease of use. Previous usage will work for the time being, although is deprecated and will be defunct in a future version.</li>
+<li>Enhancements to <code><a href="../reference/everywhere.html">everywhere()</a></code>:
+<ul><li>Consecutive <code><a href="../reference/everywhere.html">everywhere()</a></code> calls are permissible again when using dispatcher (behaviour update in v2.4.1) (<a href="https://github.com/r-lib/mirai/issues/354" class="external-link">#354</a>).</li>
+<li>No longer has any effect on the RNG stream when using a reproducible <code>seed</code> value at <code><a href="../reference/daemons.html">daemons()</a></code> (<a href="https://github.com/r-lib/mirai/issues/356" class="external-link">#356</a>).</li>
+</ul></li>
+<li>A <code><a href="../reference/mirai.html">mirai()</a></code> evaluated on an ephemeral daemon returns invisibly, consistent with other cases (<a href="https://github.com/r-lib/mirai/issues/351" class="external-link">#351</a>).</li>
+<li>
+<code><a href="../reference/daemon.html">daemon()</a></code> gains a <code>tlscert</code> argument for custom TLS certificates. The change in argument name lets this be passed when making a <code><a href="../reference/daemons.html">daemons()</a></code> call (<a href="https://github.com/r-lib/mirai/issues/344" class="external-link">#344</a>).</li>
+<li>The <code>tls</code> argument at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code> is deprecated.</li>
+<li>Requires nanonext &gt;= 1.7.0.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.4.1" id="mirai-241">mirai 2.4.1<a class="anchor" aria-label="anchor" href="#mirai-241"></a></h2><p class="text-muted">CRAN release: 2025-07-15</p>
 <div class="section level5">

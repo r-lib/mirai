@@ -7,9 +7,10 @@ articles:
   v02-promises: v02-promises.html
   v03-serialization: v03-serialization.html
   v04-parallel: v04-parallel.html
-  v05-packages: v05-packages.html
-  v06-questions: v06-questions.html
-last_built: 2025-08-13T11:59Z
+  v05-opentelemetry: v05-opentelemetry.html
+  v06-packages: v06-packages.html
+  v07-questions: v07-questions.html
+last_built: 2025-09-04T10:12Z
 urls:
   reference: https://mirai.r-lib.org/reference
   article: https://mirai.r-lib.org/articles

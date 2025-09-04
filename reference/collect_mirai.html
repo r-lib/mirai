@@ -11,7 +11,7 @@ call_mirai(x)$data."><meta property="og:image" content="https://mirai.r-lib.org/
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,8 +27,9 @@ call_mirai(x)$data."><meta property="og:image" content="https://mirai.r-lib.org/
     <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
     <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
     <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-questions.html">Community FAQs</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -50,7 +51,7 @@ call_mirai(x)$data."><meta property="og:image" content="https://mirai.r-lib.org/
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>mirai (Collect Value)</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/mirai.R" class="external-link"><code>R/mirai.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/mirai.R" class="external-link"><code>R/mirai.R</code></a></small>
       <div class="d-none name"><code>collect_mirai.Rd</code></div>
     </div>
 
@@ -91,6 +92,18 @@ still in progress, blocking but interruptible.</p>
 <p><code>x[]</code> is an equivalent way to wait for and return the value of a mirai <code>x</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="options">Options<a class="anchor" aria-label="anchor" href="#options"></a></h2>
+
+
+
+<p>As an alternative to a character vector, a list where the names are the
+collection options is also accepted. The value for <code>.progress</code> is passed to
+the cli progress bar - if a character value as the name, and if a list as
+named parameters to <code><a href="https://cli.r-lib.org/reference/cli_progress_bar.html" class="external-link">cli::cli_progress_bar</a></code>. Examples:
+<code>c(.stop = TRUE, .progress = "bar name")</code> or
+<code>c(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))</code></p>
+    </div>
+    <div class="section level2">
     <h2 id="alternatively">Alternatively<a class="anchor" aria-label="anchor" href="#alternatively"></a></h2>
 
 
@@ -110,7 +123,8 @@ as <code>while</code> or <code>if</code>.</p>
 character string of class 'miraiError' and 'errorValue'. <code><a href="is_mirai_error.html">is_mirai_error()</a></code>
 may be used to test for this. The elements of the original condition are
 accessible via <code>$</code> on the error object. A stack trace comprising a list of
-calls is also available at <code>$stack.trace</code>.</p>
+calls is also available at <code>$stack.trace</code>, and the original condition classes
+at <code>$condition.class</code>.</p>
 <p>If a daemon crashes or terminates unexpectedly during evaluation, an
 'errorValue' 19 (Connection reset) is returned.</p>
 <p><code><a href="is_mirai_error.html">is_error_value()</a></code> tests for all error conditions including 'mirai' errors,

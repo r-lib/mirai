@@ -9,8 +9,9 @@
 <url><loc>https://mirai.r-lib.org/articles/v02-promises.html</loc></url>
 <url><loc>https://mirai.r-lib.org/articles/v03-serialization.html</loc></url>
 <url><loc>https://mirai.r-lib.org/articles/v04-parallel.html</loc></url>
-<url><loc>https://mirai.r-lib.org/articles/v05-packages.html</loc></url>
-<url><loc>https://mirai.r-lib.org/articles/v06-questions.html</loc></url>
+<url><loc>https://mirai.r-lib.org/articles/v05-opentelemetry.html</loc></url>
+<url><loc>https://mirai.r-lib.org/articles/v06-packages.html</loc></url>
+<url><loc>https://mirai.r-lib.org/articles/v07-questions.html</loc></url>
 <url><loc>https://mirai.r-lib.org/authors.html</loc></url>
 <url><loc>https://mirai.r-lib.org/index.html</loc></url>
 <url><loc>https://mirai.r-lib.org/news/index.html</loc></url>
@@ -27,6 +28,7 @@
 <url><loc>https://mirai.r-lib.org/reference/everywhere.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/host_url.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/index.html</loc></url>
+<url><loc>https://mirai.r-lib.org/reference/info.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/is_mirai.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/is_mirai_error.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/launch_local.html</loc></url>
@@ -45,5 +47,6 @@
 <url><loc>https://mirai.r-lib.org/reference/stop_mirai.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/unresolved.html</loc></url>
 <url><loc>https://mirai.r-lib.org/reference/with.miraiDaemons.html</loc></url>
+<url><loc>https://mirai.r-lib.org/reference/with_daemons.html</loc></url>
 </urlset>
 
