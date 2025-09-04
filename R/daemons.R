@@ -493,6 +493,7 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 require_daemons <- function(.compute = NULL, call = environment()) {
   ensure_cli_initialized()
   is.environment(.compute) && {
+    warning("supplying `call` as the first argument of `require_daemons()` is deprecated")
     temp <- .compute
     .compute <- if (is.character(call)) call
     call <- temp
