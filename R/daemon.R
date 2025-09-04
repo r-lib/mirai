@@ -122,6 +122,7 @@ daemon <- function(
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
+    wait(cv) || return(invisible(xc))
     bundle <- collect_aio(aio)
     `[[<-`(globalenv(), ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
     if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
