@@ -747,9 +747,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
 
-  res <- collect_aio(req)
-  `[[<-`(envir, "pid", as.integer(res[1L]))
-  `[[<-`(envir, "url", res[2L])
+  `[[<-`(envir, "url", collect_aio(req))
 }
 
 launch_daemons <- function(seq, dots, envir) {
