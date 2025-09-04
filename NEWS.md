@@ -1,5 +1,11 @@
 # mirai (development version)
 
+#### Updates
+
+* Removes the following developer features:
+  + `nextget("pid")` is no longer a supported option.
+  + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.
+
 # mirai 2.5.0
 
 #### Behavioural Changes
