@@ -76,7 +76,8 @@
 #' character string of class 'miraiError' and 'errorValue'. [is_mirai_error()]
 #' may be used to test for this. The elements of the original condition are
 #' accessible via `$` on the error object. A stack trace comprising a list of
-#' calls is also available at `$stack.trace`.
+#' calls is also available at `$stack.trace`, and the original condition classes
+#' at `$condition.class`.
 #'
 #' If a daemon crashes or terminates unexpectedly during evaluation, an
 #' 'errorValue' 19 (Connection reset) is returned.
