@@ -133,7 +133,8 @@ m2[]
 is_mirai_error(m2$data)
 is_error_value(m2$data)
 ```
-A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object.
+- A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object
+- The original condition classes are also preserved at `$condition.class`
 ```{r}
 #| label: stackexample
 f <- function(x) if (x > 0) stop("positive")
@@ -142,8 +143,10 @@ m3 <- mirai({f(-1); f(1)}, f = f)
 m3[]
 
 m3$data$stack.trace
+m3$data$condition.class
 ```
-A 'miraiError' inherits from the original condition classes and hence can be caught or re-thrown. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
+- The elements of the original error condition are also accessible via `$` on the error object
+- Additional metadata recorded by `rlang::abort()` is preserved
 ```{r}
 #| label: metaexample
 f <- function(x) if (x > 0) stop("positive")

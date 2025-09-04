@@ -53,9 +53,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.897650 4.096580 5.078189 5.236960 3.512786
+#> [1] 4.476153 5.546561 5.275747 4.493184 5.143411
 m$data
-#> [1] 4.897650 4.096580 5.078189 5.236960 3.512786
+#> [1] 4.476153 5.546561 5.275747 4.493184 5.143411
 ```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
@@ -79,7 +79,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 5.617032 4.966253 3.991497 6.033833 2.806785
+#> [1] 2.005464 3.797099 2.288692 4.184737 4.566824
 ```
 
 The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
@@ -138,7 +138,8 @@ is_mirai_error(m2$data)
 is_error_value(m2$data)
 #> [1] TRUE
 ```
-A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object.
+- A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object
+- The original condition classes are also preserved at `$condition.class`
 
 ``` r
 f <- function(x) if (x > 0) stop("positive")
@@ -153,8 +154,11 @@ m3$data$stack.trace
 #> 
 #> [[2]]
 #> f(1)
+m3$data$condition.class
+#> [1] "simpleError" "error"       "condition"
 ```
-A 'miraiError' inherits from the original condition classes and hence can be caught or re-thrown. The elements of the original error condition are also accessible via `$` on the error object. Additional metadata recorded by `rlang::abort()` is preserved:
+- The elements of the original error condition are also accessible via `$` on the error object
+- Additional metadata recorded by `rlang::abort()` is preserved
 
 ``` r
 f <- function(x) if (x > 0) stop("positive")
@@ -259,7 +263,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/a3511b61eb7b8c39a2ac1b13"
+#> [1] "abstract://3b815670e7f3ccf61901f3f2"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -297,7 +301,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "ipc:///tmp/05efdcdc660d0a53ed49ec88"
+#> [1] "abstract://da8cb9f4b9a34d11357b3bac"
 ```
 
 #### everywhere()
@@ -370,7 +374,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.3.157:55701"
+#> [1] "tcp://192.168.1.71:46741"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -545,7 +549,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.3.157:55705")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:34529")'
 daemons(0)
 ```
 
@@ -568,36 +572,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.3.157:55709",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
-#> MTY4LjMuMTU3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
-#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjMu
-#> MTU3MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQCD1jE9NqWz8P2lRwOQXLUWq+wuX7GWPXTzR26C
-#> PQkDwq9x/MCWxPCyufLgVAetBk2cS6ixX8gcOgPQ7/mT24YHm38OkJ7gweUAnjb8
-#> 40zVQbw9JCzdHI4AhNVjtDs0tr8qPEyFDmJ+U56tI2L3lEiYSBkEayUEPZqj2NyY
-#> jo0z2pqW3BbQ1tRRGQQ3ndKT91Qh33Hrq6xDHdo5S6JsyM6+X/4fz3ohr1a96ea9
-#> l/SVk1QXxmll7ZiqLFlxkX7J2IuKP8xn4VkvTupKuTNL+FW0rIDYRx2bRf8gPJS7
-#> JXw7pusiYHbNvzLi9g8mSJVtU1aEavyDCZiCkBPHzjkfg91LODvdCTrTzzRSAQeo
-#> Pao0b/GsnFAmeMAIIA1atIr1T+V/2kTGkxDB75xcDrdWkl0WL7Dx66FelS+noe5x
-#> QPmHlkYUQpgtm/SB+dzW5IyQAs3jEGauVGZVHcWxbdoJBqKjsgHnaVAJ/T9BYKUw
-#> zOBlzWjZb2nQadtS30hTPJBuX+paxmxwYUfFBiTQFr0dQFMQXxj28mVz8hwSk+QV
-#> a6OuYRbWduLvCT7b668L1ImoY3nC0DbKXGaL5ZHlQU7roNAgVehytQBj3zAemhlm
-#> q7m8dzSSbkfJ9gy7/llVmClXBpjc4tr6fD2tXHMfHUNrjnMl++hazcoSdLieeioM
-#> SMhkWwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBT30xuU
-#> UMV5Vj0t1y/TX+vIsUeaZjAfBgNVHSMEGDAWgBT30xuUUMV5Vj0t1y/TX+vIsUea
-#> ZjANBgkqhkiG9w0BAQsFAAOCAgEAbO5wt61zmmHHQXbyo2UT0q/yr3al8rJJw/LF
-#> +sAAKdAqgY9jcoLQwkRh4I5zU9Qwsn1mlOpuDPB47+JrE3gDENCdlR0SnZl0F2Wl
-#> inqrSwReIgwL5YpSIZOgKHSJjyVbov6f7eZis9Z054X9Nlw04hz3sIIQ6HaYQ5Zd
-#> msufQASGc9qH8lwAoPw2C6fKA4VrE98zHlvtk98fGv0Upi0xCiPr3T4/0g2H733D
-#> 56f01t5Eo6B2kuu9/BTJBpcdUa4IkroJLQ6mtHTVTChfHeopzJT6Kcv3xvOioyTp
-#> QHlEZbaLRyrI4ItQYAbzLgQ6gmPTekqfytLi1DSTrHbGhA4buldsGQHGV8+C/LYb
-#> 9iAbJoI7vq+czT6OzBreyBNeMPTd5nh97Uzn9JNoRFuqJkQ5mWJWO83iPRindZ8a
-#> f+4F2rizoZrHyBXQiu36XWAR71Mu5027FdE5RkZ8INNNvjlp8wEIUV4WIJUhd27i
-#> gW7d1tWO+YYjkD+N0tNEVZtB7xo2wJ3RuaKfS36Yp54P8HZdVJQr1vzVceb3ZpRA
-#> QadknMqVXTMVvpygQxhCTXiXyIqSS4yzKJZGSJQ7z7IEWBzFU8fF2uFvx9ZQ5sma
-#> mu21Zl2/fjOwYiTF2etFue/xJvvc8NFduIxgRf9DJchAQ8G7wKhqnAf/wXiH1sfA
-#> 9Li/iIk=
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:39835",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
+#> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
+#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
+#> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
+#> AQEFAAOCAg8AMIICCgKCAgEA2xO5GR1prwyOCicDrhaEywpO2jUkgCGyXHiScKok
+#> C3hDJzsxG6+6ZK8uUvOOzTxSgF/ozKDcYkiNEfmtCNX6e0baBMReILzVTcpUhn3N
+#> Yw9B71xYN597HUAuGHtcAGv1fH6po/KIdcc6tYKuDLUSmG2JPsBE8tdB1MHNMrT5
+#> 9x1N2+53gXOJv/Ark+8+4Pvdb719gphtCicnSf5FrX4a4fpGCZOcWdk/71iqBhBn
+#> wk9ghHPWgSlLkusp/ebQtFYrXZ/H0AK822lLg0fsYqia8aOIu/rVnN2E/qoRBLmB
+#> bOI7FFul5kQz9n0l/KZ8AJ/4e30YXnVMRs2h2DKULVMuJA+UeK0m64njk/9ZUvY6
+#> /K7KWxwaTSgcEhx8+I0SogZJ1fSaaD0eAaISpSyWBwF7FDRaH3xhTvOB1RTfcO/h
+#> YMdmIvjQDlzhlynBsUbfCouo0uuzCC4hF6O/GewWl0zz+8n2/PoHqa1yOLGGhDDS
+#> 3Po3b3A7fORtasvbIiSYqrG5/EyVDPktmz56uwmLQ4cl6zie9Uzz3UMUmybMcVYA
+#> FbFRVCJgMR/988+k6FlzKmV5Vzn4OFbAYZPGmahAosld0He6T7KWhIZyu+YAcLrt
+#> ecSF0faOr/gr2xApR46SEKoWCk19qFxqwMsxeGEwmTk+ECpAahdVeDKYgf5xh0EH
+#> 0ukCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUVw/YtFDp
+#> nzjzTU312QD4tFFRgM0wHwYDVR0jBBgwFoAUVw/YtFDpnzjzTU312QD4tFFRgM0w
+#> DQYJKoZIhvcNAQELBQADggIBAKKi2C5+cKTptnAfTzJnmSnhwMuZeQL7RuqJ1rgj
+#> kY9PZLyXF9ofAVv5Ujb0tgyTqfzvCQg6MB4W+LwMHwVydnqpAhayg2brhOMWIYbG
+#> 40KBmHcOclEmlawVwf2uqjS19wlfWkvqId6wZeu+Kr0s+mCfUowf7N/+gPw2e6Nf
+#> 9cFLFZijMiBH3rxovcTk8DNaH4TG2ECBxzAHcoJFH6bglnw0tSJLijnEiKvOsM1g
+#> HDdosjpufMbLe2cx17wDP3GORkhwunR87bBNl0cmt2QAlL7b2neV/TKWmOFGuzFR
+#> +Gjb0CRP+s20k7s1vUtfGjlQI0sk+6D7yFi4CVbCY+tQVxB+BZjxsszpkpohh1OB
+#> f7Ugj3hNEpojqcjae84BkioZ0rW4Y1dmpHBNoInbHUTSET9ZB6FpfknGvV0XMZiT
+#> OjsuKT1oKfFJzefw37PDOvfqVUl2dbO9u/5PBq0VYldtSi2bkkzMaLxlCxItVqdF
+#> ajFVhN9RGQZJJdSEWVopJtX4lDAm4nno5IFYQ+0XYhqPMRtZPwoHAcBuDSz/E3Da
+#> XXvM8aH9n3N31lymaUE0lX6cDrLQfB/DmmYSYhjVHKjSKG2DFEILB6D1Qj8TBa34
+#> PeC4023DOtcyMO/BX4sGOsQ3cw/he4vDq8lmcqh8O/OEoTfzRe6zDgVQ/xc+M2C5
+#> Zs/P
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -667,19 +671,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "ipc:///tmp/0dab26920a871b96948d8f37"
+#> [1] "abstract://90879a789bd6e4a4a2b38593"
 m1[]
-#> [1] 14269
+#> [1] 20773
 
 s2$daemons
-#> [1] "ipc:///tmp/df937735e3b736e564a4aa50"
+#> [1] "abstract://e9c3dda8680efccf496c48ce"
 m2[] # different to m1
-#> [1] 14295
+#> [1] 20859
 
 m3[] # same as m1
-#> [1] 14269
+#> [1] 20773
 m4[] # same as m1
-#> [1] 14269
+#> [1] 20773
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
