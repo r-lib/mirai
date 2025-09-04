@@ -53,9 +53,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 3.023978 5.048477 5.529588 3.682575 3.326906
+#> [1] 4.476153 5.546561 5.275747 4.493184 5.143411
 m$data
-#> [1] 3.023978 5.048477 5.529588 3.682575 3.326906
+#> [1] 4.476153 5.546561 5.275747 4.493184 5.143411
 ```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
@@ -79,7 +79,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.616545 4.224745 4.257988 2.038878 4.246667
+#> [1] 2.005464 3.797099 2.288692 4.184737 4.566824
 ```
 
 The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
@@ -138,7 +138,8 @@ is_mirai_error(m2$data)
 is_error_value(m2$data)
 #> [1] TRUE
 ```
-A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object.
+- A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object
+- The original condition classes are also preserved at `$condition.class`
 
 ``` r
 f <- function(x) if (x > 0) stop("positive")
@@ -153,10 +154,11 @@ m3$data$stack.trace
 #> 
 #> [[2]]
 #> f(1)
+m3$data$condition.class
+#> [1] "simpleError" "error"       "condition"
 ```
 - The elements of the original error condition are also accessible via `$` on the error object
-- The original condition classes are preserved at `$condition.class`
-- Additional metadata recorded by `rlang::abort()` is preserved:
+- Additional metadata recorded by `rlang::abort()` is preserved
 
 ``` r
 f <- function(x) if (x > 0) stop("positive")
@@ -165,8 +167,6 @@ m4 <- mirai(rlang::abort("aborted", meta_uid = "UID001"))
 m4[]
 #> 'miraiError' chr Error: aborted
 
-m4$data$condition.class
-#> [1] "rlang_error" "error"       "condition"
 m4$data$meta_uid
 #> [1] "UID001"
 ```
@@ -263,7 +263,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://5a41521a92ecce7c6da37e2a"
+#> [1] "abstract://3b815670e7f3ccf61901f3f2"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -301,7 +301,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://efb51a28d1adc92d40ac97ff"
+#> [1] "abstract://da8cb9f4b9a34d11357b3bac"
 ```
 
 #### everywhere()
@@ -374,7 +374,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://192.168.1.71:40971"
+#> [1] "tcp://192.168.1.71:46741"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -549,7 +549,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:39137")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.71:34529")'
 daemons(0)
 ```
 
@@ -572,36 +572,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:42233",tlscert=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:39835",tlscert=c("-----BEGIN CERTIFICATE-----
 #> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
 #> MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
 #> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43
 #> MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEApWZ1HLVdCA+sS56menq338PSAnKfAIFZOVunhLYT
-#> NaiC5gaXAY32gfuoSa6JH2y/UWpCqO+6PCoNPwaqpskEZER75Gd9D4n5Vl7lY3w9
-#> cgwEASwUNdQ4AOVgNG01XtlslyNW0bx0CVJdB/HuyxFNB+v3kEgIKFKKE/DkLjbM
-#> dtJ0qy2KTLCuuk9MsNuwHrfOQdLSra3sxx5Xsy9/8HJ0vrfG0tSJSX8GgIMLucK+
-#> oaROToNhlt4fCDLW2BkS9FazUtTSjYD4BlmaRjBd2i+pQsEu++ipp8t6Jy01o9TN
-#> KCk2REWp+m0BsinrLFqVJ6OfmpIQCZ1qiJZJ4x+qNEmt7nCTFfkycsHeSL51vU3p
-#> oEHZRY6iCQCAYFH9F/S7sLIthUMsGWjEpeyCkpDcT3ekdBm2ujUyXhcQPYpDXFcR
-#> lWAo6jn03YRaZ+JFpc7nKzsdJqzvuwG5EeK1pzYIgdbeD+teOxyjKj2EuM6RS/3T
-#> 0B+2Lth3U/Ggi8U/stx9IvIq1TjuN52dUVzTRbTYtE0IvsD5hX+ZEUCTod6W3sIC
-#> 6JEafx3YYvqwkDV7WzQO9XMwnBn0TD+BU6J4m1n8VShJwo7Uxi+XCMEB6vd7H86+
-#> KSRX0vnB+yAHBPMpCWKfoMVyB/WtZXdVgwF1W2AGkRSml3FGY6hAEvXvQr+zzKOK
-#> 4L0CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUDM2WwG2H
-#> 5D0G71W0ciYjUcK6AjIwHwYDVR0jBBgwFoAUDM2WwG2H5D0G71W0ciYjUcK6AjIw
-#> DQYJKoZIhvcNAQELBQADggIBADr20hRGgiU50nMwScjPJfUeeaRdTFjkfNlLwS0y
-#> Qx/Cjol06uQMvDoi8XRRBWrRNSgSz1fm4ZzZD/PLD+P+5p0ocBQkw2Gp0MjfJnSv
-#> sBl3tHLvDgITfx0OwiPGEwgT8ffz9zsFrslj508K2iWpdG7rxcgZEY6ST8C0OY7W
-#> 0eDmpKfQ7lJQIoE0gqqgjoLADf4SLeuzUEVrTdcKxJowQzbX6xBq4nva9pjZUY3b
-#> yRPXsuV7FunsZtDo4G48gkDgBQCRNfhZWDyR0K0AFDpsRoSSgFTtv4DUuOJWj+2g
-#> xa/lDDODGRoy3TyhcYHEJpqild3bEmck5Ofz8nuvP/N07AYNPrJap2zhWMhp8PhB
-#> nkI4F0Gec1dnbPEhEJHBgMIADooeuFeZx6ZgxTvGvVl8V34sXg/WoTlcZOrN9rlT
-#> 5XLBoX+B/QHenn5jDjfImr714nTHRxlcFWH7m0ZjkmEiTGKFMUJ4JBl14F10iszm
-#> n3sOAV8Bvqv7NVquTQPoFBMOUc91203owtxV/UzooFxgIXvIPct4orUIp7A5rwep
-#> ifXxDaFdUPUL2Cjg7lAwhKKCRVevJdIUL/zxxWyQ2D1/BkhL/RzjILNx+fBsnfQa
-#> bizla80aaWgKB4rXQUBaFNB5/dIbc2kqodi78aHaEgDfyk+pezOOVBAX6TkxFxig
-#> gcAy
+#> AQEFAAOCAg8AMIICCgKCAgEA2xO5GR1prwyOCicDrhaEywpO2jUkgCGyXHiScKok
+#> C3hDJzsxG6+6ZK8uUvOOzTxSgF/ozKDcYkiNEfmtCNX6e0baBMReILzVTcpUhn3N
+#> Yw9B71xYN597HUAuGHtcAGv1fH6po/KIdcc6tYKuDLUSmG2JPsBE8tdB1MHNMrT5
+#> 9x1N2+53gXOJv/Ark+8+4Pvdb719gphtCicnSf5FrX4a4fpGCZOcWdk/71iqBhBn
+#> wk9ghHPWgSlLkusp/ebQtFYrXZ/H0AK822lLg0fsYqia8aOIu/rVnN2E/qoRBLmB
+#> bOI7FFul5kQz9n0l/KZ8AJ/4e30YXnVMRs2h2DKULVMuJA+UeK0m64njk/9ZUvY6
+#> /K7KWxwaTSgcEhx8+I0SogZJ1fSaaD0eAaISpSyWBwF7FDRaH3xhTvOB1RTfcO/h
+#> YMdmIvjQDlzhlynBsUbfCouo0uuzCC4hF6O/GewWl0zz+8n2/PoHqa1yOLGGhDDS
+#> 3Po3b3A7fORtasvbIiSYqrG5/EyVDPktmz56uwmLQ4cl6zie9Uzz3UMUmybMcVYA
+#> FbFRVCJgMR/988+k6FlzKmV5Vzn4OFbAYZPGmahAosld0He6T7KWhIZyu+YAcLrt
+#> ecSF0faOr/gr2xApR46SEKoWCk19qFxqwMsxeGEwmTk+ECpAahdVeDKYgf5xh0EH
+#> 0ukCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUVw/YtFDp
+#> nzjzTU312QD4tFFRgM0wHwYDVR0jBBgwFoAUVw/YtFDpnzjzTU312QD4tFFRgM0w
+#> DQYJKoZIhvcNAQELBQADggIBAKKi2C5+cKTptnAfTzJnmSnhwMuZeQL7RuqJ1rgj
+#> kY9PZLyXF9ofAVv5Ujb0tgyTqfzvCQg6MB4W+LwMHwVydnqpAhayg2brhOMWIYbG
+#> 40KBmHcOclEmlawVwf2uqjS19wlfWkvqId6wZeu+Kr0s+mCfUowf7N/+gPw2e6Nf
+#> 9cFLFZijMiBH3rxovcTk8DNaH4TG2ECBxzAHcoJFH6bglnw0tSJLijnEiKvOsM1g
+#> HDdosjpufMbLe2cx17wDP3GORkhwunR87bBNl0cmt2QAlL7b2neV/TKWmOFGuzFR
+#> +Gjb0CRP+s20k7s1vUtfGjlQI0sk+6D7yFi4CVbCY+tQVxB+BZjxsszpkpohh1OB
+#> f7Ugj3hNEpojqcjae84BkioZ0rW4Y1dmpHBNoInbHUTSET9ZB6FpfknGvV0XMZiT
+#> OjsuKT1oKfFJzefw37PDOvfqVUl2dbO9u/5PBq0VYldtSi2bkkzMaLxlCxItVqdF
+#> ajFVhN9RGQZJJdSEWVopJtX4lDAm4nno5IFYQ+0XYhqPMRtZPwoHAcBuDSz/E3Da
+#> XXvM8aH9n3N31lymaUE0lX6cDrLQfB/DmmYSYhjVHKjSKG2DFEILB6D1Qj8TBa34
+#> PeC4023DOtcyMO/BX4sGOsQ3cw/he4vDq8lmcqh8O/OEoTfzRe6zDgVQ/xc+M2C5
+#> Zs/P
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -671,19 +671,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "abstract://cd494863f903c9f1184da094"
+#> [1] "abstract://90879a789bd6e4a4a2b38593"
 m1[]
-#> [1] 9284
+#> [1] 20773
 
 s2$daemons
-#> [1] "abstract://88cc382873f68069cdb463de"
+#> [1] "abstract://e9c3dda8680efccf496c48ce"
 m2[] # different to m1
-#> [1] 9370
+#> [1] 20859
 
 m3[] # same as m1
-#> [1] 9284
+#> [1] 20773
 m4[] # same as m1
-#> [1] 9284
+#> [1] 20773
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
