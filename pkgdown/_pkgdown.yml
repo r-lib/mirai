@@ -15,9 +15,9 @@ development:
   mode: auto
 news:
  releases:
+ - text: "mirai 2.5.0"
+   href: https://www.tidyverse.org/blog/2025/09/mirai-2-5-0/
  - text: "mirai 2.4.0"
    href: https://shikokuchuo.net/posts/27-mirai-240/
  - text: "mirai 2.3.0"
    href: https://shikokuchuo.net/posts/26-mirai-230/
- - text: "mirai 2.0.0"
-   href: https://shikokuchuo.net/posts/25-mirai-v2/
