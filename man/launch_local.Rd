@@ -21,9 +21,9 @@ launch_remote(
 \strong{or} for \code{launch_remote} only, a 'miraiCluster' or 'miraiNode'.}
 
 \item{...}{(optional) arguments passed through to \code{\link[=daemon]{daemon()}}. These include
-\code{asycdial}, \code{autoexit}, \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime},
-\code{walltime} and \code{tlscert}. Only supply to override arguments originally
-provided to \code{\link[=daemons]{daemons()}}, otherwise those will be used instead.}
+\code{asycdial}, \code{autoexit}, \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime}, and
+\code{walltime}. Only supply to override arguments originally provided to
+\code{\link[=daemons]{daemons()}}, otherwise those will be used instead.}
 
 \item{tls}{[default NULL] deprecated. Specify \code{tlscert} as a \code{...} argument
 to \code{\link[=daemons]{daemons()}} when setting up daemons instead.}
