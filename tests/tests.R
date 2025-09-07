@@ -147,7 +147,7 @@ connection && {
   test_error(launch_remote(remote = ssh_config("ssh://127.0.0.1:5456", tunnel = TRUE)), "127.0.0.1")
   test_false(daemons(0L))
   Sys.sleep(1L)
-  test_true(daemons(n = 2L, url = value <- "ws://:0", dispatcher = "none", remote = remote_config(quote = TRUE)))
+  test_true(daemons(n = 2L, url = value <- "ws://:0", dispatcher = FALSE, remote = remote_config(quote = TRUE)))
   test_true(status()$daemons != value)
   test_false(daemons(0L))
 }
@@ -422,7 +422,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai_map(1:12, rnorm)[]
   test_false(daemons(0))
   Sys.sleep(0.5)
-  test_true(daemons(4, dispatcher = "none", seed = 1234L, .compute = "gpu"))
+  test_true(daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
   with_daemons("gpu", {
     test_true(all(everywhere(TRUE)[.flat]))
     n <- mirai_map(1:12, rnorm)[]

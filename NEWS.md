@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.
+
 # mirai 2.5.0
 
 #### Behavioural Changes
