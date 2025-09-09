@@ -542,10 +542,14 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #' @export
 #'
 with_daemons <- function(.compute, expr) {
+  .compute == "sequential" && {
+    on.exit(daemons(0L))
+    daemons(url = local_url(), dispatcher = FALSE, .compute = .compute)
+  }
   require_daemons(.compute = .compute, call = environment())
   prev_profile <- .[["cp"]]
   `[[<-`(., "cp", .compute)
-  on.exit(`[[<-`(., "cp", prev_profile))
+  on.exit(`[[<-`(., "cp", prev_profile), add = TRUE)
   expr
 }
 
