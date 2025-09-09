@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* `sequential_daemons()` allows running mirai sequentially in the current session, facilitating interactive debugging via `browser()`.
+
 #### Updates
 
 * `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.

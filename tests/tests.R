@@ -277,10 +277,11 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai("Seattle", .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
-  test_true(daemons(n = 1L, url = local_url(), dispatcher = TRUE))
-  with_daemons("sequential", {
+  test_true(sequential_daemons("seq"))
+  with_daemons("seq", {
     task <- mirai(substitute())
   })
+  test_false(daemons(0, .compute = "seq"))
   res <- task[]
   test_true(missing(res))
   test_type("integer", .Random.seed)

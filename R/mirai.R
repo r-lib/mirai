@@ -143,8 +143,7 @@
 #'
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   missing(.expr) && stop(._[["missing_expression"]])
-  if (is.null(.compute)) .compute <- .[["cp"]]
-  envir <- ..[[.compute]]
+  envir <- compute_env(.compute)
 
   expr <- substitute(.expr)
   globals <- list(...)
@@ -197,7 +196,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     id = envir[["dispatcher"]]
   )
   if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
-  .compute == "sequential" && daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
+  is.null(envir[["sequential"]]) ||
+    daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
   invisible(req)
 }
 
