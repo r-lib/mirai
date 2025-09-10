@@ -648,12 +648,12 @@ create_profile <- function(envir, .compute, n, dots) {
 
 init_envir_stream <- function(seed) {
   .advance()
-  oseed <- .GlobalEnv[[".Random.seed"]]
+  oseed <- globalenv()[[".Random.seed"]]
+  on.exit(`[[<-`(globalenv(), ".Random.seed", oseed))
   RNGkind("L'Ecuyer-CMRG")
   if (length(seed)) set.seed(seed)
   envir <- new.env(hash = FALSE, parent = ..)
-  `[[<-`(envir, "stream", .GlobalEnv[[".Random.seed"]])
-  `[[<-`(.GlobalEnv, ".Random.seed", oseed)
+  `[[<-`(envir, "stream", globalenv()[[".Random.seed"]])
   `[[<-`(envir, "seed", seed)
 }
 

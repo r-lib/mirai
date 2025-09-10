@@ -129,7 +129,7 @@ daemon <- function(
     is.numeric(id) && send(sock, c(0L, as.integer(id)), mode = 2L, block = TRUE)
     wait(cv) || return(invisible(xc))
     bundle <- collect_aio(aio)
-    `[[<-`(.GlobalEnv, ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
+    `[[<-`(globalenv(), ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
     if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
     snapshot()
     repeat {
@@ -154,7 +154,7 @@ daemon <- function(
       task <- task + 1L
     }
   } else {
-    if (is.numeric(rs)) `[[<-`(.GlobalEnv, ".Random.seed", as.integer(rs))
+    if (is.numeric(rs)) `[[<-`(globalenv(), ".Random.seed", as.integer(rs))
     snapshot()
     repeat {
       ctx <- .context(sock)
@@ -221,7 +221,7 @@ eval_mirai <- function(._mirai_.) {
   withRestarts(
     withCallingHandlers(
       {
-        list2env(._mirai_.[["._globals_."]], envir = .GlobalEnv)
+        list2env(._mirai_.[["._globals_."]], envir = globalenv())
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
@@ -230,7 +230,7 @@ eval_mirai <- function(._mirai_.) {
             options = list(kind = "server", parent = prtctx)
           )
         }
-        eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = .GlobalEnv)
+        eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = handle_mirai_error,
       interrupt = handle_mirai_interrupt
@@ -255,14 +255,14 @@ dial_sync_socket <- function(sock, url, autostart = NA, tls = NULL) {
 }
 
 do_cleanup <- function() {
-  vars <- names(.GlobalEnv)
-  rm(list = vars[!vars %in% .[["vars"]]], envir = .GlobalEnv)
+  vars <- names(globalenv())
+  rm(list = vars[!vars %in% .[["vars"]]], envir = globalenv())
   new <- search()
   lapply(new[!new %in% .[["se"]]], detach, character.only = TRUE)
   options(.[["op"]])
 }
 
-snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(.GlobalEnv))
+snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
 
 flag_value_auto <- function(autoexit) {
   (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit) ||
