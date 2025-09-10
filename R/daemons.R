@@ -308,19 +308,18 @@ daemons <- function(
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
 }
 
-#' Sequential Daemons
+#' Synchronous Daemons
 #'
-#' Set daemons which evaluate mirai sequentially in your current R process.
-#' Specify a value for `.compute` to limit sequential behaviour to the named
-#' compute profile, otherwise all mirai will be performed sequentially by
+#' Set daemons which evaluate mirai synchronously in your current R process.
+#' Specify a value for `.compute` to limit synchronous behaviour to the named
+#' compute profile, otherwise all mirai will be performed synchronously by
 #' default.
 #'
-#' Using sequential daemons substantially changes the behaviour of mirai by
-#' evaluating them immediately after mirai creation, hence they are no longer
-#' async. This can, however, be useful for interactive debugging via a
-#' [browser()] instance in your current session.
+#' Using synchronous daemons substantially changes the behaviour of mirai by
+#' evaluating them immediately after mirai creation. This can be useful for
+#' interactive debugging via a [browser()] instance in your current session.
 #'
-#' Sequential daemons may be reset in the usual way with a call to `daemons(0)`
+#' Synchronous daemons may be reset in the usual way with a call to `daemons(0)`
 #' for the relevant compute profile.
 #'
 #' @inheritParams daemons
@@ -330,13 +329,13 @@ daemons <- function(
 #' @seealso [daemons()].
 #'
 #' @examples
-#' sequential_daemons()
+#' daemons_sync()
 #' info()
 #' m <- mirai(Sys.getpid())
 #' daemons(0)
 #' m[]
 #'
-#' sequential_daemons("seq")
+#' daemons_sync("seq")
 #' info("seq")
 #' with_daemons("seq", {
 #'   m <- mirai(Sys.getpid())
@@ -346,7 +345,7 @@ daemons <- function(
 #'
 #' @export
 #'
-sequential_daemons <- function(.compute = NULL) {
+daemons_sync <- function(.compute = NULL) {
   dmn <- daemons(url = local_url(), dispatcher = FALSE, .compute = .compute)
   `[[<-`(compute_env(.compute), "sequential", TRUE)
   invisible(dmn)

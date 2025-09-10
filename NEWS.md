@@ -2,7 +2,8 @@
 
 #### New Features
 
-* `sequential_daemons()` allows running mirai sequentially in the current session, facilitating interactive debugging via `browser()`.
+* `daemons_sync()` creates a synchronous compute profile to allow running mirai synchronously in the current session.
+  This facilitates interactive debugging via `browser()` (#439).
 
 #### Updates
 
