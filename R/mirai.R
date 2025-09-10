@@ -196,7 +196,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     id = envir[["dispatcher"]]
   )
   if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
-  is.null(envir[["sequential"]]) || evaluate_sync(envir[["url"]])
+  envir[["sync"]] && evaluate_sync(envir[["url"]])
   invisible(req)
 }
 

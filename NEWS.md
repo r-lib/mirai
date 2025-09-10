@@ -2,8 +2,8 @@
 
 #### New Features
 
-* `daemons_sync()` creates a synchronous compute profile to allow running mirai synchronously in the current session.
-  This facilitates interactive debugging via `browser()` (#439).
+* `daemons(sync = TRUE)` creates synchronous daemons which run mirai synchronously in the current session.
+  This can facilitate debugging via interactive `browser()` instances (#439).
 
 #### Updates
 

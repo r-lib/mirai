@@ -42,6 +42,11 @@
 #' @param ... (optional) additional arguments passed through to [daemon()] if
 #'   launching daemons. These include `asyncdial`, `autoexit`, `cleanup`,
 #'   `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
+#' @param sync \[default FALSE\] logical value, whether to evaluate mirai
+#'   synchronously in your current R process. Setting this to `TRUE` ignores
+#'   other arguments, apart from `.compute` and substantially changes the
+#'   behaviour of mirai by causing them to be evaluated immediately after
+#'   creation. This can be useful for debugging via an interactive `browser()`.
 #' @param seed \[default NULL\] (optional) The default of `NULL` initializes
 #'   L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 #'   package. Results are statistically-sound, although generally
@@ -208,6 +213,21 @@
 #'
 #' }
 #'
+#' @examples
+#' # Synchronous daemons run mirai in the current process
+#' # and can be useful for debugging
+#' daemons(sync = TRUE)
+#' m <- mirai(Sys.getpid())
+#' daemons(0)
+#' m[]
+#'
+#' daemons(sync = TRUE, .compute = "sync")
+#' with_daemons("sync", {
+#'   m <- mirai(Sys.getpid())
+#' })
+#' daemons(0, .compute = "sync")
+#' m[]
+#'
 #' @export
 #'
 daemons <- function(
@@ -216,6 +236,7 @@ daemons <- function(
   remote = NULL,
   dispatcher = TRUE,
   ...,
+  sync = FALSE,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -224,6 +245,11 @@ daemons <- function(
 ) {
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
+
+  if (sync) {
+    url <- local_url()
+    dispatcher <- FALSE
+  }
 
   if (is.character(url)) {
     res <- if (is.null(envir)) {
@@ -236,7 +262,7 @@ daemons <- function(
       } else {
         create_sock(envir, url, cfg[[2L]])
       }
-      create_profile(envir, .compute, 0L, dots)
+      create_profile(envir, .compute, 0L, dots, sync)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
@@ -269,7 +295,7 @@ daemons <- function(
       } else {
         launch_daemons(seq_len(n), dots, envir)
       }
-      create_profile(envir, .compute, n, dots)
+      create_profile(envir, .compute, n, dots, sync)
     }
   }
 
@@ -281,6 +307,7 @@ daemons <- function(
       remote = remote,
       dispatcher = dispatcher,
       ...,
+      sync = sync,
       seed = seed,
       serial = serial,
       tls = tls,
@@ -306,49 +333,6 @@ daemons <- function(
   }
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
-}
-
-#' Synchronous Daemons
-#'
-#' Set daemons which evaluate mirai synchronously in your current R process.
-#' Specify a value for `.compute` to limit synchronous behaviour to the named
-#' compute profile, otherwise all mirai will be performed synchronously by
-#' default.
-#'
-#' Using synchronous daemons substantially changes the behaviour of mirai by
-#' evaluating them immediately after mirai creation. This can be useful for
-#' interactive debugging via a [browser()] instance in your current session.
-#'
-#' Synchronous daemons may be reset in the usual way with a call to `daemons(0)`
-#' for the relevant compute profile.
-#'
-#' @inheritParams daemons
-#'
-#' @return Invisibly, logical `TRUE`.
-#'
-#' @seealso [daemons()].
-#'
-#' @examples
-#' daemons_sync()
-#' info()
-#' m <- mirai(Sys.getpid())
-#' daemons(0)
-#' m[]
-#'
-#' daemons_sync("seq")
-#' info("seq")
-#' with_daemons("seq", {
-#'   m <- mirai(Sys.getpid())
-#' })
-#' daemons(0, .compute = "seq")
-#' m[]
-#'
-#' @export
-#'
-daemons_sync <- function(.compute = NULL) {
-  dmn <- daemons(url = local_url(), dispatcher = FALSE, .compute = .compute)
-  `[[<-`(compute_env(.compute), "sequential", TRUE)
-  invisible(dmn)
 }
 
 #' @export
@@ -679,9 +663,10 @@ configure_tls <- function(url, tls, pass, envir, config = TRUE) {
   list(tls, cfg)
 }
 
-create_profile <- function(envir, .compute, n, dots) {
+create_profile <- function(envir, .compute, n, dots, sync) {
   `[[<-`(envir, "n", n)
   `[[<-`(envir, "dots", dots)
+  `[[<-`(envir, "sync", sync)
   `[[<-`(.., .compute, envir)
 }
 

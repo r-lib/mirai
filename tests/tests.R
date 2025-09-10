@@ -277,7 +277,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   m <- mirai("Seattle", .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
-  test_true(daemons_sync("seq"))
+  test_true(daemons(sync = TRUE, .compute = "seq"))
   with_daemons("seq", {
     task <- mirai(substitute())
   })
