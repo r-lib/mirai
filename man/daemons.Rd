@@ -41,10 +41,11 @@ launching daemons. These include \code{asyncdial}, \code{autoexit}, \code{cleanu
 \code{output}, \code{maxtasks}, \code{idletime}, \code{walltime} and \code{tlscert}.}
 
 \item{sync}{[default FALSE] logical value, whether to evaluate mirai
-synchronously in your current R process. Setting this to \code{TRUE} ignores
-other arguments, apart from \code{.compute} and substantially changes the
-behaviour of mirai by causing them to be evaluated immediately after
-creation. This can be useful for debugging via an interactive \code{browser()}.}
+synchronously in the current R process. Setting to \code{TRUE} substantially
+changes the behaviour of mirai by causing them to be evaluated immediately
+after creation. This can be useful for debugging via an interactive
+\code{browser()}. Arguments other than \code{seed} and \code{.compute} are in this case
+disregarded.}
 
 \item{seed}{[default NULL] (optional) The default of \code{NULL} initializes
 L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
@@ -251,7 +252,7 @@ daemons(
 
 }
 \dontshow{\}) # examplesIf}
-# Synchronous daemons run mirai in the current process
+# Synchronous compute profiles run mirai in the current process
 # and can be useful for debugging
 daemons(sync = TRUE)
 m <- mirai(Sys.getpid())

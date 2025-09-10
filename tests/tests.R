@@ -279,6 +279,8 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
   test_true(daemons(sync = TRUE, .compute = "seq"))
   with_daemons("seq", {
+    test_error(launch_local(), "daemons cannot be launched")
+    test_error(launch_remote(), "synchronous compute profiles")
     task <- mirai(substitute())
   })
   test_false(daemons(0, .compute = "seq"))

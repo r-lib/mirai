@@ -43,10 +43,11 @@
 #'   launching daemons. These include `asyncdial`, `autoexit`, `cleanup`,
 #'   `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
 #' @param sync \[default FALSE\] logical value, whether to evaluate mirai
-#'   synchronously in your current R process. Setting this to `TRUE` ignores
-#'   other arguments, apart from `.compute` and substantially changes the
-#'   behaviour of mirai by causing them to be evaluated immediately after
-#'   creation. This can be useful for debugging via an interactive `browser()`.
+#'   synchronously in the current R process. Setting to `TRUE` substantially
+#'   changes the behaviour of mirai by causing them to be evaluated immediately
+#'   after creation. This can be useful for debugging via an interactive
+#'   `browser()`. Arguments other than `seed` and `.compute` are in this case
+#'   disregarded.
 #' @param seed \[default NULL\] (optional) The default of `NULL` initializes
 #'   L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 #'   package. Results are statistically-sound, although generally
@@ -214,7 +215,7 @@
 #' }
 #'
 #' @examples
-#' # Synchronous daemons run mirai in the current process
+#' # Synchronous compute profiles run mirai in the current process
 #' # and can be useful for debugging
 #' daemons(sync = TRUE)
 #' m <- mirai(Sys.getpid())
@@ -249,6 +250,7 @@ daemons <- function(
   if (sync) {
     url <- local_url()
     dispatcher <- FALSE
+    remote <- serial <- tls <- pass <- NULL
   }
 
   if (is.character(url)) {

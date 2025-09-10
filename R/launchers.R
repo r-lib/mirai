@@ -47,6 +47,7 @@
 launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
   envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
+  envir[["sync"]] && stop(._[["synchronous"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
@@ -89,6 +90,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   n <- as.integer(n)
   envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
+  envir[["sync"]] && stop(._[["synchronous"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
