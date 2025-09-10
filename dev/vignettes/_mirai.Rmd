@@ -302,7 +302,7 @@ everywhere(dbDisconnect(con))
 ```
 
 > Sometimes it may be necessary to evaluate an expression in the global environment of each daemon.
-As mirai evaluation does not occur in the global environment itself, but one inheriting from it, an explicit call to `evalq(envir = .GlobalEnv)` achieves this.
+As mirai evaluation does not occur in the global environment itself, but one inheriting from it, an explicit call to `evalq(envir = globalenv())` achieves this.
 An example use case is `box::use()` to import a module or package:
 
 ```{r}
@@ -310,7 +310,7 @@ An example use case is `box::use()` to import a module or package:
 everywhere(
   evalq(
     box::use(dplyr[select], mirai[...]),
-    envir = .GlobalEnv
+    envir = globalenv()
   )
 )
 

@@ -632,14 +632,14 @@ mk_mirai_error <- function(cnd, sc) {
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
   call <- deparse_safe(.subset2(cnd, "call"))
   msg <- if (
-    is.null(call) || call == "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = .GlobalEnv)"
+    is.null(call) || call == "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
   ) {
     sprintf("Error: %s", .subset2(cnd, "message"))
   } else {
     sprintf("Error in %s: %s", call, .subset2(cnd, "message"))
   }
   idx <- max(which(as.logical(lapply(
-    sc, `==`, "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = .GlobalEnv)"
+    sc, `==`, "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
   ))))
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
   if (sc[[1L]][[1L]] == ".handleSimpleError") sc <- sc[-1L]
