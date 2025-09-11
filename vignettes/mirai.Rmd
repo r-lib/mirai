@@ -53,9 +53,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 5.375844 4.196292 5.283457 3.248217 4.589325
+#> [1] 5.809552 4.934121 3.966212 4.442888 3.643468
 m$data
-#> [1] 5.375844 4.196292 5.283457 3.248217 4.589325
+#> [1] 5.809552 4.934121 3.966212 4.442888 3.643468
 ```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
@@ -79,7 +79,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.712100 4.256463 4.515955 2.710346 2.524172
+#> [1] 3.523121 4.522287 3.890605 5.237182 4.616812
 ```
 
 The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
@@ -263,7 +263,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://8b3d23a3516cd0cf9caa1bfc"
+#> [1] "abstract://713c553ca41824332271f4f1"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -301,7 +301,7 @@ status()
 #> [1] 6
 #> 
 #> $daemons
-#> [1] "abstract://8fda96651ebadc8bcf285f80"
+#> [1] "abstract://07d3a9544118ee8855b33560"
 ```
 
 #### everywhere()
@@ -310,8 +310,6 @@ status()
 
 ``` r
 everywhere(library(DBI))
-#> Warning in request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, : 'package:stats' may not be
-#> available when loading
 ```
 The above keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded for all evaluations.
 Other types of setup task may also be performed, including making a common resource available, such as a database connection:
@@ -319,8 +317,6 @@ Other types of setup task may also be performed, including making a common resou
 
 ``` r
 everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = tempfile())
-#> Warning in request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, : 'package:stats' may not be
-#> available when loading
 ```
 By super-assignment, the conenction 'con' will be available in the global environment of all daemon instances.
 Subsequent mirai calls may then make use of 'con'.
@@ -335,8 +331,6 @@ Disconnect from the database everywhere:
 
 ``` r
 everywhere(dbDisconnect(con))
-#> Warning in request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, : 'package:stats' may not be
-#> available when loading
 ```
 
 > Sometimes it may be necessary to evaluate an expression in the global environment of each daemon.
@@ -351,8 +345,6 @@ everywhere(
     envir = globalenv()
   )
 )
-#> Warning in request(.context(envir[["sock"]]), data, send_mode = 1L, recv_mode = 1L, : 'package:stats' may not be
-#> available when loading
 
 daemons(0)
 ```
@@ -382,7 +374,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "tcp://10.246.58.63:36759"
+#> [1] "tcp://10.246.58.63:40869"
 #> 
 #> $mirai
 #>  awaiting executing completed 
@@ -557,7 +549,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://10.246.58.63:41923")'
+#> Rscript -e 'mirai::daemon("tcp://10.246.58.63:46005")'
 daemons(0)
 ```
 
@@ -580,36 +572,36 @@ The generated self-signed certificate is available via `launch_remote()`, where 
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://10.246.58.63:37633",tlscert=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://10.246.58.63:40431",tlscert=c("-----BEGIN CERTIFICATE-----
 #> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4y
 #> NDYuNTguNjMxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
 #> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjI0Ni41OC42
 #> MzERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEA3yflR6X47QPCteUz9pb9GDkCS32Fl9tqxvPQ2hPv
-#> Uagda28hVGAdQt7EJ6tLo8DFvmmGl5bdmautEp5/3m3gK8g+r/kqmZzBqabXr/e2
-#> HFJfHq9BPf3+we8QDSES0smBXhADaYrOoQbBbDhbekQY6itkzveU/VgmzZk76hCl
-#> MbPJg+aHgcsLtcYzTXXw0anVQE/4fheGiOTn6oO+aL1/EgCl6zL7dj5y7gfIAFq5
-#> pQ6At38MowvVzPh+gl/1gWBQ3N7Y1+yoJg2dtHPxwt05dU2przEapNuBINW2pqAC
-#> +JdKX/jL052Vq2n5Diq9V4iwVoLAuyZasz3XYmOdw+OBdjjsMuqbtAADUJTHgJkB
-#> 868KfGPufvCSKcurk+W570FW/83LNJ5AxZbMkImVKNLDV900XcshqLbOayTNA0m0
-#> DQEpJ7QAbLvIywd2BVQftrxzDNzkorRelWxZYkxJjCFtdgE3DePsGrg4GIyIMej6
-#> z5QoJn5ojfxjLyRUlr/YktmfX/6of9QPS2bBCBerPZNoHqTMbGzaxb5aCIPr+YIP
-#> wsTyUmJlO+W1NSbX2yPjM9Jgn46268QIeXUEz6PId1Wz9fBL1/JW14itQIPwuJlj
-#> M5F7Nh6DHhWgsu6PeS155XIU17fOx5QL5h7lyorsmBFHucpTesEVSN7MgYgp7mNp
-#> S7sCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUgzcKldhl
-#> P1tYKPnZLp+4OIiNW8swHwYDVR0jBBgwFoAUgzcKldhlP1tYKPnZLp+4OIiNW8sw
-#> DQYJKoZIhvcNAQELBQADggIBAH79nToWrMFRvnXFmq9IXQQ1cNohCHXn7rKe/ndw
-#> gZtETyo8T++sRcY4uixuSccIbQwqh1sG/Y7M26hPKDnod4CfT60wUXSnLh7hPbOu
-#> mTAHvyjdQ5YeudMH49wbEL9yBUZKQnJh6pKbOVj2e5r+hLQGda8xhfAaw6ZMS6YH
-#> YgoMBJiXktCzeA8qZe8Yc8BR2RaP3DvlHqG3v7fO0d0ma8QHgaxcgoZbOxouxj1I
-#> T0C/pXvjsjHobjs9fzZHXqaFrwOR0OHWmeTKuqRqJy38CtdkyRAD0w17blTq9vXK
-#> izeVc2MXnl3ruNqJ1AqphxtzvcPyxlAXyZj2zx+oJMWvTrwqqvUCPVELZs38Dn3O
-#> qwsyL+1es0gZsyV+DgaJpGUHLFixsqC2qbGq4tT1jGohIexZWZtx+cZcOlUDDYNX
-#> YKlJ/dWXnQDoiaiixD4LSfJpGxFMY9fzXf0RoEFA2vWG/JVl233X+a+rI2/9Z+7M
-#> fmmJDOf7/hn9Poev/xMPIVTswSh2ZL7jsZttkXt7c19O4BdOOx3d70H3yXAiInZc
-#> /mKZNidMcAoaXITx/ad55IriuRWMHjSgplU0/RSHG0F553d1PAcv1+rZB2lysvhO
-#> Sth7hHfMzhYk2uraSy4rJ3iMTwXrUeY5ju3CTnWimU8DuF6Msc0AslHDwJwfL+8G
-#> pSBK
+#> AQEFAAOCAg8AMIICCgKCAgEAxHDoAqsfps6Li8LQ3CkM2ZHzmNquDfAz8XggJfFp
+#> uFFL2ZkCgDumP4e0aYegcak2lskeGDLX5eGEZ7CHt5ivbHA5jfcdW0Rj8dpw6LGU
+#> oguohD/NW8nGh6JhtzufCetnlbGETcCe6o9idG8MghyfmgN3VirRlL6iyVTyS0do
+#> NadFtoy2yIXuv2BqldDGNsUAjjTTXrFZiJAifDDH5Bv3fQEWO11+Az8TsxlWXp6j
+#> UBh0cSUjpysRWLVKBsx0W+SALvk+JPG7933aLZUFi0eq+9GbT1VGRmUOoshxSnJ2
+#> Sy5k3gY6BoTOcpJQhtNTY104BdFKhD2eicGY0wSQ6tr3Rc41jtfFqScFUYu+vEYH
+#> IQtJn/goxEyfwt47ZbMkOxDOMZHPEJGCqxnSQSMYY3tDWHK1XfZDIgihStNSbuxB
+#> pJiAwqYbw/co4i+56V2up6sBZ5LhtqTd1xVYlYZB4FoOwZE+EcfqhI4G5+J5m2F4
+#> H96WDhIGBEGNkh50iz3MckyTHvvYTae6JmzMuQLSEYgcXx09HRY2j6Y+aUW9ifHH
+#> GEDDSot0PtcWvtv7TyO/gu9WwURN7WmWW3rhRRTBTDdI5fe58ADzRhbI3dbaDNtw
+#> 7/USHHcNacTtc+gTm8YNLSJT+OgyOHshaEnIq9wUa77Cy84nKv1I5m3vkaFy5QEf
+#> qg0CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUmXb91oCK
+#> 0PE8nOTcWLxh4Ckp5wkwHwYDVR0jBBgwFoAUmXb91oCK0PE8nOTcWLxh4Ckp5wkw
+#> DQYJKoZIhvcNAQELBQADggIBAB3O8+il2WMoZaHa+ZplVpGQA1IIYmxCX2o9JeRj
+#> RUf3mbZtOq27yZ8R3mHwH11wKoouhhCfjCxT1SlPw1m3l/nHCXCOED6NupoT4Vc3
+#> lBcnu9IE5hJSCt4Km5Gcsk4XVoWgi3MZ4HTInQFjvJJr09Q7iIYd49XMOUrXs3vJ
+#> 6FX7z9Lq83Nequ9gVOOAuO4QR3MJwUCDe/DWxdG5mriPn6HFw00ToGNxh7C7b6Ir
+#> FSYPnb2uAqAGV7hEAjaqELDFxB3hduc/TsDQI80c/2geb+Mgk9rZRrOlCrtr36nO
+#> 3YuXJTeUOKYvjNjhpT4uf9GlDWzdC+XL/kjIaTKixY36/7bOmkHyBnmRu1CdKOz4
+#> qABncYxRvevhrHM0QcgAksmrnmx6NlHdhBw+lhJy1AlW3jBeKmGTVmLVeKDwHSZy
+#> Ub8WhENuqk5mWYldY4PPVbtpk2GiqzoeVxtWMLo+sfixQAgHvvcpFkOLg1peRpRz
+#> bWjgfOgX7nf3xCB+82yBBbvnXKQZcLHqyKUloFsY1B+RTyIzz0Y2XBoNTuSnWMUT
+#> yIHF5I6M+vFtMG85iGtd57TYgIYbLl2h9Q/Rgec902teGH5kP4e+mdRa9a3LyiaC
+#> FENDWzC7iyFgNjO36FLbOzbk3SHib+o9kxSXofwW/pBBBeGsUTywFmoUdXGYPfXq
+#> B7ZS
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -679,19 +671,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "abstract://4db5001f9cdc179a4b5ca1d7"
+#> [1] "abstract://061c69e4842e1b08301082ba"
 m1[]
-#> [1] 10653
+#> [1] 46574
 
 s2$daemons
-#> [1] "abstract://a641a9dad1affb8f93c65539"
+#> [1] "abstract://cd2740f3836165c9e846c0f1"
 m2[] # different to m1
-#> [1] 10739
+#> [1] 46660
 
 m3[] # same as m1
-#> [1] 10653
+#> [1] 46574
 m4[] # same as m1
-#> [1] 10653
+#> [1] 46574
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -716,9 +708,9 @@ Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitl
 In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
 In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are reset.
 
-### 9. Synchronous Daemons
+### 9. Synchronous Compute Profiles
 
-`daemons(sync = TRUE)` sets synchronous daemons. This causes mirai to be evaluated as soon as they are created. This means there is no asynchronous operation, but can be useful for testing and debugging code. In particular it lets you insert a `browser()` statement inside your mirai expression and drop into an interactive browser session within the current R process.
+`daemons(sync = TRUE)` creates a synchronous compute profile. This causes mirai to be evaluated before they return, and means that there is no asynchronous operation. This can, however, be useful for testing and debugging purposes. In particular, it lets you insert a `browser()` statement inside your mirai expression and drop into an interactive browser session.
 
 To set synchronous daemons, specify `sync = TRUE` and optionally `.compute` and `seed`. No other arguments have any effect.
 
@@ -732,10 +724,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 5289
+#> [1] 44999
 #> 
 #> [[2]]
-#> [1] 5289
+#> [1] 44999
 
 
 # Use sync with the 'sync' compute profile:
@@ -746,8 +738,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 5289
+#> [1] 44999
 #> 
 #> [[2]]
-#> [1] 5289
+#> [1] 44999
 ```
