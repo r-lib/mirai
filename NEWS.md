@@ -2,8 +2,8 @@
 
 #### New Features
 
-* `daemons(sync = TRUE)` creates special compute profiles which run mirai synchronously within the current session.
-  This can facilitate debugging via interactive `browser()` instances (#439).
+* New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
+  This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
 
 #### Updates
 
