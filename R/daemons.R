@@ -231,8 +231,6 @@ daemons <- function(
       envir <- init_envir_stream(seed)
       dots <- parse_dots(envir, ...)
       cfg <- configure_tls(url, tls, pass, envir)
-
-      if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
       if (dispatcher) {
         launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
       } else {
@@ -266,8 +264,6 @@ daemons <- function(
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
       envir <- init_envir_stream(seed)
       dots <- parse_dots(envir, ...)
-
-      if (is.character(dispatcher) && dispatcher == "none") dispatcher <- FALSE
       if (dispatcher) {
         launch_dispatcher(n, dots, envir, serial)
       } else {
