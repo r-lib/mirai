@@ -629,3 +629,29 @@ Wrapping a call to `shiny::shinyApp()` would not work as `runApp()` is implicitl
 
 In the case of a Shiny app, all mirai calls will be executed before the app returns as the app itself is blocking.
 In the case of other expressions, be sure to call or collect the values of all mirai within the expression to ensure that they all complete before the daemons are reset.
+
+### 9. Synchronous Daemons
+
+`daemons(sync = TRUE)` sets synchronous daemons. This causes mirai to be evaluated as soon as they are created. This means there is no asynchronous operation, but can be useful for testing and debugging code. In particular it lets you insert a `browser()` statement inside your mirai expression and drop into an interactive browser session within the current R process.
+
+To set synchronous daemons, specify `sync = TRUE` and optionally `.compute` and `seed`. No other arguments have any effect.
+
+Example usage:
+
+```{r}
+#| label: syncdaemons
+# run everything in sync:
+daemons(sync = TRUE)
+mp <- mirai_map(1:2, \(x) Sys.getpid())
+daemons(0)
+mp[]
+
+
+# Use sync with the 'sync' compute profile:
+daemons(sync = TRUE, .compute = "sync")
+with_daemons("sync", {
+  mp <- mirai_map(1:2, \(x) Sys.getpid())
+})
+daemons(0, .compute = "sync")
+mp[]
+```
