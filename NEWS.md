@@ -1,5 +1,10 @@
 # mirai (development version)
 
+#### New Features
+
+* New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
+  This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
+
 #### Updates
 
 * Removes the following developer features:

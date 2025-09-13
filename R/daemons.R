@@ -42,6 +42,12 @@
 #' @param ... (optional) additional arguments passed through to [daemon()] if
 #'   launching daemons. These include `asyncdial`, `autoexit`, `cleanup`,
 #'   `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
+#' @param sync \[default FALSE\] logical value, whether to evaluate mirai
+#'   synchronously in the current R process. Setting to `TRUE` substantially
+#'   changes the behaviour of mirai by causing them to be evaluated immediately
+#'   after creation. This facilitates testing and debugging, e.g. via
+#'   interactive `browser()` instances. In this case, arguments other than
+#'   `seed` and `.compute` are disregarded.
 #' @param seed \[default NULL\] (optional) The default of `NULL` initializes
 #'   L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
 #'   package. Results are statistically-sound, although generally
@@ -208,6 +214,22 @@
 #'
 #' }
 #'
+#' @examples
+#' # Synchronous mode
+#' # mirai are run in the current process - useful for testing and debugging
+#' daemons(sync = TRUE)
+#' m <- mirai(Sys.getpid())
+#' daemons(0)
+#' m[]
+#'
+#' # Synchronous mode restricted to a specific compute profile
+#' daemons(sync = TRUE, .compute = "sync")
+#' with_daemons("sync", {
+#'   m <- mirai(Sys.getpid())
+#' })
+#' daemons(0, .compute = "sync")
+#' m[]
+#'
 #' @export
 #'
 daemons <- function(
@@ -216,6 +238,7 @@ daemons <- function(
   remote = NULL,
   dispatcher = TRUE,
   ...,
+  sync = FALSE,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -224,6 +247,12 @@ daemons <- function(
 ) {
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
+
+  if (sync) {
+    url <- local_url()
+    dispatcher <- FALSE
+    remote <- serial <- tls <- pass <- NULL
+  }
 
   if (is.character(url)) {
     res <- if (is.null(envir)) {
@@ -236,7 +265,7 @@ daemons <- function(
       } else {
         create_sock(envir, url, cfg[[2L]])
       }
-      create_profile(envir, .compute, 0L, dots)
+      create_profile(envir, .compute, 0L, dots, sync)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
@@ -269,7 +298,7 @@ daemons <- function(
       } else {
         launch_daemons(seq_len(n), dots, envir)
       }
-      create_profile(envir, .compute, n, dots)
+      create_profile(envir, .compute, n, dots, sync)
     }
   }
 
@@ -281,6 +310,7 @@ daemons <- function(
       remote = remote,
       dispatcher = dispatcher,
       ...,
+      sync = sync,
       seed = seed,
       serial = serial,
       tls = tls,
@@ -629,9 +659,10 @@ configure_tls <- function(url, tls, pass, envir, config = TRUE) {
   list(tls, cfg)
 }
 
-create_profile <- function(envir, .compute, n, dots) {
+create_profile <- function(envir, .compute, n, dots, sync) {
   `[[<-`(envir, "n", n)
   `[[<-`(envir, "dots", dots)
+  `[[<-`(envir, "sync", sync)
   `[[<-`(.., .compute, envir)
 }
 

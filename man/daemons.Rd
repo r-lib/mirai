@@ -10,6 +10,7 @@ daemons(
   remote = NULL,
   dispatcher = TRUE,
   ...,
+  sync = FALSE,
   seed = NULL,
   serial = NULL,
   tls = NULL,
@@ -38,6 +39,13 @@ and should normally be kept on (for details see Dispatcher section below).}
 \item{...}{(optional) additional arguments passed through to \code{\link[=daemon]{daemon()}} if
 launching daemons. These include \code{asyncdial}, \code{autoexit}, \code{cleanup},
 \code{output}, \code{maxtasks}, \code{idletime}, \code{walltime} and \code{tlscert}.}
+
+\item{sync}{[default FALSE] logical value, whether to evaluate mirai
+synchronously in the current R process. Setting to \code{TRUE} substantially
+changes the behaviour of mirai by causing them to be evaluated immediately
+after creation. This facilitates testing and debugging, e.g. via
+interactive \code{browser()} instances. In this case, arguments other than
+\code{seed} and \code{.compute} are disregarded.}
 
 \item{seed}{[default NULL] (optional) The default of \code{NULL} initializes
 L'Ecuyer-CMRG RNG streams for each daemon, the same as base R's parallel
@@ -244,6 +252,21 @@ daemons(
 
 }
 \dontshow{\}) # examplesIf}
+# Synchronous mode
+# mirai are run in the current process - useful for testing and debugging
+daemons(sync = TRUE)
+m <- mirai(Sys.getpid())
+daemons(0)
+m[]
+
+# Synchronous mode restricted to a specific compute profile
+daemons(sync = TRUE, .compute = "sync")
+with_daemons("sync", {
+  m <- mirai(Sys.getpid())
+})
+daemons(0, .compute = "sync")
+m[]
+
 }
 \seealso{
 \code{\link[=with_daemons]{with_daemons()}} and \code{\link[=local_daemons]{local_daemons()}} for managing the compute

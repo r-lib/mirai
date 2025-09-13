@@ -196,6 +196,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     id = envir[["dispatcher"]]
   )
   if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
+  envir[["sync"]] && evaluate_sync(envir[["url"]])
   invisible(req)
 }
 
@@ -618,6 +619,13 @@ ephemeral_daemon <- function(data, timeout) {
   )
   `attr<-`(.subset2(req, "aio"), "sock", sock)
   invisible(req)
+}
+
+evaluate_sync <- function(url) {
+  store <- as.list.environment(globalenv(), all.names = TRUE)
+  on.exit(list2env(store, envir = globalenv()))
+  rm(list = names(globalenv()), envir = globalenv())
+  daemon(url = url, dispatcher = FALSE, output = TRUE, maxtasks = 1L)
 }
 
 deparse_safe <- function(x) {
