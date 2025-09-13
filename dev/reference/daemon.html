@@ -82,7 +82,6 @@ unless deploying manually on remote resources.</p>
 <span>  maxtasks <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  tlscert <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tls <span class="op">=</span> <span class="va">tlscert</span>,</span>
-<span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rs <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -162,12 +161,6 @@ certificate authority certificate chain and [ii] the empty string <code>""</code
 
 <dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
 <dd><p>deprecated, please use <code>tlscert</code> instead.</p></dd>
-
-
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>[default NULL] (optional) integer daemon ID provided to
-dispatcher to track connection status. Causes <code><a href="status.html">status()</a></code> to report this ID
-under <code>$events</code> when the daemon connects and disconnects.</p></dd>
 
 
 <dt id="arg-rs">rs<a class="anchor" aria-label="anchor" href="#arg-rs"></a></dt>
