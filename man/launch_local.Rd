@@ -5,15 +5,9 @@
 \alias{launch_remote}
 \title{Launch Daemon}
 \usage{
-launch_local(n = 1L, ..., tls = NULL, .compute = NULL)
+launch_local(n = 1L, ..., .compute = NULL)
 
-launch_remote(
-  n = 1L,
-  remote = remote_config(),
-  ...,
-  tls = NULL,
-  .compute = NULL
-)
+launch_remote(n = 1L, remote = remote_config(), ..., .compute = NULL)
 }
 \arguments{
 \item{n}{integer number of daemons.
@@ -21,12 +15,9 @@ launch_remote(
 \strong{or} for \code{launch_remote} only, a 'miraiCluster' or 'miraiNode'.}
 
 \item{...}{(optional) arguments passed through to \code{\link[=daemon]{daemon()}}. These include
-\code{asycdial}, \code{autoexit}, \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime},
-\code{walltime} and \code{tlscert}. Only supply to override arguments originally
-provided to \code{\link[=daemons]{daemons()}}, otherwise those will be used instead.}
-
-\item{tls}{[default NULL] deprecated. Specify \code{tlscert} as a \code{...} argument
-to \code{\link[=daemons]{daemons()}} when setting up daemons instead.}
+\code{asycdial}, \code{autoexit}, \code{cleanup}, \code{output}, \code{maxtasks}, \code{idletime}, and
+\code{walltime}. Only supply to override arguments originally provided to
+\code{\link[=daemons]{daemons()}}, otherwise those will be used instead.}
 
 \item{.compute}{[default NULL] character value for the compute profile
 to use (each has its own independent set of daemons), or NULL to use the

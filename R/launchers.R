@@ -18,11 +18,9 @@
 #'
 #'   **or** for `launch_remote` only, a 'miraiCluster' or 'miraiNode'.
 #' @param ... (optional) arguments passed through to [daemon()]. These include
-#'   `asycdial`, `autoexit`, `cleanup`, `output`, `maxtasks`, `idletime`,
-#'   `walltime` and `tlscert`. Only supply to override arguments originally
-#'   provided to [daemons()], otherwise those will be used instead.
-#' @param tls \[default NULL\] deprecated. Specify `tlscert` as a `...` argument
-#'   to [daemons()] when setting up daemons instead.
+#'   `asycdial`, `autoexit`, `cleanup`, `output`, `maxtasks`, `idletime`, and
+#'   `walltime`. Only supply to override arguments originally provided to
+#'   [daemons()], otherwise those will be used instead.
 #'
 #' @return For **launch_local**: Integer number of daemons launched.
 #'
@@ -44,13 +42,13 @@
 #'
 #' @export
 #'
-launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
+launch_local <- function(n = 1L, ..., .compute = NULL) {
   envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
-  if (is.null(tls)) tls <- envir[["tls"]]
+  tls <- envir[["tls"]]
   for (i in seq_len(n)) {
     launch_daemon(write_args(url, dots, maybe_next_stream(envir), tls))
   }
@@ -81,7 +79,7 @@ launch_local <- function(n = 1L, ..., tls = NULL, .compute = NULL) {
 #' @rdname launch_local
 #' @export
 #'
-launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .compute = NULL) {
+launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL) {
   if (!is.numeric(n) && inherits(n, c("miraiCluster", "miraiNode"))) {
     .compute <- attr(n, "id")
     n <- max(length(n), 1L)
@@ -92,7 +90,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., tls = NULL, .co
   url <- envir[["url"]]
   write_args <- if (is.null(envir[["dispatcher"]])) args_daemon_direct else args_daemon_disp
   dots <- if (...length()) parse_dots(envir, ...) else envir[["dots"]]
-  if (is.null(tls)) tls <- envir[["tls"]]
+  tls <- envir[["tls"]]
 
   command <- remote[["command"]]
   rscript <- remote[["rscript"]]
