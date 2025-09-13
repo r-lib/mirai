@@ -29,15 +29,6 @@ been received (either completed or cancelled).
 Retrieve status information for the specified compute profile, comprising
 current connections and daemons status.
 }
-\section{Events}{
-
-
-If dispatcher is used combined with daemon IDs, an additional element
-\strong{events} will report the positive integer ID when the daemon connects and
-the negative value when it disconnects. Only the events since the previous
-status query are returned.
-}
-
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 status()

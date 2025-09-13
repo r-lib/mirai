@@ -2,6 +2,9 @@
 
 #### Updates
 
+* Removes the following developer features:
+  + `nextget("pid")` is no longer a supported option.
+  + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.
 * `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.
 
 # mirai 2.5.0
