@@ -2,6 +2,7 @@
 
 #### New Features
 
+* Adds `posit_workbench_config()` to launch remote daemons using the default Posit Workbench launcher (currently only supports Rstudio Pro sessions).
 * New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
   This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
 
