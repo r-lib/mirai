@@ -120,31 +120,32 @@ daemon <- function(
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
-    wait(cv) || return(invisible(xc))
-    bundle <- collect_aio(aio)
-    `[[<-`(globalenv(), ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
-    if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
-    snapshot()
-    repeat {
-      aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
-      wait(cv) || break
-      m <- collect_aio(aio)
-      is.integer(m) && {
-        m == 5L || next
-        xc <- 1L
-        break
-      }
-      (task >= maxtasks || maxtime && mclock() >= maxtime) && {
-        .mark()
+    if (wait(cv)) {
+      bundle <- collect_aio(aio)
+      `[[<-`(globalenv(), ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
+      if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
+      snapshot()
+      repeat {
+        aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
+        wait(cv) || break
+        m <- collect_aio(aio)
+        is.integer(m) && {
+          m == 5L || next
+          xc <- 1L
+          break
+        }
+        (task >= maxtasks || maxtime && mclock() >= maxtime) && {
+          .mark()
+          send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
+          aio <- recv_aio(sock, mode = 8L, cv = cv)
+          xc <- 2L + (task >= maxtasks)
+          wait(cv)
+          break
+        }
         send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
-        aio <- recv_aio(sock, mode = 8L, cv = cv)
-        xc <- 2L + (task >= maxtasks)
-        wait(cv)
-        break
+        if (cleanup) do_cleanup()
+        task <- task + 1L
       }
-      send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
-      if (cleanup) do_cleanup()
-      task <- task + 1L
     }
   } else {
     if (is.numeric(rs)) `[[<-`(globalenv(), ".Random.seed", as.integer(rs))
