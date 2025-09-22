@@ -782,6 +782,7 @@ launch_daemons <- function(seq, dots, envir) {
   for (i in seq) {
     launch_daemon(args_daemon_direct(urld, dots, maybe_next_stream(envir)))
   }
+  `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
   sync <- 0L
@@ -800,6 +801,7 @@ create_sock <- function(envir, url, tls) {
   if (parse_url(url)[["port"]] == "0") {
     url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
   }
+  `[[<-`(envir, "cv", cv())
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", url)
 }
