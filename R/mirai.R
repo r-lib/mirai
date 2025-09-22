@@ -347,6 +347,48 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
 #'
 call_mirai <- call_aio_
 
+#' mirai (Race)
+#'
+#' Accepts a list of 'mirai' objects, such as those returned by [mirai_map()].
+#' Waits for the next 'mirai' to resolve if at least one is still in progress,
+#' otherwise returns immediately.
+#'
+#' Waits for the asynchronous operation(s) to complete if still in progress,
+#' blocking but user-interruptible. The list of mirai supplied must all be using
+#' the same compute profile.
+#'
+#' @param x a list of 'mirai' objects.
+#' @inheritParams mirai
+#'
+#' @return The passed object (invisibly). For a 'mirai', the retrieved value is
+#'   stored at `$data`.
+#'
+#' @inheritSection mirai Errors
+#'
+#' @examplesIf interactive()
+#' daemons(2)
+#' m1 <- mirai(Sys.sleep(0.2))
+#' m2 <- mirai(Sys.sleep(0.1))
+#' start <- Sys.time()
+#' race_mirai(list(m1, m2))
+#' Sys.time() - start
+#' race_mirai(list(m1, m2))
+#' Sys.time() - start
+#' daemons(0)
+#'
+#' @export
+#'
+race_mirai <- function(x, .compute = NULL) {
+  cv <- compute_env(.compute)[["cv"]]
+  cv_reset(cv)
+  n <- .unresolved(x)
+  n && repeat {
+    wait_(cv)
+    .unresolved(x) == n || return(invisible(x))
+  }
+  invisible(x)
+}
+
 #' mirai (Collect Value)
 #'
 #' Waits for the 'mirai' to resolve if still in progress, and returns its value
