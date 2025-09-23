@@ -77,7 +77,7 @@
   list(
     arglen = "`n` must equal the length of `args`, or either must be 1",
     cluster_inactive = "cluster is no longer active",
-    daemons_unset = "daemons must be set to use launchers",
+    daemons_unset = "daemons must be set to use this function",
     dot_required = "`.` must be an element of the character vector(s) supplied to `args`",
     function_required = "`.f` must be of type function, not %s",
     localhost = "SSH tunnelling requires daemons `url` hostname to be `127.0.0.1`",

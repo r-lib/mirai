@@ -380,14 +380,13 @@ call_mirai <- call_aio_
 #' @export
 #'
 race_mirai <- function(x) {
-  require_daemons(call = environment())
-  cv <- compute_env(NULL)[["cv"]]
+  envir <- compute_env(NULL)
+  is.null(envir) && stop(._[["daemons_unset"]])
+  cv <- envir[["cv"]]
   cv_reset(cv)
   n <- .unresolved(x)
-  n && repeat {
-    wait_(cv)
-    .unresolved(x) == n || return(invisible(x))
-  }
+  n || return(invisible(x))
+  while (wait_(cv) && .unresolved(x) == n) {}
   invisible(x)
 }
 
