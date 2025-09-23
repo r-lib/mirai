@@ -360,7 +360,7 @@ call_mirai <- call_aio_
 #' the currently-active one i.e. 'default' unless within a [with_daemons()] or
 #' [local_daemons()] scope.
 #'
-#' @param x a list of 'mirai' objects.
+#' @inheritParams call_mirai
 #'
 #' @return The passed object (invisibly).
 #'

@@ -7,7 +7,7 @@
 race_mirai(x)
 }
 \arguments{
-\item{x}{a list of 'mirai' objects.}
+\item{x}{a 'mirai' object, or list of 'mirai' objects.}
 }
 \value{
 The passed object (invisibly).

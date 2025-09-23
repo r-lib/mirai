@@ -70,6 +70,11 @@ See the section [Error Handling](#error-handling) below.
 
 Rather than repeatedly checking `unresolved(m)`, it is more efficient to wait for and collect its value by using `m[]`.
 
+You may also wait efficiently for mirai (or lists of mirai) to resolve using:
+
+- `call_mirai()` returns when all the mirai passed to it have resolved.
+- `race_mirai()` returns when the first mirai passed to it has resolved.
+
 #### mirai (advanced)
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
