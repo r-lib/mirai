@@ -77,16 +77,15 @@
 #'
 make_cluster <- function(n, url = NULL, remote = NULL, ...) {
   id <- sprintf("`%d`", length(..))
-  cvs <- cv()
 
   if (is.character(url)) {
-    daemons(n, url = url, remote = remote, dispatcher = FALSE, cleanup = FALSE, ..., .compute = id)
+    daemons(n, url = url, remote = remote, dispatcher = FALSE, ..., cleanup = FALSE, .compute = id)
 
     if (is.null(remote)) {
       if (missing(n)) n <- 1L
       is.numeric(n) || stop(._[["numeric_n"]])
       cat("Shell commands for deployment on nodes:\n\n", file = stdout())
-      print(launch_remote(n, ..., .compute = id))
+      print(launch_remote(n, .compute = id))
     } else {
       args <- remote[["args"]]
       n <- if (is.list(args)) length(args) else 1L
@@ -94,10 +93,8 @@ make_cluster <- function(n, url = NULL, remote = NULL, ...) {
   } else {
     is.numeric(n) || stop(._[["numeric_n"]])
     n >= 1L || stop(._[["n_one"]])
-    daemons(n, dispatcher = FALSE, cleanup = FALSE, ..., .compute = id)
+    daemons(n, dispatcher = FALSE, ..., cleanup = FALSE, .compute = id)
   }
-
-  `[[<-`(..[[id]], "cvs", cvs)
 
   cl <- lapply(seq_len(n), create_node, id = id)
   `attributes<-`(cl, list(class = c("miraiCluster", "cluster"), id = id))
@@ -130,7 +127,7 @@ sendData.miraiNode <- function(node, data) {
 
   value <- data[["data"]]
   tagged <- !is.null(value[["tag"]])
-  `[[<-`(envir, "cv", if (tagged) envir[["cvs"]])
+  if (tagged) cv_reset(envir[["cv"]])
 
   m <- mirai(
     do.call(node, data, quote = TRUE),

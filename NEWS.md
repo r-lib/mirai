@@ -2,6 +2,7 @@
 
 #### New Features
 
+* Adds `race_mirai()`, which accepts a list of mirai and waits efficiently for the next mirai amongst them to resolve (thanks t-kalinowski, #448).
 * New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
   This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439).
 

@@ -322,6 +322,8 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
 #'
 #' @inheritSection mirai Errors
 #'
+#' @seealso [race_mirai()]
+#'
 #' @examplesIf interactive()
 #' # using call_mirai()
 #' df1 <- data.frame(a = 1, b = 2)
@@ -346,6 +348,47 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
 #' @export
 #'
 call_mirai <- call_aio_
+
+#' mirai (Race)
+#'
+#' Accepts a list of 'mirai' objects, such as those returned by [mirai_map()].
+#' Waits for the next 'mirai' to resolve if at least one is still in progress,
+#' blocking but user-interruptible. If none of the objects supplied are
+#' unresolved, the function returns immediately.
+#'
+#' All of the 'mirai' objects supplied must belong to the same compute profile -
+#' the currently-active one i.e. 'default' unless within a [with_daemons()] or
+#' [local_daemons()] scope.
+#'
+#' @inheritParams call_mirai
+#'
+#' @return The passed object (invisibly).
+#'
+#' @seealso [call_mirai()]
+#'
+#' @examplesIf interactive()
+#' daemons(2)
+#' m1 <- mirai(Sys.sleep(0.2))
+#' m2 <- mirai(Sys.sleep(0.1))
+#' start <- Sys.time()
+#' race_mirai(list(m1, m2))
+#' Sys.time() - start
+#' race_mirai(list(m1, m2))
+#' Sys.time() - start
+#' daemons(0)
+#'
+#' @export
+#'
+race_mirai <- function(x) {
+  envir <- compute_env(NULL)
+  is.null(envir) && stop(._[["daemons_unset"]])
+  cv <- envir[["cv"]]
+  cv_reset(cv)
+  n <- .unresolved(x)
+  n || return(invisible(x))
+  while (wait_(cv) && .unresolved(x) == n) {}
+  invisible(x)
+}
 
 #' mirai (Collect Value)
 #'

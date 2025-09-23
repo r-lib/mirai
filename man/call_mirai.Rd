@@ -78,3 +78,6 @@ while (unresolved(m)) {
 str(m$data)
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\code{\link[=race_mirai]{race_mirai()}}
+}

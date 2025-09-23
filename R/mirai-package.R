@@ -33,11 +33,11 @@
 #' `vignette("mirai", package = "mirai")`
 #'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
-#'   .context cv cv_signal cv_value dial ip_addr is_error_value .keep listen
-#'   .mark mclock monitor msleep nng_error opt opt<- parse_url pipe_id
+#'   .context cv cv_reset cv_signal cv_value dial ip_addr is_error_value .keep
+#'   listen .mark mclock monitor msleep nng_error opt opt<- parse_url pipe_id
 #'   pipe_notify random .read_header .read_marker read_monitor reap recv
 #'   recv_aio request send serial_config socket stat stop_aio stop_request
-#'   tls_config unresolved .unresolved until wait write_cert
+#'   tls_config unresolved .unresolved until wait wait_ write_cert
 #'
 "_PACKAGE"
 
@@ -77,7 +77,7 @@
   list(
     arglen = "`n` must equal the length of `args`, or either must be 1",
     cluster_inactive = "cluster is no longer active",
-    daemons_unset = "daemons must be set to use launchers",
+    daemons_unset = "daemons must be set to use this function",
     dot_required = "`.` must be an element of the character vector(s) supplied to `args`",
     function_required = "`.f` must be of type function, not %s",
     localhost = "SSH tunnelling requires daemons `url` hostname to be `127.0.0.1`",
