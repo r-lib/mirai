@@ -143,9 +143,9 @@ a random value.</p>
 <span><span class="co"># Do work whilst unresolved</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 2.776417 3.352568 4.431967 4.924024 4.608307</span></span>
+<span><span class="co">#&gt; [1] 4.857671 4.807981 3.480817 3.313409 2.797876</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 2.776417 3.352568 4.431967 4.924024 4.608307</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 4.857671 4.807981 3.480817 3.313409 2.797876</span></span></code></pre></div>
 <p>A mirai is either <em>unresolved</em> if the result has yet to be
 received, or <em>resolved</em> if it has. <code><a href="../reference/unresolved.html">unresolved()</a></code> is a
 helper function to check the state of a mirai.</p>
@@ -157,6 +157,16 @@ section <a href="#error-handling">Error Handling</a> below.</p>
 <p>Rather than repeatedly checking <code>unresolved(m)</code>, it is
 more efficient to wait for and collect its value by using
 <code>m[]</code>.</p>
+<p>You may also wait efficiently for mirai (or lists of mirai) to
+resolve using:</p>
+<ul>
+<li>
+<code><a href="../reference/call_mirai.html">call_mirai()</a></code> returns when all the mirai passed to it
+have resolved.</li>
+<li>
+<code><a href="../reference/race_mirai.html">race_mirai()</a></code> returns when the first mirai passed to it
+has resolved.</li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="mirai-advanced">mirai (advanced)<a class="anchor" aria-label="anchor" href="#mirai-advanced"></a>
@@ -171,7 +181,7 @@ above:</p>
 <span></span>
 <span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.099663 4.251086 3.672672 2.227991 5.921987</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2.841612 4.536642 3.579022 3.546453 3.457605</span></span></code></pre></div>
 <p>The example below uses <code><a href="../reference/mirai.html">mirai()</a></code> to perform a long-running
 write operation asynchronously from a separate process. Here
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>, which is the calling environment, is passed
@@ -408,7 +418,7 @@ output:</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://c35956003f3a2b26c38f88f8"</span></span>
+<span><span class="co">#&gt; [1] "abstract://f73cd8ef86f0fece76622db2"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -444,7 +454,7 @@ URL:</p>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://c7855609583245e02ef3e3b2"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "abstract://6233a42ea27e207bee7a625b"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="everywhere">everywhere()<a class="anchor" aria-label="anchor" href="#everywhere"></a>
@@ -519,7 +529,7 @@ a free ephemeral port:</p>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "tcp://10.33.37.182:43419"</span></span>
+<span><span class="co">#&gt; [1] "tcp://192.168.1.71:38937"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $mirai</span></span>
 <span><span class="co">#&gt;  awaiting executing completed </span></span>
@@ -744,7 +754,7 @@ remote machine e.g. via a terminal session.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.33.37.182:37681")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:45775")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -770,36 +780,36 @@ command for manually launching a daemon on a remote machine.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://10.33.37.182:38543",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4z</span></span>
-<span><span class="co">#&gt; My4zNy4xODIxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
-<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjMzLjM3LjE4</span></span>
-<span><span class="co">#&gt; MjERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
-<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEApwxulR4B2NOQIK+DpjuY8yL1hNwTkesgdfpwcUWb</span></span>
-<span><span class="co">#&gt; Qw+K6+FKT6zbHgGhvWnIA9D4BPDOV/otQiXUDEwHtfPKha92p3CoJgLMsoBgU6Jm</span></span>
-<span><span class="co">#&gt; z95HxnxRXFKWirXyhDcHLdbYo+Jbf5iR7ozn6qkfFjTH/yLMESuRAs1ddE6QrV0k</span></span>
-<span><span class="co">#&gt; +mLsZJXmp8gLJmPvke/gK5TYG4hBtLg/AMC0T5/tFYSeQjA2Dtt/iJdkEGcM7Yvk</span></span>
-<span><span class="co">#&gt; KldrIFLJjyC77H+XWrf2BqDxu56K3kd2J67C2qN36iV//DNw20aFrjFRV2/lSi+8</span></span>
-<span><span class="co">#&gt; H02c6/TUX9KQDH/km32xMoamdlz8mwY2NvamViDSZTZCfuQguRJpgSxP/AtOs/tW</span></span>
-<span><span class="co">#&gt; xWfNX9RAMmg07O46aSk7m2gaLjWcLUqPT/V4iET+3ZzVDYc/lpdEOzsAGtnGYNTB</span></span>
-<span><span class="co">#&gt; 1RCnxWxAEgqijfyU/AeTYGnzEFZADsGDBr+cj0sQLWHDdafvDniFc9HfyGJwwBVX</span></span>
-<span><span class="co">#&gt; 4XuFQGmLXg7jowKz6zOAFAg4CV2bk6NHHm6/efXxBXaYUKqnrTlMxY+XgF6mvbuU</span></span>
-<span><span class="co">#&gt; ooS67RltcLjeS6nAMh9zrABYIqX1V8ciiIFm6LOC0HP5BDu7s0nyZWz4il1cRCfV</span></span>
-<span><span class="co">#&gt; tGpnQUgIsHoK9WsOJ5nSkWOgHnxZ5d1Kcby66bS1nYJyZOyFi2dYYBA9GDe0NZHS</span></span>
-<span><span class="co">#&gt; biECAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU+J1J0vba</span></span>
-<span><span class="co">#&gt; qpdf/GR8uEU71SenvbMwHwYDVR0jBBgwFoAU+J1J0vbaqpdf/GR8uEU71SenvbMw</span></span>
-<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBAIajh2tFkw50T3+SxyCYu1jEQiyZwSmjfhTQnhlR</span></span>
-<span><span class="co">#&gt; qCjI9CvqS2XxFNqqLS2h8rihw0MAhtVmSEeZT/UbC3sfPWJJBK8CHVON1r98+G9b</span></span>
-<span><span class="co">#&gt; DFHqb7HGLGZcQrIdWAYNrpX8b1pXfxzCgNxCQ4Nb3Nnuf4bqd+8fWVKiuLjkX8vO</span></span>
-<span><span class="co">#&gt; zK4LLdUDZUm94/ELSarWF41Xav0Xz/w9J//2A86rdsZMnHtkXWk825qKSd8/NovD</span></span>
-<span><span class="co">#&gt; 4d/8DdCrNS9zOfdsPi94OYxiCvwEjdt+oph2UmhDo7cW6obbiqKgfY+dtRio+BOT</span></span>
-<span><span class="co">#&gt; ViXzsKFNWWeI+xX7LNQSpPajjhaAYH4TCnlzTN1ozx5zW2NJUtHr/+rOwO54MV6y</span></span>
-<span><span class="co">#&gt; ZfAy7c695Yn9LqmQQ9MmVA7w31CTXZ6pEe5xx5VTBrvFees6PoQCBmThE1geMJTm</span></span>
-<span><span class="co">#&gt; ULIg4lUEVXqIhbYvYRmM73aO0BzzV+8qrWO6M+DRR5W6vZrM/8fJYToEXeJaNZS4</span></span>
-<span><span class="co">#&gt; /c+5xLVC5nLOFs/ECGGlgEOLvOWK9oFzzDrEd0jQLlO27rfT7CjdMlTHRUb71kEX</span></span>
-<span><span class="co">#&gt; U/XmWRLNsHTX2TBVpR5OcgrPvddB3+EabZU4tcKnWz6B62fiypqHNeJXU35eqFCe</span></span>
-<span><span class="co">#&gt; RrK0m/YNTshQkUEPnAG+d1IXcdmfLITebuNVhX32e6wWmjPJpwhZS/Q9sE9usrBB</span></span>
-<span><span class="co">#&gt; ljFg</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.1.71:32895",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu</span></span>
+<span><span class="co">#&gt; MTY4LjEuNzExETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
+<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguMS43</span></span>
+<span><span class="co">#&gt; MTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
+<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEArnUgodmfw+4IKSlAWL32oyq6R1YAZeJXFAk0MxIG</span></span>
+<span><span class="co">#&gt; AJMTCXLPWwgCU/+KZIFtivK+GY4odSeREtTXw3f7kOn7auD7Q0ZRRNSDIAzRe8RP</span></span>
+<span><span class="co">#&gt; Pgcrr5jgOLPmwVn3QGKxrUiUbm7qb6rwDlbsiPo/a5ZbrSHyT2Z7uTESQKFFkSoL</span></span>
+<span><span class="co">#&gt; EBRtRjaN3c7UzZPh3q2k/dfM5JvurLcHIeLOR2xgKhHUyJVvo6aVodQri4rpiAGV</span></span>
+<span><span class="co">#&gt; VHj1hCEyxAtSgwr3p3zQ8/dHbrdG1gyXQIGUnMsH+nDa5DbYR7GCQrvjIOofO9Rk</span></span>
+<span><span class="co">#&gt; L5TZQXfvKqY5mfAiBbihD4cad/FshkS4BIKo2nUWV6qnTGeztyzztJWUUKPeHQgT</span></span>
+<span><span class="co">#&gt; 8S9l3UOuTo0//gVf66v9+ybJc6y4JYNBESHDG4qpWsa7bJrJBGazIQoeZmg+gjft</span></span>
+<span><span class="co">#&gt; By1dTwukti64EJgxX7SSZn9i4vI7eUjI1+OjrcFpWuD3lJ47oXxs3FpFBb4I3h95</span></span>
+<span><span class="co">#&gt; M/Zz7kYWuvjCjMqV2iCwaCOaylH+nvoneft2q/QPtPzGHTKRseeGmtnTsXcks0ze</span></span>
+<span><span class="co">#&gt; uopKxH3yYCzD4pa6ybCCgtxWjOeHZ9YAOwvHdY4gcKfn8FkXRUYGo6GzwCaLhkt8</span></span>
+<span><span class="co">#&gt; z+ZSW9TPcps7oVtkXKQgVS7RIKy30KXgm9S+u9VPbnH1Rx8cxHfqlXzuUxWFuVxC</span></span>
+<span><span class="co">#&gt; cGECAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU8fJ6+hw9</span></span>
+<span><span class="co">#&gt; SF+SdRNtM0I5mv5jQeMwHwYDVR0jBBgwFoAU8fJ6+hw9SF+SdRNtM0I5mv5jQeMw</span></span>
+<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBAIvPHFZ+96Y5DgNRPa+PsxDeJOTRHMtI+HBScRmS</span></span>
+<span><span class="co">#&gt; MXov1FOpM+HgDKFjkEVrIUoc/5tN+CRPCDUry9JaMUs7NtU5gFg7iqgXu4fqwOa6</span></span>
+<span><span class="co">#&gt; AKWybReGU3t9P3ypg4dPvbU1hlgoxuZKFwwKwuMau2JYApYVrSFUedOMmrBP6wgj</span></span>
+<span><span class="co">#&gt; 9P1TtcUUdTpJHnqlbb2RN0Se42phA+xFg5KVbHiHWd8b0mdNdJT3AvJaWadeUfYj</span></span>
+<span><span class="co">#&gt; OboTWSqdF3HcFKyvDDhD1xvleufVKC02Wj420HGMo7x6kmk+ZgYaztUpEQxR0ld5</span></span>
+<span><span class="co">#&gt; 68PQrjRkq+gyAdu2v0dsmPjgJY6fW5eJIf03eWAbBVzoJLoRNCKRrxQSr75W4MAn</span></span>
+<span><span class="co">#&gt; Q00MzBWbIT9TjBuUFixvcahnAmddWpd/NDUhdTVFNabseeD7uLlmsGtccahWBYeI</span></span>
+<span><span class="co">#&gt; 0qV46tZ8+ZO0WFKC2UZg9OLJkOkkNIF7dhOipb5loqwIBUBFMJTpJgXcEdPYgZqH</span></span>
+<span><span class="co">#&gt; SfN+s+/fcw67hxBh53ejYn2K9uExL6JloYY7RAvYFDmySp8QURYxkOBiYO6gAABx</span></span>
+<span><span class="co">#&gt; Z59L1O1iQd8VS0EHfzFFMP15xCphV/Thx580/7d9EPvvcuc8MaC3WVqSNS2f5buM</span></span>
+<span><span class="co">#&gt; RYJbxPW1AFayvo664++Bwp0VHH9Y/Bg8pN6qXJCvQJlbrTpycWssWDPdHCNDNtJM</span></span>
+<span><span class="co">#&gt; cYYp</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -925,19 +935,19 @@ profile for all package functions within the relevant scope.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">s1</span><span class="op">$</span><span class="va">daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://a884afeef89baa26c8678986"</span></span>
+<span><span class="co">#&gt; [1] "abstract://f71d200eee5fc3b750bb59b0"</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 15335</span></span>
+<span><span class="co">#&gt; [1] 12224</span></span>
 <span></span>
 <span><span class="va">s2</span><span class="op">$</span><span class="va">daemons</span></span>
-<span><span class="co">#&gt; [1] "abstract://1ed9d195362bcdfe804a6e35"</span></span>
+<span><span class="co">#&gt; [1] "abstract://37292340de9998788aca2320"</span></span>
 <span><span class="va">m2</span><span class="op">[</span><span class="op">]</span> <span class="co"># different to m1</span></span>
-<span><span class="co">#&gt; [1] 15421</span></span>
+<span><span class="co">#&gt; [1] 12310</span></span>
 <span></span>
 <span><span class="va">m3</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 15335</span></span>
+<span><span class="co">#&gt; [1] 12224</span></span>
 <span><span class="va">m4</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 15335</span></span>
+<span><span class="co">#&gt; [1] 12224</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"cpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"gpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -991,10 +1001,10 @@ have no effect when specifying <code>sync = TRUE</code>.</p>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 13749</span></span>
+<span><span class="co">#&gt; [1] 10645</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 13749</span></span>
+<span><span class="co">#&gt; [1] 10645</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Use sync with the 'sync' compute profile:</span></span>
@@ -1005,10 +1015,10 @@ have no effect when specifying <code>sync = TRUE</code>.</p>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 13749</span></span>
+<span><span class="co">#&gt; [1] 10645</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 13749</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 10645</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
