@@ -284,7 +284,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (otel_tracing) otel::end_span(envir[["otel_span"]])
+      if (otel_tracing) envir[["otel_span"]]$end()
       ..[[.compute]] <- NULL -> envir
       return(invisible(FALSE))
     }
@@ -330,7 +330,8 @@ daemons <- function(
           n = envir[["n"]],
           dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
           compute_profile = .compute
-        ))
+        )),
+        tracer = otel_tracer
       )
     )
   }
