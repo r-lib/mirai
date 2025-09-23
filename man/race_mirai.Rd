@@ -4,46 +4,25 @@
 \alias{race_mirai}
 \title{mirai (Race)}
 \usage{
-race_mirai(x, .compute = NULL)
+race_mirai(x)
 }
 \arguments{
 \item{x}{a list of 'mirai' objects.}
-
-\item{.compute}{[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.}
 }
 \value{
-The passed object (invisibly). For a 'mirai', the retrieved value is
-stored at \verb{$data}.
+The passed object (invisibly).
 }
 \description{
 Accepts a list of 'mirai' objects, such as those returned by \code{\link[=mirai_map]{mirai_map()}}.
 Waits for the next 'mirai' to resolve if at least one is still in progress,
-otherwise returns immediately.
+blocking but user-interruptible. If none of the objects supplied are
+unresolved, the function returns immediately.
 }
 \details{
-Waits for the asynchronous operation(s) to complete if still in progress,
-blocking but user-interruptible. The list of mirai supplied must all be using
-the same compute profile.
+All of the 'mirai' objects supplied must belong to the same compute profile -
+the currently-active one i.e. 'default' unless within a \code{\link[=with_daemons]{with_daemons()}} or
+\code{\link[=local_daemons]{local_daemons()}} scope.
 }
-\section{Errors}{
-
-
-If an error occurs in evaluation, the error message is returned as a
-character string of class 'miraiError' and 'errorValue'. \code{\link[=is_mirai_error]{is_mirai_error()}}
-may be used to test for this. The elements of the original condition are
-accessible via \code{$} on the error object. A stack trace comprising a list of
-calls is also available at \verb{$stack.trace}, and the original condition classes
-at \verb{$condition.class}.
-
-If a daemon crashes or terminates unexpectedly during evaluation, an
-'errorValue' 19 (Connection reset) is returned.
-
-\code{\link[=is_error_value]{is_error_value()}} tests for all error conditions including 'mirai' errors,
-interrupts, and timeouts.
-}
-
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(2)
@@ -56,4 +35,7 @@ race_mirai(list(m1, m2))
 Sys.time() - start
 daemons(0)
 \dontshow{\}) # examplesIf}
+}
+\seealso{
+\code{\link[=call_mirai]{call_mirai()}}
 }

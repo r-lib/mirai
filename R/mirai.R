@@ -322,6 +322,8 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
 #'
 #' @inheritSection mirai Errors
 #'
+#' @seealso [race_mirai()]
+#'
 #' @examplesIf interactive()
 #' # using call_mirai()
 #' df1 <- data.frame(a = 1, b = 2)
@@ -351,19 +353,18 @@ call_mirai <- call_aio_
 #'
 #' Accepts a list of 'mirai' objects, such as those returned by [mirai_map()].
 #' Waits for the next 'mirai' to resolve if at least one is still in progress,
-#' otherwise returns immediately.
+#' blocking but user-interruptible. If none of the objects supplied are
+#' unresolved, the function returns immediately.
 #'
-#' Waits for the asynchronous operation(s) to complete if still in progress,
-#' blocking but user-interruptible. The list of mirai supplied must all be using
-#' the same compute profile.
+#' All of the 'mirai' objects supplied must belong to the same compute profile -
+#' the currently-active one i.e. 'default' unless within a [with_daemons()] or
+#' [local_daemons()] scope.
 #'
 #' @param x a list of 'mirai' objects.
-#' @inheritParams mirai
 #'
-#' @return The passed object (invisibly). For a 'mirai', the retrieved value is
-#'   stored at `$data`.
+#' @return The passed object (invisibly).
 #'
-#' @inheritSection mirai Errors
+#' @seealso [call_mirai()]
 #'
 #' @examplesIf interactive()
 #' daemons(2)
@@ -378,8 +379,8 @@ call_mirai <- call_aio_
 #'
 #' @export
 #'
-race_mirai <- function(x, .compute = NULL) {
-  cv <- compute_env(.compute)[["cv"]]
+race_mirai <- function(x) {
+  cv <- compute_env(NULL)[["cv"]]
   cv_reset(cv)
   n <- .unresolved(x)
   n && repeat {
