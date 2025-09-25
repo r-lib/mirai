@@ -172,7 +172,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
         options = list(kind = "client"),
         tracer = otel_tracer
       )
-      otel_tracer$get_active_span_context()$to_http_headers()
+      otel::pack_http_context()
     }
   )
 
