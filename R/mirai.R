@@ -196,7 +196,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     id = envir[["dispatcher"]]
   )
   if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
-  envir[["sync"]] && evaluate_sync(envir[["url"]])
+  envir[["sync"]] && evaluate_sync(envir)
   invisible(req)
 }
 
@@ -274,7 +274,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
   xlen <- if (is.null(envir[["dispatcher"]])) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
-    max(info(.compute)[[1L]])
+    info(.compute)[[1L]]
   }
   seed <- envir[["seed"]]
   on.exit({
@@ -664,11 +664,16 @@ ephemeral_daemon <- function(data, timeout) {
   invisible(req)
 }
 
-evaluate_sync <- function(url) {
+evaluate_sync <- function(envir) {
   store <- as.list.environment(globalenv(), all.names = TRUE)
-  on.exit(list2env(store, envir = globalenv()))
+  on.exit({
+    `[[<-`(envir, "dmnenv", as.list.environment(globalenv(), all.names = TRUE))
+    rm(list = names(globalenv()), envir = globalenv())
+    list2env(store, envir = globalenv())
+  })
   rm(list = names(globalenv()), envir = globalenv())
-  daemon(url = url, dispatcher = FALSE, output = TRUE, maxtasks = 1L)
+  list2env(envir[["dmnenv"]], envir = globalenv())
+  daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
 }
 
 deparse_safe <- function(x) {
