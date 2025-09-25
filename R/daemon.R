@@ -112,7 +112,7 @@ daemon <- function(
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
   if (otel_tracing) {
-    spn <- otel::start_local_active_span(
+    dmnspn <- otel::start_local_active_span(
       "mirai::daemon",
       attributes = otel::as_attributes(list(url = url)),
       tracer = otel_tracer
@@ -203,12 +203,12 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 handle_mirai_error <- function(cnd) {
-  if (otel_tracing) otel_tracer$get_active_span()$set_status("error", "miraiError")
+  if (otel_tracing) dynGet("spn")$set_status("error", "miraiError")
   invokeRestart("mirai_error", cnd, sys.calls())
 }
 
 handle_mirai_interrupt <- function(cnd) {
-  if (otel_tracing) otel_tracer$get_active_span()$set_status("error", "miraiInterrupt")
+  if (otel_tracing) dynGet("spn")$set_status("error", "miraiInterrupt")
   invokeRestart("mirai_interrupt")
 }
 
@@ -221,7 +221,7 @@ eval_mirai <- function(._mirai_.) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
             "mirai::daemon->eval",
-            links = list(daemon = otel::get_active_span()),
+            links = list(daemon = dynGet("dmnspn")),
             options = list(kind = "server", parent = prtctx),
             tracer = otel_tracer
           )
