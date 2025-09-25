@@ -59,7 +59,9 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Removes the following developer features:
+<ul><li>
+<code><a href="../reference/everywhere.html">everywhere()</a></code> adds argument <code>.min</code> to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher). This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (thanks <a href="https://github.com/louisaslett" class="external-link">@louisaslett</a>, <a href="https://github.com/r-lib/mirai/issues/330" class="external-link">#330</a>).</li>
+<li>Removes the following developer features:
 <ul><li>
 <code>nextget("pid")</code> is no longer a supported option.</li>
 <li>Argument <code>id</code> is removed at <code><a href="../reference/daemon.html">daemon()</a></code>. This means that <code><a href="../reference/status.html">status()</a></code> no longer reports daemon connection or disconnection events.</li>
