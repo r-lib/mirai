@@ -220,11 +220,10 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' involve random numbers.
 #'
 #' @inheritParams mirai
-#' @param .min (only applicable when using dispatcher) the minimum number of
+#' @param .min (only applicable when using dispatcher) integer minimum number of
 #'   daemons on which to evaluate the expression. A synchronization point is
-#'   created ,whereby mirai evaluations resume only after these have finished.
-#'   This can be useful when launching remote daemons, to ensure that evaluation
-#'   has occurred on all daemons to connect.
+#'   created, which can be useful for remote daemons, as these may take some
+#'   time to connect.
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
 #'

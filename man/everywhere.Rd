@@ -21,11 +21,10 @@ such objects. These objects will remain local to the evaluation environment
 as opposed to those supplied in \code{...} above - see 'evaluation' section
 below.}
 
-\item{.min}{(only applicable when using dispatcher) the minimum number of
+\item{.min}{(only applicable when using dispatcher) integer minimum number of
 daemons on which to evaluate the expression. A synchronization point is
-created ,whereby mirai evaluations resume only after these have finished.
-This can be useful when launching remote daemons, to ensure that evaluation
-has occurred on all daemons to connect.}
+created, which can be useful for remote daemons, as these may take some
+time to connect.}
 
 \item{.compute}{[default NULL] character value for the compute profile
 to use (each has its own independent set of daemons), or NULL to use the
