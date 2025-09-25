@@ -8,6 +8,8 @@
 
 #### Updates
 
+* `everywhere()` adds argument `.min` to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher).
+  This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (thanks @louisaslett, #330).
 * Removes the following developer features:
   + `nextget("pid")` is no longer a supported option.
   + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.

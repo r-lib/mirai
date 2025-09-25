@@ -220,6 +220,10 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' involve random numbers.
 #'
 #' @inheritParams mirai
+#' @param .min (only applicable when using dispatcher) integer minimum number of
+#'   daemons on which to evaluate the expression. A synchronization point is
+#'   created, which can be useful for remote daemons, as these may take some
+#'   time to connect.
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
 #'
@@ -254,7 +258,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #'
 #' @export
 #'
-everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
+everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   require_daemons(.compute = .compute, call = environment())
   if (is.null(.compute)) .compute <- .[["cp"]]
   envir <- ..[[.compute]]
@@ -274,7 +278,7 @@ everywhere <- function(.expr, ..., .args = list(), .compute = NULL) {
   xlen <- if (is.null(envir[["dispatcher"]])) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
-    info(.compute)[[1L]]
+    max(.min, info(.compute)[[1L]])
   }
   seed <- envir[["seed"]]
   on.exit({
