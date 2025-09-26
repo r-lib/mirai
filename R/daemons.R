@@ -330,7 +330,8 @@ daemons <- function(
           n = envir[["n"]],
           dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
           compute_profile = .compute
-        ))
+        )),
+        tracer = otel_tracer
       )
     )
   }
