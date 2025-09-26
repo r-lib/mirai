@@ -164,6 +164,7 @@ daemon <- function(
       if (cleanup) do_cleanup()
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
         xc <- 2L + (task >= maxtasks)
+        is.null(.[["sync"]]) && msleep(100L) || wait(cv)
         break
       }
       task <- task + 1L
