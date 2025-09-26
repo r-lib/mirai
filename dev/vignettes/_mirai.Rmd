@@ -208,13 +208,16 @@ Daemons, or persistent background processes, may be set to receive `mirai()` req
 They also load the default packages.
 To instead only load the `base` package (which cuts out more than half of R's startup time), the environment variable `R_SCRIPT_DEFAULT_PACKAGES=NULL` may be set prior to launching daemons.
 
-#### With Dispatcher (default)
-
 Call `daemons()` specifying the number of daemons to launch.
 ```{r}
 #| label: daemons
 daemons(6)
 ```
+
+Setting `n` to one less than the number of available cores is a good rule of thumb for optimal performance.
+You should determine what the 'available' cores are, as you may be setting aside cores for other purposes and want this to be less than the total number of cores in the system.
+
+#### With Dispatcher (default)
 
 The default `dispatcher = TRUE` creates a `dispatcher()` background process that connects to individual daemon processes on the local machine.
 This ensures that tasks are dispatched efficiently on a first-in first-out (FIFO) basis to daemons for processing.

@@ -6,8 +6,7 @@
 #' requests. Specify `n` to create daemons on the local machine. Specify `url`
 #' to receive connections from remote daemons (for distributed computing across
 #' the network). Specify `remote` to optionally launch remote daemons via a
-#' remote configuration. For optimal performance, set `n` to one less than the
-#' number of available cores. Dispatcher (enabled by default) ensures optimal
+#' remote configuration. Dispatcher (enabled by default) ensures optimal
 #' scheduling.
 #'
 #' Use `daemons(0)` to reset daemon connections:
