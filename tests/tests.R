@@ -403,7 +403,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
   test_class("miraiLaunchCmd", launch_remote(1))
   test_false(daemons(0))
   test_true(daemons(1))
-  test_error(mirai_map(c(1, "a", 3, 4), rnorm)[.stop])
+  test_error(mirai_map(c(1, "a", 3, 4), function(x) {Sys.sleep(0.1); rnorm(x)})[.stop])
   test_equal(mirai(1)[], 1)
   test_false(daemons(0))
 }
