@@ -16,6 +16,8 @@
   + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.
 * Removes deprecated argument `tls` at `daemon()`, `launch_local()` and `launch_remote()`.
 * `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.
+* Fixes a phenomenon where `stop_mirai()` or `mirai_map()[.stop]` could on occasion cause daemons to be interrupted and exit on subsequent runs (#459).
+* Requires nanonext >= [1.7.0.9001].
 
 # mirai 2.5.0
 

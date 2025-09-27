@@ -137,13 +137,14 @@ daemon <- function(
         }
         (task >= maxtasks || maxtime && mclock() >= maxtime) && {
           .mark()
-          send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
+          send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
           aio <- recv_aio(sock, mode = 8L, cv = cv)
           xc <- 2L + (task >= maxtasks)
           wait(cv)
           break
         }
-        send(sock, eval_mirai_with_cancel(m, sock), mode = 1L, block = TRUE)
+        send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
+        .reset_interrupts()
         if (cleanup) do_cleanup()
         task <- task + 1L
       }
@@ -213,10 +214,14 @@ handle_mirai_interrupt <- function(cnd) {
   invokeRestart("mirai_interrupt")
 }
 
-eval_mirai <- function(._mirai_.) {
+eval_mirai <- function(._mirai_., sock = NULL) {
   withRestarts(
     withCallingHandlers(
       {
+        if (length(sock)) {
+          cancel <- recv_aio(sock, mode = 8L, cv = substitute())
+          on.exit(stop_aio(cancel))
+        }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
@@ -235,12 +240,6 @@ eval_mirai <- function(._mirai_.) {
     mirai_error = mk_mirai_error,
     mirai_interrupt = mk_interrupt_error
   )
-}
-
-eval_mirai_with_cancel <- function(._mirai_., sock) {
-  cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-  on.exit(stop_aio(cancel))
-  eval_mirai(._mirai_.)
 }
 
 dial_sync_socket <- function(sock, url, autostart = NA, tls = NULL) {

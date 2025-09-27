@@ -36,8 +36,8 @@
 #'   .context cv cv_reset cv_signal cv_value dial ip_addr is_error_value .keep
 #'   listen .mark mclock monitor msleep nng_error opt opt<- parse_url pipe_id
 #'   pipe_notify random .read_header .read_marker read_monitor reap recv
-#'   recv_aio request send serial_config socket stat stop_aio stop_request
-#'   tls_config unresolved .unresolved until wait wait_ write_cert
+#'   recv_aio request .reset_interrupts send serial_config socket stat stop_aio
+#'   stop_request tls_config unresolved .unresolved until wait wait_ write_cert
 #'
 "_PACKAGE"
 
