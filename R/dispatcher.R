@@ -163,11 +163,6 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
         value <- .subset2(res, "value")
         id <- as.character(pipe_id(res))
         res <- recv_aio(psock, mode = 8L, cv = cv)
-        outq[[id]][["msgid"]] < 0 && {
-          `[[<-`(outq[[id]], "msgid", 0L)
-          cv_signal(cv)
-          next
-        }
         .read_marker(value) && {
             send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
             send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
