@@ -144,7 +144,6 @@ daemon <- function(
           break
         }
         send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
-        .reset_interrupts()
         if (cleanup) do_cleanup()
         task <- task + 1L
       }
