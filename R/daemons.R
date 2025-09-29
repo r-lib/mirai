@@ -263,7 +263,7 @@ daemons <- function(
       if (dispatcher) {
         launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
       } else {
-        create_sock(envir, url, cfg[[2L]], sync)
+        create_sock(envir, url, cfg[[2L]])
       }
       create_profile(envir, .compute, 1L, dots, sync)
       if (length(remote)) {
@@ -796,14 +796,14 @@ launch_daemons <- function(seq, dots, envir) {
 
 sub_real_port <- function(port, url) sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
 
-create_sock <- function(envir, url, tls, sync) {
+create_sock <- function(envir, url, tls) {
   sock <- req_socket(url, tls = tls)
   listener <- attr(sock, "listener")[[1L]]
   url <- opt(listener, "url")
   if (parse_url(url)[["port"]] == "0") {
     url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
   }
-  `[[<-`(envir, "cv", if (sync) substitute() else cv())
+  `[[<-`(envir, "cv", cv())
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", url)
 }

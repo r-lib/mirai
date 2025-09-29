@@ -160,13 +160,16 @@ daemon <- function(
         xc <- 1L
         break
       }
-      send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
-      if (cleanup) do_cleanup()
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
+        .mark()
+        send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
+        if (cleanup) do_cleanup()
         xc <- 2L + (task >= maxtasks)
-        is.null(.[["sync"]]) && msleep(100L) || wait(cv)
+        wait(cv)
         break
       }
+      send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
+      if (cleanup) do_cleanup()
       task <- task + 1L
     }
   }
@@ -197,6 +200,7 @@ daemon <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
+  .mark()
   m <- recv(sock, mode = 1L, block = TRUE)
   send(sock, eval_mirai(m), mode = 1L, block = TRUE) || until(cv, .limit_short)
 }
