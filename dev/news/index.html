@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,8 @@
 <li>Removes deprecated argument <code>tls</code> at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code>.</li>
 <li>
 <code><a href="../reference/daemons.html">daemons()</a></code> dispatcher argument ‘none’, deprecated in mirai v2.1.0, is removed.</li>
+<li>Fixes a phenomenon where <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or <code>mirai_map()[.stop]</code> could on occasion cause (dispatcher) daemons to be interrupted and exit on subsequent runs (<a href="https://github.com/r-lib/mirai/issues/459" class="external-link">#459</a>).</li>
+<li>Requires nanonext &gt;= [1.7.0.9002].</li>
 </ul></div>
 </div>
     <div class="section level2">
