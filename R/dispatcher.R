@@ -135,7 +135,6 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
             for (item in outq) {
               item[["msgid"]] == id && {
                 send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
-                `[[<-`(item, "msgid", -1L)
                 found <- TRUE
                 break
               }
