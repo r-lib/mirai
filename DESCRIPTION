@@ -42,4 +42,4 @@ Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Remotes: r-lib/nanonext@state
+Remotes: r-lib/nanonext
