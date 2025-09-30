@@ -202,7 +202,7 @@ daemon <- function(
   `[[<-`(., "sock", sock)
   .mark()
   m <- recv(sock, mode = 1L, block = TRUE)
-  send(sock, eval_mirai(m), mode = 1L, block = TRUE) || until(cv, .limit_short)
+  send(sock, eval_mirai(m), mode = 1L, block = TRUE) || wait(cv)
 }
 
 # internals --------------------------------------------------------------------
