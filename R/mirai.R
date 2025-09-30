@@ -663,8 +663,7 @@ ephemeral_daemon <- function(data, timeout) {
     data,
     send_mode = 1L,
     recv_mode = 1L,
-    timeout = timeout,
-    cv = substitute()
+    timeout = timeout
   )
   `attr<-`(.subset2(req, "aio"), "sock", sock)
   invisible(req)
@@ -673,14 +672,12 @@ ephemeral_daemon <- function(data, timeout) {
 evaluate_sync <- function(envir) {
   store <- as.list.environment(globalenv(), all.names = TRUE)
   on.exit({
-    `[[<-`(., "sync", NULL)
     `[[<-`(envir, "dmnenv", as.list.environment(globalenv(), all.names = TRUE))
     rm(list = names(globalenv()), envir = globalenv())
     list2env(store, envir = globalenv())
   })
   rm(list = names(globalenv()), envir = globalenv())
   list2env(envir[["dmnenv"]], envir = globalenv())
-  `[[<-`(., "sync", TRUE)
   daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
 }
 
