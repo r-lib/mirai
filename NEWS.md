@@ -19,7 +19,7 @@
 * `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.
 * Fixes a phenomenon where `stop_mirai()` or `mirai_map()[.stop]` could on occasion cause (dispatcher) daemons to be interrupted and exit on subsequent runs (#459).
 * Non-dispatcher daemons now synchronize upon timeout or task-out, ensuring that they exit safely only after all data has been sent (#458).
-* Requires nanonext >= [1.7.0.9003].
+* Requires nanonext >= 1.7.1.
 
 # mirai 2.5.0
 
