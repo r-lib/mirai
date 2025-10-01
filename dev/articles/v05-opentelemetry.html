@@ -117,7 +117,7 @@ installed and available</li>
 <li>OpenTelemetry tracing is configured and enabled (see <a href="https://otelsdk.r-lib.org/reference/collecting.html" class="external-link uri">https://otelsdk.r-lib.org/reference/collecting.html</a>)</li>
 </ol>
 <p>No additional configuration is required - mirai will automatically
-detect the presence of OpenTelemetry and begin creating spans.</p>
+detect the presence of OpenTelemetry and begin tracing.</p>
 </div>
 <div class="section level3">
 <h3 id="span-types-and-hierarchy">3. Span Types and Hierarchy<a class="anchor" aria-label="anchor" href="#span-types-and-hierarchy"></a>
@@ -127,8 +127,8 @@ operations:</p>
 <div class="section level4">
 <h4 id="core-span-types">3.1 Core Span Types<a class="anchor" aria-label="anchor" href="#core-span-types"></a>
 </h4>
-<p><strong><code><a href="../reference/daemons.html">mirai::daemons</a></code></strong> - Root span for daemon
-management</p>
+<p><strong><code><a href="../reference/daemons.html">mirai::daemons</a></code></strong> - Root span for a
+compute profile</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>internal</code>
@@ -139,8 +139,12 @@ management</p>
 <code>compute_profile</code>
 </li>
 <li>
+<strong>Events</strong>: <code>daemons-&gt;set</code> or
+<code>daemons-&gt;reset</code>
+</li>
+<li>
 <strong>Lifecycle</strong>: Created when <code><a href="../reference/daemons.html">daemons()</a></code> is
-called, ended when daemons are reset</li>
+called, and again when daemons are reset</li>
 </ul>
 <p><strong><code><a href="../reference/daemon.html">mirai::daemon</a></code></strong> - Individual daemon
 process span</p>
@@ -149,8 +153,15 @@ process span</p>
 <strong>Kind</strong>: <code>internal</code>
 </li>
 <li>
-<strong>Lifecycle</strong>: Tracks the lifetime of a single daemon
-process</li>
+<strong>Attributes</strong>: <code>url</code>
+</li>
+<li>
+<strong>Events</strong>: <code>daemon-&gt;start</code> or
+<code>daemon-&gt;end</code>
+</li>
+<li>
+<strong>Lifecycle</strong>: Created when a daemon process starts and
+again when it ends</li>
 </ul>
 <p><strong><code><a href="../reference/mirai_map.html">mirai::mirai_map</a></code></strong> - Parallel map
 operation span</p>
@@ -197,9 +208,11 @@ mirai::daemon (daemon process 1 - top level)
 mirai::daemon (daemon process 2 - top level) 
 mirai::daemon (daemon process N - top level)
 
-mirai::mirai_map (top level)
+mirai::mirai_map (top level) ──link→ mirai::daemons
 ├── mirai::mirai (task 1) ──link→ mirai::daemons
-├── mirai::mirai (task 2) ──link→ mirai::daemons  
+│   └── mirai::daemon-&gt;eval ──link→ mirai::daemon
+├── mirai::mirai (task 2) ──link→ mirai::daemons
+│   └── mirai::daemon-&gt;eval ──link→ mirai::daemon
 └── mirai::mirai (task N) ──link→ mirai::daemons
     └── mirai::daemon-&gt;eval ──link→ mirai::daemon
     
@@ -212,7 +225,9 @@ boundaries.</p>
 <p><strong>Span Links</strong>: Tasks are linked to their compute
 profile’s <code><a href="../reference/daemons.html">mirai::daemons</a></code> span on the client side, and to
 each <code><a href="../reference/daemon.html">mirai::daemon</a></code> span on the server side, showing exactly
-where each evaluation happened.</p>
+where each evaluation happened. When <code><a href="../reference/daemons.html">mirai::daemons</a></code> and
+<code><a href="../reference/daemon.html">mirai::daemon</a></code> end, these events are recorded in new spans
+with links back to their original start spans.</p>
 </div>
 </div>
 <div class="section level3">
