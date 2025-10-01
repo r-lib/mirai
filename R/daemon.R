@@ -112,11 +112,12 @@ daemon <- function(
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
   if (otel_tracing) {
-    dmnspn <- otel::start_local_active_span(
+    dmnspn <- otel::start_span(
       "mirai::daemon",
       attributes = otel::as_attributes(list(url = url)),
       tracer = otel_tracer
     )
+    otel::with_active_span(dmnspn, dmnspn$add_event("daemon->start"), end_on_exit = TRUE)
   }
 
   if (dispatcher) {
@@ -174,6 +175,15 @@ daemon <- function(
     }
   }
 
+  if (otel_tracing) {
+    dmnspn <- otel::start_span(
+      "mirai::daemon",
+      attributes = otel::as_attributes(list(url = url)),
+      links = list(daemon = dmnspn),
+      tracer = otel_tracer
+    )
+    otel::with_active_span(dmnspn, dmnspn$add_event("daemon->end"), end_on_exit = TRUE)
+  }
   if (!output) {
     sink(type = "message")
     sink()
