@@ -284,7 +284,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (otel_tracing) otel::end_span(envir[["otel_span"]])
+      if (otel_tracing) otel_daemons_span(envir, .compute, reset = TRUE)
       ..[[.compute]] <- NULL -> envir
       return(invisible(FALSE))
     }
@@ -319,22 +319,7 @@ daemons <- function(
     )
   })
 
-  if (otel_tracing) {
-    `[[<-`(
-      envir,
-      "otel_span",
-      otel::start_span(
-        "mirai::daemons",
-        attributes = otel::as_attributes(list(
-          url = envir[["url"]],
-          n = envir[["n"]],
-          dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
-          compute_profile = .compute
-        )),
-        tracer = otel_tracer
-      )
-    )
-  }
+  if (otel_tracing) `[[<-`(envir, "otel_span", otel_daemons_span(envir, .compute))
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
 }
@@ -647,6 +632,26 @@ register_serial <- function(class, sfunc, ufunc) {
 # internals --------------------------------------------------------------------
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
+
+otel_daemons_span <- function(envir, .compute, reset = FALSE) {
+  spn <- otel::start_span(
+    "mirai::daemons",
+    attributes = otel::as_attributes(list(
+      url = envir[["url"]],
+      n = envir[["n"]],
+      dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
+      compute_profile = .compute
+    )),
+    links = if (reset) list(daemons = envir[["otel_span"]]),
+    tracer = otel_tracer
+  )
+  otel::with_active_span(
+    spn,
+    spn$add_event(if (reset) "daemons->reset" else "daemons->set"),
+    end_on_exit = TRUE
+  )
+  spn
+}
 
 configure_tls <- function(url, tls, pass, envir, config = TRUE) {
   purl <- parse_url(url)

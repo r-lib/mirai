@@ -10,7 +10,8 @@
 
 * `everywhere()` adds argument `.min` to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher).
   This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (thanks @louisaslett, #330).
-* OpenTelemetry is now faster and more responsive when used (#450).
+* OpenTelemetry 'mirai::daemons' and 'mirai::daemon' spans are split into short spans when they are created and when they end.
+  This means that spans now follow the order in which they were created (#464).
 * Removes the following developer features:
   + `nextget("pid")` is no longer a supported option.
   + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.
