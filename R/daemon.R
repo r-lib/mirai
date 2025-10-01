@@ -111,14 +111,7 @@ daemon <- function(
   task <- 1L
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
-  if (otel_tracing) {
-    dmnspn <- otel::start_span(
-      "mirai::daemon",
-      attributes = otel::as_attributes(list(url = url)),
-      tracer = otel_tracer
-    )
-    otel::with_active_span(dmnspn, dmnspn$add_event("daemon->start"), end_on_exit = TRUE)
-  }
+  if (otel_tracing) dmnspn <- otel_daemon_span(url)
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -175,15 +168,7 @@ daemon <- function(
     }
   }
 
-  if (otel_tracing) {
-    dmnspn <- otel::start_span(
-      "mirai::daemon",
-      attributes = otel::as_attributes(list(url = url)),
-      links = list(daemon = dmnspn),
-      tracer = otel_tracer
-    )
-    otel::with_active_span(dmnspn, dmnspn$add_event("daemon->end"), end_on_exit = TRUE)
-  }
+  if (otel_tracing) otel_daemon_span(url, end_span = dmnspn)
   if (!output) {
     sink(type = "message")
     sink()
@@ -253,6 +238,21 @@ eval_mirai <- function(._mirai_., sock = NULL) {
     mirai_error = mk_mirai_error,
     mirai_interrupt = mk_interrupt_error
   )
+}
+
+otel_daemon_span <- function(url, end_span = NULL) {
+  spn <- otel::start_span(
+    "mirai::daemon",
+    attributes = otel::as_attributes(list(url = url)),
+    links = if (length(end_span)) list(daemon = end_span),
+    tracer = otel_tracer
+  )
+  otel::with_active_span(
+    spn,
+    spn$add_event(if (length(end_span)) "daemon->end" else "daemon->start"),
+    end_on_exit = TRUE
+  )
+  spn
 }
 
 dial_sync_socket <- function(sock, url, autostart = NA, tls = NULL) {

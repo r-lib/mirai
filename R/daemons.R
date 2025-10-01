@@ -284,7 +284,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      if (otel_tracing) create_otel_span(envir, .compute, reset = TRUE)
+      if (otel_tracing) otel_daemons_span(envir, .compute, reset = TRUE)
       ..[[.compute]] <- NULL -> envir
       return(invisible(FALSE))
     }
@@ -319,7 +319,7 @@ daemons <- function(
     )
   })
 
-  if (otel_tracing) `[[<-`(envir, "otel_span", create_otel_span(envir, .compute))
+  if (otel_tracing) `[[<-`(envir, "otel_span", otel_daemons_span(envir, .compute))
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
 }
@@ -633,7 +633,7 @@ register_serial <- function(class, sfunc, ufunc) {
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
-create_otel_span <- function(envir, .compute, reset = FALSE) {
+otel_daemons_span <- function(envir, .compute, reset = FALSE) {
   spn <- otel::start_span(
     "mirai::daemons",
     attributes = otel::as_attributes(list(
