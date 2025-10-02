@@ -94,7 +94,7 @@ daemons->reset ──link→ daemons
 
 **Context Propagation**: The context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
 
-**Span Links**: Tasks are linked to their compute profile's `daemons` span on the client side, and to each `daemon` span on the server side, showing exactly where each evaluation happened. When daemons are reset and the respective daemons terminated, these events are recorded in new spans which links back to the original spans.
+**Span Links**: Tasks are linked to their compute profile's `daemons` span on the client side, and to each `daemon` span on the server side, showing exactly where each evaluation happened. When daemons are reset and the respective daemons terminated, these events are recorded in new spans which link back to the original spans.
 
 ### 4. Status and Error Tracking
 
@@ -102,9 +102,9 @@ daemons->reset ──link→ daemons
 
 **Status Values**:
 
-- `'ok'` or `'unset'` - Operation completed successfully
-- `'error'`, with description `'miraiError'` - Operation failed with an error
-- `'error'`, with description `'miraiInterrupt'` - Operation was interrupted
+- `'ok'` or `'unset'` - completed successfully
+- `'error'`, with description `'miraiError'` - failed with an error
+- `'error'`, with description `'miraiInterrupt'` - was interrupted
 
 ### 5. Monitoring and Observability
 
@@ -137,4 +137,4 @@ mirai's OpenTelemetry implementation works seamlessly with any OpenTelemetry-com
 - Jaeger
 - Any of those listed at <https://otelsdk.r-lib.org/reference/collecting.html>.
 
-The tracer name used by mirai is `"org.r-lib.mirai"`, making it easy to filter and identify mirai-related traces in your observability platform.
+The tracer name used by mirai is `"org.r-lib.mirai"`, making it easy to filter and identify mirai-related traces.
