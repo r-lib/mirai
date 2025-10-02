@@ -669,7 +669,6 @@ create_profile <- function(envir, .compute, n, dots, sync) {
   `[[<-`(envir, "n", n)
   `[[<-`(envir, "dots", dots)
   `[[<-`(envir, "sync", sync)
-  `[[<-`(envir, "dmnenv", list())
   `[[<-`(.., .compute, envir)
 }
 

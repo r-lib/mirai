@@ -670,14 +670,14 @@ ephemeral_daemon <- function(data, timeout) {
 }
 
 evaluate_sync <- function(envir) {
-  store <- as.list.environment(globalenv(), all.names = TRUE)
+  vars <- as.list.environment(globalenv(), all.names = TRUE)
   on.exit({
-    `[[<-`(envir, "dmnenv", as.list.environment(globalenv(), all.names = TRUE))
+    `[[<-`(envir, "vars", as.list.environment(globalenv(), all.names = TRUE))
     rm(list = names(globalenv()), envir = globalenv())
-    list2env(store, envir = globalenv())
+    list2env(vars, envir = globalenv())
   })
   rm(list = names(globalenv()), envir = globalenv())
-  list2env(envir[["dmnenv"]], envir = globalenv())
+  if (!is.null(envir[["vars"]])) list2env(envir[["vars"]], envir = globalenv())
   daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
 }
 
