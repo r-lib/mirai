@@ -21,13 +21,12 @@ such objects. These objects will remain local to the evaluation environment
 as opposed to those supplied in \code{...} above - see 'evaluation' section
 below.}
 
-\item{.timeout}{[default NULL] for no timeout, or an integer value in
-milliseconds. A mirai will resolve to an 'errorValue' 5 (timed out) if
-evaluation exceeds this limit.}
+\item{.timeout}{integer value in milliseconds, or NULL for no timeout. A
+mirai will resolve to an 'errorValue' 5 (timed out) if evaluation exceeds
+this limit.}
 
-\item{.compute}{[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.}
+\item{.compute}{character value for the compute profile to use (each has its
+own independent set of daemons), or NULL to use the 'default' profile.}
 }
 \value{
 A 'mirai' object.

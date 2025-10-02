@@ -24,14 +24,13 @@ that must include \code{"."} as an element, which will be substituted for the
 daemon launch command. Alternatively, a list of such character vectors to
 effect multiple launches (one for each list element).}
 
-\item{rscript}{[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, \code{"Rscript"} should be
-replaced with \code{"Rscript.exe"}.}
+\item{rscript}{filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
 
-\item{quote}{[default FALSE] logical value whether or not to quote the
-daemon launch command (not required for Slurm \code{"srun"} for example, but
-required for Slurm \code{"sbatch"} or \code{"ssh"}).}
+\item{quote}{logical value whether or not to quote the daemon launch command
+(not required for Slurm \code{"srun"} for example, but required for Slurm
+\code{"sbatch"} or \code{"ssh"}).}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

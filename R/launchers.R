@@ -176,13 +176,12 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
 #'   that must include `"."` as an element, which will be substituted for the
 #'   daemon launch command. Alternatively, a list of such character vectors to
 #'   effect multiple launches (one for each list element).
-#' @param rscript \[default "Rscript"\] assumes the R executable is on the
-#'   search path. Replace with the full path of the Rscript executable on the
-#'   remote machine if necessary. If launching on Windows, `"Rscript"` should be
-#'   replaced with `"Rscript.exe"`.
-#' @param quote \[default FALSE\] logical value whether or not to quote the
-#'   daemon launch command (not required for Slurm `"srun"` for example, but
-#'   required for Slurm `"sbatch"` or `"ssh"`).
+#' @param rscript filename of the R executable. Use the full path of the Rscript
+#'   executable on the remote machine if necessary. If launching on Windows,
+#'   `"Rscript"` should be replaced with `"Rscript.exe"`.
+#' @param quote logical value whether or not to quote the daemon launch command
+#'   (not required for Slurm `"srun"` for example, but required for Slurm
+#'   `"sbatch"` or `"ssh"`).
 #'
 #' @return A list in the required format to be supplied to the `remote` argument
 #'   of [daemons()] or [launch_remote()].
@@ -226,11 +225,10 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #' @param remotes the character URL or vector of URLs to SSH into, using the
 #'   'ssh://' scheme and including the port open for SSH connections (defaults
 #'   to 22 if not specified), e.g. 'ssh://10.75.32.90:22' or 'ssh://nodename'.
-#' @param tunnel \[default FALSE\] logical value, whether to use SSH tunnelling.
-#'   If TRUE, requires the [daemons()] `url` hostname to be '127.0.0.1'. See
-#'   the 'SSH Tunnelling' section below for further details.
-#' @param timeout \[default 10\] maximum time allowed for connection setup in
-#'   seconds.
+#' @param tunnel logical value, whether to use SSH tunnelling. If TRUE, requires
+#'   the [daemons()] `url` hostname to be '127.0.0.1'. See the 'SSH Tunnelling'
+#'   section below for further details.
+#' @param timeout maximum time in seconds allowed for connection setup.
 #' @inheritParams remote_config
 #'
 #' @inherit remote_config return
@@ -313,11 +311,11 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
 #' Generates a remote configuration for launching daemons using an HPC cluster
 #' resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.
 #'
-#' @param command \[default "sbatch"\] for Slurm. Replace with "qsub" for
-#'   SGE / Torque / PBS, or "bsub" for LSF. See examples below.
-#' @param options \[default ""\] options as would be supplied inside a script
-#'   file passed to `command`, e.g. "#SBATCH --mem=10G", each separated by a new
-#'   line. See examples below.
+#' @param command filename of executable e.g. "sbatch" for Slurm. Replace with
+#'   "qsub" for SGE / Torque / PBS, or "bsub" for LSF. See examples below.
+#' @param options options as would be supplied inside a script file passed to
+#'   `command`, e.g. "#SBATCH --mem=10G", each separated by a new line. See
+#'   examples below.
 #'   \cr Other shell commands e.g. to change working directory may also be
 #'   included.
 #'   \cr For certain setups, "module load R" as a final line is required, or
@@ -409,13 +407,12 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' sockets on MacOS, Solaris and other POSIX platforms, and named pipes on
 #' Windows.
 #'
-#' @param tls \[default FALSE\] logical value whether to use TLS in which case
-#'   the scheme used will be 'tls+tcp://'.
-#' @param port \[default 0\] numeric port to use. `0` is a wildcard value that
-#'   automatically assigns a free ephemeral port. For `host_url`, this port
-#'   should be open to connections from the network addresses the daemons are
-#'   connecting from. For `local_url`, is only taken into account if
-#'   `tcp = TRUE`.
+#' @param tls logical value whether to use TLS. If TRUE, the scheme used will be
+#'   'tls+tcp://'.
+#' @param port numeric port to use. `0` is a wildcard value that automatically
+#'   assigns a free ephemeral port. For `host_url`, this port should be open to
+#'   connections from the network addresses the daemons are connecting from. For
+#'   `local_url`, is only taken into account if `tcp = TRUE`.
 #'
 #' @return A character vector (comprising a valid URL or URLs), named for
 #'   `host_url()`.
@@ -446,8 +443,8 @@ host_url <- function(tls = FALSE, port = 0) {
 #' SSH tunnelling. This may be supplied directly to the `url` argument of
 #' [daemons()].
 #'
-#' @param tcp \[default FALSE\] logical value whether to use a TCP connection.
-#'   This must be used for SSH tunnelling.
+#' @param tcp logical value whether to use a TCP connection. This must be TRUE
+#'   for use with SSH tunnelling.
 #'
 #' @examples
 #' local_url()

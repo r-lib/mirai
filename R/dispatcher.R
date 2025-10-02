@@ -20,8 +20,8 @@
 #'   dial in to), including the port to connect to e.g. tcp://hostname:5555' or
 #'   'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
 #'   connections.
-#' @param n \[default 0L\] if specified, the integer number of daemons to be
-#'   launched locally by the host process.
+#' @param n if specified, the integer number of daemons to be launched locally
+#'   by the host process.
 #'
 #' @return Invisible NULL.
 #'
@@ -68,7 +68,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
 
   if (n) {
     for (i in seq_len(n))
-      while(!until(cv, .limit_long))
+      while (!until(cv, .limit_long))
         cv_signal(cv) || wait(cv) || return()
 
     changes <- read_monitor(m)

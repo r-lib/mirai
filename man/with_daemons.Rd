@@ -10,14 +10,13 @@ with_daemons(.compute, expr)
 local_daemons(.compute, frame = parent.frame())
 }
 \arguments{
-\item{.compute}{[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.}
+\item{.compute}{character value for the compute profile to use (each has its
+own independent set of daemons), or NULL to use the 'default' profile.}
 
 \item{expr}{an expression to evaluate.}
 
-\item{frame}{[default parent.frame()] the frame (environment) to which the
-daemons compute profile is scoped.}
+\item{frame}{the frame (environment) to which the daemons compute profile is
+scoped.}
 }
 \value{
 For \strong{with_daemons}: the return value of \code{expr}. \cr

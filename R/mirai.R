@@ -34,12 +34,11 @@
 #'   such objects. These objects will remain local to the evaluation environment
 #'   as opposed to those supplied in `...` above - see 'evaluation' section
 #'   below.
-#' @param .timeout \[default NULL\] for no timeout, or an integer value in
-#'   milliseconds. A mirai will resolve to an 'errorValue' 5 (timed out) if
-#'   evaluation exceeds this limit.
-#' @param .compute \[default NULL\] character value for the compute profile
-#'   to use (each has its own independent set of daemons), or NULL to use the
-#'   'default' profile.
+#' @param .timeout integer value in milliseconds, or NULL for no timeout. A
+#'   mirai will resolve to an 'errorValue' 5 (timed out) if evaluation exceeds
+#'   this limit.
+#' @param .compute character value for the compute profile to use (each has its
+#'   own independent set of daemons), or NULL to use the 'default' profile.
 #'
 #' @return A 'mirai' object.
 #'

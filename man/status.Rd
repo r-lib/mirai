@@ -7,8 +7,8 @@
 status(.compute = NULL)
 }
 \arguments{
-\item{.compute}{[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.
+\item{.compute}{character value for the compute profile to query, or NULL to
+query the 'default' profile.
 
 \strong{or} a 'miraiCluster' to obtain its status.}
 }
