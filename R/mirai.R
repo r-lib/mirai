@@ -166,7 +166,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     ._globals_. = globals,
     ._otel_. = if (otel_tracing && length(envir)) {
       spn <- otel::start_local_active_span(
-        "mirai::mirai",
+        "mirai",
         links = list(compute_profile = envir[["otel_span"]]),
         options = list(kind = "client"),
         tracer = otel_tracer

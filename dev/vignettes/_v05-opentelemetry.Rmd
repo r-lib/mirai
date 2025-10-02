@@ -43,32 +43,32 @@ mirai creates several types of spans to represent different operations:
 
 #### 3.1 Core Span Types
 
-**`mirai::daemons`** - Root span for a compute profile
+**`daemons`** - Root span for a compute profile
 
 - **Kind**: `internal`
 - **Attributes**: `url`, `n` (number of daemons), `dispatcher` (true/false), `compute_profile`
 - **Events**: `daemons.set` or `daemons.reset`
 - **Lifecycle**: Created when `daemons()` is called, and again when daemons are reset
 
-**`mirai::daemon`** - Individual daemon process span
+**`daemon`** - Individual daemon process span
 
 - **Kind**: `internal` 
 - **Attributes**: `url`
 - **Events**: `daemon.start` or `daemon.end`
 - **Lifecycle**: Created when a daemon process starts and again when it ends
 
-**`mirai::mirai_map`** - Parallel map operation span
+**`mirai_map`** - Parallel map operation span
 
 - **Kind**: `internal`
 - **Lifecycle**: Encompasses the entire map operation across multiple mirai tasks
 
-**`mirai::mirai`** - Client-side async task span
+**`mirai`** - Client-side async task span
 
 - **Kind**: `client`
 - **Attributes**: `mirai.id` (unique task identifier)
 - **Lifecycle**: Created when `mirai()` is called, ended as soon as it returns
 
-**`mirai::daemon->eval`** - Server-side task evaluation span
+**`daemon->eval`** - Server-side task evaluation span
 
 - **Kind**: `server`
 - **Lifecycle**: Tracks for the duration of actual mirai evaluation on the daemon
@@ -78,27 +78,27 @@ mirai creates several types of spans to represent different operations:
 The spans form a distributed structure that traces the complete lifecycle of async operations:
 
 ```
-mirai::daemons (compute profile - top level)
+daemons (compute profile - top level)
 
-mirai::daemon (daemon process 1 - top level)
-mirai::daemon (daemon process 2 - top level) 
-mirai::daemon (daemon process N - top level)
+daemon (daemon process 1 - top level)
+daemon (daemon process 2 - top level) 
+daemon (daemon process N - top level)
 
-mirai::mirai_map (top level) ──link→ mirai::daemons
-├── mirai::mirai (task 1) ──link→ mirai::daemons
-│   └── mirai::daemon->eval ──link→ mirai::daemon
-├── mirai::mirai (task 2) ──link→ mirai::daemons
-│   └── mirai::daemon->eval ──link→ mirai::daemon
-└── mirai::mirai (task N) ──link→ mirai::daemons
-    └── mirai::daemon->eval ──link→ mirai::daemon
+mirai_map (top level) ──link→ daemons
+├── mirai (task 1) ──link→ daemons
+│   └── daemon->eval ──link→ daemon
+├── mirai (task 2) ──link→ daemons
+│   └── daemon->eval ──link→ daemon
+└── mirai (task N) ──link→ daemons
+    └── daemon->eval ──link→ daemon
     
-mirai::mirai (top level) ──link→ mirai::daemons
-└── mirai::daemon->eval ──link→ mirai::daemon
+mirai (top level) ──link→ daemons
+└── daemon->eval ──link→ daemon
 ```
 
 **Context Propagation**: The context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
 
-**Span Links**: Tasks are linked to their compute profile's `mirai::daemons` span on the client side, and to each `mirai::daemon` span on the server side, showing exactly where each evaluation happened. When `mirai::daemons` and `mirai::daemon` end, these events are recorded in new spans with links back to their original start spans.
+**Span Links**: Tasks are linked to their compute profile's `daemons` span on the client side, and to each `daemon` span on the server side, showing exactly where each evaluation happened. When daemons are reset and the respective daemons terminated, these events are recorded in new spans with links back to their original start spans.
 
 ### 4. Status and Error Tracking
 

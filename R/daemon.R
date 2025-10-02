@@ -222,7 +222,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
           prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
-            "mirai::daemon->eval",
+            "daemon->eval",
             links = list(daemon = dynGet("dmnspn")),
             options = list(kind = "server", parent = prtctx),
             tracer = otel_tracer
@@ -240,7 +240,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
 
 otel_daemon_span <- function(url, end_span = NULL) {
   spn <- otel::start_span(
-    "mirai::daemon",
+    "daemon",
     attributes = otel::as_attributes(list(url = url)),
     links = if (length(end_span)) list(daemon = end_span),
     tracer = otel_tracer

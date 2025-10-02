@@ -633,7 +633,7 @@ compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
 otel_daemons_span <- function(envir, .compute, reset = FALSE) {
   spn <- otel::start_span(
-    "mirai::daemons",
+    "daemons",
     attributes = otel::as_attributes(list(
       url = envir[["url"]],
       n = envir[["n"]],
