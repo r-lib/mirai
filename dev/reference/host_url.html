@@ -82,21 +82,20 @@ SSH tunnelling. This may be supplied directly to the <code>url</code> argument o
 
 
 <dl><dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
-<dd><p>[default FALSE] logical value whether to use TLS in which case
-the scheme used will be 'tls+tcp://'.</p></dd>
+<dd><p>logical value whether to use TLS. If TRUE, the scheme used will be
+'tls+tcp://'.</p></dd>
 
 
 <dt id="arg-port">port<a class="anchor" aria-label="anchor" href="#arg-port"></a></dt>
-<dd><p>[default 0] numeric port to use. <code>0</code> is a wildcard value that
-automatically assigns a free ephemeral port. For <code>host_url</code>, this port
-should be open to connections from the network addresses the daemons are
-connecting from. For <code>local_url</code>, is only taken into account if
-<code>tcp = TRUE</code>.</p></dd>
+<dd><p>numeric port to use. <code>0</code> is a wildcard value that automatically
+assigns a free ephemeral port. For <code>host_url</code>, this port should be open to
+connections from the network addresses the daemons are connecting from. For
+<code>local_url</code>, is only taken into account if <code>tcp = TRUE</code>.</p></dd>
 
 
 <dt id="arg-tcp">tcp<a class="anchor" aria-label="anchor" href="#arg-tcp"></a></dt>
-<dd><p>[default FALSE] logical value whether to use a TCP connection.
-This must be used for SSH tunnelling.</p></dd>
+<dd><p>logical value whether to use a TCP connection. This must be TRUE
+for use with SSH tunnelling.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -121,16 +120,16 @@ Windows.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 eth0              docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tcp://10.1.1.34:0" "tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.1.113:0" "tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     eth0                  docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.1.34:0" "tls+tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.1.113:0" "tls+tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        eth0                     docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.1.34:5555" "tls+tcp://172.17.0.1:5555" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.1.113:5555" "tls+tcp://172.17.0.1:5555" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://d25c367c73b589086388f31a"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://3d878d10f5891ebf5b82b4c6"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tcp://127.0.0.1:0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
