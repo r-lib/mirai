@@ -25,12 +25,12 @@ One important difference is that a `future_promise()` by default tries to infer 
 If your code depended on this convenience feature then you will need to instead pass these in via the `...` of `mirai()`.
 A mirai requires that the expression be self-contained, with any variables or helper functions explicitly supplied to it.
 
-On the other hand, if your code previously used the `globals` argument to supply these variables, then you can often pass that directly to the `.args` of `mirai()`.
-Note that this would only work in the case of a named list and not the other forms that `globals` can take.
+On the other hand, if your code previously used the `globals` argument to supply these variables, then you can pass this directly to the `.args` of `mirai()` if it is a named list.
 
-Regardless of using a `mirai()` or `future_promise()`, we recommend that you pass globals explicitly in production code.
-This is as globals detection is never 100% perfect, and there is always some element of guesswork, with edge cases leading to unpredictable results.
-Explicit passing of variables allows for transparent and reliable behaviour, remaining robust over time.
+Regardless of using `mirai()` or `future_promise()`, we recommend that you always pass globals explicitly.
+This matches what actually happens in multi-process parallelism, and is hence better-suited to programmatic use.
+Automatic globals detection is an imperfect abstraction that can easily lead to sending more than required to other processes hence slowing things down, as well as unpredictable edge cases.
+Explicit passing of variables allows for transparent and reliable behaviour that remains completely robust over time.
 
 **Capture globals using `environment()`:**
 
