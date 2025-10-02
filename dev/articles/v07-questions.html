@@ -117,17 +117,17 @@ self-contained, with any variables or helper functions explicitly
 supplied to it.</p>
 <p>On the other hand, if your code previously used the
 <code>globals</code> argument to supply these variables, then you can
-often pass that directly to the <code>.args</code> of
-<code><a href="../reference/mirai.html">mirai()</a></code>. Note that this would only work in the case of a
-named list and not the other forms that <code>globals</code> can
-take.</p>
-<p>Regardless of using a <code><a href="../reference/mirai.html">mirai()</a></code> or
-<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you pass globals
-explicitly in production code. This is as globals detection is never
-100% perfect, and there is always some element of guesswork, with edge
-cases leading to unpredictable results. Explicit passing of variables
-allows for transparent and reliable behaviour, remaining robust over
-time.</p>
+pass this directly to the <code>.args</code> of <code><a href="../reference/mirai.html">mirai()</a></code> if
+it is a named list.</p>
+<p>Regardless of using <code><a href="../reference/mirai.html">mirai()</a></code> or
+<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you always pass globals
+explicitly. This matches what actually happens in multi-process
+parallelism, and is hence better-suited to programmatic use. Automatic
+globals detection is an imperfect abstraction that can easily lead to
+sending more than required to other processes hence slowing things down,
+as well as unpredictable edge cases. Explicit passing of variables
+allows for transparent and reliable behaviour that remains completely
+robust over time.</p>
 <p><strong>Capture globals using
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>:</strong></p>
 <p><code><a href="../reference/mirai.html">mirai()</a></code> allows passing an environment to
@@ -242,27 +242,30 @@ be sent to the parallel process.</p>
 arguments. This is as a function includes its closure (enclosing
 environment), and an environment its parent environments. This means you
 could be passing more than you bargained for.</p>
-<p>Generally, <code>obj_size()</code> from the lobstr package is a great
-function for checking the actual size of an object (capturing many cases
-more accurately than the base R <code>object.size</code>).</p>
+<p>Generally, <code>lobstr::obj_size()</code> from the lobstr package is
+a great function for checking the actual size of an object (capturing
+many cases more accurately than the base R
+<code>object.size</code>).</p>
 <p>As mitigation for accidentally passing large objects:</p>
 <ul>
-<li>For functions, use <code>crate()</code> from the carrier package.
-This is what we use in purrr, and it makes sure only what’s necessary is
-‘crated’ with the function.</li>
+<li>For functions, use <code>carrier::crate()</code> from the carrier
+package. This is what we use in purrr, and it makes sure only what’s
+necessary is ‘crated’ with the function. To crate an existing function,
+use an anonymous function (making sure to also supply anything required
+by <code>fn</code> as part of the <code>...</code>):</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">func</span> <span class="op">&lt;-</span> <span class="fu">carrier</span><span class="fu">::</span><span class="fu">crate</span><span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, fn <span class="op">=</span> <span class="va">fn</span><span class="op">)</span></span></code></pre></div>
+<ul>
 <li>For environments, consider using
 <code>parent.env(e) &lt;- emptyenv()</code>. This is not required for R6
 classes as they are already isolated by default. Regardless of any
-parent environment, an environment / R6 class could still contain a lot
-of items that are not needed for the parallel process, in which case
-consider passing individual members rather than the entire object.</li>
+parent environment, an environment / R6 class could still contain many
+items that are not needed by the parallel process, in which case
+consider passing individual members (<code>env$x</code>,
+<code>env$y</code>) rather than the entire object (<code>env</code>)
+where possible.</li>
 </ul>
-<p>mirai does not rely on options or environment variables at all, so
-there are no object size limits to set.</p>
-<p>This follows mirai’s philosophy of being an enabler to widen the
-possibility frontier for R code, but it does place a responsibility on
-the user to ensure that the code is sensible and does what is
-desired.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
