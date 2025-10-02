@@ -7,12 +7,12 @@
 cluster_config(command = "sbatch", options = "", rscript = "Rscript")
 }
 \arguments{
-\item{command}{[default "sbatch"] for Slurm. Replace with "qsub" for
-SGE / Torque / PBS, or "bsub" for LSF. See examples below.}
+\item{command}{filename of executable e.g. "sbatch" for Slurm. Replace with
+"qsub" for SGE / Torque / PBS, or "bsub" for LSF. See examples below.}
 
-\item{options}{[default ""] options as would be supplied inside a script
-file passed to \code{command}, e.g. "#SBATCH --mem=10G", each separated by a new
-line. See examples below.
+\item{options}{options as would be supplied inside a script file passed to
+\code{command}, e.g. "#SBATCH --mem=10G", each separated by a new line. See
+examples below.
 \cr Other shell commands e.g. to change working directory may also be
 included.
 \cr For certain setups, "module load R" as a final line is required, or
@@ -20,10 +20,9 @@ for example "module load R/4.5.0" for a specific R version.
 \cr For the avoidance of doubt, the initial shebang line such as
 "#!/bin/bash" is not required.}
 
-\item{rscript}{[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, \code{"Rscript"} should be
-replaced with \code{"Rscript.exe"}.}
+\item{rscript}{filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

@@ -13,9 +13,8 @@ nextget(x, .compute = "default")
 nextcode(xc)
 }
 \arguments{
-\item{.compute}{[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.}
+\item{.compute}{character value for the compute profile to use (each has its
+own independent set of daemons), or NULL to use the 'default' profile.}
 
 \item{x}{character value of item to retrieve. One of \code{"n"} (number of
 dispatcher daemons), \code{"dispatcher"} (the URL dispatcher uses to connect to

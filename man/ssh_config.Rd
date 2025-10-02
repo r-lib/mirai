@@ -17,12 +17,11 @@ ssh_config(
 'ssh://' scheme and including the port open for SSH connections (defaults
 to 22 if not specified), e.g. 'ssh://10.75.32.90:22' or 'ssh://nodename'.}
 
-\item{tunnel}{[default FALSE] logical value, whether to use SSH tunnelling.
-If TRUE, requires the \code{\link[=daemons]{daemons()}} \code{url} hostname to be '127.0.0.1'. See
-the 'SSH Tunnelling' section below for further details.}
+\item{tunnel}{logical value, whether to use SSH tunnelling. If TRUE, requires
+the \code{\link[=daemons]{daemons()}} \code{url} hostname to be '127.0.0.1'. See the 'SSH Tunnelling'
+section below for further details.}
 
-\item{timeout}{[default 10] maximum time allowed for connection setup in
-seconds.}
+\item{timeout}{maximum time in seconds allowed for connection setup.}
 
 \item{command}{the command used to effect the daemon launch on the remote
 machine as a character string (e.g. \code{"ssh"}). Defaults to \code{"ssh"} for
@@ -31,10 +30,9 @@ SSH application. The default NULL for \code{remote_config} does not carry out
 any launches, but causes \code{\link[=launch_remote]{launch_remote()}} to return the shell commands for
 manual deployment on remote machines.}
 
-\item{rscript}{[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, \code{"Rscript"} should be
-replaced with \code{"Rscript.exe"}.}
+\item{rscript}{filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

@@ -26,9 +26,8 @@ daemons on which to evaluate the expression. A synchronization point is
 created, which can be useful for remote daemons, as these may take some
 time to connect.}
 
-\item{.compute}{[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.}
+\item{.compute}{character value for the compute profile to use (each has its
+own independent set of daemons), or NULL to use the 'default' profile.}
 }
 \value{
 A 'mirai_map' (list of 'mirai' objects).
