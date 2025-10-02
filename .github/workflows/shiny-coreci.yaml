@@ -3,9 +3,7 @@
 #
 # Modified to run additional tests.
 on:
-  push:
-    branches: [main, dev]
-  pull_request:
+  workflow_dispatch:
 
 name: shiny-coreci.yaml
 
