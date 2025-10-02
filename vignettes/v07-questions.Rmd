@@ -126,13 +126,13 @@ A `mirai()` call is meant to return almost instantaneously. The same when invoke
 
 Care should be taken when you pass a function or environment to `mirai()` in the `...` or `.args` arguments. This is as a function includes its closure (enclosing environment), and an environment its parent environments. This means you could be passing more than you bargained for.
 
-Generally, `obj_size()` from the lobstr package is a great function for checking the actual size of an object (capturing many cases more accurately than the base R `object.size`).
+Generally, `lobstr::obj_size()` from the lobstr package is a great function for checking the actual size of an object (capturing many cases more accurately than the base R `object.size`).
 
 As mitigation for accidentally passing large objects:
 
-- For functions, use `crate()` from the carrier package. This is what we use in purrr, and it makes sure only what's necessary is 'crated' with the function.
-- For environments, consider using `parent.env(e) <- emptyenv()`. This is not required for R6 classes as they are already isolated by default. Regardless of any parent environment, an environment / R6 class could still contain a lot of items that are not needed for the parallel process, in which case consider passing individual members rather than the entire object.
+- For functions, use `carrier::crate()` from the carrier package. This is what we use in purrr, and it makes sure only what's necessary is 'crated' with the function. To crate an existing function, use an anonymous function (making sure to also supply anything required by `fn` as part of the `...`):
+```r
+func <- carrier::crate(\(x) fn(x), fn = fn)
+```
 
-mirai does not rely on options or environment variables at all, so there are no object size limits to set.
-
-This follows mirai's philosophy of being an enabler to widen the possibility frontier for R code, but it does place a responsibility on the user to ensure that the code is sensible and does what is desired.
+- For environments, consider using `parent.env(e) <- emptyenv()`. This is not required for R6 classes as they are already isolated by default. Regardless of any parent environment, an environment / R6 class could still contain many items that are not needed by the parallel process, in which case consider passing individual members (`env$x`, `env$y`) rather than the entire object (`env`) where possible.
