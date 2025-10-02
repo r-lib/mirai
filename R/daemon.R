@@ -157,7 +157,6 @@ daemon <- function(
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
         .mark()
         send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
-        if (cleanup) do_cleanup()
         xc <- 2L + (task >= maxtasks)
         wait(cv)
         break
