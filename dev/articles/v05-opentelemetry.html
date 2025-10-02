@@ -127,8 +127,9 @@ operations:</p>
 <div class="section level4">
 <h4 id="core-span-types">3.1 Core Span Types<a class="anchor" aria-label="anchor" href="#core-span-types"></a>
 </h4>
-<p><strong><code><a href="../reference/daemons.html">mirai::daemons</a></code></strong> - Root span for a
-compute profile</p>
+<p><strong><code>daemons</code> /
+<code>daemons-&gt;reset</code></strong> - Root span for a compute
+profile</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>internal</code>
@@ -139,15 +140,11 @@ compute profile</p>
 <code>compute_profile</code>
 </li>
 <li>
-<strong>Events</strong>: <code>daemons-&gt;set</code> or
-<code>daemons-&gt;reset</code>
-</li>
-<li>
-<strong>Lifecycle</strong>: Created when <code><a href="../reference/daemons.html">daemons()</a></code> is
-called, and again when daemons are reset</li>
+<strong>Lifecycle</strong>: Created when daemons are set, and when
+daemons are reset</li>
 </ul>
-<p><strong><code><a href="../reference/daemon.html">mirai::daemon</a></code></strong> - Individual daemon
-process span</p>
+<p><strong><code>daemon</code> / <code>daemon-&gt;end</code></strong> -
+Individual daemon process span</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>internal</code>
@@ -156,15 +153,11 @@ process span</p>
 <strong>Attributes</strong>: <code>url</code>
 </li>
 <li>
-<strong>Events</strong>: <code>daemon-&gt;start</code> or
-<code>daemon-&gt;end</code>
-</li>
-<li>
 <strong>Lifecycle</strong>: Created when a daemon process starts and
-again when it ends</li>
+when it ends</li>
 </ul>
-<p><strong><code><a href="../reference/mirai_map.html">mirai::mirai_map</a></code></strong> - Parallel map
-operation span</p>
+<p><strong><code>mirai_map</code></strong> - Parallel map operation
+span</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>internal</code>
@@ -173,8 +166,7 @@ operation span</p>
 <strong>Lifecycle</strong>: Encompasses the entire map operation
 across multiple mirai tasks</li>
 </ul>
-<p><strong><code><a href="../reference/mirai.html">mirai::mirai</a></code></strong> - Client-side async task
-span</p>
+<p><strong><code>mirai</code></strong> - Client-side async task span</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>client</code>
@@ -186,8 +178,8 @@ identifier)</li>
 <strong>Lifecycle</strong>: Created when <code><a href="../reference/mirai.html">mirai()</a></code> is
 called, ended as soon as it returns</li>
 </ul>
-<p><strong><code>mirai::daemon-&gt;eval</code></strong> - Server-side
-task evaluation span</p>
+<p><strong><code>daemon-&gt;eval</code></strong> - Server-side task
+evaluation span</p>
 <ul>
 <li>
 <strong>Kind</strong>: <code>server</code>
@@ -202,39 +194,44 @@ evaluation on the daemon</li>
 </h4>
 <p>The spans form a distributed structure that traces the complete
 lifecycle of async operations:</p>
-<pre><code>mirai::daemons (compute profile - top level)
+<pre><code>daemons (compute profile - top level)
 
-mirai::daemon (daemon process 1 - top level)
-mirai::daemon (daemon process 2 - top level) 
-mirai::daemon (daemon process N - top level)
+daemon (daemon process 1 - top level)
+...
+daemon (daemon process N - top level)
 
-mirai::mirai_map (top level) ──link→ mirai::daemons
-├── mirai::mirai (task 1) ──link→ mirai::daemons
-│   └── mirai::daemon-&gt;eval ──link→ mirai::daemon
-├── mirai::mirai (task 2) ──link→ mirai::daemons
-│   └── mirai::daemon-&gt;eval ──link→ mirai::daemon
-└── mirai::mirai (task N) ──link→ mirai::daemons
-    └── mirai::daemon-&gt;eval ──link→ mirai::daemon
+mirai_map (top level) ──link→ daemons
+├── mirai (task 1) ──link→ daemons
+│   └── daemon-&gt;eval ──link→ daemon
+├── mirai (task 2) ──link→ daemons
+│   └── daemon-&gt;eval ──link→ daemon
+└── mirai (task N) ──link→ daemons
+    └── daemon-&gt;eval ──link→ daemon
     
-mirai::mirai (top level) ──link→ mirai::daemons
-└── mirai::daemon-&gt;eval ──link→ mirai::daemon</code></pre>
+mirai (top level) ──link→ daemons
+└── daemon-&gt;eval ──link→ daemon
+
+daemon-&gt;end (daemon process 1) ──link→ daemon
+...
+daemon-&gt;end (daemon process N) ──link→ daemon
+daemons-&gt;reset ──link→ daemons</code></pre>
 <p><strong>Context Propagation</strong>: The context is automatically
 packaged with each <code><a href="../reference/mirai.html">mirai()</a></code> call and extracted on the daemon
 side, enabling proper parent-child relationships across process
 boundaries.</p>
 <p><strong>Span Links</strong>: Tasks are linked to their compute
-profile’s <code><a href="../reference/daemons.html">mirai::daemons</a></code> span on the client side, and to
-each <code><a href="../reference/daemon.html">mirai::daemon</a></code> span on the server side, showing exactly
-where each evaluation happened. When <code><a href="../reference/daemons.html">mirai::daemons</a></code> and
-<code><a href="../reference/daemon.html">mirai::daemon</a></code> end, these events are recorded in new spans
-with links back to their original start spans.</p>
+profile’s <code>daemons</code> span on the client side, and to each
+<code>daemon</code> span on the server side, showing exactly where each
+evaluation happened. When daemons are reset and the respective daemons
+terminated, these events are recorded in new spans which links back to
+the original spans.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="status-and-error-tracking">4. Status and Error Tracking<a class="anchor" aria-label="anchor" href="#status-and-error-tracking"></a>
 </h3>
-<p><code>mirai::daemon-&gt;eval</code> spans automatically track the
-success or failure of operations:</p>
+<p><code>daemon-&gt;eval</code> spans automatically track the success or
+failure of operations:</p>
 <p><strong>Status Values</strong>:</p>
 <ul>
 <li>
