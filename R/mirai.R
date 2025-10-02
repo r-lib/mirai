@@ -670,11 +670,16 @@ ephemeral_daemon <- function(data, timeout) {
 }
 
 evaluate_sync <- function(envir) {
-  store <- as.list.environment(globalenv(), all.names = TRUE)
+  op <- options()
+  se <- search()
+  vars <- as.list.environment(globalenv(), all.names = TRUE)
   on.exit({
     `[[<-`(envir, "dmnenv", as.list.environment(globalenv(), all.names = TRUE))
+    new <- search()
+    lapply(new[!new %in% se], detach, character.only = TRUE)
+    options(op)
     rm(list = names(globalenv()), envir = globalenv())
-    list2env(store, envir = globalenv())
+    list2env(vars, envir = globalenv())
   })
   rm(list = names(globalenv()), envir = globalenv())
   list2env(envir[["dmnenv"]], envir = globalenv())
