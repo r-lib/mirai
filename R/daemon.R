@@ -247,7 +247,7 @@ otel_daemon_span <- function(url, end_span = NULL) {
   )
   otel::with_active_span(
     spn,
-    spn$add_event(if (length(end_span)) "daemon->end" else "daemon->start"),
+    spn$add_event(if (length(end_span)) "daemon.end" else "daemon.start"),
     end_on_exit = TRUE
   )
   spn

@@ -40,14 +40,14 @@ mirai creates several types of spans to represent different operations:
 
 - **Kind**: `internal`
 - **Attributes**: `url`, `n` (number of daemons), `dispatcher` (true/false), `compute_profile`
-- **Events**: `daemons->set` or `daemons->reset`
+- **Events**: `daemons.set` or `daemons.reset`
 - **Lifecycle**: Created when `daemons()` is called, and again when daemons are reset
 
 **`mirai::daemon`** - Individual daemon process span
 
 - **Kind**: `internal` 
 - **Attributes**: `url`
-- **Events**: `daemon->start` or `daemon->end`
+- **Events**: `daemon.start` or `daemon.end`
 - **Lifecycle**: Created when a daemon process starts and again when it ends
 
 **`mirai::mirai_map`** - Parallel map operation span

@@ -645,7 +645,7 @@ otel_daemons_span <- function(envir, .compute, reset = FALSE) {
   )
   otel::with_active_span(
     spn,
-    spn$add_event(if (reset) "daemons->reset" else "daemons->set"),
+    spn$add_event(if (reset) "daemons.reset" else "daemons.set"),
     end_on_exit = TRUE
   )
   spn
