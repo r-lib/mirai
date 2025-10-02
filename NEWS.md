@@ -2,21 +2,21 @@
 
 #### New Features
 
-* Adds `race_mirai()`, which accepts a list of mirai and waits efficiently for the next mirai amongst them to resolve (thanks t-kalinowski, #448).
+* Adds `race_mirai()`, which accepts a list of mirai and waits efficiently for the next mirai amongst them to resolve (@t-kalinowski, #448).
 * New synchronous mode: `daemons(sync = TRUE)` causes mirai to run synchronously within the current process.
   This facilitates testing and debugging, e.g. via interactive `browser()` instances (#439, @kentqin-cve #442).
 
 #### Updates
 
 * `everywhere()` adds argument `.min` to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher).
-  This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (thanks @louisaslett, #330).
+  This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (@louisaslett, #330).
 * OpenTelemetry 'mirai::daemons' and 'mirai::daemon' spans are split into short spans when they are created and when they end.
   This means that spans now follow the order in which they were created (#464).
 * Removes the following developer features:
   + `nextget("pid")` is no longer a supported option.
   + Argument `id` is removed at `daemon()`. This means that `status()` no longer reports daemon connection or disconnection events.
 * Removes deprecated argument `tls` at `daemon()`, `launch_local()` and `launch_remote()`.
-* `daemons()` dispatcher argument 'none', deprecated in mirai v2.1.0, is removed.
+* Removes deprecated dispatcher argument 'none' at `daemons()`, deprecated in mirai v2.1.0.
 * Fixes a phenomenon where `stop_mirai()` or `mirai_map()[.stop]` could on occasion cause (dispatcher) daemons to be interrupted and exit on subsequent runs (#459).
 * Non-dispatcher daemons now synchronize upon timeout or task-out, ensuring that they exit safely only after all data has been sent (#458).
 * Requires nanonext >= 1.7.1.
