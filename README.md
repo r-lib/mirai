@@ -24,8 +24,6 @@ for R <br /><br />
 
 → Distribute workloads across local or remote machines
 
-→ Execute tasks on different compute resources as required
-
 → Perform actions reactively as soon as tasks complete
 
 <br />
