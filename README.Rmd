@@ -36,8 +36,6 @@ Minimalist Async Evaluation Framework for R
 
 → Distribute workloads across local or remote machines
 
-→ Execute tasks on different compute resources as required
-
 → Perform actions reactively as soon as tasks complete
 
 <br />
@@ -82,33 +80,33 @@ daemons(0)
 
 ### Design Philosophy
 
-⚙️ **Modern Foundation**
+→  **Modern Foundation**
 
 - Architected on current communication technologies (IPC, TCP, secure TLS)
-- Professional queueing and scheduling built on [nanonext](https://github.com/r-lib/nanonext/) and [NNG](https://github.com/nanomsg/nng/)
+- Professional queueing and scheduling built on [nanonext](https://nanonext.r-lib.org/) and [NNG](https://nng.nanomsg.org/)
 - Engineered for custom serialization of cross-language data formats (e.g. torch, Arrow)
 
-⚡️ **Extreme Performance**
+→  **Extreme Performance**
 
-- Scales to millions of tasks across thousands of connections
-- Delivers 1,000x greater efficiency and responsiveness over alternatives
-- Zero-latency, event-driven promises optimized for real-time applications
+- Scales to millions of tasks across thousands of processes
+- 1,000x greater efficiency and responsiveness than previously possible
+- Zero-latency, event-driven promises brings modern async to R
 
-🚀 **Production First**
+→  **Production First**
 
-- Clear evaluation model with clean environment separation and explicit object passing
-- Transparent and robust operation from minimal complexity and no hidden state
-- Enhanced observability through OpenTelemetry integration
+- 100% reliable abstraction of the multi-process, message-passing paradigm
+- Consistent and transparent evaluation, from minimal complexity and no hidden state
+- Observability at scale through OpenTelemetry integration
 
-🌐 **Deploy Everywhere**
+→  **Deploy Everywhere**
 
 - Deploy across local, remote (SSH), and HPC environments (Slurm, SGE, PBS, LSF)
-- Compute profiles manage independent daemon pools and resource types
-- Distribute workload to optimal resources using multiple compute profiles
+- Combine and extend local processing power with network or cloud compute
+- Direct tasks to the most suitable resources, using modular compute profiles
 
 ### Powers the R Ecosystem
 
-mirai serves as a foundation for asynchronous and parallel computing in the R ecosystem:
+mirai serves as a foundation for asynchronous, parallel and distributed computing in the R ecosystem.
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html) &nbsp; The first official alternative communications backend for R, the 'MIRAI' parallel cluster, a feature request by R-Core.
 
@@ -142,7 +140,9 @@ mirai serves as a foundation for asynchronous and parallel computing in the R ec
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) • [nanonext](https://nanonext.r-lib.org/) • [CRAN HPC Task View](https://cran.r-project.org/view=HighPerformanceComputing)
+[mirai](https://mirai.r-lib.org/) | 
+[nanonext](https://nanonext.r-lib.org/) | 
+[CRAN HPC Task View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 --
 

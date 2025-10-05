@@ -21,18 +21,16 @@ knitr::opts_chunk$set(
 
 This function is similar to `purrr::map()`, but instead of a list of values, returns a 'mirai_map' object, which is a list of mirai.
 
-Incidentally, purrr's `in_parallel()` parallel map capability is based entirely on `mirai_map()`, but does not extend in the same way to async usage, as there you'd wait for completion in all cases.
-
-A `mirai_map()` call returns almost immediately on the other hand.
+A `mirai_map()` call returns almost immediately.
 The results of a mirai_map `x` may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai.
 This waits for all asynchronous operations to complete if still in progress.
 
-Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case (rather than launching potentially too many *ephemeral daemons* if the map is over a large number of elements).
+> Use of `mirai_map()` requires that `daemons()` have previously been set, and will error if this is not the case. This avoids launching potentially too many *ephemeral daemons* if the map is over a large number of elements.
 
 ### 2. Key Advantages
 
 1. Returns immediately with all evaluations taking place asynchronously. Printing a 'mirai map' object shows the current completion progress.
-1. The '.promise' argument allows a promise action to be registered against each iteration. This can be used to perform side-effects when each iteration completes (such as checkpointing or sending a progress update).
+1. The '.promise' argument allows a promise action to be registered against each iteration. This can be used to perform side-effects when each iteration completes (such as checkpointing or recording a progress update).
 1. Returns evaluation errors as 'miraiError' or 'errorValue' as the case may be, rather than causing the entire map to fail. This allows more efficient recovery from partial failure.
 1. Does not rely on a 'chunking' algorithm that attempts to split work into batches according to the number of available daemons, as implemented for instance in the `parallel` package. 
 Chunking cannot take into account varying or unpredictable compute times over the indices, which `mirai` scheduling is designed to deal with optimally. This is demonstrated in the example below:
@@ -58,11 +56,14 @@ with(
 Use `...` to further specify objects referenced but not defined in `.f` - the function `fn` below:
 ```{r}
 #| label: mmap2
-daemons(4)
+daemons(4, seed = 2345L)
+fn <- function(x, range) {
+  runif(x, x, x + range)
+}
 ml <- mirai_map(
   c(a = 1, b = 2, c = 3),
-  function(x) fn(x, as.logical(x %% 2)),
-  fn = nanonext::random
+  \(x) fn(x, x * 2),
+  fn = fn
 )
 ml
 ml[]

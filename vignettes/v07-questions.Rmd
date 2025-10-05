@@ -29,8 +29,8 @@ On the other hand, if your code previously used the `globals` argument to supply
 
 Regardless of using `mirai()` or `future_promise()`, we recommend that you always pass globals explicitly.
 This matches what actually happens in multi-process parallelism, and is hence better-suited to programmatic use.
-Automatic globals detection is an imperfect abstraction that can easily lead to sending more than required to other processes hence slowing things down, as well as unpredictable edge cases.
-Explicit passing of variables allows for transparent and reliable behaviour that remains completely robust over time.
+Automatic globals detection is an imperfect abstraction that can lead to unpredictable edge cases, or simply slower operation through sending more than required to daemons.
+Explicit passing of variables allows for reliable and transparent behaviour that remains robust over time.
 
 **Capture globals using `environment()`:**
 

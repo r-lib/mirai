@@ -12,7 +12,7 @@ vignette: >
 
 `mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. The [articles](https://rstudio.github.io/promises/) for the promises package provide a full guide for the use of promises, including with Shiny.
 
-A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a mirai directly.
+A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask` accept a mirai directly.
 
 Alternatively, a mirai may be explicitly converted to a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly from the promise object.
 
@@ -20,9 +20,10 @@ Whilst normal usage of a mirai involves collecting its value, a promise instead 
 
 For a mirai promise, the mirai's value is passed to the `onFulfilled` argument of `promises::then()` if no error has occurred, and the mirai's `errorValue` is passed to the `onRejected` argument if an error has occured.
 
-Promises converted from mirai are next-generation, event-driven promises.
+Promises converted from mirai are modern, event-driven promises:
 
-- Promise actions are triggered as soon as each mirai resolves, without time-polling for completion as a `future_promise()` does.
+- Promise actions are triggered as soon as each mirai resolves, without time-polling for completion e.g. every 100 milliseconds.
+- At the point of resolution, the data has already been received in the background, so there is no need to initiate a transfer to fetch the data at this point.
 - Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of concurrent promises).
 
 The following example outputs "hello" to the console after one second when the 'mirai' resolves.
@@ -543,7 +544,7 @@ m <- mirai({
               )
             )
           },
-          msg = req[["HEADERS"]][["msg"]]
+          msg = req$HEADERS$msg
         ) %...>% (function(x) {
           res$status <- x$status
           res$body <- x$body
@@ -569,28 +570,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:34\"],\"msg\":[\"1\"],\"pid\":[15061]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"1\"],\"pid\":[65457]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:34\"],\"msg\":[\"2\"],\"pid\":[15063]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"2\"],\"pid\":[65452]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:34\"],\"msg\":[\"3\"],\"pid\":[15079]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"3\"],\"pid\":[65455]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:34\"],\"msg\":[\"4\"],\"pid\":[15073]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"4\"],\"pid\":[65450]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:35\"],\"msg\":[\"5\"],\"pid\":[15073]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"5\"],\"pid\":[65452]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:35\"],\"msg\":[\"6\"],\"pid\":[15079]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"6\"],\"pid\":[65455]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:35\"],\"msg\":[\"7\"],\"pid\":[15061]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"7\"],\"pid\":[65450]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:35\"],\"msg\":[\"8\"],\"pid\":[15063]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"8\"],\"pid\":[65457]}"
 
 daemons(0)
 ```
@@ -625,7 +626,7 @@ m <- mirai({
               status = 200L,
               body = list(
                 time = format(Sys.time()),
-                msg = jsonlite::fromJSON(data)[["msg"]],
+                msg = jsonlite::parse_json(data)$msg,
                 pid = Sys.getpid()
               )
             )
@@ -655,28 +656,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:39\"],\"msg\":[\"1\"],\"pid\":[15136]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"1\"],\"pid\":[65722]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:39\"],\"msg\":[\"2\"],\"pid\":[15138]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"2\"],\"pid\":[65727]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:39\"],\"msg\":[\"3\"],\"pid\":[15154]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"3\"],\"pid\":[65724]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:39\"],\"msg\":[\"4\"],\"pid\":[15148]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"4\"],\"pid\":[65720]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:40\"],\"msg\":[\"5\"],\"pid\":[15136]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"5\"],\"pid\":[65720]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:40\"],\"msg\":[\"6\"],\"pid\":[15148]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"6\"],\"pid\":[65727]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:40\"],\"msg\":[\"7\"],\"pid\":[15138]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"7\"],\"pid\":[65722]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-08-06 11:43:40\"],\"msg\":[\"8\"],\"pid\":[15154]}"
+#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"8\"],\"pid\":[65724]}"
 
 daemons(0)
 ```
