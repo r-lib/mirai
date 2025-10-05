@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 `mirai` supplies its own `as.promise()` method, allowing it to be readily converted to a promise from the [`promises`](https://rstudio.github.io/promises/) package. The [articles](https://rstudio.github.io/promises/) for the promises package provide a full guide for the use of promises, including with Shiny.
 
-A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask$new()` accept a mirai directly.
+A mirai may be piped directly using the promise pipe `%...>%`, which implicitly calls `as.promise()` on it. Similarly, all promise-aware functions such as `promises::then()` or `shiny::ExtendedTask` accept a mirai directly.
 
 Alternatively, a mirai may be explicitly converted to a promise by `as.promise()`, which then allows using the methods `$then()`, `$finally()` etc. directly from the promise object.
 
@@ -27,9 +27,10 @@ Whilst normal usage of a mirai involves collecting its value, a promise instead 
 
 For a mirai promise, the mirai's value is passed to the `onFulfilled` argument of `promises::then()` if no error has occurred, and the mirai's `errorValue` is passed to the `onRejected` argument if an error has occured.
 
-Promises converted from mirai are next-generation, event-driven promises.
+Promises converted from mirai are modern, event-driven promises:
 
-- Promise actions are triggered as soon as each mirai resolves, without time-polling for completion as a `future_promise()` does.
+- Promise actions are triggered as soon as each mirai resolves, without time-polling for completion e.g. every 100 milliseconds.
+- At the point of resolution, the data has already been received in the background, so there is no need to initiate a transfer to fetch the data at this point.
 - Allows for much higher responsiveness (zero latency) and massive scalability (thousands or even millions of concurrent promises).
 
 The following example outputs "hello" to the console after one second when the 'mirai' resolves.
@@ -548,7 +549,7 @@ m <- mirai({
               )
             )
           },
-          msg = req[["HEADERS"]][["msg"]]
+          msg = req$HEADERS$msg
         ) %...>% (function(x) {
           res$status <- x$status
           res$body <- x$body
@@ -611,7 +612,7 @@ m <- mirai({
               status = 200L,
               body = list(
                 time = format(Sys.time()),
-                msg = jsonlite::fromJSON(data)[["msg"]],
+                msg = jsonlite::parse_json(data)$msg,
                 pid = Sys.getpid()
               )
             )
