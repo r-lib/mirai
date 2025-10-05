@@ -26,15 +26,16 @@ Futures are an abstraction that represent the result of code evaluation that wil
 
 #### mirai
 
-The package has one main function: `mirai()` to create a mirai object.
+The package has one main function: `mirai()` to create a mirai object from an expression.
 
-This function returns almost immediately, and is never blocking. This is the essence of async: whilst the mirai evaluation is ongoing on the daemon, the host R process is free to continue with other things.
+This function returns immediately, and is never blocking. This is the essence of async: whilst the mirai expression is evaluated on a daemon, the host process is free to move on.
 
-mirai adopts a clear and explicit model for evaluation: as the mirai expression is sent to another process, it must be self-contained.
-This requires that:
+As the expression is evaluated in another process, it must be self-contained:
 
-- Package functions be namespaced using `::`, or `library()` calls be made within the expression.
+- Package functions must be namespaced using `::`, or `library()` calls be made within the expression.
 - Other functions/data/objects required by the expression should be passed explicitly via `...` or `.args`.
+
+> This is a 100% reliable evaluation model that corresponds to the underlying reality - any attempt to abstract away from it is inherently imperfect, and we do not compromise on this point.
 
 The following mimics an expensive calculation that eventually returns a random value.
 
@@ -78,7 +79,7 @@ You may also wait efficiently for mirai (or lists of mirai) to resolve using:
 #### mirai (advanced)
 
 For easy programmatic use of `mirai()`, '.expr' accepts a pre-constructed language object, and also a list of named arguments passed via '.args'.
-So, the following would be equivalent to the above:
+So, the following would be equivalent to the above example:
 
 ```{r}
 #| label: equiv
@@ -198,7 +199,7 @@ Streams essentially cut into the RNG's period (a very long sequence of pseudo-ra
 
 - Guarantees the same deterministic, reproducible results across runs
 - This is regardless of the number of daemons used
-- This is slightly computationally wasteful, although with a negligible impact on performance
+- This does require additional computation, although with a negligible impact on performance
 
 ### 4. Local Daemons
 
