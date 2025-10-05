@@ -93,7 +93,6 @@
 <p><br> みらい 未来 <br><br> Minimalist Async Evaluation Framework for R <br><br></p>
 <p>→ Run R code in parallel without blocking your session</p>
 <p>→ Distribute workloads across local or remote machines</p>
-<p>→ Execute tasks on different compute resources as required</p>
 <p>→ Perform actions reactively as soon as tasks complete</p>
 <p><br></p>
 </div>
@@ -137,36 +136,36 @@
 <div class="section level3">
 <h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
 </h3>
-<p>⚙️ <strong>Modern Foundation</strong></p>
+<p>→ <strong>Modern Foundation</strong></p>
 <ul>
 <li>Architected on current communication technologies (IPC, TCP, secure TLS)</li>
-<li>Professional queueing and scheduling built on <a href="https://github.com/r-lib/nanonext/" class="external-link">nanonext</a> and <a href="https://github.com/nanomsg/nng/" class="external-link">NNG</a>
+<li>Professional queueing and scheduling built on <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a>
 </li>
 <li>Engineered for custom serialization of cross-language data formats (e.g. torch, Arrow)</li>
 </ul>
-<p>⚡️ <strong>Extreme Performance</strong></p>
+<p>→ <strong>Extreme Performance</strong></p>
 <ul>
-<li>Scales to millions of tasks across thousands of connections</li>
-<li>Delivers 1,000x greater efficiency and responsiveness over alternatives</li>
-<li>Zero-latency, event-driven promises optimized for real-time applications</li>
+<li>Scales to millions of tasks across thousands of processes</li>
+<li>1,000x greater efficiency and responsiveness than previously possible</li>
+<li>Zero-latency, event-driven promises brings modern async to R</li>
 </ul>
-<p>🚀 <strong>Production First</strong></p>
+<p>→ <strong>Production First</strong></p>
 <ul>
-<li>Clear evaluation model with clean environment separation and explicit object passing</li>
-<li>Transparent and robust operation from minimal complexity and no hidden state</li>
-<li>Enhanced observability through OpenTelemetry integration</li>
+<li>100% reliable abstraction of the multi-process, message-passing paradigm</li>
+<li>Consistent and transparent evaluation, from minimal complexity and no hidden state</li>
+<li>Observability at scale through OpenTelemetry integration</li>
 </ul>
-<p>🌐 <strong>Deploy Everywhere</strong></p>
+<p>→ <strong>Deploy Everywhere</strong></p>
 <ul>
 <li>Deploy across local, remote (SSH), and HPC environments (Slurm, SGE, PBS, LSF)</li>
-<li>Compute profiles manage independent daemon pools and resource types</li>
-<li>Distribute workload to optimal resources using multiple compute profiles</li>
+<li>Combine and extend local processing power with network or cloud compute</li>
+<li>Direct tasks to the most suitable resources, using modular compute profiles</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="powers-the-r-ecosystem">Powers the R Ecosystem<a class="anchor" aria-label="anchor" href="#powers-the-r-ecosystem"></a>
 </h3>
-<p>mirai serves as a foundation for asynchronous and parallel computing in the R ecosystem:</p>
+<p>mirai serves as a foundation for asynchronous, parallel and distributed computing in the R ecosystem.</p>
 <p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   The first official alternative communications backend for R, the ‘MIRAI’ parallel cluster, a feature request by R-Core.</p>
 <p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for purrr, a core tidyverse package.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny with full ExtendedTask support.</p>
@@ -189,7 +188,7 @@
 <div class="section level3">
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
 </h3>
-<p><a href="https://mirai.r-lib.org/">mirai</a> • <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> • <a href="https://cran.r-project.org/view=HighPerformanceComputing" class="external-link">CRAN HPC Task View</a></p>
+<p><a href="https://mirai.r-lib.org/">mirai</a> | <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> | <a href="https://cran.r-project.org/view=HighPerformanceComputing" class="external-link">CRAN HPC Task View</a></p>
 <p>–</p>
 <p>Please note that this project is released with a <a href="https://mirai.r-lib.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>

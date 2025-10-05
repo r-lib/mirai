@@ -123,11 +123,10 @@ it is a named list.</p>
 <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you always pass globals
 explicitly. This matches what actually happens in multi-process
 parallelism, and is hence better-suited to programmatic use. Automatic
-globals detection is an imperfect abstraction that can easily lead to
-sending more than required to other processes hence slowing things down,
-as well as unpredictable edge cases. Explicit passing of variables
-allows for transparent and reliable behaviour that remains completely
-robust over time.</p>
+globals detection is an imperfect abstraction that can lead to
+unpredictable edge cases, or simply slower operation through sending
+more than required to daemons. Explicit passing of variables allows for
+reliable and transparent behaviour that remains robust over time.</p>
 <p><strong>Capture globals using
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>:</strong></p>
 <p><code><a href="../reference/mirai.html">mirai()</a></code> allows passing an environment to
