@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,9 +47,33 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.5.1" id="mirai-251">mirai 2.5.1<a class="anchor" aria-label="anchor" href="#mirai-251"></a></h2>
+<div class="section level5">
+<h5 id="new-features-2-5-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-5-1"></a></h5>
+<ul><li>Adds <code><a href="../reference/race_mirai.html">race_mirai()</a></code>, which accepts a list of mirai and waits efficiently for the next mirai amongst them to resolve (<a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/448" class="external-link">#448</a>).</li>
+<li>New synchronous mode: <code>daemons(sync = TRUE)</code> causes mirai to run synchronously within the current process. This facilitates testing and debugging, e.g. via interactive <code><a href="https://rdrr.io/r/base/browser.html" class="external-link">browser()</a></code> instances (<a href="https://github.com/r-lib/mirai/issues/439" class="external-link">#439</a>, <a href="https://github.com/kentqin-cve" class="external-link">@kentqin-cve</a> <a href="https://github.com/r-lib/mirai/issues/442" class="external-link">#442</a>).</li>
+</ul></div>
+<div class="section level5">
+<h5 id="updates-2-5-1">Updates<a class="anchor" aria-label="anchor" href="#updates-2-5-1"></a></h5>
+<ul><li>
+<code><a href="../reference/everywhere.html">everywhere()</a></code> adds argument <code>.min</code> to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher). This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (<a href="https://github.com/louisaslett" class="external-link">@louisaslett</a>, <a href="https://github.com/r-lib/mirai/issues/330" class="external-link">#330</a>).</li>
+<li>OpenTelemetry span names have been updated. Spans for long-running daemons are now split into short spans when they are created and when they end - refer to the updated vignette for more details (<a href="https://github.com/r-lib/mirai/issues/464" class="external-link">#464</a>, <a href="https://github.com/r-lib/mirai/issues/471" class="external-link">#471</a>).</li>
+<li>Removes the following developer features:
+<ul><li>
+<code>nextget("pid")</code> is no longer a supported option.</li>
+<li>Argument <code>id</code> is removed at <code><a href="../reference/daemon.html">daemon()</a></code>. This means that <code><a href="../reference/status.html">status()</a></code> no longer reports daemon connection or disconnection events.</li>
+</ul></li>
+<li>Removes deprecated argument <code>tls</code> at <code><a href="../reference/daemon.html">daemon()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> and <code><a href="../reference/launch_local.html">launch_remote()</a></code>.</li>
+<li>Removes deprecated dispatcher argument ‘none’ at <code><a href="../reference/daemons.html">daemons()</a></code>, deprecated in mirai v2.1.0.</li>
+<li>Fixes a phenomenon where <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or <code>mirai_map()[.stop]</code> could on occasion cause (dispatcher) daemons to be interrupted and exit on subsequent runs (<a href="https://github.com/r-lib/mirai/issues/459" class="external-link">#459</a>).</li>
+<li>Non-dispatcher daemons now synchronize upon timeout or task-out, ensuring that they exit safely only after all data has been sent (<a href="https://github.com/r-lib/mirai/issues/458" class="external-link">#458</a>).</li>
+<li>Requires nanonext &gt;= 1.7.1.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.5.0" id="mirai-250">mirai 2.5.0<a class="anchor" aria-label="anchor" href="#mirai-250"></a></h2><p class="text-muted">CRAN release: 2025-09-04</p>
 <div class="section level5">

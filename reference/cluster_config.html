@@ -9,7 +9,7 @@ resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub."><me
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub."><me
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Cluster Remote Launch Configuration</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>cluster_config.Rd</code></div>
     </div>
 
@@ -68,14 +68,14 @@ resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.</p>
 
 
 <dl><dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
-<dd><p>[default "sbatch"] for Slurm. Replace with "qsub" for
-SGE / Torque / PBS, or "bsub" for LSF. See examples below.</p></dd>
+<dd><p>filename of executable e.g. "sbatch" for Slurm. Replace with
+"qsub" for SGE / Torque / PBS, or "bsub" for LSF. See examples below.</p></dd>
 
 
 <dt id="arg-options">options<a class="anchor" aria-label="anchor" href="#arg-options"></a></dt>
-<dd><p>[default ""] options as would be supplied inside a script
-file passed to <code>command</code>, e.g. "#SBATCH –mem=10G", each separated by a new
-line. See examples below.
+<dd><p>options as would be supplied inside a script file passed to
+<code>command</code>, e.g. "#SBATCH –mem=10G", each separated by a new line. See
+examples below.
 <br> Other shell commands e.g. to change working directory may also be
 included.
 <br> For certain setups, "module load R" as a final line is required, or
@@ -85,10 +85,9 @@ for example "module load R/4.5.0" for a specific R version.
 
 
 <dt id="arg-rscript">rscript<a class="anchor" aria-label="anchor" href="#arg-rscript"></a></dt>
-<dd><p>[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, <code>"Rscript"</code> should be
-replaced with <code>"Rscript.exe"</code>.</p></dd>
+<dd><p>filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+<code>"Rscript"</code> should be replaced with <code>"Rscript.exe"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

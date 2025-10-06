@@ -9,7 +9,7 @@ current connections and daemons status."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ current connections and daemons status."><meta property="og:image" content="http
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Status Information</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/daemons.R" class="external-link"><code>R/daemons.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/daemons.R" class="external-link"><code>R/daemons.R</code></a></small>
       <div class="d-none name"><code>status.Rd</code></div>
     </div>
 
@@ -68,8 +68,8 @@ current connections and daemons status.</p>
 
 
 <dl><dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>[default NULL] character value for the compute profile to
-query, or NULL to query the 'default' profile.</p>
+<dd><p>character value for the compute profile to query, or NULL to
+query the 'default' profile.</p>
 <p><strong>or</strong> a 'miraiCluster' to obtain its status.</p></dd>
 
 </dl></div>
@@ -84,16 +84,6 @@ dispatcher, <strong>executing</strong> - number of tasks sent to a daemon for
 execution, and <strong>completed</strong> - number of tasks for which the result has
 been received (either completed or cancelled).</p></li>
 </ul></div>
-    <div class="section level2">
-    <h2 id="events">Events<a class="anchor" aria-label="anchor" href="#events"></a></h2>
-
-
-
-<p>If dispatcher is used combined with daemon IDs, an additional element
-<strong>events</strong> will report the positive integer ID when the daemon connects and
-the negative value when it disconnects. Only the events since the previous
-status query are returned.</p>
-    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="info.html">info()</a></code> for more succinct information statistics.</p></div>

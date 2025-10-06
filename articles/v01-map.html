@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Mirai Map</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v01-map.Rmd" class="external-link"><code>vignettes/v01-map.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v01-map.Rmd" class="external-link"><code>vignettes/v01-map.Rmd</code></a></small>
       <div class="d-none name"><code>v01-map.Rmd</code></div>
     </div>
 
@@ -97,19 +97,17 @@ map using <code>mirai</code>.</p>
 <p>This function is similar to <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code>, but instead of
 a list of values, returns a ‘mirai_map’ object, which is a list of
 mirai.</p>
-<p>Incidentally, purrr’s <code>in_parallel()</code> parallel map
-capability is based entirely on <code><a href="../reference/mirai_map.html">mirai_map()</a></code>, but does not
-extend in the same way to async usage, as there you’d wait for
-completion in all cases.</p>
-<p>A <code><a href="../reference/mirai_map.html">mirai_map()</a></code> call returns almost immediately on the
-other hand. The results of a mirai_map <code>x</code> may be collected
-using <code>x[]</code> or <code>collect_mirai(x)</code>, the same as for
-a mirai. This waits for all asynchronous operations to complete if still
+<p>A <code><a href="../reference/mirai_map.html">mirai_map()</a></code> call returns almost immediately. The
+results of a mirai_map <code>x</code> may be collected using
+<code>x[]</code> or <code>collect_mirai(x)</code>, the same as for a
+mirai. This waits for all asynchronous operations to complete if still
 in progress.</p>
+<blockquote>
 <p>Use of <code><a href="../reference/mirai_map.html">mirai_map()</a></code> requires that <code><a href="../reference/daemons.html">daemons()</a></code>
-have previously been set, and will error if this is not the case (rather
-than launching potentially too many <em>ephemeral daemons</em> if the
-map is over a large number of elements).</p>
+have previously been set, and will error if this is not the case. This
+avoids launching potentially too many <em>ephemeral daemons</em> if the
+map is over a large number of elements.</p>
+</blockquote>
 </div>
 <div class="section level3">
 <h3 id="key-advantages">2. Key Advantages<a class="anchor" aria-label="anchor" href="#key-advantages"></a>
@@ -120,7 +118,7 @@ asynchronously. Printing a ‘mirai map’ object shows the current
 completion progress.</li>
 <li>The ‘.promise’ argument allows a promise action to be registered
 against each iteration. This can be used to perform side-effects when
-each iteration completes (such as checkpointing or sending a progress
+each iteration completes (such as checkpointing or recording a progress
 update).</li>
 <li>Returns evaluation errors as ‘miraiError’ or ‘errorValue’ as the
 case may be, rather than causing the entire map to fail. This allows
@@ -140,10 +138,10 @@ optimally. This is demonstrated in the example below:</li>
 <span><span class="va">vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.004   0.009   4.005</span></span>
+<span><span class="co">#&gt;   0.010   0.001   4.007</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">vec</span>, <span class="va">Sys.sleep</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.052   0.106   8.270</span></span>
+<span><span class="co">#&gt;   0.012   0.001   8.011</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p><code>.args</code> is used to specify further constant arguments to
 <code>.f</code> - the <code>mean</code> and <code>sd</code> in the
@@ -164,23 +162,26 @@ example below:</p>
 <p>Use <code>...</code> to further specify objects referenced but not
 defined in <code>.f</code> - the function <code>fn</code> below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, seed <span class="op">=</span> <span class="fl">2345L</span><span class="op">)</span></span>
+<span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">range</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span>, <span class="va">x</span> <span class="op">+</span> <span class="va">range</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span><span class="va">ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">as.logical</a></span><span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  fn <span class="op">=</span> <span class="fu">nanonext</span><span class="fu">::</span><span class="va"><a href="https://nanonext.r-lib.org/reference/random.html" class="external-link">random</a></span></span>
+<span>  \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  fn <span class="op">=</span> <span class="va">fn</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">ml</span></span>
 <span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
-<span><span class="co">#&gt; [1] "05"</span></span>
+<span><span class="co">#&gt; [1] 2.637793</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $b</span></span>
-<span><span class="co">#&gt; [1] 28 e2</span></span>
+<span><span class="co">#&gt; [1] 2.328183 5.649959</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $c</span></span>
-<span><span class="co">#&gt; [1] "d96dd9"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.302906 3.531788 6.389231</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="collecting-results">3. Collecting Results<a class="anchor" aria-label="anchor" href="#collecting-results"></a>

@@ -23,7 +23,7 @@ daemon on the remote machine."><meta property="og:image" content="https://mirai.
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@ daemon on the remote machine."><meta property="og:image" content="https://mirai.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Launch Daemon</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>launch_local.Rd</code></div>
     </div>
 
@@ -81,15 +81,9 @@ daemon on the remote machine.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">launch_local</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span>, tls <span class="op">=</span> <span class="cn">NULL</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">launch_local</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">launch_remote</span><span class="op">(</span></span>
-<span>  n <span class="op">=</span> <span class="fl">1L</span>,</span>
-<span>  remote <span class="op">=</span> <span class="fu"><a href="remote_config.html">remote_config</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span>,</span>
-<span>  tls <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .compute <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">launch_remote</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1L</span>, remote <span class="op">=</span> <span class="fu"><a href="remote_config.html">remote_config</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,20 +97,14 @@ daemon on the remote machine.</p>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>(optional) arguments passed through to <code><a href="daemon.html">daemon()</a></code>. These include
-<code>asycdial</code>, <code>autoexit</code>, <code>cleanup</code>, <code>output</code>, <code>maxtasks</code>, <code>idletime</code>,
-<code>walltime</code> and <code>tlscert</code>. Only supply to override arguments originally
-provided to <code><a href="daemons.html">daemons()</a></code>, otherwise those will be used instead.</p></dd>
-
-
-<dt id="arg-tls">tls<a class="anchor" aria-label="anchor" href="#arg-tls"></a></dt>
-<dd><p>[default NULL] deprecated. Specify <code>tlscert</code> as a <code>...</code> argument
-to <code><a href="daemons.html">daemons()</a></code> when setting up daemons instead.</p></dd>
+<code>asycdial</code>, <code>autoexit</code>, <code>cleanup</code>, <code>output</code>, <code>maxtasks</code>, <code>idletime</code>, and
+<code>walltime</code>. Only supply to override arguments originally provided to
+<code><a href="daemons.html">daemons()</a></code>, otherwise those will be used instead.</p></dd>
 
 
 <dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>[default NULL] character value for the compute profile
-to use (each has its own independent set of daemons), or NULL to use the
-'default' profile.</p></dd>
+<dd><p>character value for the compute profile to use (each has its
+own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
 
 
 <dt id="arg-remote">remote<a class="anchor" aria-label="anchor" href="#arg-remote"></a></dt>

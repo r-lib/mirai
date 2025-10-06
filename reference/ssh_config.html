@@ -9,7 +9,7 @@ option of SSH tunnelling."><meta property="og:image" content="https://mirai.r-li
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ option of SSH tunnelling."><meta property="og:image" content="https://mirai.r-li
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>SSH Remote Launch Configuration</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>ssh_config.Rd</code></div>
     </div>
 
@@ -80,14 +80,13 @@ to 22 if not specified), e.g. 'ssh://10.75.32.90:22' or 'ssh://nodename'.</p></d
 
 
 <dt id="arg-tunnel">tunnel<a class="anchor" aria-label="anchor" href="#arg-tunnel"></a></dt>
-<dd><p>[default FALSE] logical value, whether to use SSH tunnelling.
-If TRUE, requires the <code><a href="daemons.html">daemons()</a></code> <code>url</code> hostname to be '127.0.0.1'. See
-the 'SSH Tunnelling' section below for further details.</p></dd>
+<dd><p>logical value, whether to use SSH tunnelling. If TRUE, requires
+the <code><a href="daemons.html">daemons()</a></code> <code>url</code> hostname to be '127.0.0.1'. See the 'SSH Tunnelling'
+section below for further details.</p></dd>
 
 
 <dt id="arg-timeout">timeout<a class="anchor" aria-label="anchor" href="#arg-timeout"></a></dt>
-<dd><p>[default 10] maximum time allowed for connection setup in
-seconds.</p></dd>
+<dd><p>maximum time in seconds allowed for connection setup.</p></dd>
 
 
 <dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
@@ -100,10 +99,9 @@ manual deployment on remote machines.</p></dd>
 
 
 <dt id="arg-rscript">rscript<a class="anchor" aria-label="anchor" href="#arg-rscript"></a></dt>
-<dd><p>[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, <code>"Rscript"</code> should be
-replaced with <code>"Rscript.exe"</code>.</p></dd>
+<dd><p>filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+<code>"Rscript"</code> should be replaced with <code>"Rscript.exe"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

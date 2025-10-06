@@ -9,7 +9,7 @@ deploy daemons remotely."><meta property="og:image" content="https://mirai.r-lib
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ deploy daemons remotely."><meta property="og:image" content="https://mirai.r-lib
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Generic Remote Launch Configuration</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>remote_config.Rd</code></div>
     </div>
 
@@ -89,16 +89,15 @@ effect multiple launches (one for each list element).</p></dd>
 
 
 <dt id="arg-rscript">rscript<a class="anchor" aria-label="anchor" href="#arg-rscript"></a></dt>
-<dd><p>[default "Rscript"] assumes the R executable is on the
-search path. Replace with the full path of the Rscript executable on the
-remote machine if necessary. If launching on Windows, <code>"Rscript"</code> should be
-replaced with <code>"Rscript.exe"</code>.</p></dd>
+<dd><p>filename of the R executable. Use the full path of the Rscript
+executable on the remote machine if necessary. If launching on Windows,
+<code>"Rscript"</code> should be replaced with <code>"Rscript.exe"</code>.</p></dd>
 
 
 <dt id="arg-quote">quote<a class="anchor" aria-label="anchor" href="#arg-quote"></a></dt>
-<dd><p>[default FALSE] logical value whether or not to quote the
-daemon launch command (not required for Slurm <code>"srun"</code> for example, but
-required for Slurm <code>"sbatch"</code> or <code>"ssh"</code>).</p></dd>
+<dd><p>logical value whether or not to quote the daemon launch command
+(not required for Slurm <code>"srun"</code> for example, but required for Slurm
+<code>"sbatch"</code> or <code>"ssh"</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
