@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,13 +52,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.5.1" id="mirai-251">mirai 2.5.1<a class="anchor" aria-label="anchor" href="#mirai-251"></a></h2><p class="text-muted">CRAN release: 2025-10-06</p>
 <div class="section level5">
-<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<h5 id="new-features-2-5-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-5-1"></a></h5>
 <ul><li>Adds <code><a href="../reference/race_mirai.html">race_mirai()</a></code>, which accepts a list of mirai and waits efficiently for the next mirai amongst them to resolve (<a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/448" class="external-link">#448</a>).</li>
 <li>New synchronous mode: <code>daemons(sync = TRUE)</code> causes mirai to run synchronously within the current process. This facilitates testing and debugging, e.g. via interactive <code><a href="https://rdrr.io/r/base/browser.html" class="external-link">browser()</a></code> instances (<a href="https://github.com/r-lib/mirai/issues/439" class="external-link">#439</a>, <a href="https://github.com/kentqin-cve" class="external-link">@kentqin-cve</a> <a href="https://github.com/r-lib/mirai/issues/442" class="external-link">#442</a>).</li>
 </ul></div>
 <div class="section level5">
-<h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
+<h5 id="updates-2-5-1">Updates<a class="anchor" aria-label="anchor" href="#updates-2-5-1"></a></h5>
 <ul><li>
 <code><a href="../reference/everywhere.html">everywhere()</a></code> adds argument <code>.min</code> to specify a minimum number of daemons on which to evaluate the expression (when using dispatcher). This creates a synchronization point and can be useful when launching remote daemons to ensure that the expression has run on all daemons to connect (<a href="https://github.com/louisaslett" class="external-link">@louisaslett</a>, <a href="https://github.com/r-lib/mirai/issues/330" class="external-link">#330</a>).</li>
 <li>OpenTelemetry span names have been updated. Spans for long-running daemons are now split into short spans when they are created and when they end - refer to the updated vignette for more details (<a href="https://github.com/r-lib/mirai/issues/464" class="external-link">#464</a>, <a href="https://github.com/r-lib/mirai/issues/471" class="external-link">#471</a>).</li>
