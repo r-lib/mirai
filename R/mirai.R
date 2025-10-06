@@ -495,9 +495,6 @@ stop_mirai <- stop_request
 #'
 #' Suitable for use in control flow statements such as `while` or `if`.
 #'
-#' Note: querying resolution may cause a previously unresolved 'mirai' to
-#' resolve.
-#'
 #' @param x a 'mirai' object or list of 'mirai' objects, or a 'mirai' value
 #'   stored at `$data`.
 #'

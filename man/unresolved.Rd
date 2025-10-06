@@ -20,9 +20,6 @@ Unlike \code{\link[=call_mirai]{call_mirai()}}, this function does not wait for 
 }
 \details{
 Suitable for use in control flow statements such as \code{while} or \code{if}.
-
-Note: querying resolution may cause a previously unresolved 'mirai' to
-resolve.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
