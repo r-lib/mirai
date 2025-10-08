@@ -6,7 +6,8 @@ template:
   includes:
     in_header: |
       <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
-
+    after_navbar: |
+      <a href="https://deepwiki.com/r-lib/mirai"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 reference:
 - contents:
   - mirai-package

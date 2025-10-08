@@ -13,6 +13,8 @@ status](https://r-lib.r-universe.dev/badges/mirai)](https://r-lib.r-universe.dev
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
 [![DOI](https://zenodo.org/badge/459341940.svg)](https://zenodo.org/badge/latestdoi/459341940)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <!-- badges: end -->
 
 ### ミライ
