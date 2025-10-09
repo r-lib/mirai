@@ -99,7 +99,7 @@ daemons(0)
 
 The reason the change in random seed persists in all circumstances is due to this being a special case, arising from the use of L'Ecuyer CMRG streams to provide parallel-safe random numbers.
 
-Streams can be thought of as entry points to the psuedo random number line far away from each other to ensure that random results in each daemon are independent from one another.
+Streams can be thought of as entry points to the pseudo random number line far away from each other to ensure that random results in each daemon are independent from one another.
 The random seed is not reset after each mirai call to ensure that however many random draws are made in any mirai call, the next random draw follows on in the stream, and hence have the desired statistical properties.
 
 Hence normally, the random seed should be set once on the host process when daemons are created, rather than in each daemon.
