@@ -790,15 +790,21 @@ launch_daemons <- function(seq, dots, envir) {
   pipe_notify(sock, NULL, add = TRUE)
 }
 
-sub_real_port <- function(port, url) sub("(?<=:)0(?![^/])", port, url, perl = TRUE)
+sub_real_port <- function(sock, url) {
+  if (parse_url(url)[["port"]] == "0") {
+    url <- sub(
+      "(?<=:)0(?![^/])",
+      opt(attr(sock, "listener")[[1L]], "tcp-bound-port"),
+      url,
+      perl = TRUE
+    )
+  }
+  url
+}
 
 create_sock <- function(envir, url, tls) {
   sock <- req_socket(url, tls = tls)
-  listener <- attr(sock, "listener")[[1L]]
-  url <- opt(listener, "url")
-  if (parse_url(url)[["port"]] == "0") {
-    url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
-  }
+  url <- sub_real_port(sock, url)
   `[[<-`(envir, "cv", cv())
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", url)

@@ -81,11 +81,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
     }
   } else {
     listen(psock, url = url, tls = tls, fail = 2L)
-    listener <- attr(psock, "listener")[[1L]]
-    url <- opt(listener, "url")
-    if (parse_url(url)[["port"]] == "0") {
-      url <- sub_real_port(opt(listener, "tcp-bound-port"), url)
-    }
+    url <- sub_real_port(psock, url)
   }
   send(sock, url, mode = 2L, block = TRUE)
 
