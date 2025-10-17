@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* OpenTelemetry 'daemons' and 'daemon' span attributes have been updated to better follow semantic conventions for RPC (#481).
+
 # mirai 2.5.1
 
 #### New Features
