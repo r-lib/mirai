@@ -632,13 +632,17 @@ register_serial <- function(class, sfunc, ufunc) {
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
 otel_daemons_span <- function(envir, .compute, reset = FALSE) {
+  purl <- parse_url(envir[["url"]])
   otel::start_local_active_span(
     if (reset) "daemons->reset" else "daemons",
     attributes = otel::as_attributes(list(
-      url = envir[["url"]],
-      n = envir[["n"]],
-      dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
-      compute_profile = .compute
+      rpc.system = "nng",
+      server.address = purl[["hostname"]],
+      server.port = purl[["port"]],
+      network.transport = purl[["scheme"]],
+      mirai.n = envir[["n"]],
+      mirai.dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
+      mirai.compute.profile = .compute
     )),
     links = if (reset) list(daemons = envir[["otel_span"]]),
     tracer = otel_tracer
