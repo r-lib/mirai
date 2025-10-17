@@ -642,7 +642,7 @@ otel_daemons_span <- function(envir, .compute, reset = FALSE) {
       network.transport = purl[["scheme"]],
       mirai.n = envir[["n"]],
       mirai.dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
-      mirai.compute.profile = .compute
+      mirai.compute = .compute
     )),
     links = if (reset) list(daemons = envir[["otel_span"]]),
     tracer = otel_tracer
