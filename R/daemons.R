@@ -637,7 +637,7 @@ otel_daemons_span <- function(envir, .compute, reset = FALSE) {
     if (reset) "daemons->reset" else "daemons",
     attributes = otel::as_attributes(list(
       rpc.system = "nng",
-      server.address = purl[["hostname"]],
+      server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
       server.port = purl[["port"]],
       network.transport = purl[["scheme"]],
       mirai.n = envir[["n"]],
