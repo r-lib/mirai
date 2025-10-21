@@ -566,8 +566,7 @@ local_daemons <- function(.compute, frame = parent.frame()) {
   require_daemons(.compute = .compute, call = frame)
   prev_profile <- .[["cp"]]
   `[[<-`(., "cp", .compute)
-  expr <- as.call(list(function() `[[<-`(., "cp", prev_profile)))
-  do.call(on.exit, list(expr, TRUE, FALSE), envir = frame)
+  defer(`[[<-`(., "cp", prev_profile), envir = frame)
 }
 
 #' Create Serialization Configuration
@@ -628,6 +627,12 @@ register_serial <- function(class, sfunc, ufunc) {
 }
 
 # internals --------------------------------------------------------------------
+
+# Simplified version of withr standalone `defer()`
+defer <- function(expr, envir) {
+  thunk <- as.call(list(function() expr))
+  do.call(on.exit, list(thunk, add = TRUE, after = FALSE), envir = envir)
+}
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
