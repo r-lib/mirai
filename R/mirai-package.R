@@ -50,7 +50,6 @@
     .subset2(otel_tracer, "is_enabled")()
   }
   cli_enabled <<- requireNamespace("cli", quietly = TRUE)
-  ensure_cli_initialized()
   switch(
     Sys.info()[["sysname"]],
     Linux = {
@@ -70,12 +69,9 @@
 
 # nocov end
 
-. <- new.env()
+. <- `[[<-`(new.env(), "cp", "default")
 .. <- new.env()
-`[[<-`(., "cp", "default")
-`[[<-`(., ".flat", .flat)
-`[[<-`(., ".progress", .progress)
-`[[<-`(., ".stop", .stop)
+.opts <- list2env(list(.flat = .flat, .progress = .progress, .stop = .stop))
 .command <- NULL
 .urlscheme <- NULL
 .limit_long <- 10000L

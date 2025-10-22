@@ -451,7 +451,7 @@ collect_mirai <- function(x, options = NULL) {
     `[[<-`(., "progress", options[[".progress"]])
     options <- names(options)
   }
-  dots <- mget(options, envir = .)
+  dots <- mget(options, envir = .opts)
   mmap(x, dots)
 }
 
