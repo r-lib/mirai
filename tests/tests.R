@@ -35,8 +35,20 @@ test_error(launch_local(1L), "daemons must be set")
 test_error(race_mirai(list()), "daemons must be set")
 test_false(daemons_set())
 test_error(require_daemons())
+if (mirai:::cli_enabled) {
+  ns <- getNamespace("mirai")
+  unlockBinding("cli_enabled", ns)
+  ns[["cli_enabled"]] <- FALSE
+  cli_disabled <- TRUE
+} else {
+  cli_disabled <- FALSE
+}
 test_error(mirai:::stop_d(NULL), "No daemons set.")
 test_error(mirai:::stop_d("default"), "No daemons set for the 'default' compute profile.")
+if (cli_disabled) {
+  ns[["cli_enabled"]] <- TRUE
+  lockBinding("cli_enabled", ns)
+}
 test_type("character", host_url())
 test_type("character", names(host_url()))
 test_true(all(startsWith(host_url(tls = TRUE), "tls")))
