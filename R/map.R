@@ -269,7 +269,7 @@ print.mirai_map <- function(x, ...) {
 #'
 .progress <- compiler::compile(
   quote(
-    cat(sprintf("\r[ %d / %d %s ]", i, xlen, if (i < xlen) "...." else "done"), file = stderr())
+    cat(sprintf("\r[ %d / %d %s", i, xlen, if (i < xlen) ".... ]" else "done ]\n"), file = stderr())
   )
 )
 
@@ -288,12 +288,11 @@ print.mirai_map <- function(x, ...) {
 # internals --------------------------------------------------------------------
 
 ensure_cli_initialized <- function() {
-  is.null(.[["require_daemons"]]) || return()
-  cli <- requireNamespace("cli", quietly = TRUE)
-  `[[<-`(., ".flat", if (cli) flat_cli else .flat)
-  `[[<-`(., ".progress", if (cli) progress_cli else .progress)
-  `[[<-`(., ".stop", if (cli) stop_cli else .stop)
-  `[[<-`(., "require_daemons", if (cli) stop_d_cli else stop_d)
+  requireNamespace("cli", quietly = TRUE) || return()
+  `[[<-`(., ".flat", flat_cli)
+  `[[<-`(., ".progress", progress_cli)
+  `[[<-`(., ".stop", stop_cli )
+  `[[<-`(., "require_daemons", require_d_cli)
 }
 
 mmap <- function(x, dots) {

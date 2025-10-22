@@ -494,7 +494,6 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 #' @export
 #'
 require_daemons <- function(.compute = NULL, call = environment()) {
-  ensure_cli_initialized()
   is.environment(.compute) && {
     warning("supplying `call` as the first argument of `require_daemons()` is deprecated")
     temp <- .compute
@@ -841,7 +840,7 @@ dispatcher_status <- function(envir) {
   )
 }
 
-stop_d_cli <- function(.compute, call) {
+require_d_cli <- function(.compute, call) {
   cli::cli_abort(
     if (is.character(.compute)) c(
       sprintf("No daemons set for the '%s' compute profile.", .compute),
@@ -854,7 +853,7 @@ stop_d_cli <- function(.compute, call) {
   )
 }
 
-stop_d <- function(.compute, call) {
+require_d <- function(.compute, call) {
   stop(
     if (is.character(.compute)) {
       sprintf("No daemons set for the '%1$s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%1$s\") to set 6 local daemons.", .compute)

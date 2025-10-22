@@ -49,6 +49,7 @@
     otel_tracer <<- otel::get_tracer(name = otel_tracer_name)
     .subset2(otel_tracer, "is_enabled")()
   }
+  ensure_cli_initialized()
   switch(
     Sys.info()[["sysname"]],
     Linux = {
@@ -68,8 +69,13 @@
 
 # nocov end
 
-. <- `[[<-`(new.env(), "cp", "default")
+. <- new.env()
 .. <- new.env()
+`[[<-`(., "cp", "default")
+`[[<-`(., ".flat", .flat)
+`[[<-`(., ".progress", .progress)
+`[[<-`(., ".stop", .stop)
+`[[<-`(., "require_daemons", require_d)
 .command <- NULL
 .urlscheme <- NULL
 .limit_long <- 10000L
