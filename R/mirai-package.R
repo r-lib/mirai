@@ -49,6 +49,7 @@
     otel_tracer <<- otel::get_tracer(name = otel_tracer_name)
     .subset2(otel_tracer, "is_enabled")()
   }
+  cli_enabled <<- requireNamespace("cli", quietly = TRUE)
   ensure_cli_initialized()
   switch(
     Sys.info()[["sysname"]],
@@ -75,7 +76,6 @@
 `[[<-`(., ".flat", .flat)
 `[[<-`(., ".progress", .progress)
 `[[<-`(., ".stop", .stop)
-`[[<-`(., "require_daemons", require_d)
 .command <- NULL
 .urlscheme <- NULL
 .limit_long <- 10000L
@@ -104,6 +104,7 @@
   hash = TRUE
 )
 
+cli_enabled <- FALSE
 otel_tracing <- FALSE
 otel_tracer <- NULL
 otel_tracer_name <- "org.r-lib.mirai"

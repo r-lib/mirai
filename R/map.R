@@ -288,11 +288,10 @@ print.mirai_map <- function(x, ...) {
 # internals --------------------------------------------------------------------
 
 ensure_cli_initialized <- function() {
-  requireNamespace("cli", quietly = TRUE) || return()
+  cli_enabled || return()
   `[[<-`(., ".flat", flat_cli)
   `[[<-`(., ".progress", progress_cli)
   `[[<-`(., ".stop", stop_cli )
-  `[[<-`(., "require_daemons", require_d_cli)
 }
 
 mmap <- function(x, dots) {
