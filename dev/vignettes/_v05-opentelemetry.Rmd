@@ -53,7 +53,7 @@ mirai creates several types of spans to represent different operations:
   + `network.transport` (e.g. 'tcp' or 'ipc')
   + `mirai.n` (number of daemons)
   + `mirai.dispatcher` (true/false)
-  + `mirai.compute`
+  + `mirai.compute` (profile name)
 - **Lifecycle**: Created when daemons are set, and when daemons are reset
 
 **`daemon` / `daemon->end`** - Individual daemon process span
