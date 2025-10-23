@@ -12,4 +12,5 @@
 ^[\.]?air\.toml$
 ^\.vscode$
 ^cran-comments\.md$
+^\.claude$
 ^CLAUDE.md$
