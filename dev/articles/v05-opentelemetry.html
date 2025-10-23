@@ -136,9 +136,23 @@ profile</p>
 <strong>Kind</strong>: <code>internal</code>
 </li>
 <li>
-<strong>Attributes</strong>: <code>url</code>, <code>n</code>
-(number of daemons), <code>dispatcher</code> (true/false),
-<code>compute_profile</code>
+<strong>Attributes</strong>:
+<ul>
+<li>
+<code>rpc.system</code> (‘mirai’)</li>
+<li>
+<code>server.address</code> (e.g. ‘127.0.0.1’ or ‘hostname’)</li>
+<li>
+<code>server.port</code> (where applicable)</li>
+<li>
+<code>network.transport</code> (e.g. ‘tcp’ or ‘ipc’)</li>
+<li>
+<code>mirai.n</code> (number of daemons)</li>
+<li>
+<code>mirai.dispatcher</code> (true/false)</li>
+<li>
+<code>mirai.compute</code> (profile name)</li>
+</ul>
 </li>
 <li>
 <strong>Lifecycle</strong>: Created when daemons are set, and when
@@ -151,7 +165,17 @@ Individual daemon process span</p>
 <strong>Kind</strong>: <code>internal</code>
 </li>
 <li>
-<strong>Attributes</strong>: <code>url</code>
+<strong>Attributes</strong>:
+<ul>
+<li>
+<code>rpc.system</code> (‘mirai’)</li>
+<li>
+<code>server.address</code> (e.g. ‘127.0.0.1’ or ‘hostname’)</li>
+<li>
+<code>server.port</code> (where applicable)</li>
+<li>
+<code>network.transport</code> (e.g. ‘tcp’ or ‘ipc’)</li>
+</ul>
 </li>
 <li>
 <strong>Lifecycle</strong>: Created when a daemon process starts and
