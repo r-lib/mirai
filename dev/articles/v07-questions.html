@@ -267,6 +267,52 @@ consider passing individual members (<code>env$x</code>,
 where possible.</li>
 </ul>
 </div>
+<div class="section level3">
+<h3 id="how-to-create-daemons-on-demand-or-shutdown-daemons-when-theyre-not-used">5. How to create daemons on-demand or shutdown daemons when they’re
+not used<a class="anchor" aria-label="anchor" href="#how-to-create-daemons-on-demand-or-shutdown-daemons-when-theyre-not-used"></a>
+</h3>
+<p>Setting daemons can be totally separate from the task of actually
+launching (deploying) them. To just set daemons when you’re using only
+your local machine:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>or if you’re using your local machine and/or remote machines:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>This sets up daemons. You can think of this as a ‘base station’ that
+listens for incoming daemon connections.</p>
+<p>When you actually want to launch (deploy) a daemon, you may use
+either:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_local</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span><span class="op">)</span> <span class="co"># or cluster_config()</span></span></code></pre></div>
+<p>The key to adopting a flexible-use pattern that lets you scale up and
+down is to specify one of the following arguments to the
+<code>...</code> argument of <code><a href="../reference/launch_local.html">launch_local()</a></code> or
+<code><a href="../reference/launch_local.html">launch_remote()</a></code>. You may also supply these to the initial
+<code><a href="../reference/daemons.html">daemons()</a></code> call for them to apply by default for all
+launches:</p>
+<ul>
+<li>
+<code>maxtasks</code>: integer number of tasks to perform before
+exiting.</li>
+<li>
+<code>idletime</code>: milliseconds idle time before exiting.</li>
+<li>
+<code>walltime</code>: milliseconds (soft) wall time before exiting
+(i.e. at least this amount of time, and possibly more as there is no
+forcible timeout mid-task)</li>
+</ul>
+<p>As an example, to launch a daemon to perform one task only:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span>, maxtasks <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+<p>In this way, you may use <code><a href="../reference/cluster_config.html">cluster_config()</a></code> to launch jobs
+on an HPC cluster on demand, without using persistent daemons. Note that
+you will incur the latency costs of however long it takes to launch the
+job.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
