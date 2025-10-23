@@ -129,7 +129,7 @@ func <- carrier::crate(\(x) fn(x), fn = fn)
 
 - For environments, consider using `parent.env(e) <- emptyenv()`. This is not required for R6 classes as they are already isolated by default. Regardless of any parent environment, an environment / R6 class could still contain many items that are not needed by the parallel process, in which case consider passing individual members (`env$x`, `env$y`) rather than the entire object (`env`) where possible.
 
-### 5. How to create daemons on-demand or shutdown daemons when they're not used?
+### 5. How to create daemons on-demand or shutdown daemons when they're not used
 
 Setting daemons can be totally separate from the task of actually launching (deploying) them. To just set daemons when you're using only your local machine:
 
@@ -151,7 +151,7 @@ or
 ```r
 launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config()
 ```
-The key to adopting a flexible-use pattern that lets you scale up and down is to specify one of the following arguments to the `...` argument of `launch_local()` or `launch_remote()`. You may also supply these to the initial `daemons()` call for them to be used by default for all launches:
+The key to adopting a flexible-use pattern that lets you scale up and down is to specify one of the following arguments to the `...` argument of `launch_local()` or `launch_remote()`. You may also supply these to the initial `daemons()` call for them to apply by default for all launches:
 
 - `maxtasks`: integer number of tasks to perform before exiting.
 - `idletime`: milliseconds idle time before exiting.
