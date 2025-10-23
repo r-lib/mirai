@@ -47,7 +47,7 @@ mirai creates several types of spans to represent different operations:
 
 - **Kind**: `internal`
 - **Attributes**:
-  + `rpc.system` ('nng')
+  + `rpc.system` ('mirai')
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')
@@ -60,7 +60,7 @@ mirai creates several types of spans to represent different operations:
 
 - **Kind**: `internal` 
 - **Attributes**:
-  + `rpc.system` ('nng')
+  + `rpc.system` ('mirai')
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')

@@ -243,7 +243,7 @@ otel_daemon_span <- function(url, end_span = NULL) {
   otel::start_local_active_span(
     if (length(end_span)) "daemon->end" else "daemon",
     attributes = otel::as_attributes(list(
-      rpc.system = "nng",
+      rpc.system = "mirai",
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
       server.port = purl[["port"]],
       network.transport = purl[["scheme"]]
