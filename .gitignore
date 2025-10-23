@@ -7,5 +7,6 @@ inst/doc
 .vscode
 air.toml
 revdep/
+.claude
 CLAUDE.md
 .DS_Store

@@ -46,13 +46,24 @@ mirai creates several types of spans to represent different operations:
 **`daemons` / `daemons->reset`** - Root span for a compute profile
 
 - **Kind**: `internal`
-- **Attributes**: `url`, `n` (number of daemons), `dispatcher` (true/false), `compute_profile`
+- **Attributes**:
+  + `rpc.system` ('mirai')
+  + `server.address` (e.g. '127.0.0.1' or 'hostname')
+  + `server.port` (where applicable)
+  + `network.transport` (e.g. 'tcp' or 'ipc')
+  + `mirai.n` (number of daemons)
+  + `mirai.dispatcher` (true/false)
+  + `mirai.compute` (profile name)
 - **Lifecycle**: Created when daemons are set, and when daemons are reset
 
 **`daemon` / `daemon->end`** - Individual daemon process span
 
 - **Kind**: `internal` 
-- **Attributes**: `url`
+- **Attributes**:
+  + `rpc.system` ('mirai')
+  + `server.address` (e.g. '127.0.0.1' or 'hostname')
+  + `server.port` (where applicable)
+  + `network.transport` (e.g. 'tcp' or 'ipc')
 - **Lifecycle**: Created when a daemon process starts and when it ends
 
 **`mirai_map`** - Parallel map operation span
