@@ -103,7 +103,7 @@ daemons (with a clickable function link if the cli package is available)
 if daemons are not already set.</li>
 <li>
 <code><a href="../reference/daemons_set.html">daemons_set()</a></code>, to detect if daemons have already been
-set and prompt the user to set daemons if not.</li>
+set.</li>
 <li>
 <code><a href="../reference/on_daemon.html">on_daemon()</a></code>, to detect if code is already running on a
 daemon, i.e. within a <code><a href="../reference/mirai.html">mirai()</a></code> call.</li>
@@ -142,7 +142,22 @@ your package as a convenience.</li>
 <code><a href="../reference/mirai_map.html">mirai_map()</a></code>. This is important to ensure that there is no
 accidental recursive creation of daemons on the same machine, for
 example if your function is used within another package’s function that
-also uses mirai.</li>
+also uses mirai.
+<ul>
+<li>
+<p>The exception to this rule is that package authors may decide to
+provide a fallback to synchronous behaviour to ensure that a map always
+runs even if the user has not set daemons. In this case, it is
+permissible to set synchronous daemons for the duration of the map, if
+daemons have not been set, and provided that they are reset after the
+map. For this purpose, you may use code such as:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/daemons_set.html">daemons_set</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+</li>
+</ul>
+</li>
 <li>Exceptionally, a
 <code>daemons(n = 1, dispatcher = FALSE, .compute = ...)</code> call may
 be used to set up a single dedicated daemon, but only if used with a
@@ -162,7 +177,7 @@ any time. Use <code><a href="../reference/info.html">info()</a></code> instead.<
 </ul>
 <ol start="3" style="list-style-type: decimal">
 <li><p><code><a href="../reference/info.html">info()</a></code> may be used programmatically, but only index
-into the vector using the name rather than position
+into the vector using the name of the element rather than its position
 e.g. <code>info()[["cumulative"]]</code> rather than
 <code>info()[[2]]</code>. This is in case other values are added at a
 later date.</p></li>
