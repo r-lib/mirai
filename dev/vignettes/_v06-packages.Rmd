@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 mirai offers the following functions primarily for package authors using mirai:
 
 1. `require_daemons()` will error and prompt the user to set daemons (with a clickable function link if the cli package is available) if daemons are not already set.
-1. `daemons_set()`, to detect if daemons have already been set and prompt the user to set daemons if not.
+1. `daemons_set()`, to detect if daemons have already been set.
 1. `on_daemon()`, to detect if code is already running on a daemon, i.e. within a `mirai()` call.
 1. `register_serial()` to register custom serialization functions, which are automatically available by default for all subsequent `daemons()` calls.
 1. `nextget()`, for querying values for a compute profile, such as 'url', described in the function's documentation. Note: only the specifically-documented values are supported interfaces.
@@ -39,13 +39,22 @@ You do not need to anticipate whether an end-user will run the code on their own
 - Consider pointing to the documentation for `mirai::daemons()`, or re-exporting `daemons()` in your package as a convenience.
 - Never include a call to `daemons()` when using `mirai_map()`.
   This is important to ensure that there is no accidental recursive creation of daemons on the same machine, for example if your function is used within another package's function that also uses mirai.
+  + The exception to this rule is that package authors may decide to provide a fallback to synchronous behaviour to ensure that a map always runs even if the user has not set daemons.
+    In this case, it is permissible to set synchronous daemons for the duration of the map, if daemons have not been set, and provided that they are reset after the map.
+    For this purpose, you may use code such as:
+    ```r
+    with(if (!daemons_set()) daemons(sync = TRUE), {
+      mirai_map(...)
+    })
+    ```
 - Exceptionally, a `daemons(n = 1, dispatcher = FALSE, .compute = ...)` call may be used to set up a single dedicated daemon, but only if used with a unique value for `.compute`.
   A representative example of this usage pattern is `logger::appender_async()`, where the logger package's 'namespace' concept maps directly to mirai's 'compute profile'.
 
 2. The shape and contents of a `status()` call must not be used programmatically, as this user interface is subject to change at any time. Use `info()` instead.
 - For the value of `status()$daemons`, instead use `nextget("url")`.
 
-3. `info()` may be used programmatically, but only index into the vector using the name rather than position e.g. `info()[["cumulative"]]` rather than `info()[[2]]`. This is in case other values are added at a later date.
+3. `info()` may be used programmatically, but only index into the vector using the name of the element rather than its position e.g. `info()[["cumulative"]]` rather than `info()[[2]]`.
+  This is in case other values are added at a later date.
 
 4. The functions `unresolved()`, `is_error_value()`, `is_mirai_error()`, and `is_mirai_interrupt()` should be used to test for the relevant state of a mirai or its value.
 - The characteristics of their current implementation, e.g. as a logical NA for an 'unresolvedValue', should not be relied upon, as these are subject to change at any time.
