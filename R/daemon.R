@@ -110,7 +110,7 @@ daemon <- function(
   task <- 1L
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
-  if (otel_tracing) dmnspn <- otel_daemon_span(url)
+  dmnspn <- otel_daemon_span(url)
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -166,7 +166,7 @@ daemon <- function(
     }
   }
 
-  if (otel_tracing) otel_daemon_span(url, end_span = dmnspn)
+  otel_daemon_span(url, end_span = dmnspn)
   if (!output) {
     sink(type = "message")
     sink()
@@ -201,12 +201,12 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 handle_mirai_error <- function(cnd) {
-  if (otel_tracing) otel::get_active_span()$set_status("error", "miraiError")
+  otel_set_span_status(dynGet("spn", ifnotfound = NULL), "miraiError")
   invokeRestart("mirai_error", cnd, sys.calls())
 }
 
 handle_mirai_interrupt <- function(cnd) {
-  if (otel_tracing) otel::get_active_span()$set_status("error", "miraiInterrupt")
+  otel_set_span_status(dynGet("spn", ifnotfound = NULL), "miraiInterrupt")
   invokeRestart("mirai_interrupt")
 }
 
@@ -220,11 +220,11 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
-          prtctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
+          ctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
-            "daemon->eval",
+            "daemon eval",
             links = list(daemon = dynGet("dmnspn")),
-            options = list(kind = "server", parent = prtctx),
+            options = list(kind = "server", parent = ctx),
             tracer = otel_tracer
           )
         }
@@ -238,10 +238,16 @@ eval_mirai <- function(._mirai_., sock = NULL) {
   )
 }
 
+otel_set_span_status <- function(span, type) {
+  otel_tracing && length(span) || return()
+  span$set_status("error", type)
+}
+
 otel_daemon_span <- function(url, end_span = NULL) {
+  otel_tracing || return()
   purl <- parse_url(url)
   otel::start_local_active_span(
-    if (length(end_span)) "daemon->end" else "daemon",
+    if (length(end_span)) "daemon exit" else "daemon",
     attributes = otel::as_attributes(list(
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
       server.port = purl[["port"]],

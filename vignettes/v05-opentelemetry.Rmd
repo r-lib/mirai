@@ -36,7 +36,7 @@ mirai creates several types of spans to represent different operations:
 
 #### 3.1 Core Span Types
 
-**`daemons` / `daemons->reset`** - Root span for a compute profile
+**`daemons` / `daemons reset`** - Root span for a compute profile
 
 - **Kind**: `internal`
 - **Attributes**:
@@ -48,14 +48,14 @@ mirai creates several types of spans to represent different operations:
   + `mirai.compute` (profile name)
 - **Lifecycle**: Created when daemons are set, and when daemons are reset
 
-**`daemon` / `daemon->end`** - Individual daemon process span
+**`daemon` / `daemon exit`** - Individual daemon process span
 
 - **Kind**: `internal` 
 - **Attributes**:
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')
-- **Lifecycle**: Created when a daemon process starts and when it ends
+- **Lifecycle**: Created when a daemon process starts, and when it exits
 
 **`mirai_map`** - Parallel map operation span
 
@@ -68,7 +68,7 @@ mirai creates several types of spans to represent different operations:
 - **Attributes**: `mirai.id` (unique task identifier)
 - **Lifecycle**: Created when `mirai()` is called, ended as soon as it returns
 
-**`daemon->eval`** - Server-side task evaluation span
+**`daemon eval`** - Server-side task evaluation span
 
 - **Kind**: `server`
 - **Lifecycle**: Tracks for the duration of actual mirai evaluation on the daemon
@@ -86,19 +86,19 @@ daemon (daemon process N - top level)
 
 mirai_map (top level) ──link→ daemons
 ├── mirai (task 1) ──link→ daemons
-│   └── daemon->eval ──link→ daemon
+│   └── daemon eval ──link→ daemon
 ├── mirai (task 2) ──link→ daemons
-│   └── daemon->eval ──link→ daemon
+│   └── daemon eval ──link→ daemon
 └── mirai (task N) ──link→ daemons
-    └── daemon->eval ──link→ daemon
+    └── daemon eval ──link→ daemon
     
 mirai (top level) ──link→ daemons
-└── daemon->eval ──link→ daemon
+└── daemon eval ──link→ daemon
 
-daemon->end (daemon process 1) ──link→ daemon
+daemon exit (daemon process 1) ──link→ daemon
 ...
-daemon->end (daemon process N) ──link→ daemon
-daemons->reset ──link→ daemons
+daemon exit (daemon process N) ──link→ daemon
+daemons reset ──link→ daemons
 ```
 
 **Context Propagation**: The context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
@@ -107,7 +107,7 @@ daemons->reset ──link→ daemons
 
 ### 4. Status and Error Tracking
 
-`daemon->eval` spans automatically track the success or failure of operations:
+`daemon eval` spans automatically track the success or failure of operations:
 
 **Status Values**:
 

@@ -45,9 +45,9 @@
 # tested implicitly
 
 .onLoad <- function(libname, pkgname) {
-  otel_tracing <<- requireNamespace("otel", quietly = TRUE) && {
+  requireNamespace("otel", quietly = TRUE) && {
     otel_tracer <<- otel::get_tracer(name = otel_tracer_name)
-    .subset2(otel_tracer, "is_enabled")()
+    otel_tracing <<- .subset2(otel_tracer, "is_enabled")()
   }
   cli_enabled <<- requireNamespace("cli", quietly = TRUE)
   switch(

@@ -638,7 +638,7 @@ compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 otel_daemons_span <- function(envir, .compute, reset = FALSE) {
   purl <- parse_url(envir[["url"]])
   otel::start_local_active_span(
-    if (reset) "daemons->reset" else "daemons",
+    if (reset) "daemons reset" else "daemons",
     attributes = otel::as_attributes(list(
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
       server.port = purl[["port"]],
