@@ -247,7 +247,7 @@ otel_daemon_span <- function(url, end_span = NULL) {
   otel_tracing || return()
   purl <- parse_url(url)
   otel::start_local_active_span(
-    if (length(end_span)) "daemon exit" else "daemon",
+    sprintf("daemon %s %s", if (length(end_span)) "disconnect" else "connect", url),
     attributes = otel::as_attributes(list(
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
       server.port = purl[["port"]],

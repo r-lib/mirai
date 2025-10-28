@@ -2,7 +2,7 @@
 
 #### Updates
 
-* OpenTelemetry 'daemons' and 'daemon' span attributes have been updated to better follow semantic conventions for RPC (#481).
+* OpenTelemetry span names and attributes have been updated to better follow semantic conventions (#481).
 
 # mirai 2.5.1
 
