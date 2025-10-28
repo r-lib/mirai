@@ -90,6 +90,7 @@ daemon <- function(
   tlscert = NULL,
   rs = NULL
 ) {
+  dmnspn <- otel_daemon_span(url)
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit({
@@ -110,7 +111,6 @@ daemon <- function(
   task <- 1L
   timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
-  dmnspn <- otel_daemon_span(url)
 
   if (dispatcher) {
     aio <- recv_aio(sock, mode = 1L, cv = cv)
@@ -166,12 +166,12 @@ daemon <- function(
     }
   }
 
-  otel_daemon_span(url, end_span = dmnspn)
   if (!output) {
     sink(type = "message")
     sink()
     close.connection(devnull)
   }
+  otel_daemon_span(url, end_span = dmnspn)
   invisible(xc)
 }
 
@@ -220,11 +220,13 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         if (otel_tracing && length(._mirai_.[["._otel_."]])) {
-          ctx <- otel::extract_http_context(._mirai_.[["._otel_."]])
           spn <- otel::start_local_active_span(
             "daemon eval",
             links = list(daemon = dynGet("dmnspn")),
-            options = list(kind = "server", parent = ctx),
+            options = list(
+              kind = "server",
+              parent = otel::extract_http_context(._mirai_.[["._otel_."]])
+            ),
             tracer = otel_tracer
           )
         }
