@@ -219,17 +219,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
           on.exit(stop_aio(cancel))
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        if (otel_tracing && length(._mirai_.[["._otel_."]])) {
-          spn <- otel::start_local_active_span(
-            "daemon eval",
-            links = list(daemon = dynGet("dmnspn")),
-            options = list(
-              kind = "server",
-              parent = otel::extract_http_context(._mirai_.[["._otel_."]])
-            ),
-            tracer = otel_tracer
-          )
-        }
+        spn <- otel_local_eval_span(._mirai_.[["._otel_."]], dynGet("dmnspn"))
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = handle_mirai_error,
@@ -243,6 +233,17 @@ eval_mirai <- function(._mirai_., sock = NULL) {
 otel_set_span_status <- function(span, type) {
   otel_tracing && length(span) || return()
   span$set_status("error", type)
+}
+
+otel_local_eval_span <- function(ctx, span, scope = parent.frame()) {
+  otel_tracing && length(ctx) || return()
+  otel::start_local_active_span(
+    "daemon eval",
+    links = list(daemon = span),
+    options = list(kind = "server", parent = otel::extract_http_context(ctx)),
+    tracer = otel_tracer,
+    activation_scope = scope
+  )
 }
 
 otel_daemon_span <- function(url, end_span = NULL) {
