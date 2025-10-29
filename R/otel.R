@@ -75,7 +75,7 @@ otel_daemon_span <- function(url, span = NULL) {
     sprintf("daemon %s %s", if (is.null(span)) "connect" else "disconnect", url),
     attributes = otel::as_attributes(list(
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
-      server.port = purl[["port"]],
+      server.port = if (nzchar(purl[["port"]])) as.integer(purl[["port"]]) else integer(),
       network.transport = purl[["scheme"]]
     )),
     links = if (length(span)) list(daemon = span),
@@ -91,7 +91,7 @@ otel_daemons_span <- function(envir, reset = FALSE) {
     sprintf("daemons %s %s",if (reset) "reset" else "set", url),
     attributes = list(
       server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
-      server.port = purl[["port"]],
+      server.port = if (nzchar(purl[["port"]])) as.integer(purl[["port"]]) else integer(),
       network.transport = purl[["scheme"]],
       mirai.n = envir[["n"]],
       mirai.dispatcher = !is.null(envir[["dispatcher"]]),
