@@ -473,7 +473,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRA
   test_equal(traces[[1L]]$attributes$server.port, purl[["port"]])
   test_equal(traces[[1L]]$attributes$network.transport, purl[["scheme"]])
   test_equal(traces[[1L]]$attributes$mirai.n, 1L)
-  test_equal(traces[[1L]]$attributes$mirai.dispatcher, "false")
+  test_false(traces[[1L]]$attributes$mirai.dispatcher)
   test_equal(traces[[1L]]$attributes$mirai.compute, "default")
   test_equal(traces[[2L]]$name, "mirai")
   test_equal(traces[[2L]]$kind, "client")
@@ -515,7 +515,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRA
   test_equal(traces[[15L]]$attributes$server.port, purl[["port"]])
   test_equal(traces[[15L]]$attributes$network.transport, purl[["scheme"]])
   test_equal(traces[[15L]]$attributes$mirai.n, 1L)
-  test_equal(traces[[15L]]$attributes$mirai.dispatcher, "false")
+  test_false(traces[[15L]]$attributes$mirai.dispatcher)
   test_equal(traces[[15L]]$attributes$mirai.compute, "default")
 }
 test_false(daemons(0))

@@ -94,7 +94,7 @@ otel_daemons_span <- function(envir, reset = FALSE) {
       server.port = purl[["port"]],
       network.transport = purl[["scheme"]],
       mirai.n = envir[["n"]],
-      mirai.dispatcher = if (is.null(envir[["dispatcher"]])) "false" else "true",
+      mirai.dispatcher = !is.null(envir[["dispatcher"]]),
       mirai.compute = envir[["compute"]]
     ),
     links = if (reset) list(daemons = envir[["otel_span"]]),
