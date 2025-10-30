@@ -158,7 +158,11 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
   if (is.null(.compute)) .compute <- .[["cp"]]
 
-  spn <- otel_local_map_span(..[[.compute]][["otel_span"]])
+  spn <- otel_active_span(
+    name = "mirai_map",
+    links = list(daemon = ..[[.compute]][["otel_span"]]),
+    scope = environment()
+  )
 
   dx <- dim(.x)
   vec <- if (is.null(dx)) {

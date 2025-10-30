@@ -90,7 +90,10 @@ daemon <- function(
   tlscert = NULL,
   rs = NULL
 ) {
-  dmnspn <- otel_daemon_span(url)
+  dmnspn <- otel_active_span(
+    name = sprintf("daemon connect %s", url),
+    attributes = make_daemon_attrs(url)
+  )
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit({
@@ -171,7 +174,11 @@ daemon <- function(
     sink()
     close.connection(devnull)
   }
-  otel_daemon_span(url, span = dmnspn)
+  otel_active_span(
+    name = sprintf("daemon disconnect %s", url),
+    attributes = make_daemon_attrs(url),
+    links = list(daemon = dmnspn),
+  )
   invisible(xc)
 }
 
@@ -219,7 +226,13 @@ eval_mirai <- function(._mirai_., sock = NULL) {
           on.exit(stop_aio(cancel))
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        spn <- otel_local_eval_span(._mirai_.[["._otel_."]], dynGet("dmnspn"))
+        spn <- otel_active_span(
+          name = "daemon eval",
+          cond = length(._mirai_.[["._otel_."]]),
+          links = list(daemon = dynGet("dmnspn")),
+          options = list(kind = "server", parent = otel::extract_http_context(._mirai_.[["._otel_."]])),
+          scope = environment()
+        )
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = handle_mirai_error,

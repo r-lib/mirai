@@ -155,7 +155,14 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
-  ctx_span <- otel_local_mirai_ctx_span(envir)
+  ctx_spn <- otel_active_span(
+    name = "mirai",
+    cond = length(envir),
+    links = list(daemons = envir[["otel_span"]]),
+    options = list(kind = "client"),
+    return_ctx = TRUE,
+    scope = environment()
+  )
   if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
   data <- list(
     ._expr_. = if (
@@ -164,7 +171,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       is.language(.expr)
     ) .expr else expr,
     ._globals_. = globals,
-    ._otel_. = ctx_span[[1L]]
+    ._otel_. = ctx_spn[[1L]]
   )
 
   if (length(.args)) {
@@ -187,7 +194,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
-  otel_set_span_id(ctx_span[[2L]], attr(req, "id"))
+  otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
   envir[["sync"]] && evaluate_sync(envir)
   invisible(req)
 }
