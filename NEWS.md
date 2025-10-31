@@ -3,6 +3,7 @@
 #### Updates
 
 * OpenTelemetry 'daemons' and 'daemon' span attributes have been updated to better follow semantic conventions for RPC (#481).
+* Use of `require_daemons()` with `.compute` as the first argument (which produced a warning) no longer works.
 
 # mirai 2.5.1
 
