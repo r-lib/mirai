@@ -31,8 +31,7 @@ Imports:
 Suggests: 
     cli,
     litedown,
-    otel,
-    otelsdk
+    otel
 Enhances: 
     parallel,
     promises
