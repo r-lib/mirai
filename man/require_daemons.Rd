@@ -23,11 +23,6 @@ Returns TRUE only if daemons are set, otherwise produces an informative
 error for the user to set daemons, with a clickable function link if the
 \CRANpkg{cli} package is available.
 }
-\note{
-Previously the arguments were reversed with \code{call} coming before \code{.compute}.
-Specifying an environment to the first argument works for the time being,
-although is deprecated and will be defunct in a future version.
-}
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 daemons(1)

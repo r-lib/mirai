@@ -488,11 +488,6 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 #'
 #' @return Logical `TRUE`, or else errors.
 #'
-#' @note
-#' Previously the arguments were reversed with `call` coming before `.compute`.
-#' Specifying an environment to the first argument works for the time being,
-#' although is deprecated and will be defunct in a future version.
-#'
 #' @examplesIf interactive()
 #' daemons(1)
 #' require_daemons()
@@ -501,13 +496,6 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 #' @export
 #'
 require_daemons <- function(.compute = NULL, call = environment()) {
-  is.environment(.compute) && {
-    warning("supplying `call` as the first argument of `require_daemons()` is deprecated")
-    temp <- .compute
-    .compute <- if (is.character(call)) call
-    call <- temp
-    TRUE
-  }
   daemons_set(.compute = .compute) || stop_d(.compute, call)
 }
 

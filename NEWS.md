@@ -2,7 +2,8 @@
 
 #### Updates
 
-* OpenTelemetry span names and attributes have been updated to better follow semantic conventions (#481).
+* OpenTelemetry span names and attributes have been upgraded to be more informative and better follow semantic conventions (#481).
+* Use of `require_daemons()` with `.compute` as the first argument (which produced a warning) no longer works.
 
 # mirai 2.5.1
 
