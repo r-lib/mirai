@@ -24,13 +24,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2
+          extra-packages: |
+            any::covr
+            any::xml2
+            any::rlang
+            otelsdk=?ignore-before-r=4.3.0
           needs: coverage
-
-      - name: Install additional packages
-        run: |
-          pak::pak(c("otelsdk", "rlang"))
-        shell: Rscript {0}
 
       - name: Test coverage
         run: |
