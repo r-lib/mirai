@@ -91,7 +91,7 @@ daemon <- function(
   rs = NULL
 ) {
   dmnspn <- otel_active_span(
-    name = sprintf("daemon connect %s", url),
+    sprintf("daemon connect %s", url),
     attributes = make_daemon_attrs(url)
   )
   cv <- cv()
@@ -175,9 +175,9 @@ daemon <- function(
     close.connection(devnull)
   }
   otel_active_span(
-    name = sprintf("daemon disconnect %s", url),
+    sprintf("daemon disconnect %s", url),
     attributes = make_daemon_attrs(url),
-    links = list(daemon = dmnspn),
+    links = list(daemon = dmnspn)
   )
   invisible(xc)
 }
@@ -227,7 +227,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         spn <- otel_active_span(
-          name = "daemon eval",
+          "daemon eval",
           cond = length(._mirai_.[["._otel_."]]),
           links = list(daemon = dynGet("dmnspn")),
           options = list(kind = "server", parent = otel::extract_http_context(._mirai_.[["._otel_."]])),

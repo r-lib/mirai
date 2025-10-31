@@ -119,13 +119,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
           if (id == 0L) {
             awaiting <- length(inq)
             executing <- sum(as.logical(unlist(lapply(outq, .subset2, "msgid"), use.names = FALSE)))
-            found <- c(
-              length(outq),
-              connections,
-              awaiting,
-              executing,
-              count - awaiting - executing
-            )
+            found <- c(length(outq), connections, awaiting, executing, count - awaiting - executing)
           } else {
             found <- FALSE
             for (item in outq) {

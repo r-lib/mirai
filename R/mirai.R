@@ -156,7 +156,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
   ctx_spn <- otel_active_span(
-    name = "mirai",
+    "mirai",
     cond = length(envir),
     links = list(daemons = envir[["otel_span"]]),
     options = list(kind = "client"),

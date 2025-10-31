@@ -159,7 +159,7 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   if (is.null(.compute)) .compute <- .[["cp"]]
 
   spn <- otel_active_span(
-    name = "mirai_map",
+    "mirai_map",
     links = list(daemon = ..[[.compute]][["otel_span"]]),
     scope = environment()
   )
