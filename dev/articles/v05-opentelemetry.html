@@ -124,19 +124,19 @@ detect the presence of OpenTelemetry and begin tracing.</p>
 <h3 id="span-types-and-hierarchy">3. Span Types and Hierarchy<a class="anchor" aria-label="anchor" href="#span-types-and-hierarchy"></a>
 </h3>
 <p>mirai creates several types of spans to represent different
-operations:</p>
+operations.</p>
 <div class="section level4">
 <h4 id="core-span-types">3.1 Core Span Types<a class="anchor" aria-label="anchor" href="#core-span-types"></a>
 </h4>
-<p><strong><code>daemons</code> /
-<code>daemons-&gt;reset</code></strong> - Root span for a compute
-profile</p>
+<p><strong><code>daemons set</code> /
+<code>daemons reset</code></strong></p>
+<p>Root span for a compute profile, created when daemons are set, and
+when they are reset. The span name includes the URL for easy
+identification.</p>
 <ul>
-<li>
-<strong>Kind</strong>: <code>internal</code>
+<li>Kind: <code>internal</code>
 </li>
-<li>
-<strong>Attributes</strong>:
+<li>Attributes:
 <ul>
 <li>
 <code>server.address</code> (e.g. ‘127.0.0.1’ or ‘hostname’)</li>
@@ -152,18 +152,15 @@ profile</p>
 <code>mirai.compute</code> (profile name)</li>
 </ul>
 </li>
-<li>
-<strong>Lifecycle</strong>: Created when daemons are set, and when
-daemons are reset</li>
 </ul>
-<p><strong><code>daemon</code> / <code>daemon-&gt;end</code></strong> -
-Individual daemon process span</p>
+<p><strong><code>daemon connect</code> /
+<code>daemon disconnect</code></strong></p>
+<p>Daemon process span, created when a daemon connects, and when it
+disconnects. The span name includes the URL for easy identification.</p>
 <ul>
-<li>
-<strong>Kind</strong>: <code>internal</code>
+<li>Kind: <code>internal</code>
 </li>
-<li>
-<strong>Attributes</strong>:
+<li>Attributes:
 <ul>
 <li>
 <code>server.address</code> (e.g. ‘127.0.0.1’ or ‘hostname’)</li>
@@ -173,41 +170,28 @@ Individual daemon process span</p>
 <code>network.transport</code> (e.g. ‘tcp’ or ‘ipc’)</li>
 </ul>
 </li>
-<li>
-<strong>Lifecycle</strong>: Created when a daemon process starts and
-when it ends</li>
 </ul>
-<p><strong><code>mirai_map</code></strong> - Parallel map operation
-span</p>
+<p><strong><code>mirai_map</code></strong></p>
+<p>Parallel map operation span. Encompasses the entire map operation
+across multiple mirai tasks.</p>
 <ul>
-<li>
-<strong>Kind</strong>: <code>internal</code>
+<li>Kind: <code>internal</code>
 </li>
-<li>
-<strong>Lifecycle</strong>: Encompasses the entire map operation
-across multiple mirai tasks</li>
 </ul>
-<p><strong><code>mirai</code></strong> - Client-side async task span</p>
+<p><strong><code>mirai</code></strong></p>
+<p>Client-side async task span. Created when <code><a href="../reference/mirai.html">mirai()</a></code> is
+called and ends as soon as it returns.</p>
 <ul>
-<li>
-<strong>Kind</strong>: <code>client</code>
+<li>Kind: <code>client</code>
 </li>
-<li>
-<strong>Attributes</strong>: <code>mirai.id</code> (unique task
-identifier)</li>
-<li>
-<strong>Lifecycle</strong>: Created when <code><a href="../reference/mirai.html">mirai()</a></code> is
-called, ended as soon as it returns</li>
+<li>Attributes: <code>mirai.id</code> (unique task identifier)</li>
 </ul>
-<p><strong><code>daemon-&gt;eval</code></strong> - Server-side task
-evaluation span</p>
+<p><strong><code>daemon eval</code></strong></p>
+<p>Server-side task evaluation span. Tracks for the duration of actual
+mirai evaluation on the daemon.</p>
 <ul>
-<li>
-<strong>Kind</strong>: <code>server</code>
+<li>Kind: <code>server</code>
 </li>
-<li>
-<strong>Lifecycle</strong>: Tracks for the duration of actual mirai
-evaluation on the daemon</li>
 </ul>
 </div>
 <div class="section level4">
@@ -215,45 +199,45 @@ evaluation on the daemon</li>
 </h4>
 <p>The spans form a distributed structure that traces the complete
 lifecycle of async operations:</p>
-<pre><code>daemons (compute profile - top level)
+<pre><code>daemons set (compute profile - top level)
 
-daemon (daemon process 1 - top level)
+daemon connect (daemon process 1 - top level)
 ...
-daemon (daemon process N - top level)
+daemon connect (daemon process N - top level)
 
-mirai_map (top level) ──link→ daemons
-├── mirai (task 1) ──link→ daemons
-│   └── daemon-&gt;eval ──link→ daemon
-├── mirai (task 2) ──link→ daemons
-│   └── daemon-&gt;eval ──link→ daemon
-└── mirai (task N) ──link→ daemons
-    └── daemon-&gt;eval ──link→ daemon
+mirai_map (top level) ──link→ daemons set
+├── mirai (task 1) ──link→ daemons set
+│   └── daemon eval ──link→ daemon connnect
+├── mirai (task 2) ──link→ daemons set
+│   └── daemon eval ──link→ daemon conenct
+└── mirai (task N) ──link→ daemons set
+    └── daemon eval ──link→ daemon connect
     
-mirai (top level) ──link→ daemons
-└── daemon-&gt;eval ──link→ daemon
+mirai (top level) ──link→ daemons set
+└── daemon eval ──link→ daemon connect
 
-daemon-&gt;end (daemon process 1) ──link→ daemon
+daemon disconnect (daemon process 1) ──link→ daemon connect
 ...
-daemon-&gt;end (daemon process N) ──link→ daemon
-daemons-&gt;reset ──link→ daemons</code></pre>
-<p><strong>Context Propagation</strong>: The context is automatically
+daemon disconnect (daemon process N) ──link→ daemon connect
+daemons reset ──link→ daemons set</code></pre>
+<p><strong>Context Propagation</strong>: the context is automatically
 packaged with each <code><a href="../reference/mirai.html">mirai()</a></code> call and extracted on the daemon
 side, enabling proper parent-child relationships across process
 boundaries.</p>
-<p><strong>Span Links</strong>: Tasks are linked to their compute
-profile’s <code>daemons</code> span on the client side, and to each
-<code>daemon</code> span on the server side, showing exactly where each
-evaluation happened. When daemons are reset and the respective daemons
-terminated, these events are recorded in new spans which link back to
-the original spans.</p>
+<p><strong>Span Links</strong>: tasks are linked to their compute
+profile’s <code>daemons set</code> span on the client side, and to each
+<code>daemon connect</code> span on the server side, showing exactly
+where each evaluation happened. When daemons are reset and the
+respective daemons disconnect, these events are recorded in new spans
+which link back to the original spans.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="status-and-error-tracking">4. Status and Error Tracking<a class="anchor" aria-label="anchor" href="#status-and-error-tracking"></a>
 </h3>
-<p><code>daemon-&gt;eval</code> spans automatically track the success or
-failure of operations:</p>
-<p><strong>Status Values</strong>:</p>
+<p><code>daemon eval</code> spans automatically track the success or
+failure of operations.</p>
+<p><strong>Status Values</strong></p>
 <ul>
 <li>
 <code>'ok'</code> or <code>'unset'</code> - completed
@@ -270,20 +254,20 @@ failed with an error</li>
 <h3 id="monitoring-and-observability">5. Monitoring and Observability<a class="anchor" aria-label="anchor" href="#monitoring-and-observability"></a>
 </h3>
 <p>The OpenTelemetry spans provide rich observability into mirai
-operations:</p>
-<p><strong>Performance Monitoring</strong>:</p>
+operations.</p>
+<p><strong>Performance Monitoring</strong></p>
 <ul>
 <li>Track task execution times from submission to completion</li>
 <li>Monitor daemon utilization and load balancing</li>
 <li>Identify bottlenecks in distributed computation</li>
 </ul>
-<p><strong>Error Analysis</strong>:</p>
+<p><strong>Error Analysis</strong></p>
 <ul>
 <li>Correlate errors with specific tasks and daemons</li>
 <li>Track error rates across different types of operations</li>
 <li>Debug issues in distributed environments</li>
 </ul>
-<p><strong>Distributed Tracing</strong>:</p>
+<p><strong>Distributed Tracing</strong></p>
 <ul>
 <li>Follow task execution across network boundaries</li>
 <li>Understand the complete lifecycle of async operations</li>
@@ -301,8 +285,8 @@ OpenTelemetry-compatible observability platform, including:</p>
 <li>Jaeger</li>
 <li>Any of those listed at <a href="https://otelsdk.r-lib.org/reference/collecting.html" class="external-link uri">https://otelsdk.r-lib.org/reference/collecting.html</a>.</li>
 </ul>
-<p>The tracer name used by mirai is <code>"org.r-lib.mirai"</code>,
-making it easy to filter and identify mirai-related traces.</p>
+<p>The tracer name used by mirai is <code>org.r-lib.mirai</code>, making
+it easy to filter and identify mirai-related traces.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
