@@ -2,11 +2,16 @@ otel_tracer_name <- "org.r-lib.mirai"
 otel_is_tracing <- FALSE
 otel_tracer <- NULL
 
+# nocov start
+# tested implicitly on package load
+
 otel_cache_tracer = function() {
   requireNamespace("otel", quietly = TRUE) || return()
   otel_tracer <<- otel::get_tracer(otel_tracer_name)
   otel_is_tracing <<- tracer_enabled(otel_tracer)
 }
+
+# nocov end
 
 otel_refresh_tracer <- function(pkgname) {
   requireNamespace("otel", quietly = TRUE) || return()

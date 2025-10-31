@@ -465,6 +465,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRA
     test_true(is_error_value(m2[]))
     test_false(daemons(0))
   })
+  mirai:::otel_refresh_tracer("mirai")
   traces <- record$traces
   test_equal(length(traces), 15L)
   test_true(startsWith(traces[[1L]]$name, "daemons set"))
