@@ -29,7 +29,7 @@ jobs:
 
       - name: Install additional packages
         run: |
-          pak::pak(c("otelsdk", "rlang"))
+          pak::pak(c("r-lib/otelsdk", "rlang"))
         shell: Rscript {0}
 
       - name: Test coverage
