@@ -50,9 +50,7 @@ as.promise.mirai <- function(x) {
       function(resolve, reject) {
         if (unresolved(x)) .keep(x, environment()) else resolve(.subset2(x, "value"))
       }
-    )$then(
-      onFulfilled = handle_fulfilled
-    )
+    )$then(onFulfilled = handle_fulfilled)
     `[[<-`(x, "promise", promise)
   }
 

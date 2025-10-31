@@ -39,84 +39,94 @@ No additional configuration is required - mirai will automatically detect the pr
 
 ### 3. Span Types and Hierarchy
 
-mirai creates several types of spans to represent different operations:
+mirai creates several types of spans to represent different operations.
 
 #### 3.1 Core Span Types
 
-**`daemons` / `daemons->reset`** - Root span for a compute profile
+**`daemons set` / `daemons reset`**
 
-- **Kind**: `internal`
-- **Attributes**:
+Root span for a compute profile, created when daemons are set, and when they are reset.
+The span name includes the URL for easy identification.
+
+- Kind: `internal`
+- Attributes:
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')
   + `mirai.n` (number of daemons)
   + `mirai.dispatcher` (true/false)
   + `mirai.compute` (profile name)
-- **Lifecycle**: Created when daemons are set, and when daemons are reset
 
-**`daemon` / `daemon->end`** - Individual daemon process span
+**`daemon connect` / `daemon disconnect`**
 
-- **Kind**: `internal` 
-- **Attributes**:
+Daemon process span, created when a daemon connects, and when it disconnects.
+The span name includes the URL for easy identification.
+
+- Kind: `internal` 
+- Attributes:
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')
-- **Lifecycle**: Created when a daemon process starts and when it ends
 
-**`mirai_map`** - Parallel map operation span
+**`mirai_map`**
 
-- **Kind**: `internal`
-- **Lifecycle**: Encompasses the entire map operation across multiple mirai tasks
+Parallel map operation span.
+Encompasses the entire map operation across multiple mirai tasks.
 
-**`mirai`** - Client-side async task span
+- Kind: `internal`
 
-- **Kind**: `client`
-- **Attributes**: `mirai.id` (unique task identifier)
-- **Lifecycle**: Created when `mirai()` is called, ended as soon as it returns
+**`mirai`**
 
-**`daemon->eval`** - Server-side task evaluation span
+Client-side async task span.
+Created when `mirai()` is called and ends as soon as it returns.
 
-- **Kind**: `server`
-- **Lifecycle**: Tracks for the duration of actual mirai evaluation on the daemon
+- Kind: `client`
+- Attributes: `mirai.id` (unique task identifier)
+
+**`daemon eval`**
+
+Server-side task evaluation span.
+Tracks for the duration of actual mirai evaluation on the daemon.
+
+- Kind: `server`
 
 #### 3.2 Span Relationships and Context Propagation
 
 The spans form a distributed structure that traces the complete lifecycle of async operations:
 
 ```
-daemons (compute profile - top level)
+daemons set (compute profile - top level)
 
-daemon (daemon process 1 - top level)
+daemon connect (daemon process 1 - top level)
 ...
-daemon (daemon process N - top level)
+daemon connect (daemon process N - top level)
 
-mirai_map (top level) ──link→ daemons
-├── mirai (task 1) ──link→ daemons
-│   └── daemon->eval ──link→ daemon
-├── mirai (task 2) ──link→ daemons
-│   └── daemon->eval ──link→ daemon
-└── mirai (task N) ──link→ daemons
-    └── daemon->eval ──link→ daemon
+mirai_map (top level) ──link→ daemons set
+├── mirai (task 1) ──link→ daemons set
+│   └── daemon eval ──link→ daemon connnect
+├── mirai (task 2) ──link→ daemons set
+│   └── daemon eval ──link→ daemon conenct
+└── mirai (task N) ──link→ daemons set
+    └── daemon eval ──link→ daemon connect
     
-mirai (top level) ──link→ daemons
-└── daemon->eval ──link→ daemon
+mirai (top level) ──link→ daemons set
+└── daemon eval ──link→ daemon connect
 
-daemon->end (daemon process 1) ──link→ daemon
+daemon disconnect (daemon process 1) ──link→ daemon connect
 ...
-daemon->end (daemon process N) ──link→ daemon
-daemons->reset ──link→ daemons
+daemon disconnect (daemon process N) ──link→ daemon connect
+daemons reset ──link→ daemons set
 ```
 
-**Context Propagation**: The context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
+**Context Propagation**: the context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
 
-**Span Links**: Tasks are linked to their compute profile's `daemons` span on the client side, and to each `daemon` span on the server side, showing exactly where each evaluation happened. When daemons are reset and the respective daemons terminated, these events are recorded in new spans which link back to the original spans.
+**Span Links**: tasks are linked to their compute profile's `daemons set` span on the client side, and to each `daemon connect` span on the server side, showing exactly where each evaluation happened. When daemons are reset and the respective daemons disconnect, these events are recorded in new spans which link back to the original spans.
 
 ### 4. Status and Error Tracking
 
-`daemon->eval` spans automatically track the success or failure of operations:
+`daemon eval` spans automatically track the success or failure of operations.
 
-**Status Values**:
+**Status Values**
 
 - `'ok'` or `'unset'` - completed successfully
 - `'error'`, with description `'miraiError'` - failed with an error
@@ -124,21 +134,21 @@ daemons->reset ──link→ daemons
 
 ### 5. Monitoring and Observability
 
-The OpenTelemetry spans provide rich observability into mirai operations:
+The OpenTelemetry spans provide rich observability into mirai operations.
 
-**Performance Monitoring**:
+**Performance Monitoring**
 
 - Track task execution times from submission to completion
 - Monitor daemon utilization and load balancing
 - Identify bottlenecks in distributed computation
 
-**Error Analysis**:
+**Error Analysis**
 
 - Correlate errors with specific tasks and daemons
 - Track error rates across different types of operations
 - Debug issues in distributed environments
 
-**Distributed Tracing**:
+**Distributed Tracing**
 
 - Follow task execution across network boundaries
 - Understand the complete lifecycle of async operations
@@ -153,4 +163,4 @@ mirai's OpenTelemetry implementation works seamlessly with any OpenTelemetry-com
 - Jaeger
 - Any of those listed at <https://otelsdk.r-lib.org/reference/collecting.html>.
 
-The tracer name used by mirai is `"org.r-lib.mirai"`, making it easy to filter and identify mirai-related traces.
+The tracer name used by mirai is `org.r-lib.mirai`, making it easy to filter and identify mirai-related traces.

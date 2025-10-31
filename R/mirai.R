@@ -155,8 +155,15 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
+  ctx_spn <- otel_active_span(
+    "mirai",
+    cond = length(envir),
+    links = list(daemons = envir[["otel_span"]]),
+    options = list(kind = "client"),
+    return_ctx = TRUE,
+    scope = environment()
+  )
   if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
-
   data <- list(
     ._expr_. = if (
       is.symbol(expr) &&
@@ -164,15 +171,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
       is.language(.expr)
     ) .expr else expr,
     ._globals_. = globals,
-    ._otel_. = if (otel_tracing && length(envir)) {
-      spn <- otel::start_local_active_span(
-        "mirai",
-        links = list(compute_profile = envir[["otel_span"]]),
-        options = list(kind = "client"),
-        tracer = otel_tracer
-      )
-      otel::pack_http_context()
-    }
+    ._otel_. = ctx_spn[[1L]]
   )
 
   if (length(.args)) {
@@ -195,7 +194,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
-  if (otel_tracing) spn$set_attribute("mirai.id", attr(req, "id"))
+  otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
   envir[["sync"]] && evaluate_sync(envir)
   invisible(req)
 }

@@ -45,10 +45,7 @@
 # tested implicitly
 
 .onLoad <- function(libname, pkgname) {
-  otel_tracing <<- requireNamespace("otel", quietly = TRUE) && {
-    otel_tracer <<- otel::get_tracer(name = otel_tracer_name)
-    .subset2(otel_tracer, "is_enabled")()
-  }
+  otel_cache_tracer()
   cli_enabled <<- requireNamespace("cli", quietly = TRUE)
   switch(
     Sys.info()[["sysname"]],
@@ -69,11 +66,13 @@
 
 # nocov end
 
+cli_enabled <- FALSE
+.command <- NULL
+.urlscheme <- NULL
+
 . <- `[[<-`(new.env(), "cp", "default")
 .. <- new.env()
 .opts <- list2env(list(.flat = .flat, .progress = .progress, .stop = .stop))
-.command <- NULL
-.urlscheme <- NULL
 .limit_long <- 10000L
 .limit_long_secs <- 10L
 .limit_short <- 5000L
@@ -99,8 +98,3 @@
   ),
   hash = TRUE
 )
-
-cli_enabled <- FALSE
-otel_tracing <- FALSE
-otel_tracer <- NULL
-otel_tracer_name <- "org.r-lib.mirai"
