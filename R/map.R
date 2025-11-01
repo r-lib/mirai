@@ -31,7 +31,7 @@
 #'   mirai. Either a function, supplied to the `onFulfilled` argument of
 #'   `promises::then()` or a list of 2 functions, supplied respectively to
 #'   `onFulfilled` and `onRejected` of `promises::then()`. Using this argument
-#'   requires the \CRANpkg{promises} package.
+#'   requires the \pkg{promises} package.
 #' @inheritParams mirai
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
@@ -47,9 +47,9 @@
 #' has been returned or results are of differing type.
 #'
 #' `x[.progress]` collects map results whilst showing a progress bar from
-#' the \CRANpkg{cli} package, if installed, with completion percentage and ETA,
-#' or else a simple text progress indicator. Note: if the map operation
-#' completes too quickly then the progress bar may not show at all.
+#' the \pkg{cli} package, if installed, with completion percentage and ETA, or
+#' else a simple text progress indicator. Note: if the map operation completes
+#' too quickly then the progress bar may not show at all.
 #'
 #' `x[.stop]` collects map results applying early stopping, which stops at
 #' the first failure and cancels remaining operations.

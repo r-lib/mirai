@@ -481,7 +481,7 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 #' if the \pkg{cli} package is available.
 #'
 #' @inheritParams mirai
-#' @param call (only used if the \CRANpkg{cli} package is installed) the
+#' @param call (only used if the \pkg{cli} package is installed) the
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.

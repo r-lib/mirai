@@ -23,7 +23,7 @@ list.}
 mirai. Either a function, supplied to the \code{onFulfilled} argument of
 \code{promises::then()} or a list of 2 functions, supplied respectively to
 \code{onFulfilled} and \code{onRejected} of \code{promises::then()}. Using this argument
-requires the \CRANpkg{promises} package.}
+requires the \pkg{promises} package.}
 
 \item{.compute}{character value for the compute profile to use (each has its
 own independent set of daemons), or NULL to use the 'default' profile.}
@@ -62,9 +62,9 @@ they are of the same type to avoid coercion. Note: errors if an 'errorValue'
 has been returned or results are of differing type.
 
 \code{x[.progress]} collects map results whilst showing a progress bar from
-the \CRANpkg{cli} package, if installed, with completion percentage and ETA,
-or else a simple text progress indicator. Note: if the map operation
-completes too quickly then the progress bar may not show at all.
+the \pkg{cli} package, if installed, with completion percentage and ETA, or
+else a simple text progress indicator. Note: if the map operation completes
+too quickly then the progress bar may not show at all.
 
 \code{x[.stop]} collects map results applying early stopping, which stops at
 the first failure and cancels remaining operations.
