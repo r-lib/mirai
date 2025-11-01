@@ -62,7 +62,7 @@ otel_set_span_error <- function(span, type) {
   span$set_status("error", type)
 }
 
-make_daemon_attrs <- function(url) {
+otel_daemon_attrs <- function(url) {
   purl <- parse_url(url)
   list(
     server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
@@ -71,14 +71,13 @@ make_daemon_attrs <- function(url) {
   )
 }
 
-make_daemons_attrs <- function(envir) {
-  purl <- parse_url(envir[["url"]])
-  list(
-    server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
-    server.port = if (nzchar(purl[["port"]])) as.integer(purl[["port"]]) else integer(),
-    network.transport = purl[["scheme"]],
-    mirai.n = envir[["n"]],
-    mirai.dispatcher = !is.null(envir[["dispatcher"]]),
-    mirai.compute = envir[["compute"]]
+otel_daemons_attrs <- function(envir) {
+  c(
+    otel_daemon_attrs(envir[["url"]]),
+    list(
+      mirai.n = envir[["n"]],
+      mirai.dispatcher = !is.null(envir[["dispatcher"]]),
+      mirai.compute = envir[["compute"]]
+    )
   )
 }

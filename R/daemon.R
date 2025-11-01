@@ -92,7 +92,7 @@ daemon <- function(
 ) {
   dmnspn <- otel_active_span(
     sprintf("daemon connect %s", url),
-    attributes = make_daemon_attrs(url)
+    attributes = otel_daemon_attrs(url)
   )
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
@@ -176,7 +176,7 @@ daemon <- function(
   }
   otel_active_span(
     sprintf("daemon disconnect %s", url),
-    attributes = make_daemon_attrs(url),
+    attributes = otel_daemon_attrs(url),
     links = list(daemon = dmnspn)
   )
   invisible(xc)

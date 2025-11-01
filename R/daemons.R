@@ -284,7 +284,7 @@ daemons <- function(
       reap(envir[["sock"]])
       otel_active_span(
         sprintf("daemons reset %s", envir[["url"]]),
-        attributes = make_daemons_attrs(envir),
+        attributes = otel_daemons_attrs(envir),
         links = list(daemons = envir[["otel_span"]])
       )
       ..[[.compute]] <- NULL -> envir
@@ -323,7 +323,7 @@ daemons <- function(
 
   `[[<-`(envir, "otel_span", otel_active_span(
     sprintf("daemons set %s", envir[["url"]]),
-    attributes = make_daemons_attrs(envir)
+    attributes = otel_daemons_attrs(envir)
   ))
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
