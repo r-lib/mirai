@@ -380,8 +380,7 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
 #'
 cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript") {
   command <- command[[1L]]
-  options <- sub("^[ \t]+", "", options, perl = TRUE)
-  options <- gsub("\n[ \t]+", "\n", options, perl = TRUE)
+  options <- gsub("^[ \t]+|(?<=\n)[ \t]+", "", options, perl = TRUE)
   args <- c(
     sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n", command, options),
     ".",
