@@ -823,24 +823,11 @@ dispatcher_status <- function(envir) {
 }
 
 stop_d <- function(.compute, call) {
-  cli_enabled || stop(
-    if (is.character(.compute)) {
-      sprintf("No daemons set for the '%1$s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%1$s\") to set 6 local daemons.", .compute)
-    } else {
-      "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons."
-    },
-    call. = FALSE
-  )
-  cli::cli_abort(
-    if (is.character(.compute)) c(
-      sprintf("No daemons set for the '%s' compute profile.", .compute),
-      sprintf("Use e.g. {.run mirai::daemons(6, .compute = \"%s\")} to set 6 local daemons.", .compute)
-    ) else c(
-      "No daemons set.",
-      "Use e.g. {.run mirai::daemons(6)} to set 6 local daemons."
-    ),
-    call = call
-  )
+  profile <- is.character(.compute)
+  msg <- if (profile) sprintf("No daemons set for the '%s' compute profile.", .compute) else "No daemons set."
+  try <- if (profile) sprintf("mirai::daemons(6, .compute = \"%s\")", .compute) else "mirai::daemons(6)"
+  cli_enabled || stop(sprintf("%s\nUse e.g. %s to set 6 local daemons.", msg, try), call. = FALSE)
+  cli::cli_abort(c(msg, sprintf("Use e.g. {.run %s} to set 6 local daemons.", try)), call = call)
 }
 
 ._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))
