@@ -284,7 +284,7 @@ daemons <- function(
       reap(envir[["sock"]])
       otel_active_span(
         sprintf("daemons reset %s", envir[["url"]]),
-        attributes = make_daemons_attrs(envir),
+        attributes = otel_daemons_attrs(envir),
         links = list(daemons = envir[["otel_span"]])
       )
       ..[[.compute]] <- NULL -> envir
@@ -323,7 +323,7 @@ daemons <- function(
 
   `[[<-`(envir, "otel_span", otel_active_span(
     sprintf("daemons set %s", envir[["url"]]),
-    attributes = make_daemons_attrs(envir)
+    attributes = otel_daemons_attrs(envir)
   ))
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
@@ -476,27 +476,27 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 
 #' Require Daemons
 #'
-#' Returns TRUE only if daemons are set, otherwise produces an informative
-#' error for the user to set daemons, with a clickable function link if the
-#' \CRANpkg{cli} package is available.
+#' Returns `TRUE` invisibly only if daemons are set, otherwise produces an
+#' informative error for the user to set daemons, with a clickable function link
+#' if the \pkg{cli} package is available.
 #'
 #' @inheritParams mirai
-#' @param call (only used if the \CRANpkg{cli} package is installed) the
+#' @param call (only used if the \pkg{cli} package is installed) the
 #'   execution environment of a currently running function, e.g.
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.
 #'
-#' @return Logical `TRUE`, or else errors.
+#' @return Invisibly, logical `TRUE`, or else errors.
 #'
-#' @examplesIf interactive()
-#' daemons(1)
-#' require_daemons()
+#' @examples
+#' daemons(sync = TRUE)
+#' (require_daemons())
 #' daemons(0)
 #'
 #' @export
 #'
 require_daemons <- function(.compute = NULL, call = environment()) {
-  daemons_set(.compute = .compute) || stop_d(.compute, call)
+  invisible(daemons_set(.compute = .compute) || stop_d(.compute, call))
 }
 
 #' With Daemons
@@ -630,16 +630,15 @@ defer <- function(expr, envir) {
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
-configure_tls <- function(url, tls, pass, envir, config = TRUE) {
+configure_tls <- function(url, tls, pass, envir) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
-  if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
+  if ((startsWith(sch, "tls") || startsWith(sch, "wss")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
     `[[<-`(envir, "tls", cert[["client"]])
     tls <- cert[["server"]]
   }
-  cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
-  list(tls, cfg)
+  list(tls, if (length(tls)) tls_config(server = tls, pass = pass))
 }
 
 create_profile <- function(envir, .compute, n, dots, sync) {
@@ -668,9 +667,7 @@ req_socket <- function(url, tls = NULL) {
 parse_dots <- function(envir, ...) {
   ...length() || return("")
   dots <- list(...)
-  if (any(names(dots) == "tlscert")) {
-    `[[<-`(envir, "tls", dots[["tlscert"]])
-  }
+  if (any(names(dots) == "tlscert")) `[[<-`(envir, "tls", dots[["tlscert"]])
   dots <- dots[as.logical(lapply(dots, function(x) is.logical(x) || is.numeric(x)))]
   length(dots) || return("")
   sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
@@ -823,24 +820,11 @@ dispatcher_status <- function(envir) {
 }
 
 stop_d <- function(.compute, call) {
-  cli_enabled || stop(
-    if (is.character(.compute)) {
-      sprintf("No daemons set for the '%1$s' compute profile.\nUse e.g. mirai::daemons(6, .compute = \"%1$s\") to set 6 local daemons.", .compute)
-    } else {
-      "No daemons set.\nUse e.g. mirai::daemons(6) to set 6 local daemons."
-    },
-    call. = FALSE
-  )
-  cli::cli_abort(
-    if (is.character(.compute)) c(
-      sprintf("No daemons set for the '%s' compute profile.", .compute),
-      sprintf("Use e.g. {.run mirai::daemons(6, .compute = \"%s\")} to set 6 local daemons.", .compute)
-    ) else c(
-      "No daemons set.",
-      "Use e.g. {.run mirai::daemons(6)} to set 6 local daemons."
-    ),
-    call = call
-  )
+  profile <- is.character(.compute)
+  msg <- if (profile) sprintf("No daemons set for the '%s' compute profile.", .compute) else "No daemons set."
+  try <- if (profile) sprintf("mirai::daemons(6, .compute = \"%s\")", .compute) else "mirai::daemons(6)"
+  cli_enabled || stop(sprintf("%s\nUse e.g. %s to set 6 local daemons.", msg, try), call. = FALSE)
+  cli::cli_abort(c(msg, sprintf("Use e.g. {.run %s} to set 6 local daemons.", try)), call = call)
 }
 
 ._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))

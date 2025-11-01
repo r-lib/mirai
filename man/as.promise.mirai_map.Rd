@@ -19,7 +19,7 @@ Creates a 'promise' from a 'mirai_map'.
 This function is an S3 method for the generic \code{as.promise()} for class
 'mirai_map'.
 
-Requires the \CRANpkg{promises} package.
+Requires the \pkg{promises} package.
 
 Allows a 'mirai_map' to be used with the promise pipe \verb{\%...>\%}, which
 schedules a function to run upon resolution of the entire 'mirai_map'.

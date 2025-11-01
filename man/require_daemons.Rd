@@ -10,23 +10,22 @@ require_daemons(.compute = NULL, call = environment())
 \item{.compute}{character value for the compute profile to use (each has its
 own independent set of daemons), or NULL to use the 'default' profile.}
 
-\item{call}{(only used if the \CRANpkg{cli} package is installed) the
+\item{call}{(only used if the \pkg{cli} package is installed) the
 execution environment of a currently running function, e.g.
 \code{environment()}. The function will be mentioned in error messages as the
 source of the error.}
 }
 \value{
-Logical \code{TRUE}, or else errors.
+Invisibly, logical \code{TRUE}, or else errors.
 }
 \description{
-Returns TRUE only if daemons are set, otherwise produces an informative
-error for the user to set daemons, with a clickable function link if the
-\CRANpkg{cli} package is available.
+Returns \code{TRUE} invisibly only if daemons are set, otherwise produces an
+informative error for the user to set daemons, with a clickable function link
+if the \pkg{cli} package is available.
 }
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-daemons(1)
-require_daemons()
+daemons(sync = TRUE)
+(require_daemons())
 daemons(0)
-\dontshow{\}) # examplesIf}
+
 }

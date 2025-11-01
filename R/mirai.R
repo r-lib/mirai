@@ -685,19 +685,16 @@ deparse_safe <- function(x) {
 mk_interrupt_error <- function() .miraiInterrupt
 
 mk_mirai_error <- function(cnd, sc) {
+  eval_call <- "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
   cnd[["condition.class"]] <- class(cnd)
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
   call <- deparse_safe(.subset2(cnd, "call"))
-  msg <- if (
-    is.null(call) || call == "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
-  ) {
+  msg <- if (is.null(call) || call == eval_call) {
     sprintf("Error: %s", .subset2(cnd, "message"))
   } else {
     sprintf("Error in %s: %s", call, .subset2(cnd, "message"))
   }
-  idx <- max(which(as.logical(lapply(
-    sc, `==`, "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
-  ))))
+  idx <- max(which(as.logical(lapply(sc, `==`, eval_call))))
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
   if (sc[[1L]][[1L]] == ".handleSimpleError") sc <- sc[-1L]
   cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)

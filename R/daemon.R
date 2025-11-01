@@ -92,7 +92,7 @@ daemon <- function(
 ) {
   dmnspn <- otel_active_span(
     sprintf("daemon connect %s", url),
-    attributes = make_daemon_attrs(url)
+    attributes = otel_daemon_attrs(url)
   )
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
@@ -176,7 +176,7 @@ daemon <- function(
   }
   otel_active_span(
     sprintf("daemon disconnect %s", url),
-    attributes = make_daemon_attrs(url),
+    attributes = otel_daemon_attrs(url),
     links = list(daemon = dmnspn)
   )
   invisible(xc)
@@ -262,8 +262,8 @@ do_cleanup <- function() {
 snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
 
 flag_value_auto <- function(autoexit) {
-  (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit) ||
-    is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
+  (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit)
+  is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
 }
 
 flag_value <- function() isNamespaceLoaded("covr") || return(tools::SIGTERM)

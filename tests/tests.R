@@ -172,7 +172,8 @@ connection && {
 connection && {
   Sys.sleep(1L)
   m <- with(daemons(1, dispatcher = FALSE, .compute = "ml"), {
-    if (is.null(tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) NULL)))
+    if (tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) TRUE) &&
+        tryCatch(mirai_map(list(1, "a", 2), sum)[.flat], error = function(e) TRUE))
       mirai_map(1:3, rnorm, .args = list(mean = 20, 2))[]
   })
   test_false(is_mirai_map(m))

@@ -31,7 +31,7 @@
 #'   mirai. Either a function, supplied to the `onFulfilled` argument of
 #'   `promises::then()` or a list of 2 functions, supplied respectively to
 #'   `onFulfilled` and `onRejected` of `promises::then()`. Using this argument
-#'   requires the \CRANpkg{promises} package.
+#'   requires the \pkg{promises} package.
 #' @inheritParams mirai
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
@@ -47,9 +47,9 @@
 #' has been returned or results are of differing type.
 #'
 #' `x[.progress]` collects map results whilst showing a progress bar from
-#' the \CRANpkg{cli} package, if installed, with completion percentage and ETA,
-#' or else a simple text progress indicator. Note: if the map operation
-#' completes too quickly then the progress bar may not show at all.
+#' the \pkg{cli} package, if installed, with completion percentage and ETA, or
+#' else a simple text progress indicator. Note: if the map operation completes
+#' too quickly then the progress bar may not show at all.
 #'
 #' `x[.stop]` collects map results applying early stopping, which stops at
 #' the first failure and cancels remaining operations.
@@ -247,22 +247,7 @@ print.mirai_map <- function(x, ...) {
     } else if (i == 1L) {
       typ <<- typeof(xi)
     } else {
-      is_error_value(xi) && {
-        stop_mirai(x)
-        cli_enabled ||
-          stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
-        iname <- names(x)[i]
-        cli::cli_abort(
-          c(
-            i = "In index: {i}.",
-            i = if (length(iname) && nzchar(iname)) "With name: {iname}."
-          ),
-          location = i,
-          name = iname,
-          parent = `class<-`(attributes(xi), c("error", "condition")),
-          call = quote(mirai_map())
-        )
-      }
+      is_error_value(xi) && stop_m(x, i, xi)
       typeof(xi) != typ && {
         stop_mirai(x)
         cli_enabled || stop(
@@ -308,26 +293,7 @@ print.mirai_map <- function(x, ...) {
 #' @rdname dot-flat
 #' @export
 #'
-.stop <- compiler::compile(
-  quote(
-    is_error_value(xi) && {
-      stop_mirai(x)
-      cli_enabled ||
-        stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
-      iname <- names(x)[i]
-      cli::cli_abort(
-        c(
-          i = "In index: {i}.",
-          i = if (length(iname) && nzchar(iname)) "With name: {iname}."
-        ),
-        location = i,
-        name = iname,
-        parent = `class<-`(attributes(xi), c("error", "condition")),
-        call = quote(mirai_map())
-      )
-    }
-  )
-)
+.stop <- compiler::compile(quote(is_error_value(xi) && stop_m(x, i, xi)))
 
 # internals --------------------------------------------------------------------
 
@@ -345,4 +311,17 @@ mmap <- function(x, dots) {
   out <- `names<-`(lapply(seq_len(xlen), collect_map), names(x))
   xi && return(unlist(out, recursive = FALSE))
   out
+}
+
+stop_m <- function(x, i, xi) {
+  stop_mirai(x)
+  cli_enabled || stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
+  name <- names(x)[i]
+  cli::cli_abort(
+    c(i = "In index: {i}.", i = if (length(name) && nzchar(name)) "With name: {name}."),
+    location = i,
+    name = name,
+    parent = `class<-`(attributes(xi), c("error", "condition")),
+    call = quote(mirai_map())
+  )
 }
