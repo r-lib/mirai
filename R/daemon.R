@@ -262,7 +262,7 @@ do_cleanup <- function() {
 snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
 
 flag_value_auto <- function(autoexit) {
-  (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit)
+  isFALSE(autoexit) && return(autoexit)
   is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
 }
 

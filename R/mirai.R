@@ -674,7 +674,7 @@ evaluate_sync <- function(envir) {
     rm(list = names(globalenv()), envir = globalenv())
     list2env(ge, envir = globalenv())
   })
-  daemon(url = envir[["url"]], dispatcher = FALSE, output = TRUE, maxtasks = 1L)
+  daemon(url = envir[["url"]], autoexit = FALSE, dispatcher = FALSE, output = TRUE, maxtasks = 1L)
 }
 
 deparse_safe <- function(x) {
