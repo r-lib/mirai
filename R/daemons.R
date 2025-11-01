@@ -630,16 +630,15 @@ defer <- function(expr, envir) {
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
-configure_tls <- function(url, tls, pass, envir, config = TRUE) {
+configure_tls <- function(url, tls, pass, envir) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
-  if ((startsWith(sch, "wss") || startsWith(sch, "tls")) && is.null(tls)) {
+  if ((startsWith(sch, "tls") || startsWith(sch, "wss")) && is.null(tls)) {
     cert <- write_cert(cn = purl[["hostname"]])
     `[[<-`(envir, "tls", cert[["client"]])
     tls <- cert[["server"]]
   }
-  cfg <- if (length(tls)) tls_config(server = tls, pass = pass)
-  list(tls, cfg)
+  list(tls, if (length(tls)) tls_config(server = tls, pass = pass))
 }
 
 create_profile <- function(envir, .compute, n, dots, sync) {
