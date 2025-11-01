@@ -476,9 +476,9 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 
 #' Require Daemons
 #'
-#' Returns TRUE only if daemons are set, otherwise produces an informative
-#' error for the user to set daemons, with a clickable function link if the
-#' \CRANpkg{cli} package is available.
+#' Returns `TRUE` invisibly only if daemons are set, otherwise produces an
+#' informative error for the user to set daemons, with a clickable function link
+#' if the \pkg{cli} package is available.
 #'
 #' @inheritParams mirai
 #' @param call (only used if the \CRANpkg{cli} package is installed) the
@@ -486,17 +486,17 @@ daemons_set <- function(.compute = NULL) !is.null(compute_env(.compute))
 #'   `environment()`. The function will be mentioned in error messages as the
 #'   source of the error.
 #'
-#' @return Logical `TRUE`, or else errors.
+#' @return Invisibly, logical `TRUE`, or else errors.
 #'
-#' @examplesIf interactive()
-#' daemons(1)
-#' require_daemons()
+#' @examples
+#' daemons(sync = TRUE)
+#' (require_daemons())
 #' daemons(0)
 #'
 #' @export
 #'
 require_daemons <- function(.compute = NULL, call = environment()) {
-  daemons_set(.compute = .compute) || stop_d(.compute, call)
+  invisible(daemons_set(.compute = .compute) || stop_d(.compute, call))
 }
 
 #' With Daemons
