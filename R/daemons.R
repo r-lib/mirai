@@ -668,9 +668,7 @@ req_socket <- function(url, tls = NULL) {
 parse_dots <- function(envir, ...) {
   ...length() || return("")
   dots <- list(...)
-  if (any(names(dots) == "tlscert")) {
-    `[[<-`(envir, "tls", dots[["tlscert"]])
-  }
+  if (any(names(dots) == "tlscert")) `[[<-`(envir, "tls", dots[["tlscert"]])
   dots <- dots[as.logical(lapply(dots, function(x) is.logical(x) || is.numeric(x)))]
   length(dots) || return("")
   sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
