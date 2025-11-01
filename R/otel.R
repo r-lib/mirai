@@ -15,18 +15,19 @@ otel_cache_tracer = function() {
 
 otel_refresh_tracer <- function(pkgname) {
   requireNamespace("otel", quietly = TRUE) || return()
-  ns <- getNamespace(pkgname)
-  do.call(unlockBinding, list("otel_is_tracing", ns))
-  do.call(unlockBinding, list("otel_tracer", ns))
-  otel_tracer <- otel::get_tracer()
-  `[[<-`(ns, "otel_is_tracing", tracer_enabled(otel_tracer))
-  `[[<-`(ns, "otel_tracer", otel_tracer)
-  lockBinding("otel_is_tracing", ns)
-  lockBinding("otel_tracer", ns)
+  tracer <- otel::get_tracer()
+  modify_binding(getNamespace(pkgname), c("otel_tracer", "otel_is_tracing"), list(tracer, tracer_enabled(tracer))
+  )
 }
 
 tracer_enabled <- function(tracer) {
   .subset2(tracer, "is_enabled")()
+}
+
+modify_binding <- function(env, name, object) {
+  lapply(name, unlockBinding, env)
+  list2env(`names<-`(object, name), envir = env)
+  lapply(name, lockBinding, env)
 }
 
 otel_active_span <- function(
