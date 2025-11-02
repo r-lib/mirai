@@ -263,7 +263,8 @@ daemons <- function(
       } else {
         create_sock(envir, url, cfg[[2L]])
       }
-      create_profile(envir, .compute, 1L, dots, sync)
+      if (missing(n)) n <- 1L
+      create_profile(envir, .compute, n, dots, sync)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
@@ -285,7 +286,7 @@ daemons <- function(
       otel_active_span(
         sprintf("daemons reset %s", envir[["url"]]),
         attributes = otel_daemons_attrs(envir),
-        links = list(daemons = envir[["otel_span"]])
+        links = if (length(envir[["otel_span"]])) list(daemons = envir[["otel_span"]])
       )
       ..[[.compute]] <- NULL -> envir
       msleep(.sleep_daemons)
@@ -749,11 +750,11 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
       launch_daemon(launch_args)
     }
   }
-  req <- recv_aio(sock, mode = 2L, cv = cv)
+  raio <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
 
-  `[[<-`(envir, "url", collect_aio(req))
+  `[[<-`(envir, "url", collect_aio(raio))
 }
 
 launch_daemons <- function(seq, dots, envir) {
@@ -812,11 +813,7 @@ dispatcher_status <- function(envir) {
   list(
     connections = status[1L],
     daemons = envir[["url"]],
-    mirai = c(
-      awaiting = status[3L],
-      executing = status[4L],
-      completed = status[5L]
-    )
+    mirai = c(awaiting = status[3L], executing = status[4L], completed = status[5L])
   )
 }
 
