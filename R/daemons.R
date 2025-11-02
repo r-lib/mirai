@@ -286,7 +286,7 @@ daemons <- function(
       otel_active_span(
         sprintf("daemons reset %s", envir[["url"]]),
         attributes = otel_daemons_attrs(envir),
-        links = list(daemons = envir[["otel_span"]])
+        links = if (length(envir[["otel_span"]])) list(daemons = envir[["otel_span"]])
       )
       ..[[.compute]] <- NULL -> envir
       msleep(.sleep_daemons)
