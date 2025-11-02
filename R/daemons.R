@@ -750,11 +750,11 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
       launch_daemon(launch_args)
     }
   }
-  req <- recv_aio(sock, mode = 2L, cv = cv)
+  raio <- recv_aio(sock, mode = 2L, cv = cv)
   while(!until(cv, .limit_long))
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
 
-  `[[<-`(envir, "url", collect_aio(req))
+  `[[<-`(envir, "url", collect_aio(raio))
 }
 
 launch_daemons <- function(seq, dots, envir) {
@@ -813,11 +813,7 @@ dispatcher_status <- function(envir) {
   list(
     connections = status[1L],
     daemons = envir[["url"]],
-    mirai = c(
-      awaiting = status[3L],
-      executing = status[4L],
-      completed = status[5L]
-    )
+    mirai = c(awaiting = status[3L], executing = status[4L], completed = status[5L])
   )
 }
 
