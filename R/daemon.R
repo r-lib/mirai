@@ -101,7 +101,7 @@ daemon <- function(
     `[[<-`(., "sock", NULL)
   })
   `[[<-`(., "sock", sock)
-  pipe_notify(sock, cv, remove = TRUE, flag = flag_value_auto(autoexit))
+  pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
   if (length(tlscert)) tlscert <- tls_config(client = tlscert)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tlscert)
 
@@ -197,7 +197,7 @@ daemon <- function(
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
+  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
   .mark()
@@ -261,9 +261,7 @@ do_cleanup <- function() {
 
 snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
 
-flag_value_auto <- function(autoexit) {
-  (isFALSE(autoexit) || isNamespace(topenv(parent.frame(), NULL))) && return(autoexit)
-  is.na(autoexit) || isNamespaceLoaded("covr") || return(tools::SIGTERM)
+flag_value <- function(autoexit) {
+  is.na(autoexit) && return(TRUE)
+  autoexit && return(tools::SIGTERM)
 }
-
-flag_value <- function() isNamespaceLoaded("covr") || return(tools::SIGTERM)

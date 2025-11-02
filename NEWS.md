@@ -5,6 +5,7 @@
 * OpenTelemetry span names and attributes have been upgraded to be more informative and better follow semantic conventions (#481).
 * `require_daemons()` now returns invisibly.
 * Use of `require_daemons()` with `.compute` as the first argument (which produced a warning) no longer works.
+* Requires nanonext >= [1.7.1.9001].
 
 # mirai 2.5.1
 

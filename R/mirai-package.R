@@ -76,6 +76,8 @@ cli_enabled <- FALSE
 .limit_long <- 10000L
 .limit_long_secs <- 10L
 .limit_short <- 5000L
+.sleep_daemons <- 200L
+.sleep_signal <- 10L
 
 ._ <- list2env(
   list(
