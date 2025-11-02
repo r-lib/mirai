@@ -55,10 +55,17 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>OpenTelemetry span names and attributes have been upgraded to be more informative and better follow semantic conventions (<a href="https://github.com/r-lib/mirai/issues/481" class="external-link">#481</a>).</li>
+<ul><li>The default daemons <code>autoexit = TRUE</code> behaviour has been updated for OpenTelemetry compatibility (<a href="https://github.com/r-lib/mirai/issues/500" class="external-link">#500</a>).
+<ul><li>Introduces a 200ms grace period for processes to exit gracefully before a forceful termination.</li>
+<li>The behavioural changes announced in mirai 2.4.0 are now enforced for all daemon types - eliminating a bug that previously caused this to only be applied to ephemeral daemons.</li>
+</ul></li>
+<li>OpenTelemetry span names and attributes have been upgraded to be more informative and better follow semantic conventions (<a href="https://github.com/r-lib/mirai/issues/481" class="external-link">#481</a>).</li>
 <li>
-<code><a href="../reference/require_daemons.html">require_daemons()</a></code> now returns invisibly.</li>
-<li>Use of <code><a href="../reference/require_daemons.html">require_daemons()</a></code> with <code>.compute</code> as the first argument (which produced a warning) no longer works.</li>
+<code><a href="../reference/require_daemons.html">require_daemons()</a></code> updates:
+<ul><li>Function now returns invisibly as intended.</li>
+<li>Using with <code>.compute</code> as the first argument (which produced a warning) no longer works.</li>
+</ul></li>
+<li>Requires nanonext &gt;= [1.7.1.9001].</li>
 </ul></div>
 </div>
     <div class="section level2">
