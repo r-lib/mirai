@@ -288,6 +288,7 @@ daemons <- function(
         links = list(daemons = envir[["otel_span"]])
       )
       ..[[.compute]] <- NULL -> envir
+      msleep(.sleep_daemons)
       return(invisible(FALSE))
     }
     res <- if (is.null(envir)) {
@@ -801,7 +802,7 @@ send_signal <- function(envir) {
   }
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
-    msleep(10L)
+    msleep(.sleep_signal)
   }
 }
 

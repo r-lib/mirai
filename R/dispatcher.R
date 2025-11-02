@@ -31,7 +31,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))
-  pipe_notify(sock, cv, remove = TRUE, flag = flag_value())
+  pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
 
   psock <- socket("poly")
   on.exit(reap(psock), add = TRUE, after = TRUE)

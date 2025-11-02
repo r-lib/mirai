@@ -461,7 +461,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRA
     mp <- mirai_map(1:3, rnorm)
     m1 <- mirai(stop("error"))
     m2 <- mirai(getNamespace("rlang")$interrupt())
-    test_equal(daemon(url = url, maxtasks = 5L, dispatcher = FALSE), 3L)
+    test_equal(daemon(url = url, autoexit = FALSE, maxtasks = 5L, dispatcher = FALSE), 3L)
     test_true(is_error_value(m2[]))
     test_false(daemons(0))
   })
