@@ -92,19 +92,19 @@ distributes tasks to all available daemons.
 
 
 The \code{autoexit} argument governs persistence settings for the daemon. The
-default \code{TRUE} ensures that it will exit as soon as its socket connection
-with the host process drops. A 200ms grace period is given for the daemon
-process to exit gracefully, after which it will be forcefully terminated.
+default \code{TRUE} ensures that it exits as soon as its socket connection with
+the host process drops. A 200ms grace period allows the daemon process to
+exit gracefully, after which it will be forcefully terminated.
 
-Supplying \code{NA} allows a daemon to exit cleanly once its socket connection
-with the host process drops, as soon as it has finished any task that is
-currently in progress. This may be useful if the daemon is performing some
-side effect such as writing files to disk, and the result is not required in
-the host process.
+Supplying \code{NA} ensures that a daemon always exits cleanly after its socket
+connection with the host drops. This means that it can temporarily outlive
+this connection, but only to complete any task that is currently in progress.
+This can be useful if the daemon is performing a side effect such as writing
+files to disk, with the result not being required back in the host process.
 
-Setting to FALSE allows the daemon to persist indefinitely even when there is
-no longer a socket connection. This allows a host session to end and a new
-session to connect at the URL where the daemon is dialled in. Daemons must be
+Setting to \code{FALSE} allows the daemon to persist indefinitely even when there
+is no longer a socket connection. This allows a host session to end and a new
+session to connect at the URL where the daemon is dialed in. Daemons must be
 terminated with \code{daemons(NULL)} in this case instead of \code{daemons(0)}. This
 sends explicit exit signals to all connected daemons.
 }
