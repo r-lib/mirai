@@ -31,12 +31,11 @@ For non-dispatcher daemons: only 'connections' will be available and the
 other values will be \code{NA}.
 }
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 info()
-daemons(1)
+daemons(sync = TRUE)
 info()
 daemons(0)
-\dontshow{\}) # examplesIf}
+
 }
 \seealso{
 \code{\link[=status]{status()}} for more verbose status information.

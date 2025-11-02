@@ -72,8 +72,7 @@ being found.
 }
 
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-daemons(1)
+daemons(sync = TRUE)
 
 # export common data by a super-assignment expression:
 everywhere(y <<- 3)
@@ -93,10 +92,10 @@ collect_mirai(mp)
 daemons(0)
 
 # loading a package on all daemons
-daemons(1, dispatcher = FALSE)
+daemons(sync = TRUE)
 everywhere(library(parallel))
 m <- mirai("package:parallel" \%in\% search())
 m[]
 daemons(0)
-\dontshow{\}) # examplesIf}
+
 }

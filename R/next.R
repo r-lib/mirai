@@ -20,8 +20,8 @@
 #'   to the `rs` argument of [daemon()]), or else NULL if a stream has not yet
 #'   been created.
 #'
-#' @examplesIf interactive()
-#' daemons(1L)
+#' @examples
+#' daemons(sync = TRUE)
 #' nextstream()
 #' nextstream()
 #'

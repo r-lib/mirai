@@ -228,8 +228,8 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #'
 #' @inheritSection mirai Evaluation
 #'
-#' @examplesIf interactive()
-#' daemons(1)
+#' @examples
+#' daemons(sync = TRUE)
 #'
 #' # export common data by a super-assignment expression:
 #' everywhere(y <<- 3)
@@ -249,7 +249,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' daemons(0)
 #'
 #' # loading a package on all daemons
-#' daemons(1, dispatcher = FALSE)
+#' daemons(sync = TRUE)
 #' everywhere(library(parallel))
 #' m <- mirai("package:parallel" %in% search())
 #' m[]

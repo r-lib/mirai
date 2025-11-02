@@ -437,9 +437,9 @@ status <- function(.compute = NULL) {
 #'
 #' @seealso [status()] for more verbose status information.
 #'
-#' @examplesIf interactive()
+#' @examples
 #' info()
-#' daemons(1)
+#' daemons(sync = TRUE)
 #' info()
 #' daemons(0)
 #'
@@ -466,9 +466,9 @@ info <- function(.compute = NULL) {
 #'
 #' @return Logical `TRUE` or `FALSE`.
 #'
-#' @examplesIf interactive()
+#' @examples
 #' daemons_set()
-#' daemons(1)
+#' daemons(sync = TRUE)
 #' daemons_set()
 #' daemons(0)
 #'
