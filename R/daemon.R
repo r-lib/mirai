@@ -59,10 +59,11 @@
 #' @section Persistence:
 #'
 #' The `autoexit` argument governs persistence settings for the daemon. The
-#' default TRUE ensures that it will exit as soon as its socket connection
-#' with the host process drops.
+#' default `TRUE` ensures that it will exit as soon as its socket connection
+#' with the host process drops. A 200ms grace period is given for the daemon
+#' process to exit gracefully, after which it will be forcefully terminated.
 #'
-#' Supplying `NA` will allow a daemon to exit cleanly once its socket connection
+#' Supplying `NA` allows a daemon to exit cleanly once its socket connection
 #' with the host process drops, as soon as it has finished any task that is
 #' currently in progress. This may be useful if the daemon is performing some
 #' side effect such as writing files to disk, and the result is not required in
