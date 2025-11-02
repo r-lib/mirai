@@ -263,7 +263,8 @@ daemons <- function(
       } else {
         create_sock(envir, url, cfg[[2L]])
       }
-      create_profile(envir, .compute, 1L, dots, sync)
+      if (missing(n)) n <- 1L
+      create_profile(envir, .compute, n, dots, sync)
       if (length(remote)) {
         on.exit(daemons(0L, .compute = .compute))
         launch_remote(n = n, remote = remote, .compute = .compute)
