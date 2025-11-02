@@ -178,7 +178,7 @@ daemon <- function(
   otel_active_span(
     sprintf("daemon disconnect %s", url),
     attributes = otel_daemon_attrs(url),
-    links = list(daemon = dmnspn)
+    links = list(dmnspn)
   )
   invisible(xc)
 }
@@ -230,7 +230,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         spn <- otel_active_span(
           "daemon eval",
           cond = length(._mirai_.[["._otel_."]]),
-          links = list(daemon = dynGet("dmnspn")),
+          links = list(dynGet("dmnspn")),
           options = list(kind = "server", parent = otel::extract_http_context(._mirai_.[["._otel_."]])),
           scope = environment()
         )

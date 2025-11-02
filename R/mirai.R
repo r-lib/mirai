@@ -158,7 +158,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
   ctx_spn <- otel_active_span(
     "mirai",
     cond = length(envir),
-    links = list(daemons = envir[["otel_span"]]),
+    links = list(envir[["otel_span"]]),
     options = list(kind = "client"),
     return_ctx = TRUE,
     scope = environment()
