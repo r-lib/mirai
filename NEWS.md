@@ -9,6 +9,7 @@
 * `require_daemons()` updates:
   + Function now returns invisibly as intended.
   + Using with `.compute` as the first argument (which produced a warning) no longer works.
+* Calling `daemons()` specifying `url` and `remote` but not `n` works again (#502).
 * Requires nanonext >= [1.7.1.9001].
 
 # mirai 2.5.1
