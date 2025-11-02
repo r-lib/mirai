@@ -89,26 +89,25 @@ The spans form a distributed structure that traces the complete lifecycle of asy
 
 ```
 daemons set (compute profile - top level)
-
 daemon connect (daemon process 1 - top level)
 ...
 daemon connect (daemon process N - top level)
 
 mirai_map (top level) ──link→ daemons set
 ├── mirai (task 1) ──link→ daemons set
-│   └── daemon eval ──link→ daemon connnect
+│   └── daemon eval ──link→ daemon connect
 ├── mirai (task 2) ──link→ daemons set
-│   └── daemon eval ──link→ daemon conenct
+│   └── daemon eval ──link→ daemon connect
 └── mirai (task N) ──link→ daemons set
     └── daemon eval ──link→ daemon connect
     
 mirai (top level) ──link→ daemons set
 └── daemon eval ──link→ daemon connect
 
+daemons reset ──link→ daemons set
 daemon disconnect (daemon process 1) ──link→ daemon connect
 ...
 daemon disconnect (daemon process N) ──link→ daemon connect
-daemons reset ──link→ daemons set
 ```
 
 **Context Propagation**: the context is automatically packaged with each `mirai()` call and extracted on the daemon side, enabling proper parent-child relationships across process boundaries.
