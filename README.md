@@ -22,11 +22,11 @@ DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
 for R <br /><br />
 
-→ Run R code in parallel without blocking your session
+→ Run R code in parallel while keeping your session free
 
-→ Distribute workloads across local or remote machines
+→ Scale seamlessly from your laptop to cloud servers or HPC clusters
 
-→ Perform actions reactively as soon as tasks complete
+→ Automate actions as soon as tasks complete
 
 <br />
 
