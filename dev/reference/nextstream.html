@@ -115,15 +115,19 @@ next recursive stream is returned when the function is called again.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># interactive()</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407   792815129 -1884879098 -1960710705   286126532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  1328909813 -1274208718</span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407 -1925600861  -765594404 -1351620210 -1371409380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]   302119711 -1829637341</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"url"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://1c5ba9f5de37517ee95a4c6e"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextcode</span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0 | Daemon connection terminated"</span>
 <span class="r-in"><span><span class="fu">nextcode</span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span></span>
