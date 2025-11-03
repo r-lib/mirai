@@ -75,7 +75,6 @@ otel_daemons_attrs <- function(envir) {
   c(
     otel_daemon_attrs(envir[["url"]]),
     list(
-      mirai.n = envir[["n"]],
       mirai.dispatcher = !is.null(envir[["dispatcher"]]),
       mirai.compute = envir[["compute"]]
     )

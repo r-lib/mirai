@@ -278,9 +278,10 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #'
 #' \dontrun{
 #'
-#' # launch 2 daemons on the remote machines 10.75.32.90 and 10.75.32.91 using
+#' # launch daemons on the remote machines 10.75.32.90 and 10.75.32.91 using
 #' # SSH, connecting back directly to the host URL over a TLS connection:
 #' daemons(
+#'   n = 1,
 #'   url = host_url(tls = TRUE),
 #'   remote = ssh_config(c("ssh://10.75.32.90:222", "ssh://10.75.32.91:222"))
 #' )

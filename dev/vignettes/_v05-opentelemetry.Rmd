@@ -53,7 +53,6 @@ The span name includes the URL for easy identification.
   + `server.address` (e.g. '127.0.0.1' or 'hostname')
   + `server.port` (where applicable)
   + `network.transport` (e.g. 'tcp' or 'ipc')
-  + `mirai.n` (number of daemons)
   + `mirai.dispatcher` (true/false)
   + `mirai.compute` (profile name)
 
