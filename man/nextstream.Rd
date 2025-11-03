@@ -51,15 +51,14 @@ advancing the stream stored within the compute profile. This ensures that the
 next recursive stream is returned when the function is called again.
 }
 \examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-daemons(1L)
+daemons(sync = TRUE)
 nextstream()
 nextstream()
 
 nextget("url")
 
 daemons(0)
-\dontshow{\}) # examplesIf}
+
 nextcode(0L)
 nextcode(1L)
 
