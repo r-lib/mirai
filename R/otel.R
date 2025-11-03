@@ -16,7 +16,10 @@ otel_cache_tracer = function() {
 otel_refresh_tracer <- function(pkgname) {
   requireNamespace("otel", quietly = TRUE) || return()
   tracer <- otel::get_tracer()
-  modify_binding(getNamespace(pkgname), c("otel_tracer", "otel_is_tracing"), list(tracer, tracer_enabled(tracer))
+  modify_binding(
+    getNamespace(pkgname),
+    c("otel_tracer", "otel_is_tracing"),
+    list(tracer, tracer_enabled(tracer))
   )
 }
 

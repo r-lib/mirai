@@ -9,7 +9,7 @@
 * `require_daemons()` updates:
   + Function now returns invisibly as intended.
   + Using with `.compute` as the first argument (which produced a warning) no longer works.
-* Requires nanonext >= [1.7.1.9001].
+* Requires nanonext >= 1.7.2.
 
 # mirai 2.5.1
 
