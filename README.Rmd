@@ -81,29 +81,29 @@ daemons(0)
 
 ### Design Philosophy
 
-→  **Modern Foundation**
+→ **Dynamic Architecture**
 
-- Architected on current communication technologies (IPC, TCP, secure TLS)
-- Professional queueing and scheduling built on [nanonext](https://nanonext.r-lib.org/) and [NNG](https://nng.nanomsg.org/)
-- Engineered for custom serialization of cross-language data formats (e.g. torch, Arrow)
+- Inverted topology, where daemons connect to host, enables true dynamic scaling
+- Optimal load balancing through FIFO dispatcher scheduling
+- Event-driven promises complete with zero latency and no polling overhead
 
-→  **Extreme Performance**
+→ **Modern Foundation**
 
-- Scales to millions of tasks across thousands of processes
-- 1,000x greater efficiency and responsiveness than previously possible
-- Zero-latency, event-driven promises brings modern async to R
+- Built on [NNG](https://nng.nanomsg.org/) via [nanonext](https://nanonext.r-lib.org/) for scaling to millions of tasks over thousands of processes
+- High performance, with round-trip times measured in microseconds, not milliseconds
+- Native support for IPC, TCP, and zero-config TLS with automatic certificate generation
 
-→  **Production First**
+→ **Production First**
 
-- 100% reliable abstraction of the multi-process, message-passing paradigm
-- Consistent and transparent evaluation, from minimal complexity and no hidden state
-- Observability at scale through OpenTelemetry integration
+- Clear evaluation model with explicit dependencies prevents surprises from hidden state
+- Serialization support for cross-language data formats (torch tensors, Arrow tables)
+- OpenTelemetry integration for observability across distributed processes
 
-→  **Deploy Everywhere**
+→ **Deploy Everywhere**
 
-- Deploy across local, remote (SSH), and HPC environments (Slurm, SGE, PBS, LSF)
-- Combine and extend local processing power with network or cloud compute
-- Direct tasks to the most suitable resources, using modular compute profiles
+- Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)
+- Modular compute profiles direct tasks to the most suitable resources
+- Flexibility to combine local, remote, and HPC resources in a single compute profile
 
 ### Powers the R Ecosystem
 
