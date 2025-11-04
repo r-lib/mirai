@@ -137,30 +137,29 @@
 <div class="section level3">
 <h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
 </h3>
+<p>→ <strong>Dynamic Architecture</strong></p>
+<ul>
+<li>Inverted topology, where daemons connect to host, enables true dynamic scaling</li>
+<li>Optimal load balancing through FIFO dispatcher scheduling</li>
+<li>Event-driven promises complete with zero latency and no polling overhead</li>
+</ul>
 <p>→ <strong>Modern Foundation</strong></p>
 <ul>
-<li>Architected on current communication technologies (IPC, TCP, secure TLS)</li>
-<li>Professional queueing and scheduling built on <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> and <a href="https://nng.nanomsg.org/" class="external-link">NNG</a>
-</li>
-<li>Engineered for custom serialization of cross-language data formats (e.g. torch, Arrow)</li>
-</ul>
-<p>→ <strong>Extreme Performance</strong></p>
-<ul>
-<li>Scales to millions of tasks across thousands of processes</li>
-<li>1,000x greater efficiency and responsiveness than previously possible</li>
-<li>Zero-latency, event-driven promises brings modern async to R</li>
+<li>Built on <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> via <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> for scaling to millions of tasks over thousands of processes</li>
+<li>High performance, with round-trip times measured in microseconds, not milliseconds</li>
+<li>Native support for IPC, TCP, and zero-config TLS with automatic certificate generation</li>
 </ul>
 <p>→ <strong>Production First</strong></p>
 <ul>
-<li>100% reliable abstraction of the multi-process, message-passing paradigm</li>
-<li>Consistent and transparent evaluation, from minimal complexity and no hidden state</li>
-<li>Observability at scale through OpenTelemetry integration</li>
+<li>Clear evaluation model with explicit dependencies prevents surprises from hidden state</li>
+<li>Serialization support for cross-language data formats (torch tensors, Arrow tables)</li>
+<li>OpenTelemetry integration for observability across distributed processes</li>
 </ul>
 <p>→ <strong>Deploy Everywhere</strong></p>
 <ul>
-<li>Deploy across local, remote (SSH), and HPC environments (Slurm, SGE, PBS, LSF)</li>
-<li>Combine and extend local processing power with network or cloud compute</li>
-<li>Direct tasks to the most suitable resources, using modular compute profiles</li>
+<li>Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)</li>
+<li>Modular compute profiles direct tasks to the most suitable resources</li>
+<li>Flexibility to combine local, remote, and HPC resources in a single compute profile</li>
 </ul>
 </div>
 <div class="section level3">
