@@ -76,7 +76,7 @@ daemons(0)
 
 - Inverted topology, where daemons connect to host, enables true dynamic
   scaling
-- Optimal load balancing through FIFO dispatcher scheduling
+- Optimal load balancing through efficient FIFO dispatcher scheduling
 - Event-driven promises complete with zero latency (and no polling
   overhead)
 
