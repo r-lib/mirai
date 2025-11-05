@@ -2,16 +2,22 @@ otel_tracer_name <- "org.r-lib.mirai"
 otel_is_tracing <- FALSE
 otel_tracer <- NULL
 
+# generic otel helpers ---------------------------------------------------------
+
 # nocov start
 # tested implicitly on package load
 
-otel_cache_tracer = function() {
+otel_cache_tracer <- function() {
   requireNamespace("otel", quietly = TRUE) || return()
   otel_tracer <<- otel::get_tracer(otel_tracer_name)
   otel_is_tracing <<- tracer_enabled(otel_tracer)
 }
 
 # nocov end
+
+tracer_enabled <- function(tracer) {
+  .subset2(tracer, "is_enabled")()
+}
 
 otel_refresh_tracer <- function(pkgname) {
   requireNamespace("otel", quietly = TRUE) || return()
@@ -22,15 +28,13 @@ otel_refresh_tracer <- function(pkgname) {
   )
 }
 
-tracer_enabled <- function(tracer) {
-  .subset2(tracer, "is_enabled")()
-}
-
 modify_binding <- function(env, lst) {
   lapply(names(lst), unlockBinding, env)
   list2env(lst, envir = env)
   lapply(names(lst), lockBinding, env)
 }
+
+# mirai-specific helpers -------------------------------------------------------
 
 otel_active_span <- function(
   name,
@@ -55,13 +59,11 @@ otel_active_span <- function(
 }
 
 otel_set_span_id <- function(span, id) {
-  otel_is_tracing || return()
-  span$set_attribute("mirai.id", id)
+  otel_is_tracing && return(span$set_attribute("mirai.id", id))
 }
 
 otel_set_span_error <- function(span, type) {
-  otel_is_tracing && length(span) || return()
-  span$set_status("error", type)
+  otel_is_tracing && length(span) && return(span$set_status("error", type))
 }
 
 otel_daemon_attrs <- function(url) {
