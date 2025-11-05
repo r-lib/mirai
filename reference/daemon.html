@@ -7,7 +7,7 @@ unless deploying manually on remote resources."><meta property="og:description" 
 evaluates an expression in an environment containing the supplied data,
 and returns the value to the host caller. Daemon settings may be controlled
 by daemons() and this function should not need to be invoked directly,
-unless deploying manually on remote resources."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+unless deploying manually on remote resources."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -15,7 +15,7 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,14 +49,14 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/r-lib/mirai/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
-    <a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+     <a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 
   </div>
 </nav><div class="container template-reference-topic" id="container">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Daemon Instance</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/daemon.R" class="external-link"><code>R/daemon.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/daemon.R" class="external-link"><code>R/daemon.R</code></a></small>
       <div class="d-none name"><code>daemon.Rd</code></div>
     </div>
 
@@ -183,16 +183,17 @@ distributes tasks to all available daemons.</p>
 
 
 <p>The <code>autoexit</code> argument governs persistence settings for the daemon. The
-default TRUE ensures that it will exit as soon as its socket connection
-with the host process drops.</p>
-<p>Supplying <code>NA</code> will allow a daemon to exit cleanly once its socket connection
-with the host process drops, as soon as it has finished any task that is
-currently in progress. This may be useful if the daemon is performing some
-side effect such as writing files to disk, and the result is not required in
-the host process.</p>
-<p>Setting to FALSE allows the daemon to persist indefinitely even when there is
-no longer a socket connection. This allows a host session to end and a new
-session to connect at the URL where the daemon is dialled in. Daemons must be
+default <code>TRUE</code> ensures that it exits as soon as its socket connection with
+the host process drops. A 200ms grace period allows the daemon process to
+exit normally, after which it will be forcefully terminated.</p>
+<p>Supplying <code>NA</code> ensures that a daemon always exits cleanly after its socket
+connection with the host drops. This means that it can temporarily outlive
+this connection, but only to complete any task that is currently in progress.
+This can be useful if the daemon is performing a side effect such as writing
+files to disk, with the result not being required back in the host process.</p>
+<p>Setting to <code>FALSE</code> allows the daemon to persist indefinitely even when there
+is no longer a socket connection. This allows a host session to end and a new
+session to connect at the URL where the daemon is dialed in. Daemons must be
 terminated with <code>daemons(NULL)</code> in this case instead of <code>daemons(0)</code>. This
 sends explicit exit signals to all connected daemons.</p>
     </div>
@@ -204,7 +205,7 @@ sends explicit exit signals to all connected daemons.</p>
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by Charlie Gao, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/shikokuchuo" class="external-link">Charlie Gao</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -3,7 +3,7 @@
 mirai, with optional promises integration. Performs multiple map
 over the rows of a dataframe or matrix."><meta property="og:description" content="Asynchronous parallel map of a function over a list or vector using
 mirai, with optional promises integration. Performs multiple map
-over the rows of a dataframe or matrix."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+over the rows of a dataframe or matrix."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -11,7 +11,7 @@ over the rows of a dataframe or matrix."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,14 +45,14 @@ over the rows of a dataframe or matrix."><meta property="og:image" content="http
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/r-lib/mirai/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
-    <a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+     <a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 
   </div>
 </nav><div class="container template-reference-topic" id="container">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>mirai Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/map.R" class="external-link"><code>R/map.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/map.R" class="external-link"><code>R/map.R</code></a></small>
       <div class="d-none name"><code>mirai_map.Rd</code></div>
     </div>
 
@@ -96,7 +96,7 @@ list.</p></dd>
 mirai. Either a function, supplied to the <code>onFulfilled</code> argument of
 <code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code> or a list of 2 functions, supplied respectively to
 <code>onFulfilled</code> and <code>onRejected</code> of <code><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">promises::then()</a></code>. Using this argument
-requires the <a href="https://CRAN.R-project.org/package=promises" class="external-link"><span class="pkg">promises</span></a> package.</p></dd>
+requires the <span class="pkg">promises</span> package.</p></dd>
 
 
 <dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
@@ -132,9 +132,9 @@ blocking but user-interruptible.</p>
 they are of the same type to avoid coercion. Note: errors if an 'errorValue'
 has been returned or results are of differing type.</p>
 <p><code>x[.progress]</code> collects map results whilst showing a progress bar from
-the <a href="https://CRAN.R-project.org/package=cli" class="external-link"><span class="pkg">cli</span></a> package, if installed, with completion percentage and ETA,
-or else a simple text progress indicator. Note: if the map operation
-completes too quickly then the progress bar may not show at all.</p>
+the <span class="pkg">cli</span> package, if installed, with completion percentage and ETA, or
+else a simple text progress indicator. Note: if the map operation completes
+too quickly then the progress bar may not show at all.</p>
 <p><code>x[.stop]</code> collects map results applying early stopping, which stops at
 the first failure and cancels remaining operations.</p>
 <p>The options above may be combined in the manner of: <br><code>x[.stop, .progress]</code> which applies early stopping together with a
@@ -248,7 +248,7 @@ permitted from within a map.</p>
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by Charlie Gao, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/shikokuchuo" class="external-link">Charlie Gao</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
