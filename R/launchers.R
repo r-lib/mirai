@@ -204,7 +204,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
 #'   quote = TRUE
 #' )
 #'
-#' # can be used to start local dameons with special configurations
+#' # can be used to start local daemons with special configurations
 #' remote_config(
 #'   command = "Rscript",
 #'   rscript = "--default-packages=NULL --vanilla"

@@ -55,7 +55,7 @@ remote_config(
   quote = TRUE
 )
 
-# can be used to start local dameons with special configurations
+# can be used to start local daemons with special configurations
 remote_config(
   command = "Rscript",
   rscript = "--default-packages=NULL --vanilla"
