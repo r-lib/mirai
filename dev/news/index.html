@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,10 +53,13 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.5.2" id="mirai-252">mirai 2.5.2<a class="anchor" aria-label="anchor" href="#mirai-252"></a></h2>
 <div class="section level5">
-<h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
+<h5 id="updates-2-5-2">Updates<a class="anchor" aria-label="anchor" href="#updates-2-5-2"></a></h5>
 <ul><li>The default daemons <code>autoexit = TRUE</code> behaviour has been updated for OpenTelemetry compatibility (<a href="https://github.com/r-lib/mirai/issues/500" class="external-link">#500</a>).
-<ul><li>Introduces a 200ms grace period for processes to exit gracefully before a forceful termination.</li>
+<ul><li>Introduces a 200ms grace period for processes to exit normally before a forceful termination.</li>
 <li>The behavioural changes announced in mirai 2.4.0 are now enforced for all daemon types - eliminating a bug that previously caused this to only be applied to ephemeral daemons.</li>
 </ul></li>
 <li>OpenTelemetry span names and attributes have been upgraded to be more informative and better follow semantic conventions (<a href="https://github.com/r-lib/mirai/issues/481" class="external-link">#481</a>).</li>

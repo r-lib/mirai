@@ -15,7 +15,7 @@ unless deploying manually on remote resources."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -185,7 +185,7 @@ distributes tasks to all available daemons.</p>
 <p>The <code>autoexit</code> argument governs persistence settings for the daemon. The
 default <code>TRUE</code> ensures that it exits as soon as its socket connection with
 the host process drops. A 200ms grace period allows the daemon process to
-exit gracefully, after which it will be forcefully terminated.</p>
+exit normally, after which it will be forcefully terminated.</p>
 <p>Supplying <code>NA</code> ensures that a daemon always exits cleanly after its socket
 connection with the host drops. This means that it can temporarily outlive
 this connection, but only to complete any task that is currently in progress.
