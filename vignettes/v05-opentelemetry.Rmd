@@ -25,10 +25,10 @@ This enables detailed monitoring of:
 
 Tracing is automatically enabled when:
 
-1. The `otel` and `otelsdk` packages are installed and available
+1. The `otel` and `otelsdk` packages are installed; and
 2. OpenTelemetry tracing is configured and enabled (see <https://otelsdk.r-lib.org/reference/collecting.html>)
 
-No additional configuration is required - mirai will automatically detect the presence of OpenTelemetry and begin tracing.
+No additional action is required - mirai will automatically detect the presence of OpenTelemetry and begin tracing.
 
 ### 3. Span Types and Hierarchy
 

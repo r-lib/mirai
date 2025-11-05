@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 [![R-universe status](https://r-lib.r-universe.dev/badges/mirai)](https://r-lib.r-universe.dev/mirai)
 [![R-CMD-check](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
-[![DOI](https://zenodo.org/badge/459341940.svg)](https://doi.org/10.5281/zenodo.7912722)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <!-- badges: end -->
 
@@ -84,12 +83,12 @@ daemons(0)
 → **Dynamic Architecture**
 
 - Inverted topology, where daemons connect to host, enables true dynamic scaling
-- Optimal load balancing through FIFO dispatcher scheduling
-- Event-driven promises complete with zero latency and no polling overhead
+- Optimal load balancing through efficient FIFO dispatcher scheduling
+- Event-driven promises complete with zero latency (and no polling overhead)
 
 → **Modern Foundation**
 
-- Built on [NNG](https://nng.nanomsg.org/) via [nanonext](https://nanonext.r-lib.org/) for scaling to millions of tasks over thousands of processes
+- Built on [NNG](https://nng.nanomsg.org/) via [nanonext](https://nanonext.r-lib.org/), scales reliably to millions of tasks / thousands of processes
 - High performance, with round-trip times measured in microseconds, not milliseconds
 - Native support for IPC, TCP, and zero-config TLS with automatic certificate generation
 
@@ -103,7 +102,7 @@ daemons(0)
 
 - Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)
 - Modular compute profiles direct tasks to the most suitable resources
-- Flexibility to combine local, remote, and HPC resources in a single compute profile
+- Combine local, remote, and HPC resources in a single compute profile
 
 ### Powers the R Ecosystem
 

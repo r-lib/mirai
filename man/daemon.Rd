@@ -94,7 +94,7 @@ distributes tasks to all available daemons.
 The \code{autoexit} argument governs persistence settings for the daemon. The
 default \code{TRUE} ensures that it exits as soon as its socket connection with
 the host process drops. A 200ms grace period allows the daemon process to
-exit gracefully, after which it will be forcefully terminated.
+exit normally, after which it will be forcefully terminated.
 
 Supplying \code{NA} ensures that a daemon always exits cleanly after its socket
 connection with the host drops. This means that it can temporarily outlive
