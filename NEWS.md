@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* Fixes a bug which caused mirai to remain unresolved after switching from synchronous daemons to dispatcher daemons in the same session (#509).
+
 # mirai 2.5.2
 
 #### Updates
