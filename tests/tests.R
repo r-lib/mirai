@@ -455,7 +455,7 @@ connection && Sys.getenv("NOT_CRAN") == "true" && {
 }
 connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRAN") == "true" && {
   record <- otelsdk::with_otel_record({
-    mirai:::otel_refresh_tracer("mirai")
+    mirai:::otel_refresh_tracer()
     url <- local_url()
     purl <- nanonext::parse_url(url)
     test_true(daemons(url = url, dispatcher = FALSE))
@@ -466,7 +466,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && Sys.getenv("NOT_CRA
     test_true(is_error_value(m2[]))
     test_false(daemons(0))
   })
-  mirai:::otel_refresh_tracer("mirai")
+  mirai:::otel_refresh_tracer()
   traces <- record$traces
   test_equal(length(traces), 15L)
   test_true(startsWith(traces[[1L]]$name, "daemons set"))

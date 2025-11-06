@@ -19,11 +19,11 @@ tracer_enabled <- function(tracer) {
   .subset2(tracer, "is_enabled")()
 }
 
-otel_refresh_tracer <- function(pkgname) {
+otel_refresh_tracer <- function() {
   requireNamespace("otel", quietly = TRUE) || return()
   tracer <- otel::get_tracer()
   modify_binding(
-    getNamespace(pkgname),
+    topenv(),
     list(otel_tracer = tracer, otel_is_tracing = tracer_enabled(tracer))
   )
 }
