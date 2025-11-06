@@ -133,8 +133,7 @@ daemon <- function(
           break
         }
         (task >= maxtasks || maxtime && mclock() >= maxtime) && {
-          .mark()
-          send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
+          marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
           aio <- recv_aio(sock, mode = 8L, cv = cv)
           xc <- 2L + (task >= maxtasks)
           wait(cv)
@@ -158,8 +157,7 @@ daemon <- function(
         break
       }
       (task >= maxtasks || maxtime && mclock() >= maxtime) && {
-        .mark()
-        send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
+        marked(send(ctx, eval_mirai(m), mode = 1L, block = TRUE))
         xc <- 2L + (task >= maxtasks)
         wait(cv)
         break
@@ -201,9 +199,8 @@ daemon <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = tools::SIGTERM)
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
-  .mark()
   m <- recv(sock, mode = 1L, block = TRUE)
-  send(sock, eval_mirai(m), mode = 1L, block = TRUE) || wait(cv)
+  marked(send(sock, eval_mirai(m), mode = 1L, block = TRUE)) || wait(cv)
 }
 
 # internals --------------------------------------------------------------------
@@ -265,4 +262,10 @@ snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()),
 flag_value <- function(autoexit) {
   is.na(autoexit) && return(TRUE)
   autoexit && return(tools::SIGTERM)
+}
+
+marked <- function(expr) {
+  .mark()
+  on.exit(.mark(FALSE))
+  expr
 }
