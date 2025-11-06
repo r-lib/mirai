@@ -280,16 +280,14 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
     max(.min, info(.compute)[[1L]])
   }
   seed <- envir[["seed"]]
-  on.exit({
-    .mark(FALSE)
-    `[[<-`(envir, "seed", seed)
-  })
+  on.exit(`[[<-`(envir, "seed", seed))
   `[[<-`(envir, "seed", NULL)
-  .mark()
-  vec <- lapply(seq_len(xlen), function(i)
-    mirai(.expr, ..., .args = .args, .compute = .compute)
+  vec <- marked(
+    lapply(
+      seq_len(xlen),
+      function(i) mirai(.expr, ..., .args = .args, .compute = .compute)
+    )
   )
-  .mark(FALSE)
   m <- mirai({})
   `[[<-`(envir, "everywhere",  c(vec, list(m)))
   invisible(`class<-`(vec, "mirai_map"))
