@@ -206,16 +206,6 @@ daemon <- function(
 
 # internals --------------------------------------------------------------------
 
-handle_mirai_error <- function(cnd) {
-  otel_set_span_error(dynGet(".mirai_dmneval_span", ifnotfound = NULL), "miraiError")
-  invokeRestart("mirai_error", cnd, sys.calls())
-}
-
-handle_mirai_interrupt <- function(cnd) {
-  otel_set_span_error(dynGet(".mirai_dmneval_span", ifnotfound = NULL), "miraiInterrupt")
-  invokeRestart("mirai_interrupt")
-}
-
 eval_mirai <- function(._mirai_., sock = NULL) {
   withRestarts(
     withCallingHandlers(
@@ -225,7 +215,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
           on.exit(stop_aio(cancel))
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        .mirai_dmneval_span <- otel_active_span(
+        sock <- otel_active_span(
           "daemon eval",
           cond = length(._mirai_.[["._otel_."]]),
           links = list(.[["otel_span"]]),
@@ -234,8 +224,14 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         )
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
-      error = handle_mirai_error,
-      interrupt = handle_mirai_interrupt
+      error = function(cnd) {
+        otel_set_span_error(sock, "miraiError")
+        invokeRestart("mirai_error", cnd, sys.calls())
+      },
+      interrupt = function(cnd) {
+        otel_set_span_error(sock, "miraiInterrupt")
+        invokeRestart("mirai_interrupt")
+      }
     ),
     mirai_error = mk_mirai_error,
     mirai_interrupt = mk_interrupt_error

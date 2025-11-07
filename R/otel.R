@@ -63,7 +63,7 @@ otel_set_span_id <- function(span, id) {
 }
 
 otel_set_span_error <- function(span, type) {
-  otel_is_tracing && length(span) && return(span$set_status("error", type))
+  otel_is_tracing && inherits(span, "otel_span") && return(span$set_status("error", type))
 }
 
 otel_daemon_attrs <- function(url) {
