@@ -91,20 +91,21 @@ daemon <- function(
   tlscert = NULL,
   rs = NULL
 ) {
-  dmnspn <- otel_active_span(
-    sprintf("daemon connect %s", url),
-    attributes = otel_daemon_attrs(url)
-  )
   cv <- cv()
   sock <- socket(if (dispatcher) "poly" else "rep")
   on.exit({
     reap(sock)
     `[[<-`(., "sock", NULL)
+    `[[<-`(., "otel_span", NULL)
   })
   `[[<-`(., "sock", sock)
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
   if (length(tlscert)) tlscert <- tls_config(client = tlscert)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tlscert)
+  `[[<-`(., "otel_span", otel_active_span(
+    sprintf("daemon connect %s", url),
+    attributes = otel_daemon_attrs(url)
+  ))
 
   if (!output) {
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
@@ -176,7 +177,7 @@ daemon <- function(
   otel_active_span(
     sprintf("daemon disconnect %s", url),
     attributes = otel_daemon_attrs(url),
-    links = list(dmnspn)
+    links = list(.[["otel_span"]])
   )
   invisible(xc)
 }
@@ -206,12 +207,12 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 handle_mirai_error <- function(cnd) {
-  otel_set_span_error(dynGet("spn", ifnotfound = NULL), "miraiError")
+  otel_set_span_error(dynGet(".mirai_dmneval_span", ifnotfound = NULL), "miraiError")
   invokeRestart("mirai_error", cnd, sys.calls())
 }
 
 handle_mirai_interrupt <- function(cnd) {
-  otel_set_span_error(dynGet("spn", ifnotfound = NULL), "miraiInterrupt")
+  otel_set_span_error(dynGet(".mirai_dmneval_span", ifnotfound = NULL), "miraiInterrupt")
   invokeRestart("mirai_interrupt")
 }
 
@@ -224,10 +225,10 @@ eval_mirai <- function(._mirai_., sock = NULL) {
           on.exit(stop_aio(cancel))
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        spn <- otel_active_span(
+        .mirai_dmneval_span <- otel_active_span(
           "daemon eval",
           cond = length(._mirai_.[["._otel_."]]),
-          links = list(dynGet("dmnspn")),
+          links = list(.[["otel_span"]]),
           options = list(kind = "server", parent = otel::extract_http_context(._mirai_.[["._otel_."]])),
           scope = environment()
         )
