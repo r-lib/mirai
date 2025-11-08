@@ -20,7 +20,7 @@ local({
   otel_active_span <<- function(
     name,
     cond = TRUE,
-    attributes = list(),
+    attributes = NULL,
     links = NULL,
     options = NULL,
     return_ctx = FALSE,
@@ -29,7 +29,7 @@ local({
     otel_is_tracing && cond || return()
     spn <- otel::start_local_active_span(
       name,
-      attributes = otel::as_attributes(attributes),
+      attributes = attributes,
       links = links,
       options = options,
       tracer = otel_tracer,
