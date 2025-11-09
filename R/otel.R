@@ -44,7 +44,7 @@ local({
   }
 
   otel_set_span_error <<- function(span, type) {
-    otel_is_tracing && inherits(span, "otel_span") && return(span$set_status("error", type))
+    otel_is_tracing && is.environment(span) && return(span$set_status("error", type))
   }
 })
 
