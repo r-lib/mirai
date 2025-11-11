@@ -102,10 +102,7 @@ daemon <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
   if (length(tlscert)) tlscert <- tls_config(client = tlscert)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tlscert)
-  `[[<-`(., "otel_span", otel_active_span(
-    sprintf("daemon connect %s", url),
-    attributes = otel_daemon_attrs(url)
-  ))
+  `[[<-`(., "otel_span", otel_span("daemon connect", url, otel_attrs(url)))
 
   if (!output) {
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
@@ -174,11 +171,7 @@ daemon <- function(
     sink()
     close.connection(devnull)
   }
-  otel_active_span(
-    sprintf("daemon disconnect %s", url),
-    attributes = otel_daemon_attrs(url),
-    links = list(.[["otel_span"]])
-  )
+  otel_span("daemon disconnect", url, otel_attrs(url), links = list(.[["otel_span"]]))
   invisible(xc)
 }
 
@@ -215,13 +208,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
           on.exit(stop_aio(cancel))
         }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        sock <- otel_active_span(
-          "daemon eval",
-          cond = length(._mirai_.[["._otel_."]]),
-          links = list(.[["otel_span"]]),
-          options = list(kind = "server", parent = otel::extract_http_context(._mirai_.[["._otel_."]])),
-          scope = environment()
-        )
+        sock <- otel_eval_span(._mirai_.[["._otel_."]])
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = function(cnd) {

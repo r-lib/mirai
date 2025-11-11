@@ -155,14 +155,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     }
     all(nzchar(gn)) || stop(._[["named_dots"]])
   }
-  ctx_spn <- otel_active_span(
-    "mirai",
-    cond = length(envir),
-    links = list(envir[["otel_span"]]),
-    options = list(kind = "client"),
-    return_ctx = TRUE,
-    scope = environment()
-  )
+  ctx_spn <- otel_mirai_span(envir)
   if (length(envir[["seed"]])) globals[[".Random.seed"]] <- next_stream(envir)
   data <- list(
     ._expr_. = if (
