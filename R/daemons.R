@@ -283,7 +283,7 @@ daemons <- function(
 
       if (signal) send_signal(envir)
       reap(envir[["sock"]])
-      otel_span("daemons reset", envir[["url"]], otel_attrs(envir), links = list(envir[["otel_span"]]))
+      otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
       ..[[.compute]] <- NULL -> envir
       msleep(.sleep_daemons)
       return(invisible(FALSE))
@@ -319,7 +319,7 @@ daemons <- function(
     )
   })
 
-  `[[<-`(envir, "otel_span", otel_span("daemons set", envir[["url"]], otel_attrs(envir)))
+  `[[<-`(envir, "otel_span", otel_span("daemons set", envir))
 
   invisible(`class<-`(TRUE, c("miraiDaemons", .compute)))
 }

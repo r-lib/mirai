@@ -102,7 +102,7 @@ daemon <- function(
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
   if (length(tlscert)) tlscert <- tls_config(client = tlscert)
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tlscert)
-  `[[<-`(., "otel_span", otel_span("daemon connect", url, otel_attrs(url)))
+  `[[<-`(., "otel_span", otel_span("daemon connect", url))
 
   if (!output) {
     devnull <- file(nullfile(), open = "w", blocking = FALSE)
@@ -171,7 +171,7 @@ daemon <- function(
     sink()
     close.connection(devnull)
   }
-  otel_span("daemon disconnect", url, otel_attrs(url), links = list(.[["otel_span"]]))
+  otel_span("daemon disconnect", url, links = list(.[["otel_span"]]))
   invisible(xc)
 }
 

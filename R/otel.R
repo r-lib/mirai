@@ -53,11 +53,17 @@ local({
     )
   }
 
-  otel_span <<- function(name, label, attributes, links = NULL) {
+  otel_span <<- function(name, obj, links = NULL) {
     otel_is_tracing || return()
+    if (is.environment(obj)) {
+      attributes <- otel_env_attrs(obj)
+      obj <- obj[["url"]]
+    } else {
+      attributes <- NULL
+    }
     otel::start_local_active_span(
-      sprintf("%s %s", name, label),
-      attributes = attributes,
+      sprintf("%s %s", name, obj),
+      attributes = c(otel_url_attrs(obj), attributes),
       links = links,
       tracer = otel_tracer
     )
@@ -88,17 +94,15 @@ with_otel_record <- function(expr) {
   })
 }
 
-otel_attrs <- function(obj) {
-  is.environment(obj) && return(
-    c(
-      otel_attrs(obj[["url"]]),
-      list(
-        mirai.dispatcher = !is.null(obj[["dispatcher"]]),
-        mirai.compute = obj[["compute"]]
-      )
-    )
+otel_env_attrs <- function(env) {
+  list(
+    mirai.dispatcher = !is.null(env[["dispatcher"]]),
+    mirai.compute = env[["compute"]]
   )
-  purl <- parse_url(obj)
+}
+
+otel_url_attrs <- function(url) {
+  purl <- parse_url(url)
   list(
     server.address = if (nzchar(purl[["hostname"]])) purl[["hostname"]] else purl[["path"]],
     server.port = if (nzchar(purl[["port"]])) as.integer(purl[["port"]]) else integer(),
