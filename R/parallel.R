@@ -81,7 +81,9 @@ make_cluster <- function(n, url = NULL, remote = NULL, ...) {
     daemons(n, url = url, remote = remote, dispatcher = FALSE, ..., cleanup = FALSE, .compute = id)
 
     if (is.null(remote)) {
-      if (missing(n)) n <- 1L
+      if (missing(n)) {
+        n <- 1L
+      }
       is.numeric(n) || stop(._[["numeric_n"]])
       cat("Shell commands for deployment on nodes:\n\n", file = stdout())
       print(launch_remote(n, .compute = id))
@@ -126,7 +128,9 @@ sendData.miraiNode <- function(node, data) {
 
   value <- data[["data"]]
   tagged <- !is.null(value[["tag"]])
-  if (tagged) cv_reset(envir[["cv"]])
+  if (tagged) {
+    cv_reset(envir[["cv"]])
+  }
 
   m <- mirai(
     do.call(node, data, quote = TRUE),
@@ -134,7 +138,9 @@ sendData.miraiNode <- function(node, data) {
     data = value[["args"]],
     .compute = id
   )
-  if (tagged) `[[<-`(m, "tag", value[["tag"]])
+  if (tagged) {
+    `[[<-`(m, "tag", value[["tag"]])
+  }
   `[[<-`(node, "mirai", m)
 }
 
@@ -156,12 +162,7 @@ recvOneData.miraiCluster <- function(cl) {
 print.miraiCluster <- function(x, ...) {
   id <- attr(x, "id")
   cat(
-    sprintf(
-      "< miraiCluster | ID: %s nodes: %d active: %s >\n",
-      id,
-      length(x),
-      !is.null(..[[id]])
-    ),
+    sprintf("< miraiCluster | ID: %s nodes: %d active: %s >\n", id, length(x), !is.null(..[[id]])),
     file = stdout()
   )
   invisible(x)
@@ -175,11 +176,7 @@ print.miraiCluster <- function(x, ...) {
 #'
 print.miraiNode <- function(x, ...) {
   cat(
-    sprintf(
-      "< miraiNode | node: %d cluster ID: %s >\n",
-      attr(x, "node"),
-      attr(x, "id")
-    ),
+    sprintf("< miraiNode | node: %d cluster ID: %s >\n", attr(x, "node"), attr(x, "id")),
     file = stdout()
   )
   invisible(x)

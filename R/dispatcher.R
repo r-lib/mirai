@@ -67,17 +67,28 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
   `[[<-`(envir, "stream", res)
 
   if (n) {
-    for (i in seq_len(n))
-      while (!until(cv, .limit_long))
+    for (i in seq_len(n)) {
+      while (!until(cv, .limit_long)) {
         cv_signal(cv) || wait(cv) || return()
+      }
+    }
 
     changes <- read_monitor(m)
     for (item in changes) {
-      item > 0 && {
-        connections <- connections + 1L
-        outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
-        send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
-      }
+      item > 0 &&
+        {
+          connections <- connections + 1L
+          outq[[as.character(item)]] <- `[[<-`(
+            `[[<-`(
+              `[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L),
+              "ctx",
+              NULL
+            ),
+            "sync",
+            FALSE
+          )
+          send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
+        }
     }
   } else {
     listen(psock, url = url, tls = tls, fail = 2L)
@@ -91,25 +102,34 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
 
   suspendInterrupts(
     while (wait(cv)) {
-
       changes <- read_monitor(m)
-      is.null(changes) || {
-        for (item in changes) {
-          if (item > 0) {
-            connections <- connections + 1L
-            outq[[as.character(item)]] <- `[[<-`(`[[<-`(`[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L), "ctx", NULL), "sync", FALSE)
-            send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
-            cv_signal(cv)
-          } else {
-            id <- as.character(-item)
-            if (length(outq[[id]])) {
-              outq[[id]][["msgid"]] && send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
-              outq[[id]] <- NULL
+      is.null(changes) ||
+        {
+          for (item in changes) {
+            if (item > 0) {
+              connections <- connections + 1L
+              outq[[as.character(item)]] <- `[[<-`(
+                `[[<-`(
+                  `[[<-`(`[[<-`(new.env(parent = emptyenv()), "pipe", item), "msgid", 0L),
+                  "ctx",
+                  NULL
+                ),
+                "sync",
+                FALSE
+              )
+              send(psock, list(next_stream(envir), serial), mode = 1L, block = TRUE, pipe = item)
+              cv_signal(cv)
+            } else {
+              id <- as.character(-item)
+              if (length(outq[[id]])) {
+                outq[[id]][["msgid"]] &&
+                  send(outq[[id]][["ctx"]], .connectionReset, mode = 1L, block = TRUE)
+                outq[[id]] <- NULL
+              }
             }
           }
+          next
         }
-        next
-      }
 
       if (!unresolved(req)) {
         value <- .subset2(req, "value")
@@ -123,19 +143,21 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
           } else {
             found <- FALSE
             for (item in outq) {
-              item[["msgid"]] == id && {
-                send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
-                found <- TRUE
-                break
-              }
-            }
-            if (!found) {
-              for (i in seq_along(inq)) {
-                inq[[i]][["msgid"]] == id && {
-                  inq[[i]] <- NULL
+              item[["msgid"]] == id &&
+                {
+                  send(psock, 0L, mode = 1L, pipe = item[["pipe"]], block = TRUE)
                   found <- TRUE
                   break
                 }
+            }
+            if (!found) {
+              for (i in seq_along(inq)) {
+                inq[[i]][["msgid"]] == id &&
+                  {
+                    inq[[i]] <- NULL
+                    found <- TRUE
+                    break
+                  }
               }
             }
           }
@@ -147,36 +169,37 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
         }
         ctx <- .context(sock)
         req <- recv_aio(ctx, mode = 8L, cv = cv)
-
       } else if (!unresolved(res)) {
         value <- .subset2(res, "value")
         id <- as.character(pipe_id(res))
         res <- recv_aio(psock, mode = 8L, cv = cv)
-        .read_marker(value) && {
-          send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
-          send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
-          outq[[id]] <- NULL
-          next
-        }
+        .read_marker(value) &&
+          {
+            send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
+            send(psock, 0L, mode = 2L, pipe = outq[[id]][["pipe"]], block = TRUE)
+            outq[[id]] <- NULL
+            next
+          }
         send(outq[[id]][["ctx"]], value, mode = 2L, block = TRUE)
         `[[<-`(outq[[id]], "msgid", 0L)
       }
 
       if (length(inq)) {
         for (item in outq) {
-          item[["msgid"]] || {
-            if (.read_marker(inq[[1L]][["req"]])) {
-              item[["sync"]] && next
-              `[[<-`(item, "sync", TRUE)
-            } else if (item[["sync"]]) {
-              lapply(outq, `[[<-`, "sync", FALSE)
+          item[["msgid"]] ||
+            {
+              if (.read_marker(inq[[1L]][["req"]])) {
+                item[["sync"]] && next
+                `[[<-`(item, "sync", TRUE)
+              } else if (item[["sync"]]) {
+                lapply(outq, `[[<-`, "sync", FALSE)
+              }
+              send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
+              `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
+              `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
+              inq[[1L]] <- NULL
+              break
             }
-            send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
-            `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
-            `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
-            inq[[1L]] <- NULL
-            break
-          }
         }
       }
     }

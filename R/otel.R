@@ -70,15 +70,13 @@ local({
   }
 
   otel_set_span_id <<- function(span, id) {
-    otel_is_tracing && is.environment(span) && return(
-      .subset2(span, "set_attribute")("mirai.id", id)
-    )
+    otel_is_tracing &&
+      is.environment(span) &&
+      return(.subset2(span, "set_attribute")("mirai.id", id))
   }
 
   otel_set_span_error <<- function(span, type) {
-    otel_is_tracing && is.environment(span) && return(
-      .subset2(span, "set_status")("error", type)
-    )
+    otel_is_tracing && is.environment(span) && return(.subset2(span, "set_status")("error", type))
   }
 })
 
@@ -95,10 +93,7 @@ with_otel_record <- function(expr) {
 }
 
 otel_env_attrs <- function(env) {
-  list(
-    mirai.dispatcher = !is.null(env[["dispatcher"]]),
-    mirai.compute = env[["compute"]]
-  )
+  list(mirai.dispatcher = !is.null(env[["dispatcher"]]), mirai.compute = env[["compute"]])
 }
 
 otel_url_attrs <- function(url) {

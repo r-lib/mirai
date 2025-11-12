@@ -156,56 +156,59 @@
 mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
   require_daemons(.compute = .compute, call = environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
-  if (is.null(.compute)) .compute <- .[["cp"]]
+  if (is.null(.compute)) {
+    .compute <- .[["cp"]]
+  }
 
   spn <- otel_map_span(.compute)
 
   dx <- dim(.x)
   vec <- if (is.null(dx)) {
     `names<-`(
-      lapply(.x, function(x)
+      lapply(.x, function(x) {
         mirai(
           .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
           ...,
           .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
           .compute = .compute
         )
-      ),
+      }),
       names(.x)
     )
   } else if (is.data.frame(.x)) {
     rn <- attr(.x, "row.names", exact = TRUE)
     `names<-`(
-      lapply(seq_len(dx[1L]), function(i)
+      lapply(seq_len(dx[1L]), function(i) {
         mirai(
           .expr = do.call(.f, c(.x, .args), quote = TRUE),
           ...,
           .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
           .compute = .compute
         )
-      ),
+      }),
       if (is.character(rn)) rn
     )
   } else {
     `names<-`(
-      lapply(seq_len(dx[1L]), function(i)
+      lapply(seq_len(dx[1L]), function(i) {
         mirai(
           .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
           ...,
           .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
           .compute = .compute
         )
-      ),
+      }),
       if (is.matrix(.x)) dimnames(.x)[[1L]]
     )
   }
 
-  if (length(.promise))
+  if (length(.promise)) {
     if (is.list(.promise)) {
       lapply(vec, promises::then, .promise[[1L]], .promise[2L][[1L]])
     } else {
       lapply(vec, promises::then, .promise)
     }
+  }
 
   `class<-`(vec, "mirai_map")
 }
@@ -236,55 +239,60 @@ print.mirai_map <- function(x, ...) {
 #' @keywords internal
 #' @export
 #'
-.flat <- compiler::compile(
-  quote(
-    if (i == 0L) {
-      xi <- TRUE
-    } else if (i == 1L) {
-      typ <<- typeof(xi)
-    } else {
-      is_error_value(xi) && stop_m(x, i, xi)
-      typeof(xi) != typ && {
+.flat <- compiler::compile(quote(
+  if (i == 0L) {
+    xi <- TRUE
+  } else if (i == 1L) {
+    typ <<- typeof(xi)
+  } else {
+    is_error_value(xi) && stop_m(x, i, xi)
+    typeof(xi) != typ &&
+      {
         stop_mirai(x)
-        cli_enabled || stop(
-          sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
-          call. = FALSE
-        )
+        cli_enabled ||
+          stop(
+            sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
+            call. = FALSE
+          )
         cli::cli_abort(
-          c(
-            `!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"
-          ),
+          c(`!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"),
           location = i,
           name = names(x)[i],
           call = quote(mirai_map())
         )
       }
-    }
-  )
-)
+  }
+))
 
 #' @rdname dot-flat
 #' @export
 #'
-.progress <- compiler::compile(
-  quote(
-    if (cli_enabled) {
-      if (i == 0L) {
-        options <- .[["progress"]]
-        if (is.list(options)) {
-          do.call(cli::cli_progress_bar, c(list(total = xlen, auto_terminate = TRUE, .envir = .), options))
-        } else {
-          cli::cli_progress_bar(name = options, type = NULL, total = xlen, auto_terminate = TRUE, .envir = .)
-        }
-        `[[<-`(., "progress", NULL)
+.progress <- compiler::compile(quote(
+  if (cli_enabled) {
+    if (i == 0L) {
+      options <- .[["progress"]]
+      if (is.list(options)) {
+        do.call(
+          cli::cli_progress_bar,
+          c(list(total = xlen, auto_terminate = TRUE, .envir = .), options)
+        )
       } else {
-        cli::cli_progress_update(.envir = .)
+        cli::cli_progress_bar(
+          name = options,
+          type = NULL,
+          total = xlen,
+          auto_terminate = TRUE,
+          .envir = .
+        )
       }
+      `[[<-`(., "progress", NULL)
     } else {
-      cat(sprintf("\r[ %d / %d %s", i, xlen, if (i < xlen) ".... ]" else "done ]\n"), file = stderr())
+      cli::cli_progress_update(.envir = .)
     }
-  )
-)
+  } else {
+    cat(sprintf("\r[ %d / %d %s", i, xlen, if (i < xlen) ".... ]" else "done ]\n"), file = stderr())
+  }
+))
 
 #' @rdname dot-flat
 #' @export
