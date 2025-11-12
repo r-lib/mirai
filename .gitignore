@@ -4,8 +4,6 @@
 .Ruserdata
 docs
 inst/doc
-.vscode
-air.toml
 revdep/
 .claude
 CLAUDE.md

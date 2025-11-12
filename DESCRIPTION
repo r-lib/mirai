@@ -35,6 +35,7 @@ Enhances:
     promises
 VignetteBuilder: 
     litedown
+Config/Needs/coverage: rlang
 Config/Needs/website: tidyverse/tidytemplate
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
