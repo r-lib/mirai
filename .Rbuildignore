@@ -14,3 +14,4 @@
 ^cran-comments\.md$
 ^\.claude$
 ^CLAUDE.md$
+^\.git-blame-ignore-revs$
