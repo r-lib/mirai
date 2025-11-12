@@ -243,7 +243,9 @@ daemons <- function(
   pass = NULL,
   .compute = NULL
 ) {
-  if (is.null(.compute)) .compute <- .[["cp"]]
+  if (is.null(.compute)) {
+    .compute <- .[["cp"]]
+  }
   envir <- ..[[.compute]]
 
   if (sync) {
@@ -274,20 +276,25 @@ daemons <- function(
     }
   } else {
     signal <- is.null(n)
-    if (signal) n <- 0L
+    if (signal) {
+      n <- 0L
+    }
     is.numeric(n) || stop(._[["numeric_n"]])
     n <- as.integer(n)
 
-    n == 0L && {
-      is.null(envir) && return(invisible(FALSE))
+    n == 0L &&
+      {
+        is.null(envir) && return(invisible(FALSE))
 
-      if (signal) send_signal(envir)
-      reap(envir[["sock"]])
-      otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
-      ..[[.compute]] <- NULL -> envir
-      msleep(.sleep_daemons)
-      return(invisible(FALSE))
-    }
+        if (signal) {
+          send_signal(envir)
+        }
+        reap(envir[["sock"]])
+        otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
+        ..[[.compute]] <- NULL -> envir
+        msleep(.sleep_daemons)
+        return(invisible(FALSE))
+      }
     res <- if (is.null(envir)) {
       n > 0L || stop(._[["n_zero"]])
       dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
@@ -302,22 +309,23 @@ daemons <- function(
     }
   }
 
-  is.null(res) && return({
-    daemons(0L, .compute = .compute)
-    daemons(
-      n = n,
-      url = url,
-      remote = remote,
-      dispatcher = dispatcher,
-      ...,
-      sync = sync,
-      seed = seed,
-      serial = serial,
-      tls = tls,
-      pass = pass,
-      .compute = .compute
-    )
-  })
+  is.null(res) &&
+    return({
+      daemons(0L, .compute = .compute)
+      daemons(
+        n = n,
+        url = url,
+        remote = remote,
+        dispatcher = dispatcher,
+        ...,
+        sync = sync,
+        seed = seed,
+        serial = serial,
+        tls = tls,
+        pass = pass,
+        .compute = .compute
+      )
+    })
 
   `[[<-`(envir, "otel_span", otel_span("daemons set", envir))
 
@@ -649,7 +657,9 @@ init_envir_stream <- function(seed) {
   oseed <- globalenv()[[".Random.seed"]]
   on.exit(`[[<-`(globalenv(), ".Random.seed", oseed))
   RNGkind("L'Ecuyer-CMRG")
-  if (length(seed)) set.seed(seed)
+  if (length(seed)) {
+    set.seed(seed)
+  }
   envir <- new.env(hash = FALSE, parent = ..)
   `[[<-`(envir, "stream", globalenv()[[".Random.seed"]])
   `[[<-`(envir, "seed", seed)
@@ -662,7 +672,9 @@ req_socket <- function(url, tls = NULL) {
 parse_dots <- function(envir, ...) {
   ...length() || return("")
   dots <- list(...)
-  if (any(names(dots) == "tlscert")) `[[<-`(envir, "tls", dots[["tlscert"]])
+  if (any(names(dots) == "tlscert")) {
+    `[[<-`(envir, "tls", dots[["tlscert"]])
+  }
   dots <- dots[as.logical(lapply(dots, function(x) is.logical(x) || is.numeric(x)))]
   length(dots) || return("")
   sprintf(",%s", paste(names(dots), dots, sep = "=", collapse = ","))
@@ -718,22 +730,29 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
   pipe_notify(sock, cv, add = TRUE)
   local <- is.numeric(url)
   n <- if (local) url else 0L
-  if (local) url <- local_url()
+  if (local) {
+    url <- local_url()
+  }
   system2(
     .command,
     args = c("--default-packages=NULL", "--vanilla", "-e", args_dispatcher(urld, url, n)),
     wait = FALSE
   )
-  if (is.null(serial)) serial <- .[["serial"]]
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
+  if (is.null(serial)) {
+    serial <- .[["serial"]]
+  }
+  if (is.list(serial)) {
+    `opt<-`(sock, "serial", serial)
+  }
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
   data <- list(Sys.getenv("R_DEFAULT_PACKAGES"), tls, pass, serial, envir[["stream"]])
   sync <- 0L
 
-  while(!until(cv, .limit_long))
+  while (!until(cv, .limit_long)) {
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+  }
 
   pipe_notify(sock, NULL, add = TRUE)
   send(sock, data, mode = 1L, block = TRUE)
@@ -744,8 +763,9 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
     }
   }
   raio <- recv_aio(sock, mode = 2L, cv = cv)
-  while(!until(cv, .limit_long))
+  while (!until(cv, .limit_long)) {
     message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
+  }
 
   `[[<-`(envir, "url", collect_aio(raio))
 }
@@ -762,9 +782,11 @@ launch_daemons <- function(seq, dots, envir) {
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
   sync <- 0L
-  for (i in seq)
-    while(!until(cv, .limit_long))
+  for (i in seq) {
+    while (!until(cv, .limit_long)) {
       message(sprintf(._[["sync_daemons"]], sync <- sync + .limit_long_secs))
+    }
+  }
   pipe_notify(sock, NULL, add = TRUE)
 }
 
@@ -812,10 +834,46 @@ dispatcher_status <- function(envir) {
 
 stop_d <- function(.compute, call) {
   profile <- is.character(.compute)
-  msg <- if (profile) sprintf("No daemons set for the '%s' compute profile.", .compute) else "No daemons set."
-  try <- if (profile) sprintf("mirai::daemons(6, .compute = \"%s\")", .compute) else "mirai::daemons(6)"
+  msg <- if (profile) {
+    sprintf("No daemons set for the '%s' compute profile.", .compute)
+  } else {
+    "No daemons set."
+  }
+  try <- if (profile) {
+    sprintf("mirai::daemons(6, .compute = \"%s\")", .compute)
+  } else {
+    "mirai::daemons(6)"
+  }
   cli_enabled || stop(sprintf("%s\nUse e.g. %s to set 6 local daemons.", msg, try), call. = FALSE)
   cli::cli_abort(c(msg, sprintf("Use e.g. {.run %s} to set 6 local daemons.", try)), call = call)
 }
 
-._scm_. <- as.raw(c(0x42, 0x0a, 0x03, 0x00, 0x00, 0x00, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x55, 0x54, 0x46, 0x2d, 0x38, 0xfc, 0x00, 0x00, 0x00))
+._scm_. <- as.raw(c(
+  0x42,
+  0x0a,
+  0x03,
+  0x00,
+  0x00,
+  0x00,
+  0x02,
+  0x03,
+  0x04,
+  0x00,
+  0x00,
+  0x05,
+  0x03,
+  0x00,
+  0x05,
+  0x00,
+  0x00,
+  0x00,
+  0x55,
+  0x54,
+  0x46,
+  0x2d,
+  0x38,
+  0xfc,
+  0x00,
+  0x00,
+  0x00
+))

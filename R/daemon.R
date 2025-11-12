@@ -100,7 +100,9 @@ daemon <- function(
   })
   `[[<-`(., "sock", sock)
   pipe_notify(sock, cv, remove = TRUE, flag = flag_value(autoexit))
-  if (length(tlscert)) tlscert <- tls_config(client = tlscert)
+  if (length(tlscert)) {
+    tlscert <- tls_config(client = tlscert)
+  }
   dial_sync_socket(sock, url, autostart = asyncdial || NA, tls = tlscert)
   `[[<-`(., "otel_span", otel_span("daemon connect", url))
 
@@ -111,7 +113,11 @@ daemon <- function(
   }
   xc <- 0L
   task <- 1L
-  timeout <- if (idletime > walltime) walltime else if (is.finite(idletime)) idletime
+  timeout <- if (idletime > walltime) {
+    walltime
+  } else if (is.finite(idletime)) {
+    idletime
+  }
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
 
   if (dispatcher) {
@@ -119,49 +125,61 @@ daemon <- function(
     if (wait(cv)) {
       bundle <- collect_aio(aio)
       `[[<-`(globalenv(), ".Random.seed", if (is.numeric(rs)) as.integer(rs) else bundle[[1L]])
-      if (is.list(bundle[[2L]])) `opt<-`(sock, "serial", bundle[[2L]])
+      if (is.list(bundle[[2L]])) {
+        `opt<-`(sock, "serial", bundle[[2L]])
+      }
       snapshot()
       repeat {
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
-        is.integer(m) && {
-          m == 5L || next
-          xc <- 1L
-          break
-        }
-        (task >= maxtasks || maxtime && mclock() >= maxtime) && {
-          marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
-          aio <- recv_aio(sock, mode = 8L, cv = cv)
-          xc <- 2L + (task >= maxtasks)
-          wait(cv)
-          break
-        }
+        is.integer(m) &&
+          {
+            m == 5L || next
+            xc <- 1L
+            break
+          }
+        (task >= maxtasks || maxtime && mclock() >= maxtime) &&
+          {
+            marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
+            aio <- recv_aio(sock, mode = 8L, cv = cv)
+            xc <- 2L + (task >= maxtasks)
+            wait(cv)
+            break
+          }
         send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
-        if (cleanup) do_cleanup()
+        if (cleanup) {
+          do_cleanup()
+        }
         task <- task + 1L
       }
     }
   } else {
-    if (is.numeric(rs)) `[[<-`(globalenv(), ".Random.seed", as.integer(rs))
+    if (is.numeric(rs)) {
+      `[[<-`(globalenv(), ".Random.seed", as.integer(rs))
+    }
     snapshot()
     repeat {
       ctx <- .context(sock)
       aio <- recv_aio(ctx, mode = 1L, timeout = timeout, cv = cv)
       wait(cv) || break
       m <- collect_aio(aio)
-      is.integer(m) && {
-        xc <- 1L
-        break
-      }
-      (task >= maxtasks || maxtime && mclock() >= maxtime) && {
-        marked(send(ctx, eval_mirai(m), mode = 1L, block = TRUE))
-        xc <- 2L + (task >= maxtasks)
-        wait(cv)
-        break
-      }
+      is.integer(m) &&
+        {
+          xc <- 1L
+          break
+        }
+      (task >= maxtasks || maxtime && mclock() >= maxtime) &&
+        {
+          marked(send(ctx, eval_mirai(m), mode = 1L, block = TRUE))
+          xc <- 2L + (task >= maxtasks)
+          wait(cv)
+          break
+        }
       send(ctx, eval_mirai(m), mode = 1L, block = TRUE)
-      if (cleanup) do_cleanup()
+      if (cleanup) {
+        do_cleanup()
+      }
       task <- task + 1L
     }
   }
@@ -241,7 +259,9 @@ do_cleanup <- function() {
   options(.[["op"]])
 }
 
-snapshot <- function() `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
+snapshot <- function() {
+  `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
+}
 
 flag_value <- function(autoexit) {
   is.na(autoexit) && return(TRUE)

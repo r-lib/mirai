@@ -213,7 +213,11 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
 #' @export
 #'
 remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript", quote = FALSE) {
-  if (is.list(args)) lapply(args, find_dot) else find_dot(args)
+  if (is.list(args)) {
+    lapply(args, find_dot)
+  } else {
+    find_dot(args)
+  }
   list(command = command, args = args, rscript = rscript, quote = quote, tunnel = FALSE)
 }
 
@@ -296,7 +300,13 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #'
 #' @export
 #'
-ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", rscript = "Rscript") {
+ssh_config <- function(
+  remotes,
+  tunnel = FALSE,
+  timeout = 10,
+  command = "ssh",
+  rscript = "Rscript"
+) {
   premotes <- lapply(remotes, parse_url)
   hostnames <- lapply(premotes, .subset2, "hostname")
   ports <- lapply(premotes, .subset2, "port")
@@ -382,11 +392,7 @@ ssh_config <- function(remotes, tunnel = FALSE, timeout = 10, command = "ssh", r
 cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript") {
   command <- command[[1L]]
   options <- gsub("^[ \t]+|(?<=\n)[ \t]+", "", options, perl = TRUE)
-  args <- c(
-    sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n", command, options),
-    ".",
-    "\nEOF"
-  )
+  args <- c(sprintf("%s<<'EOF'\n#!/bin/sh\n%s\n", command, options), ".", "\nEOF")
   list(command = "/bin/sh", args = args, rscript = rscript, quote = NULL)
 }
 
@@ -462,7 +468,9 @@ local_url <- function(tcp = FALSE, port = 0) {
 #' @export
 #'
 print.miraiLaunchCmd <- function(x, ...) {
-  for (i in seq_along(x)) cat(sprintf("[%d]\n%s\n\n", i, x[i]), file = stdout())
+  for (i in seq_along(x)) {
+    cat(sprintf("[%d]\n%s\n\n", i, x[i]), file = stdout())
+  }
   invisible(x)
 }
 
