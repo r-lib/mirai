@@ -2,9 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
-docs
-inst/doc
-revdep/
-.claude
-CLAUDE.md
+/docs/
+/revdep/
+/.claude/
+/.quarto/
+**/*.quarto_ipynb
 .DS_Store
