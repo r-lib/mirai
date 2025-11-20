@@ -44,7 +44,7 @@ to the cli progress bar - if a character value as the name, and if a
 list as named parameters to
 [`cli::cli_progress_bar`](https://cli.r-lib.org/reference/cli_progress_bar.html).
 Examples: `c(.stop = TRUE, .progress = "bar name")` or
-`c(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
+`list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
 
 ## Alternatively
 
