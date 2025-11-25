@@ -1,7 +1,7 @@
 ---
-title: "Mirai Reference Manual"
+title: "mirai - Reference Manual"
 vignette: >
-  %\VignetteIndexEntry{Mirai Reference Manual}
+  %\VignetteIndexEntry{mirai - Reference Manual}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -54,9 +54,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.719273 5.150796 4.538094 2.816822 5.521011
+#> [1] 4.940024 4.588510 3.609578 4.523175 4.230951
 m$data
-#> [1] 4.719273 5.150796 4.538094 2.816822 5.521011
+#> [1] 4.940024 4.588510 3.609578 4.523175 4.230951
 ```
 
 A mirai is either *unresolved* if the result has yet to be received, or *resolved* if it has. `unresolved()` is a helper function to check the state of a mirai.
@@ -80,15 +80,12 @@ So, the following would be equivalent to the above example:
 
 
 ``` r
-expr <- quote({
-  Sys.sleep(time)
-  rnorm(5L, mean)
-})
+expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
 args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 4.447807 2.535265 3.735104 4.729115 4.332595
+#> [1] 4.783043 2.864386 4.335620 4.604609 3.470967
 ```
 
 The example below uses `mirai()` to perform a long-running write operation asynchronously from a separate process.
@@ -136,93 +133,74 @@ If execution in a mirai fails, the error message is returned as a character stri
 ``` r
 m1 <- mirai(stop("occurred with a custom message", call. = FALSE))
 m1[]
+#> 'miraiError' chr Error: occurred with a custom message
 
 m2 <- mirai(mirai::mirai())
 m2[]
+#> 'miraiError' chr Error in mirai::mirai(): missing expression, perhaps wrap in {}?
 
 is_mirai_error(m2$data)
+#> [1] TRUE
 is_error_value(m2$data)
-``
-`
-- A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace
-` on the error object
-- The original condition classes are also preserved at `$condition.class
-`
-`
-``
-{
-  r
-}
-#| label: stackexample
+#> [1] TRUE
+```
+- A full stack trace of evaluation within the mirai is recorded and accessible at `$stack.trace` on the error object
+- The original condition classes are also preserved at `$condition.class`
+
+``` r
 f <- function(x) if (x > 0) stop("positive")
 
-m3 <- mirai(
-  {
-    f(-1)
-    f(1)
-  },
-  f = f
-)
+m3 <- mirai({f(-1); f(1)}, f = f)
 m3[]
+#> 'miraiError' chr Error in f(1): positive
 
 m3$data$stack.trace
+#> [[1]]
+#> stop("positive")
+#> 
+#> [[2]]
+#> f(1)
 m3$data$condition.class
-`
-`
-`
+#> [1] "simpleError" "error"       "condition"
+```
 - The elements of the original error condition are also accessible via `$` on the error object
-- Additional metadata recorded by `
-rlang::abort()
-` is preserved
-`
-``
-{
-  r
-}
-#| label: metaexample
+- Additional metadata recorded by `rlang::abort()` is preserved
+
+``` r
 f <- function(x) if (x > 0) stop("positive")
 
 m4 <- mirai(rlang::abort("aborted", meta_uid = "UID001"))
 m4[]
+#> 'miraiError' chr Error: aborted
 
 m4$data$meta_uid
-``
-`
+#> [1] "UID001"
+```
 If a daemon instance is sent a user interrupt, the mirai will resolve to an object of class 'miraiInterrupt' and 'errorValue'.
 
-`
-is_mirai_interrupt()
-` may be used to test for such interrupts.
-`
-``
-{
-  r
-}
-#| label: interruptexample
+`is_mirai_interrupt()` may be used to test for such interrupts.
+
+``` r
 m4 <- mirai(rlang::interrupt()) # simulates a user interrupt
 is_mirai_interrupt(m4[])
-`
-`
-`
+#> [1] TRUE
+```
 If execution of a mirai surpasses the timeout set via the '.timeout' argument, the mirai will resolve to an 'errorValue' of 5L (timed out).
 This can, amongst other things, guard against mirai processes that have the potential to hang and never return.
-`
-``
-{
-  r
-}
-#| label: timeouts
+
+``` r
 m5 <- mirai(nanonext::msleep(1000), .timeout = 500)
 m5[]
+#> 'errorValue' int 5 | Timed out
 
 is_mirai_error(m5$data)
+#> [1] FALSE
 is_mirai_interrupt(m5$data)
+#> [1] FALSE
 is_error_value(m5$data)
-``
-`
-`
-is_error_value()
-` tests for all mirai execution errors, user interrupts and timeouts.
+#> [1] TRUE
+```
+`is_error_value()` tests for all mirai execution errors, user interrupts and timeouts.
 
 ### 3. Random Number Generation
 
@@ -230,25 +208,13 @@ mirai employs L'Ecuyer-CMRG streams for random number generation in the same way
 
 Streams essentially cut into the RNG's period (a very long sequence of pseudo-random numbers) at intervals that are far apart from each other that they do not in practice overlap. This ensures that statistical results obtained from parallel computations remain correct and valid. The method of generating streams is recursive.
 
-**By default, when the `
-seed
-` argument to `
-daemons()
-` is `
-NULL
-`**: mirai initiates a new stream for each daemon launched, in the same manner as base R.
+**By default, when the `seed` argument to `daemons()` is `NULL`**: mirai initiates a new stream for each daemon launched, in the same manner as base R.
 
 - Guarantees that the results are statistically-sound, although does not guarantee numerical reproducibility between parallel runs
 - Using different numbers of daemons would cause mirai tasks to be sent to different daemons
 - With dispatcher, mirai tasks are sent dynamically to the next available daemon, and this is not guaranteed to be the same on each run
 
-**Supply an explicit integer `
-seed
-` to `
-daemons()
-` for reproducible RNG**: instead of initiating a new stream for each daemon, now a stream is initiated for each `
-mirai()
-` call.
+**Supply an explicit integer `seed` to `daemons()` for reproducible RNG**: instead of initiating a new stream for each daemon, now a stream is initiated for each `mirai()` call.
 
 - Guarantees the same deterministic, reproducible results across runs
 - This is regardless of the number of daemons used
@@ -256,29 +222,16 @@ mirai()
 
 ### 4. Local Daemons
 
-Daemons, or persistent background processes, may be set to receive `
-mirai()
-` requests.
+Daemons, or persistent background processes, may be set to receive `mirai()` requests.
 
 > Daemons inherit the default system configuration and read in the relevant '.Renviron' and '.Rprofile' etc. on startup.
 They also load the default packages.
-To instead only load the `
-base
-` package (which cuts out more than half of R's startup time), the environment variable `
-R_SCRIPT_DEFAULT_PACKAGES = NULL
-` may be set prior to launching daemons.
+To instead only load the `base` package (which cuts out more than half of R's startup time), the environment variable `R_SCRIPT_DEFAULT_PACKAGES=NULL` may be set prior to launching daemons.
 
-Call `
-daemons()
-` specifying the number of daemons to launch.
-`
-``
-{
-  r
-}
-#| label: daemons
+Call `daemons()` specifying the number of daemons to launch.
+
+``` r
 daemons(6)
-#> Error in parse(text = input): attempt to use zero-length variable name
 ```
 
 Setting `n` to one less than the number of available cores is a good rule of thumb for optimal performance.
@@ -302,7 +255,8 @@ To view current statistics, `info()` provides these succinctly in a single integ
 
 ``` r
 info()
-#> NULL
+#> connections  cumulative    awaiting   executing   completed 
+#>           6           6           0           0           0
 ```
 
 The `status()` function provides a slightly more verbose output:
@@ -315,45 +269,31 @@ The `status()` function provides a slightly more verbose output:
 ``` r
 status()
 #> $connections
-#> [1] 0
+#> [1] 6
 #> 
 #> $daemons
-#> [1] 0
+#> [1] "ipc:///tmp/75a31f6260200779ce4021dd"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
 ```
 
 
 ``` r
 daemons(0)
-`
-`
-`
+```
 Set the number of daemons to zero to reset.
 This reverts to the default of creating a new background process for each 'mirai' request.
 
 #### Without Dispatcher
 
-Alternatively, specifying `
-dispatcher = FALSE
-`, the background daemons connect directly to the host process.
-`
-``
-{
-  r
-}
-#| label: daemonsq
+Alternatively, specifying `dispatcher = FALSE`, the background daemons connect directly to the host process.
+
+``` r
 daemons(6, dispatcher = FALSE)
-``
-`
-`
-``
-{
-  r
-}
-#| label: daemonsq2
-#| include: false
-Sys.sleep(0.5)
-#> Error in parse(text = input): attempt to use zero-length variable name
 ```
+
 
 This means that tasks are sent immediately in a round-robin fashion, which ensures that they are evenly-distributed amongst daemons.
 This does not however guarantee optimal scheduling, as the duration of tasks cannot be known *a priori*.
@@ -367,10 +307,10 @@ Requesting the status now shows 6 connections, along with the host URL:
 ``` r
 status()
 #> $connections
-#> [1] 0
+#> [1] 6
 #> 
 #> $daemons
-#> [1] 0
+#> [1] "ipc:///tmp/ed803752fc917b21b393be1b"
 ```
 
 #### everywhere()
@@ -379,46 +319,27 @@ status()
 
 ``` r
 everywhere(library(DBI))
-`
-`
-`
-The above keeps the [`
-DBI
-`](https://dbi.r-dbi.org/) package loaded for all evaluations.
+```
+The above keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded for all evaluations.
 Other types of setup task may also be performed, including making a common resource available, such as a database connection:
 
-`
-``
-{
-  r
-}
-#| label: everywhere2
+
+``` r
 everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = tempfile())
-``
-`
+```
 By super-assignment, the conenction 'con' will be available in the global environment of all daemon instances.
 Subsequent mirai calls may then make use of 'con'.
 
-`
-``
-{
-  r
-}
-#| label: everywhere3
+
+``` r
 mirai(exists("con"))[]
-`
-`
-`
+#> [1] TRUE
+```
 Disconnect from the database everywhere:
 
-`
-``
-{
-  r
-}
-#| label: everywhere4
+
+``` r
 everywhere(dbDisconnect(con))
-#> Error in parse(text = input): attempt to use zero-length variable name
 ```
 
 > Sometimes it may be necessary to evaluate an expression in the global environment of each daemon.
@@ -427,10 +348,12 @@ An example use case is `box::use()` to import a module or package:
 
 
 ``` r
-everywhere(evalq(box::use(dplyr[select], mirai[...]), envir = globalenv()))
-#> Error in `everywhere()`:
-#> ! No daemons set.
-#> Use e.g. ]8;;x-r-run:mirai::daemons(6)mirai::daemons(6)]8;; to set 6 local daemons.
+everywhere(
+  evalq(
+    box::use(dplyr[select], mirai[...]),
+    envir = globalenv()
+  )
+)
 
 daemons(0)
 ```
@@ -451,62 +374,43 @@ This is a wildcard value that will automatically assigns a free ephemeral port:
 
 ``` r
 daemons(url = host_url())
-``
-`
-The actual assigned port may be queried at any time via `
+```
+The actual assigned port may be queried at any time via `status()`:
+
+``` r
 status()
-`:
-`
-``
-{
-  r
-}
-#| label: remotev2
-status()
-`
-`
-`
+#> $connections
+#> [1] 0
+#> 
+#> $daemons
+#> [1] "tcp://192.168.1.110:53399"
+#> 
+#> $mirai
+#>  awaiting executing completed 
+#>         0         0         0
+```
 The number of daemons connected at any time may be dynamically scaled up or down, according to requirements.
 
 To reset all connections and revert to default behaviour:
-`
-``
-{
-  r
-}
-#| label: reset2
+
+``` r
 daemons(0)
-``
-`
+```
 Closing the connection causes all connected daemons to exit automatically. If using dispatcher, it will cause dispatcher to exit, and in turn all connected daemons when their respective connections with the dispatcher are terminated.
 
 ### 6. Launching Remote Daemons
 
 > The launcher analogy is appropriate, as these are ways of deploying a daemon on the machine of your choice, very much like launching a satellite. Once deployed, the daemon connects back to your host process through its own communications (TCP or TLS over TCP).
 
-The local launcher simply runs an `
-Rscript
-` instance via a local shell. The remote launcher uses a method to run this `
-Rscript
-` command on a remote machine.
+The local launcher simply runs an `Rscript` instance via a local shell. The remote launcher uses a method to run this `Rscript` command on a remote machine.
 
-To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `
-daemons()
-`, or `
-launch_remote()
-` at any time thereafter.
+To launch remote daemons, supply a remote launch configuration to the 'remote' argument of `daemons()`, or `launch_remote()` at any time thereafter.
 
 There are currently 3 options for generating remote launch configurations:
 
-1. `
-ssh_config()
-` where there is SSH access to the remote machine.
-2. `
-cluster_config()
-` to use HPC cluster resource managers such as Slurm, SGE, Torque/PBS and LSF.
-2. `
-remote_config()
-` for a generic, flexible method that caters for other custom launchers.
+1. `ssh_config()` where there is SSH access to the remote machine.
+2. `cluster_config()` to use HPC cluster resource managers such as Slurm, SGE, Torque/PBS and LSF.
+2. `remote_config()` for a generic, flexible method that caters for other custom launchers.
 
 The return value of all of these functions is a simple list. This means that they may be pre-constructed, saved and re-used whenever the same configuration is required.
 
@@ -518,31 +422,22 @@ In the examples below, the remote daemons connect back directly to port 5555 on 
 In these cases, using TLS is often desirable to provide additional security to the connections.
 
 The first example below launches 4 daemons on the machine 10.75.32.90 (using the default SSH port of 22 as this was not specified), connecting back to the host URL:
-`
-``
-{
-  r
-}
-#| label: ldmn
-#| eval: false
-daemons(n = 4, url = host_url(tls = TRUE, port = 5555), remote = ssh_config("ssh://10.75.32.90"))
-`
-`
-`
+
+``` r
+daemons(
+  n = 4,
+  url = host_url(tls = TRUE, port = 5555),
+  remote = ssh_config("ssh://10.75.32.90")
+)
+```
 The second example below launches one daemon on each of 10.75.32.90 and 10.75.32.91 using the custom SSH port of 222:
-`
-``
-{
-  r
-}
-#| label: ldmnd
-#| eval: false
+
+``` r
 daemons(
   n = 1,
   url = host_url(tls = TRUE, port = 5555),
   remote = ssh_config(c("ssh://10.75.32.90:222", "ssh://10.75.32.91:222"))
 )
-#> Error in parse(text = input): attempt to use zero-length variable name
 ```
 
 #### SSH Tunnelling
@@ -568,7 +463,11 @@ The host listens to `127.0.0.1:5555` on its side, and the daemons each dial into
 The below example launches 2 daemons on the remote machine 10.75.32.90 using SSH tunnelling:
 
 ``` r
-daemons(n = 2, url = local_url(tcp = TRUE), remote = ssh_config("ssh://10.75.32.90", tunnel = TRUE))
+daemons(
+  n = 2,
+  url = local_url(tcp = TRUE),
+  remote = ssh_config("ssh://10.75.32.90", tunnel = TRUE)
+)
 ```
 
 #### HPC Cluster Resource Managers
@@ -659,7 +558,7 @@ The printed return values may then be copy / pasted directly to a remote machine
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://10.37.51.240:51839")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.1.110:53400")'
 daemons(0)
 ```
 
@@ -673,32 +572,51 @@ Simply specify a secure URL using the scheme `tls+tcp://` when setting daemons, 
 
 ``` r
 daemons(url = host_url(tls = TRUE))
-``
-`
+```
 Single-use keys and certificates are automatically generated and configured, without requiring any further intervention.
 The private key is always retained on the host machine and never transmitted.
 
-The generated self-signed certificate is available via `
-launch_remote()
-`, where it is included as part of the shell command for manually launching a daemon on a remote machine.
-`
-``
-{
-  r
-}
-#| label: launch_remote
+The generated self-signed certificate is available via `launch_remote()`, where it is included as part of the shell command for manually launching a daemon on a remote machine.
+
+``` r
 launch_remote(1)
-`
-`
-`
-`
-``
-{
-  r
-}
-#| label: tlsclose
+#> [1]
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.1.110:53401",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
+#> MTY4LjEuMTEwMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjEu
+#> MTEwMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQCxVnubxv4p66SUTJy3wD7NCed805Fl0E6JI29O
+#> YouANuIGy5ctD48QM+N48DwHknNKWNj0y5mpVmy/p6qlUKDK7Lnea3OpD86ov7Fg
+#> nisAfaVGWHjIxvy/7UG/epyYdYoQhLXare6qbECvuy6MdZU/OVEB7T2metk2B9SK
+#> I6mMkbP3C6Q5asMCLYPygc+w4enJ2eYhhYcmpsbsdRMC1ipHtNVHJKTbpg6lZKAj
+#> d9cXhMYdcQxvQ6jV0Br3OQXH+E/DVXN/A1xBhurBNkfDnAa6/Uv0nrInBYwmRAuQ
+#> eeLtt/Sx2EhwAX9jUpdkB8hBPSiW4bNYMTLrHqcVPjk+fPC6eUt7jrY5bAvLlc2X
+#> 1zlx9Ol0sYEoUXUd1ixhCapxOkfJfQW0Plj2j3OYKMq+n5pU75nAvL3g40w6W5Ip
+#> GrpHyOvLh6zj7ssX4eD7S3kG4by7mCzSk2cc0rCLhaY/ahtLf5KvNLyngzOQ+N5l
+#> OOSrpZcnPrRSFYqUwPQHm//797Dg7sxhrReWNDN30xUHaer8n1wTswB9V87RDg1Q
+#> YknrzOmN6uJPLOKU1DpyUrW5hsSdKRQPi9bKJYgsz4d4VvFP1em0JoEGSy7Q73OS
+#> cqvnKSOQRaOzu5NbqtjJTqZZ+eyOdj2CIAECcrUpzsEC7yFngjaHonP1+YLYAOJ+
+#> BssQQwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBT8T3Ak
+#> MEPhayUqHcv0yIiD9fabGTAfBgNVHSMEGDAWgBT8T3AkMEPhayUqHcv0yIiD9fab
+#> GTANBgkqhkiG9w0BAQsFAAOCAgEAE3HIoKGLjYtZImByOo1WIjCNk2FB29GM5Fcv
+#> L31MqRFzaNoe6X1HOM4GV5P5vDlpZAFPP54ibsOfIytKa5EgISAGPcQajvEQTs0t
+#> 0laOAXYdrZE4O1ZfEzgIft46XRcwfh5VvZHomezk/pT3uNgvmCUkMl2ywHAj3ptY
+#> orpw+oNMhoU/dhtgbAUwJGF0ZUORiTjKUp7rFxu+DyaZ7JHOYubG51ZHJ0wdEPTp
+#> dM7+PUnwZ5So5VoT0Qyq0iVwrc0tKgg8jS1TNvNqbr7kGIC0Nd+eujMzfJvz+U6G
+#> NN+HGdvOT1tk5LDzYDeCY4Fdy7oQFDkpGItgdjhEm/90PQBfd7Q3h1vJHlde0Deh
+#> fai4FhBmitCr0tOq3p8fcRv0V0VsM15x5TNXMK4UpvCnKAeVMQjORZ9Rh7T8pfmr
+#> t6rQz5TzMlxJfMVCrfra1BCbMBCmut6lrZ9CGJwBUfTZ9yAbbytYlrSAqzoOGZLT
+#> 7C3tDY86HP2aF+j8zsjBIf4d39lhCNBQl+002uCzk2kDjQvEl7Zcohwcs/LVHqFs
+#> WmriJvtMYpkuCjPECQOWTFWmajsPHxadoSiXRPjXblfQDnT+udGWtn4A9zkfeTvi
+#> WS/7CFfRZzLY2KRA+w5NrV117j2NMb7HZ7qtfHI1+Im08FNhWPCvZvIaQ8EluDc7
+#> XCPLLdQ=
+#> -----END CERTIFICATE-----
+#> ",""))'
+```
+
+``` r
 daemons(0)
-#> Error in parse(text = input): attempt to use zero-length variable name
 ```
 
 #### CA Signed Certificates
@@ -762,19 +680,19 @@ with_daemons("gpu", {
 })
 
 s1$daemons
-#> [1] "ipc:///tmp/24990ba1d4fa69cf1945cb4c"
+#> [1] "ipc:///tmp/c0f63277a4f5bb439fb1e0b5"
 m1[]
-#> [1] 80161
+#> [1] 46424
 
 s2$daemons
-#> [1] "ipc:///tmp/11087fa91abdbada3bce2ce7"
+#> [1] "ipc:///tmp/4742aeb9f6914313d23feca0"
 m2[] # different to m1
-#> [1] 80187
+#> [1] 46450
 
 m3[] # same as m1
-#> [1] 80161
+#> [1] 46424
 m4[] # same as m1
-#> [1] 80161
+#> [1] 46424
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -815,10 +733,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 66285
+#> [1] 42898
 #> 
 #> [[2]]
-#> [1] 66285
+#> [1] 42898
 
 
 # Use sync with the 'sync' compute profile:
@@ -829,8 +747,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 66285
+#> [1] 42898
 #> 
 #> [[2]]
-#> [1] 66285
+#> [1] 42898
 ```
