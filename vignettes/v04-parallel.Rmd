@@ -1,7 +1,7 @@
 ---
-title: "Communications Backend for R"
+title: "mirai - Communications Backend for R"
 vignette: >
-  %\VignetteIndexEntry{Communications Backend for R}
+  %\VignetteIndexEntry{mirai - Communications Backend for R}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---

@@ -12,7 +12,7 @@ vignette: >
 
 **Architecture**: daemons dial into host, a topology which facilitates dynamic scaling.
 
-This is a cheatsheet. Refer to the [mirai reference manual](v00-mirai.html) for a detailed introduction.
+This is a cheatsheet. Refer to the [mirai reference manual](v01-reference.html) for a detailed introduction.
 
 ## Key Takeaways
 

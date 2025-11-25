@@ -1,7 +1,7 @@
 ---
-title: "Promises - Shiny and Plumber"
+title: "mirai - Promises (Shiny and Plumber)"
 vignette: >
-  %\VignetteIndexEntry{Promises - Shiny and Plumber}
+  %\VignetteIndexEntry{mirai - Promises (Shiny and Plumber)}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---

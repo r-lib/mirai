@@ -1,7 +1,7 @@
 ---
-title: "OpenTelemetry"
+title: "mirai - OpenTelemetry"
 vignette: >
-  %\VignetteIndexEntry{OpenTelemetry}
+  %\VignetteIndexEntry{mirai - OpenTelemetry}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
