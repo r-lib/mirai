@@ -325,7 +325,7 @@ ssh_config <- function(
 #' @param command filename of executable e.g. "sbatch" for Slurm. Replace with
 #'   "qsub" for SGE / Torque / PBS, or "bsub" for LSF. See examples below.
 #' @param options options as would be supplied inside a script file passed to
-#'   `command`, e.g. "#SBATCH --mem=10G", each separated by a new line. See
+#'   `command`, e.g. "#SBATCH --mem=16G", each separated by a new line. See
 #'   examples below.
 #'   \cr Other shell commands e.g. to change working directory may also be
 #'   included.
@@ -345,7 +345,7 @@ ssh_config <- function(
 #' cluster_config(
 #'   command = "sbatch",
 #'   options = "#SBATCH --job-name=mirai
-#'              #SBATCH --mem=10G
+#'              #SBATCH --mem=16G
 #'              #SBATCH --output=job.out
 #'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
@@ -355,7 +355,7 @@ ssh_config <- function(
 #' cluster_config(
 #'   command = "qsub",
 #'   options = "#$ -N mirai
-#'              #$ -l mem_free=10G
+#'              #$ -l mem_free=16G
 #'              #$ -o job.out
 #'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
@@ -365,7 +365,7 @@ ssh_config <- function(
 #' cluster_config(
 #'   command = "qsub",
 #'   options = "#PBS -N mirai
-#'              #PBS -l mem=10gb
+#'              #PBS -l mem=16gb
 #'              #PBS -o job.out
 #'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
@@ -375,7 +375,7 @@ ssh_config <- function(
 #' cluster_config(
 #'   command = "bsub",
 #'   options = "#BSUB -J mirai
-#'              #BSUB -M 10000
+#'              #BSUB -M 16000
 #'              #BSUB -o job.out
 #'              module load R/4.5.0",
 #'   rscript = file.path(R.home("bin"), "Rscript")
