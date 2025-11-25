@@ -450,55 +450,7 @@ daemons(
 )
 ```
 
-## 13. Integration with R Parallel
-
-### MIRAI Cluster
-
-```r
-library(parallel)
-
-# Create MIRAI cluster
-cl <- make_cluster(4)
-cl <- makeCluster(4, type = "MIRAI") # Available R >= 4.5
-
-# Use with parallel functions
-results <- parLapply(cl, 1:100, sqrt)
-results <- mclapply(1:100, sqrt)
-
-# Stop cluster
-stopCluster(cl)
-```
-
-## 14. Integration with Promises
-
-### Convert mirai to Promise
-
-```r
-library(promises)
-
-# Promise then (implicit conversion)
-mirai({Sys.sleep(1); "result"}) |> then(print)
-
-# Explicit conversion
-p <- as.promise(mirai(slow_task()))
-p$then(onFulfilled = function(x) cat("Done:", x))
-```
-
-### Shiny ExtendedTask
-
-```r
-library(shiny)
-
-# In server function
-task <- ExtendedTask$new(function(x) mirai(compute(x), x = x))
-
-observeEvent(input$button, task$invoke(input$value))
-observeEvent(task$result(), {
-  output$plot <- renderPlot(task$result())
-})
-```
-
-## 15. Dispatcher vs. Direct
+## 13. Dispatcher vs. Direct
 
 | Feature | With Dispatcher (default) | Direct (dispatcher=FALSE) |
 |---------|---------------------------|---------------------------|
@@ -509,7 +461,7 @@ observeEvent(task$result(), {
 | Overhead | Slightly higher | Minimal |
 | Use case | Variable task times | Similar task times |
 
-## 16. Quick Decision Tree
+## 14. Quick Decision Tree
 
 ```
 ┌─ Need async in R?
@@ -535,7 +487,7 @@ observeEvent(task$result(), {
       └─ daemons(url = host_url(), remote = cluster_config(...))
 ```
 
-## 17. Common Gotchas
+## 15. Common Gotchas
 
 ```r
 # Expression Evaluation
