@@ -30,7 +30,7 @@ Expressions must be self-contained:
 - Package functions must be namespaced with `::` or loaded via `library()` within the expression.
 - Pass required functions, data, or objects explicitly via `...` or `.args`.
 
-> This explicit design perfectly matches message-passing parallelism - attempting to infer global variables would introduce unreliability, which we do not compromise on.
+> This explicit design perfectly matches message-passing parallelism - attempting to infer global variables introduces unreliability, which we do not compromise on.
 
 This example mimics an expensive calculation:
 
