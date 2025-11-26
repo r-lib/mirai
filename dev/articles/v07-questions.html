@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Community FAQs • mirai</title>
+<title>mirai - Community FAQs • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Community FAQs">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - Community FAQs">
 <meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -43,13 +43,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Community FAQs</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>mirai - Community FAQs</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v07-questions.Rmd" class="external-link"><code>vignettes/v07-questions.Rmd</code></a></small>
@@ -91,51 +91,40 @@
 
     
     
-<p>This vignette is designed to provide a knowledgebase for questions
-posed by the community, and will be added to over time.</p>
+<p>This vignette provides answers to common questions from the
+community.</p>
 <div class="section level3">
 <h3 id="migration-from-future_promise">1. Migration from <code>future_promise()</code><a class="anchor" aria-label="anchor" href="#migration-from-future_promise"></a>
 </h3>
-<p>For use within Shiny, it should be straightforward translating
-ExtendedTask or other async code that was originally written for use
-with a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">promises::future_promise()</a></code>.</p>
-<p>Note: <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> exists in the promises package as
-we had to find a workaround to make <code>future(...)</code> always
-async. <code>future(...)</code> by itself is not always async as it
-blocks as soon as it runs out of parallel processes on which to run
-tasks.</p>
-<p><code><a href="../reference/mirai.html">mirai()</a></code> on the other hand is built as an async
-framework, so there’s no need for an additional function from the
-promises package. You should simply use a <code><a href="../reference/mirai.html">mirai()</a></code> directly
-in place of a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
+<p>Translating Shiny ExtendedTask or async code from
+<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">promises::future_promise()</a></code> to mirai is straightforward.</p>
+<p><code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> exists because <code>future(...)</code>
+alone isn’t always async - it blocks when parallel processes run out.
+<code><a href="../reference/mirai.html">mirai()</a></code> is built as an async framework, so use it directly
+in place of <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
 <p><strong>Globals:</strong></p>
-<p>One important difference is that a <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> by
-default tries to infer all the global variables that are required by the
-expression. If your code depended on this convenience feature then you
-will need to instead pass these in via the <code>...</code> of
-<code><a href="../reference/mirai.html">mirai()</a></code>. A mirai requires that the expression be
-self-contained, with any variables or helper functions explicitly
-supplied to it.</p>
-<p>On the other hand, if your code previously used the
-<code>globals</code> argument to supply these variables, then you can
-pass this directly to the <code>.args</code> of <code><a href="../reference/mirai.html">mirai()</a></code> if
-it is a named list.</p>
-<p>Regardless of using <code><a href="../reference/mirai.html">mirai()</a></code> or
-<code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>, we recommend that you always pass globals
-explicitly. This matches what actually happens in multi-process
-parallelism, and is hence better-suited to programmatic use. Automatic
-globals detection is an imperfect abstraction that can lead to
-unpredictable edge cases, or simply slower operation through sending
-more than required to daemons. Explicit passing of variables allows for
-reliable and transparent behaviour that remains robust over time.</p>
+<p><code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> by default infers required global
+variables. If your code depended on this, pass variables explicitly via
+<code>...</code> in <code><a href="../reference/mirai.html">mirai()</a></code>. A mirai requires
+self-contained expressions with all variables or helper functions
+explicitly supplied.</p>
+<p>If your code used the <code>globals</code> argument, pass it directly
+to <code>.args</code> in <code><a href="../reference/mirai.html">mirai()</a></code> (if it’s a named
+list).</p>
+<p><strong>Always pass globals explicitly.</strong> This matches the
+behaviour of multi-process parallelism and is suited for programmatic
+use. Automatic globals detection creates an imperfect abstraction
+leading to unpredictable edge cases or slower operation from sending
+unnecessary data to daemons. Explicitly passing variables ensures
+reliable, transparent behaviour.</p>
 <p><strong>Capture globals using
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>:</strong></p>
-<p><code><a href="../reference/mirai.html">mirai()</a></code> allows passing an environment to
-<code>...</code> or to <code>.args</code>. This is especially useful for
-Shiny ExtendedTask, where it is invoked with a set of arguments. By
-using <code>mirai::mirai({...}, environment())</code> you automatically
-capture the variables provided to the invoke method. See the Shiny
-vignette for example usage.</p>
+<p><code><a href="../reference/mirai.html">mirai()</a></code> accepts an environment passed to
+<code>...</code> or <code>.args</code>. This is useful for Shiny
+ExtendedTask invoked with arguments. Using
+<code>mirai::mirai({...}, environment())</code> automatically captures
+variables provided to the invoke method. See the Shiny vignette for
+examples.</p>
 <p><strong>Special Case: <code>...</code>:</strong></p>
 <p>A Shiny app may have used <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> code similar
 to the following within the server component:</p>
@@ -161,11 +150,10 @@ to the following within the server component:</p>
 <div class="section level3">
 <h3 id="setting-the-random-seed">2. Setting the random seed<a class="anchor" aria-label="anchor" href="#setting-the-random-seed"></a>
 </h3>
-<p>The following example was raised as being potentially
-counter-intuitive, given that default ‘cleanup’ settings at each daemon
-ensures that variables in the global environment, of which
-<code>.Random.seed</code> is one, do not carry over to subsequent
-runs.</p>
+<p>This example may seem counter-intuitive: default ‘cleanup’ settings
+at each daemon ensure global environment variables don’t carry over to
+subsequent runs. This can be assumed to include
+<code>.Random.seed</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
@@ -201,117 +189,106 @@ runs.</p>
 <span><span class="co">#&gt; [1] -1.8150926  0.3304096 -1.1421557</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>The reason the change in random seed persists in all circumstances is
-due to this being a special case, arising from the use of L’Ecuyer CMRG
-streams to provide parallel-safe random numbers.</p>
-<p>Streams can be thought of as entry points to the pseudo random number
-line far away from each other to ensure that random results in each
-daemon are independent from one another. The random seed is not reset
-after each mirai call to ensure that however many random draws are made
-in any mirai call, the next random draw follows on in the stream, and
-hence have the desired statistical properties.</p>
-<p>Hence normally, the random seed should be set once on the host
-process when daemons are created, rather than in each daemon.</p>
-<p>For numerical reproducibility, set the <code>seed</code> argument to
-<code><a href="../reference/daemons.html">daemons()</a></code> (see the Random Number Generation section of the
-reference vignette for further details).</p>
+<p>Random seed changes persist because mirai uses L’Ecuyer CMRG streams
+for parallel-safe random numbers.</p>
+<p>Streams are entry points on the pseudo-random number line, far apart
+to ensure independent random results across daemons. The random seed
+isn’t reset after each mirai call - this ensures that random draws
+continue along the stream, maintaining desired statistical properties
+regardless of how many draws occur per call.</p>
+<p><strong>Set the random seed once on the host process when creating
+daemons, not in each daemon.</strong></p>
+<p>For numerical reproducibility, set the <code>seed</code> argument in
+<code><a href="../reference/daemons.html">daemons()</a></code> (see Random Number Generation in the reference
+vignette).</p>
 </div>
 <div class="section level3">
 <h3 id="accessing-package-functions-during-development">3. Accessing package functions during development<a class="anchor" aria-label="anchor" href="#accessing-package-functions-during-development"></a>
 </h3>
-<p>A mirai call usually requires package-namespaced functions. However
-the latest version of a package in development is often loaded
-dynamically by <code>devtools::load_all()</code> or the underlying
-<code>pkgload::load_all()</code> for quick iteration.</p>
-<p>In this case, use <code><a href="../reference/everywhere.html">everywhere()</a></code> to also call
-<code>devtools::load_all()</code> on all (local) daemons. They will then
-have access to the same functions as your host session for subsequent
+<p>A mirai call usually requires package-namespaced functions. However,
+development packages are often loaded dynamically by
+<code>devtools::load_all()</code> or <code>pkgload::load_all()</code>
+for quick iteration.</p>
+<p>Use <code><a href="../reference/everywhere.html">everywhere()</a></code> to call
+<code>devtools::load_all()</code> on all (local) daemons. They’ll then
+access the same functions as your host session for subsequent
 <code><a href="../reference/mirai.html">mirai()</a></code> calls.</p>
 </div>
 <div class="section level3">
-<h3 id="why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately">4. Why does it take time for <code>mirai()</code> to execute when
-it’s meant to return immediately?<a class="anchor" aria-label="anchor" href="#why-does-it-take-time-for-mirai-to-execute-when-its-meant-to-return-immediately"></a>
+<h3 id="why-does-mirai-take-time-when-its-meant-to-return-immediately">4. Why does <code>mirai()</code> take time when it’s meant to return
+immediately?<a class="anchor" aria-label="anchor" href="#why-does-mirai-take-time-when-its-meant-to-return-immediately"></a>
 </h3>
-<p>A <code><a href="../reference/mirai.html">mirai()</a></code> call is meant to return almost
-instantaneously. The same when invoked by a Shiny
-<code>ExtendedTask</code>. The only reason it would take time is if you
-are passing through large objects, which then need to be serialized to
-be sent to the parallel process.</p>
-<p>Care should be taken when you pass a function or environment to
-<code><a href="../reference/mirai.html">mirai()</a></code> in the <code>...</code> or <code>.args</code>
-arguments. This is as a function includes its closure (enclosing
-environment), and an environment its parent environments. This means you
-could be passing more than you bargained for.</p>
-<p>Generally, <code>lobstr::obj_size()</code> from the lobstr package is
-a great function for checking the actual size of an object (capturing
-many cases more accurately than the base R
+<p>A <code><a href="../reference/mirai.html">mirai()</a></code> call returns almost instantaneously, as does
+Shiny <code>ExtendedTask</code>. The only reason it takes time is
+passing large objects requiring serialization to the parallel
+process.</p>
+<p>Be careful passing functions or environments to <code><a href="../reference/mirai.html">mirai()</a></code>
+via <code>...</code> or <code>.args</code>. Functions include their
+closure (enclosing environment), and environments include parent
+environments. You may be passing more than intended.</p>
+<p>Use <code>lobstr::obj_size()</code> from the lobstr package to check
+actual object size (more accurate than base R’s
 <code>object.size</code>).</p>
-<p>As mitigation for accidentally passing large objects:</p>
+<p><strong>Mitigation for large objects:</strong></p>
 <ul>
-<li>For functions, use <code>carrier::crate()</code> from the carrier
-package. This is what we use in purrr, and it makes sure only what’s
-necessary is ‘crated’ with the function. To crate an existing function,
-use an anonymous function (making sure to also supply anything required
-by <code>fn</code> as part of the <code>...</code>):</li>
+<li>
+<strong>Functions</strong>: Use <code>carrier::crate()</code> from
+the carrier package (used in purrr). This ensures only necessary
+components are ‘crated’ with the function. To crate an existing
+function, use an anonymous function (supplying anything required by
+<code>fn</code> via <code>...</code>):</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">func</span> <span class="op">&lt;-</span> <span class="fu">carrier</span><span class="fu">::</span><span class="fu">crate</span><span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, fn <span class="op">=</span> <span class="va">fn</span><span class="op">)</span></span></code></pre></div>
 <ul>
-<li>For environments, consider using
-<code>parent.env(e) &lt;- emptyenv()</code>. This is not required for R6
-classes as they are already isolated by default. Regardless of any
-parent environment, an environment / R6 class could still contain many
-items that are not needed by the parallel process, in which case
-consider passing individual members (<code>env$x</code>,
-<code>env$y</code>) rather than the entire object (<code>env</code>)
-where possible.</li>
+<li>
+<strong>Environments</strong>: Consider
+<code>parent.env(e) &lt;- emptyenv()</code>. Not required for R6 classes
+(already isolated by default). Environments or R6 classes may contain
+unnecessary items for the parallel process - consider passing individual
+members (<code>env$x</code>, <code>env$y</code>) rather than the entire
+object (<code>env</code>).</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="how-to-create-daemons-on-demand-or-shutdown-daemons-when-theyre-not-used">5. How to create daemons on-demand or shutdown daemons when they’re
-not used<a class="anchor" aria-label="anchor" href="#how-to-create-daemons-on-demand-or-shutdown-daemons-when-theyre-not-used"></a>
+<h3 id="creating-daemons-on-demand-or-shutting-down-idle-daemons">5. Creating daemons on-demand or shutting down idle daemons<a class="anchor" aria-label="anchor" href="#creating-daemons-on-demand-or-shutting-down-idle-daemons"></a>
 </h3>
-<p>Setting daemons can be totally separate from the task of actually
-launching (deploying) them. To just set daemons when you’re using only
-your local machine:</p>
+<p>Setting daemons is separate from launching (deploying) them. To set
+daemons for local use:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>or if you’re using your local machine and/or remote machines:</p>
+<p>For local and/or remote machines:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>This sets up daemons. You can think of this as a ‘base station’ that
-listens for incoming daemon connections.</p>
-<p>When you actually want to launch (deploy) a daemon, you may use
-either:</p>
+<p>This creates a ‘base station’ listening for incoming daemon
+connections.</p>
+<p>To launch (deploy) a daemon:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_local</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>or</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span><span class="op">)</span> <span class="co"># or cluster_config()</span></span></code></pre></div>
-<p>The key to adopting a flexible-use pattern that lets you scale up and
-down is to specify one of the following arguments to the
-<code>...</code> argument of <code><a href="../reference/launch_local.html">launch_local()</a></code> or
-<code><a href="../reference/launch_local.html">launch_remote()</a></code>. You may also supply these to the initial
-<code><a href="../reference/daemons.html">daemons()</a></code> call for them to apply by default for all
-launches:</p>
+<p>For flexible scaling up and down, specify one of these arguments to
+<code>...</code> in <code><a href="../reference/launch_local.html">launch_local()</a></code> or
+<code><a href="../reference/launch_local.html">launch_remote()</a></code>. Supply these to the initial
+<code><a href="../reference/daemons.html">daemons()</a></code> call to apply by default for all launches:</p>
 <ul>
 <li>
-<code>maxtasks</code>: integer number of tasks to perform before
-exiting.</li>
+<code>maxtasks</code>: Integer number of tasks to perform before
+exiting</li>
 <li>
-<code>idletime</code>: milliseconds idle time before exiting.</li>
+<code>idletime</code>: Milliseconds idle time before exiting</li>
 <li>
-<code>walltime</code>: milliseconds (soft) wall time before exiting
-(i.e. at least this amount of time, and possibly more as there is no
-forcible timeout mid-task)</li>
+<code>walltime</code>: Milliseconds soft wall time before exiting
+(at least this amount, possibly more - no forcible timeout
+mid-task)</li>
 </ul>
-<p>As an example, to launch a daemon to perform one task only:</p>
+<p>To launch a daemon for one task only:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span>, maxtasks <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
-<p>In this way, you may use <code><a href="../reference/cluster_config.html">cluster_config()</a></code> to launch jobs
-on an HPC cluster on demand, without using persistent daemons. Note that
-you will incur the latency costs of however long it takes to launch the
-job.</p>
+<p>This enables on-demand HPC cluster jobs via
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code> without persistent daemons. Note: you
+incur latency costs from job launch time.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

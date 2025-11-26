@@ -24,15 +24,35 @@ sent by the host process.
 - **dispatcher()**: Optional scheduler process that ensures optimal FIFO
   scheduling and enables features like cancellation and custom
   serialization
+- **mirai_map()**: Asynchronous parallel map over lists/vectors with
+  progress bars and early stopping
+- **everywhere()**: Evaluates expressions on all connected daemons (for
+  loading packages/exporting data)
 
 ### Message-Passing Topology
 
 The network topology has daemons **dial into** the host/dispatcher (not
 vice versa). The host/dispatcher listens at a URL, allowing dynamic
 addition/removal of compute resources. This inverted topology design
-enables: - Local daemons via IPC - Remote daemons via TCP/TLS (including
-automatic zero-config TLS certificate generation) - Distributed
-computing across networks - True dynamic scaling
+enables: - Local daemons via IPC (Unix sockets on Linux/macOS, named
+pipes on Windows) - Remote daemons via TCP/TLS (including automatic
+zero-config TLS certificate generation) - Distributed computing across
+networks - True dynamic scaling
+
+### Dispatcher vs. Direct Connection
+
+**With Dispatcher (default)**: `dispatcher = TRUE` - Optimal FIFO
+scheduling - tasks queued and sent to next available daemon - Enables
+mirai cancellation via
+[`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) -
+Enables timeout cancellation (not just timeout detection) - Required for
+custom serialization configurations - Slight additional overhead
+
+**Direct Connection**: `dispatcher = FALSE` - Round-robin distribution -
+tasks sent directly to daemons - Lower overhead, more
+resource-efficient - Best for similar-length tasks or when concurrent
+tasks \< available daemons - No cancellation or custom serialization
+support
 
 ### Evaluation Model
 
@@ -54,8 +74,12 @@ etc. to specify which profile to use. Default profile is “default”.
 ### Random Number Generation
 
 Uses L’Ecuyer-CMRG RNG streams for statistical independence across
-parallel processes, following base R’s parallel package conventions. Can
-be seeded at the compute profile level for reproducible results.
+parallel processes, following base R’s parallel package conventions.
+
+- **Default (`seed = NULL`)**: New stream per daemon (statistically
+  sound, non-reproducible across runs)
+- **Reproducible (`seed = integer`)**: New stream per mirai call
+  (deterministic, reproducible results)
 
 ## Development Commands
 
@@ -105,16 +129,17 @@ rmarkdown::render("README.Rmd")
 ### R/ Directory Structure
 
 - **mirai.R**: Core mirai() function, unresolved(), call_mirai(),
-  stop_mirai()
+  stop_mirai(), everywhere(), race_mirai()
 - **daemons.R**: Setup functions for daemon infrastructure including
-  daemons(), remote configurations, compute profiles
+  daemons(), remote configurations, compute profiles, with_daemons(),
+  local_daemons()
 - **daemon.R**: The daemon instance implementation that runs in
   background processes
-- **dispatcher.R**: Dispatcher process for optimal scheduling
-- **map.R**: mirai_map() for parallel map operations with promises
-  integration
+- **dispatcher.R**: Dispatcher process for optimal FIFO scheduling
+- **map.R**: mirai_map() for parallel map operations with collection
+  options (.flat, .progress, .stop)
 - **launchers.R**: launch_local() and launch_remote() for deploying
-  daemons
+  daemons; remote_config(), ssh_config(), cluster_config()
 - **parallel.R**: Integration with R’s parallel package via
   make_cluster() - the first official alternative communications backend
   for R
@@ -171,6 +196,61 @@ devel) and platforms (Ubuntu, macOS, Windows) - **test-coverage.yaml**:
 Code coverage via codecov - **pkgdown.yaml**: Documentation site
 generation - **shiny-coreci.yaml**: Shiny core CI integration -
 **rhub.yaml**: Additional platform testing
+
+## Remote Daemon Deployment
+
+### SSH Direct Connection
+
+- Requires SSH key-based authentication
+- Host port must be open to inbound connections from remotes
+- Daemons dial back to host URL directly
+- Use `ssh_config(remotes, tunnel = FALSE)`
+
+### SSH Tunnelling
+
+- Use when firewall blocks inbound connections to host
+- Creates reverse SSH tunnel: remote port -\> host port
+- Host URL must be `tcp://127.0.0.1:port` (use `local_url(tcp = TRUE)`)
+- Daemons dial into their own localhost, traffic tunnels through SSH
+- Use `ssh_config(remotes, tunnel = TRUE)`
+
+### HPC Cluster Managers
+
+Supported via
+[`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md): -
+**Slurm**: sbatch (batch), srun (interactive) - **SGE**: qsub -
+**Torque/PBS**: qsub - **LSF**: bsub
+
+Configuration includes job options (memory, output files, etc.) and
+optional module loading commands.
+
+### Manual Deployment
+
+Use
+[`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md)
+with empty arguments to generate shell commands for manual copy/paste to
+remote machines.
+
+## Helper Functions
+
+### URL Constructors
+
+- `host_url(tls, port)`: Constructs host URL based on detected IP
+  address
+- `local_url(tcp, port)`: Generates IPC URL or localhost TCP URL
+
+### Scope Management
+
+- `with_daemons(.compute, expr)`: Temporarily use a specific compute
+  profile
+- `local_daemons(.compute, frame)`: Set profile for current scope
+
+### Status and Monitoring
+
+- `status(.compute)`: Detailed status (connections, URL, mirai counts)
+- `info(.compute)`: Concise statistics vector
+- `daemons_set(.compute)`: Check if daemons exist
+- `require_daemons(.compute)`: Error if daemons not set
 
 ## Package Conventions
 

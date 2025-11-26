@@ -20,7 +20,7 @@ cluster_config(command = "sbatch", options = "", rscript = "Rscript")
 - options:
 
   options as would be supplied inside a script file passed to `command`,
-  e.g. "#SBATCH –mem=10G", each separated by a new line. See examples
+  e.g. "#SBATCH –mem=16G", each separated by a new line. See examples
   below.  
   Other shell commands e.g. to change working directory may also be
   included.  
@@ -55,7 +55,7 @@ for generic configurations.
 cluster_config(
   command = "sbatch",
   options = "#SBATCH --job-name=mirai
-             #SBATCH --mem=10G
+             #SBATCH --mem=16G
              #SBATCH --output=job.out
              module load R/4.5.0",
   rscript = file.path(R.home("bin"), "Rscript")
@@ -64,7 +64,7 @@ cluster_config(
 #> [1] "/bin/sh"
 #> 
 #> $args
-#> [1] "sbatch<<'EOF'\n#!/bin/sh\n#SBATCH --job-name=mirai\n#SBATCH --mem=10G\n#SBATCH --output=job.out\nmodule load R/4.5.0\n"
+#> [1] "sbatch<<'EOF'\n#!/bin/sh\n#SBATCH --job-name=mirai\n#SBATCH --mem=16G\n#SBATCH --output=job.out\nmodule load R/4.5.0\n"
 #> [2] "."                                                                                                                     
 #> [3] "\nEOF"                                                                                                                 
 #> 
@@ -79,7 +79,7 @@ cluster_config(
 cluster_config(
   command = "qsub",
   options = "#$ -N mirai
-             #$ -l mem_free=10G
+             #$ -l mem_free=16G
              #$ -o job.out
              module load R/4.5.0",
   rscript = file.path(R.home("bin"), "Rscript")
@@ -88,7 +88,7 @@ cluster_config(
 #> [1] "/bin/sh"
 #> 
 #> $args
-#> [1] "qsub<<'EOF'\n#!/bin/sh\n#$ -N mirai\n#$ -l mem_free=10G\n#$ -o job.out\nmodule load R/4.5.0\n"
+#> [1] "qsub<<'EOF'\n#!/bin/sh\n#$ -N mirai\n#$ -l mem_free=16G\n#$ -o job.out\nmodule load R/4.5.0\n"
 #> [2] "."                                                                                            
 #> [3] "\nEOF"                                                                                        
 #> 
@@ -103,7 +103,7 @@ cluster_config(
 cluster_config(
   command = "qsub",
   options = "#PBS -N mirai
-             #PBS -l mem=10gb
+             #PBS -l mem=16gb
              #PBS -o job.out
              module load R/4.5.0",
   rscript = file.path(R.home("bin"), "Rscript")
@@ -112,7 +112,7 @@ cluster_config(
 #> [1] "/bin/sh"
 #> 
 #> $args
-#> [1] "qsub<<'EOF'\n#!/bin/sh\n#PBS -N mirai\n#PBS -l mem=10gb\n#PBS -o job.out\nmodule load R/4.5.0\n"
+#> [1] "qsub<<'EOF'\n#!/bin/sh\n#PBS -N mirai\n#PBS -l mem=16gb\n#PBS -o job.out\nmodule load R/4.5.0\n"
 #> [2] "."                                                                                              
 #> [3] "\nEOF"                                                                                          
 #> 
@@ -127,7 +127,7 @@ cluster_config(
 cluster_config(
   command = "bsub",
   options = "#BSUB -J mirai
-             #BSUB -M 10000
+             #BSUB -M 16000
              #BSUB -o job.out
              module load R/4.5.0",
   rscript = file.path(R.home("bin"), "Rscript")
@@ -136,7 +136,7 @@ cluster_config(
 #> [1] "/bin/sh"
 #> 
 #> $args
-#> [1] "bsub<<'EOF'\n#!/bin/sh\n#BSUB -J mirai\n#BSUB -M 10000\n#BSUB -o job.out\nmodule load R/4.5.0\n"
+#> [1] "bsub<<'EOF'\n#!/bin/sh\n#BSUB -J mirai\n#BSUB -M 16000\n#BSUB -o job.out\nmodule load R/4.5.0\n"
 #> [2] "."                                                                                              
 #> [3] "\nEOF"                                                                                          
 #> 

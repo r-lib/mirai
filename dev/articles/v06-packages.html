@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>For Package Authors • mirai</title>
+<title>mirai - For Package Authors • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="For Package Authors">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - For Package Authors">
 <meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -43,13 +43,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>For Package Authors</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>mirai - For Package Authors</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v06-packages.Rmd" class="external-link"><code>vignettes/v06-packages.Rmd</code></a></small>
@@ -94,63 +94,52 @@
 <div class="section level3">
 <h3 id="developer-interfaces">1. Developer Interfaces<a class="anchor" aria-label="anchor" href="#developer-interfaces"></a>
 </h3>
-<p>mirai offers the following functions primarily for package authors
-using mirai:</p>
+<p>mirai provides these functions for package authors:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/require_daemons.html">require_daemons()</a></code> will error and prompt the user to set
-daemons (with a clickable function link if the cli package is available)
-if daemons are not already set.</li>
+<code><a href="../reference/require_daemons.html">require_daemons()</a></code> - errors and prompts users to set
+daemons if not already set (with clickable function link if cli package
+available)</li>
 <li>
-<code><a href="../reference/daemons_set.html">daemons_set()</a></code>, to detect if daemons have already been
-set.</li>
+<code><a href="../reference/daemons_set.html">daemons_set()</a></code> - detects if daemons are set</li>
 <li>
-<code><a href="../reference/on_daemon.html">on_daemon()</a></code>, to detect if code is already running on a
-daemon, i.e. within a <code><a href="../reference/mirai.html">mirai()</a></code> call.</li>
+<code><a href="../reference/on_daemon.html">on_daemon()</a></code> - detects if code runs on a daemon (within
+a <code><a href="../reference/mirai.html">mirai()</a></code> call)</li>
 <li>
-<code><a href="../reference/register_serial.html">register_serial()</a></code> to register custom serialization
-functions, which are automatically available by default for all
-subsequent <code><a href="../reference/daemons.html">daemons()</a></code> calls.</li>
+<code><a href="../reference/register_serial.html">register_serial()</a></code> - registers custom serialization
+functions, automatically available for all subsequent
+<code><a href="../reference/daemons.html">daemons()</a></code> calls</li>
 <li>
-<code><a href="../reference/nextstream.html">nextget()</a></code>, for querying values for a compute profile,
-such as ‘url’, described in the function’s documentation. Note: only the
-specifically-documented values are supported interfaces.</li>
+<code><a href="../reference/nextstream.html">nextget()</a></code> - queries compute profile values like ‘url’
+(see function documentation). Note: only specifically-documented values
+are supported interfaces.</li>
 </ol>
 </div>
 <div class="section level3">
 <h3 id="guidance">2. Guidance<a class="anchor" aria-label="anchor" href="#guidance"></a>
 </h3>
-<p>mirai as a framework is designed to support completely transparent
-and inter-operable use within packages. A core design precept of not
-relying on global options or environment variables minimises the
-likelihood of conflict between use by different packages.</p>
-<p>There are hence only a few important points to note:</p>
+<p>mirai supports transparent, inter-operable package use. Not relying
+on global options or environment variables minimizes conflicts between
+packages.</p>
+<p><strong>Important points:</strong></p>
 <ol style="list-style-type: decimal">
 <li>
-<code><a href="../reference/daemons.html">daemons()</a></code> settings should wherever possible be left to
-end-users. This means that as a package author, you should just consider
-that mirai are run on whatever resources are available to the user at
-the time the code is run. You do not need to anticipate whether an
-end-user will run the code on their own machine, distributed over the
-network, or a mixture of both.</li>
-</ol>
+<p><strong>Leave <code><a href="../reference/daemons.html">daemons()</a></code> settings to
+end-users.</strong> As a package author, assume mirai run on whatever
+resources users have available. Don’t anticipate whether users run code
+locally, distributed, or mixed.</p>
 <ul>
-<li>Consider pointing to the documentation for
-<code><a href="../reference/daemons.html">mirai::daemons()</a></code>, or re-exporting <code><a href="../reference/daemons.html">daemons()</a></code> in
-your package as a convenience.</li>
-<li>Never include a call to <code><a href="../reference/daemons.html">daemons()</a></code> when using
-<code><a href="../reference/mirai_map.html">mirai_map()</a></code>. This is important to ensure that there is no
-accidental recursive creation of daemons on the same machine, for
-example if your function is used within another package’s function that
-also uses mirai.
+<li>Point to <code><a href="../reference/daemons.html">mirai::daemons()</a></code> documentation or re-export
+<code><a href="../reference/daemons.html">daemons()</a></code> for convenience</li>
+<li>
+<strong>Never call <code><a href="../reference/daemons.html">daemons()</a></code> when using
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code></strong> to prevent accidental recursive daemon
+creation (e.g., if your function is used within another package’s
+mirai-using function)
 <ul>
 <li>
-<p>The exception to this rule is that package authors may decide to
-provide a fallback to synchronous behaviour to ensure that a map always
-runs even if the user has not set daemons. In this case, it is
-permissible to set synchronous daemons for the duration of the map, if
-daemons have not been set, and provided that they are reset after the
-map. For this purpose, you may use code such as:</p>
+<p><strong>Exception</strong>: Can provide a synchronous fallback if
+users haven’t set daemons:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/daemons_set.html">daemons_set</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
@@ -158,57 +147,52 @@ map. For this purpose, you may use code such as:</p>
 </li>
 </ul>
 </li>
-<li>Exceptionally, a
-<code>daemons(n = 1, dispatcher = FALSE, .compute = ...)</code> call may
-be used to set up a single dedicated daemon, but only if used with a
-unique value for <code>.compute</code>. A representative example of this
-usage pattern is <code>logger::appender_async()</code>, where the logger
-package’s ‘namespace’ concept maps directly to mirai’s ‘compute
-profile’.</li>
+<li>
+<strong>Exceptional case</strong>: Use
+<code>daemons(n = 1, dispatcher = FALSE, .compute = ...)</code> for a
+single dedicated daemon only with a unique <code>.compute</code> value.
+Example: <code>logger::appender_async()</code> where logger’s
+‘namespace’ maps to mirai’s ‘compute profile’.</li>
 </ul>
-<ol start="2" style="list-style-type: decimal">
-<li>The shape and contents of a <code><a href="../reference/status.html">status()</a></code> call must not be
-used programmatically, as this user interface is subject to change at
-any time. Use <code><a href="../reference/info.html">info()</a></code> instead.</li>
-</ol>
+</li>
+<li>
+<p><strong>Don’t use <code><a href="../reference/status.html">status()</a></code>
+programmatically.</strong> Its interface may change. Use
+<code><a href="../reference/info.html">info()</a></code> instead.</p>
 <ul>
-<li>For the value of <code>status()$daemons</code>, instead use
-<code>nextget("url")</code>.</li>
+<li>For <code>status()$daemons</code>, use
+<code>nextget("url")</code>
+</li>
 </ul>
-<ol start="3" style="list-style-type: decimal">
-<li><p><code><a href="../reference/info.html">info()</a></code> may be used programmatically, but only index
-into the vector using the name of the element rather than its position
-e.g. <code>info()[["cumulative"]]</code> rather than
-<code>info()[[2]]</code>. This is in case other values are added at a
-later date.</p></li>
-<li><p>The functions <code><a href="../reference/unresolved.html">unresolved()</a></code>,
-<code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>, <code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
-<code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code> should be used to test for the
-relevant state of a mirai or its value.</p></li>
-</ol>
+</li>
+<li><p><strong>Use <code><a href="../reference/info.html">info()</a></code> programmatically by name, not
+position.</strong> Index by element name (e.g.,
+<code>info()[["cumulative"]]</code>) not position (e.g.,
+<code>info()[[2]]</code>) in case values are added later.</p></li>
+<li>
+<p><strong>Use official test functions for mirai state.</strong> Use
+<code><a href="../reference/unresolved.html">unresolved()</a></code>, <code><a href="../reference/is_mirai_error.html">is_error_value()</a></code>,
+<code><a href="../reference/is_mirai_error.html">is_mirai_error()</a></code>, and
+<code><a href="../reference/is_mirai_error.html">is_mirai_interrupt()</a></code>.</p>
 <ul>
-<li>The characteristics of their current implementation, e.g. as a
-logical NA for an ‘unresolvedValue’, should not be relied upon, as these
-are subject to change at any time.</li>
+<li>Don’t rely on implementation characteristics (e.g., logical NA for
+‘unresolvedValue’) as these may change</li>
 </ul>
-<ol start="5" style="list-style-type: decimal">
-<li>For CRAN packages, all examples and tests should respect the
-following rules when running on CRAN:</li>
-</ol>
+</li>
+<li>
+<p><strong>CRAN package rules:</strong></p>
 <ul>
-<li>Use only one daemon (with <code>dispatcher = FALSE</code>) to ensure
-that only one additional process is used, to remain within the 2-core
-limit.</li>
-<li>Always reset daemons with <code>daemons(0)</code> at the end of each
-example or test file. Then allow at least a one-second sleep to ensure
-that all background processes have properly exited and that no
-‘detritus’ from the processes remains.</li>
-<li>Never modify the default value of <code>asyncdial</code> or
-<code>autoexit</code> for <code><a href="../reference/daemon.html">daemon()</a></code>, in that function or any
-functions that pass arguments through to it such as
-<code><a href="../reference/daemons.html">daemons()</a></code>. This is to ensure that processes exit as soon as
-the host process does.</li>
+<li>Use only one daemon with <code>dispatcher = FALSE</code> (stays
+within 2-core limit)</li>
+<li>Always reset with <code>daemons(0)</code> at end of examples/test
+files, then sleep at least 1 second to ensure proper process exit</li>
+<li>Never modify <code>asyncdial</code> or <code>autoexit</code>
+defaults for <code><a href="../reference/daemon.html">daemon()</a></code> (or functions passing arguments to it
+like <code><a href="../reference/daemons.html">daemons()</a></code>). This ensures processes exit with the host
+process.</li>
 </ul>
+</li>
+</ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -1,51 +1,40 @@
-# Promises - Shiny and Plumber
+# mirai - Promises (Shiny and Plumber)
 
 ### 1. Event-driven promises
 
-`mirai` supplies its own
+`mirai` provides an
 [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-method, allowing it to be readily converted to a promise from the
-[`promises`](https://rstudio.github.io/promises/) package. The
-[articles](https://rstudio.github.io/promises/) for the promises package
-provide a full guide for the use of promises, including with Shiny.
+method for conversion to
+[`promises`](https://rstudio.github.io/promises/) package promises. See
+the [promises articles](https://rstudio.github.io/promises/) for a
+comprehensive guide.
 
-A mirai may be piped directly using the promise pipe `%...>%`, which
-implicitly calls
+Use mirai directly with: - Promise pipe `%...>%` (implicitly calls
+[`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)) -
+Promise-aware functions
+([`promises::then()`](https://rstudio.github.io/promises/reference/then.html),
+`shiny::ExtendedTask`)
+
+Or explicitly convert with
 [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-on it. Similarly, all promise-aware functions such as
-[`promises::then()`](https://rstudio.github.io/promises/reference/then.html)
-or `shiny::ExtendedTask` accept a mirai directly.
+to access `$then()`, `$finally()` methods.
 
-Alternatively, a mirai may be explicitly converted to a promise by
-[`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html),
-which then allows using the methods `$then()`, `$finally()` etc.
-directly from the promise object.
+Promises register actions triggered when mirai resolves. This happens
+automatically when R is idle or within loops/functions calling
+[`later::run_now()`](https://later.r-lib.org/reference/run_now.html)
+(e.g., Shiny).
 
-Whilst normal usage of a mirai involves collecting its value, a promise
-instead registers an action to be taken as soon as a mirai resolves.
-This will happen automatically if the R session is idle at the top
-prompt, or if within a loop or function where
-[`later::run_now()`](https://later.r-lib.org/reference/run_now.html) is
-being called periodically to service promise actions (e.g. in Shiny).
+Mirai promises pass return values to `onFulfilled` (success) or
+`errorValue` to `onRejected` (error).
 
-For a mirai promise, the mirai’s value is passed to the `onFulfilled`
-argument of
-[`promises::then()`](https://rstudio.github.io/promises/reference/then.html)
-if no error has occurred, and the mirai’s `errorValue` is passed to the
-`onRejected` argument if an error has occured.
+**Event-driven advantages:**
 
-Promises converted from mirai are modern, event-driven promises:
+- Actions trigger immediately on resolution (no time-polling)
+- Data already received in background (no transfer delay)
+- High responsiveness (zero latency) and massive scalability
+  (thousands/millions of concurrent promises)
 
-- Promise actions are triggered as soon as each mirai resolves, without
-  time-polling for completion e.g. every 100 milliseconds.
-- At the point of resolution, the data has already been received in the
-  background, so there is no need to initiate a transfer to fetch the
-  data at this point.
-- Allows for much higher responsiveness (zero latency) and massive
-  scalability (thousands or even millions of concurrent promises).
-
-The following example outputs “hello” to the console after one second
-when the ‘mirai’ resolves.
+This outputs “hello” after one second:
 
 ``` r
 library(mirai)
@@ -56,9 +45,8 @@ p
 #> <Promise [pending]>
 ```
 
-It is possible to both access a ‘mirai’ value at `$data` and to use a
-promise for enacting a side effect (assigning the value to an
-environment in the example below).
+Access mirai values at `$data` while using promises for side effects
+(assigning to an environment):
 
 ``` r
 env <- new.env()
@@ -81,33 +69,28 @@ env$res
 #> [1] "hello"
 ```
 
-A `mirai_map` also has an
+`mirai_map` also has an
 [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-method. It resolves when the entire map operation completes or at least
-one mirai in the map is rejected.
+method. It resolves when the entire map completes or any mirai is
+rejected.
 
 ### 2. Shiny ExtendedTask: Introduction
 
-mirai is the primary asynchronous backend for scaling
-[Shiny](https://shiny.posit.co/) applications. Depending on the options
-supplied to
-[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md), mirai
-tasks may be distributed across parallel processes locally or across the
-network.
+mirai is the primary async backend for scaling
+[Shiny](https://shiny.posit.co/) applications. Use
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) to
+distribute tasks across local parallel processes or network resources.
 
-Shiny ExtendedTask allows the creation of scalable Shiny apps, which
-remain responsive intra-session for each user, as well as inter-session
-for multiple concurrent users.
+Shiny ExtendedTask creates scalable apps responsive both intra-session
+(per user) and inter-session (multiple concurrent users).
 
-In the example below, the app remains responsive, with the clock
-continuing to tick whilst the simulated expensive computation is running
-asynchronously in a parallel process. Also the button is disabled and
-the plot greyed out until the computation is complete.
+In this example, the clock continues ticking while the expensive
+computation runs asynchronously. The button disables and plot greys out
+until completion.
 
-> The call to
-> [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) is
-> made at the top level, and `onStop()` may be used to automatically
-> shut them down when the app exits.
+> Call [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
+> at top level. Use `onStop()` to automatically shut down daemons when
+> the app exits.
 
 ``` r
 library(shiny)
@@ -151,22 +134,20 @@ shinyApp(ui = ui, server = server)
 *Thanks to Joe Cheng for providing examples on which the above is
 based.*
 
-The key components to using ExtendedTask are:
+**Key ExtendedTask components:**
 
-1.  In the UI, use
-    [`bslib::input_task_button()`](https://rstudio.github.io/bslib/reference/input_task_button.html).
-    This is a button which is disabled during computation to prevent
-    additional clicks.
+1.  **UI**: Use
+    [`bslib::input_task_button()`](https://rstudio.github.io/bslib/reference/input_task_button.html)
+    (disables during computation):
 
 ``` r
 input_task_button("btn", "Plot uniform distribution")
 ```
 
-2.  In the server, create an ExtendedTask object by calling
-    `ExtendedTask$new()` on an anonymous function passing `...`
-    arguments to
-    [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), and
-    bind it to the button created in (1).
+2.  **Server**: Create ExtendedTask with `ExtendedTask$new()`, passing
+    `...` to
+    [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), bind to
+    button:
 
 ``` r
 task <- ExtendedTask$new(
@@ -174,16 +155,14 @@ task <- ExtendedTask$new(
 ) |> bind_task_button("btn")
 ```
 
-3.  In the server, create an observer on the input button, which invokes
-    the ExtendedTask, passing in named arguments to the anonymous
-    function (and hence the mirai) above.
+3.  **Server**: Observe button input, invoke ExtendedTask with named
+    arguments:
 
 ``` r
 observeEvent(input$btn, task$invoke(x = input$n, y = input$delay))
 ```
 
-4.  In the server, create a render function for the output, which
-    consumes the result of the ExtendedTask.
+4.  **Server**: Render output consuming ExtendedTask result:
 
 ``` r
 output$plot <- renderPlot(hist(task$result()))
@@ -191,19 +170,15 @@ output$plot <- renderPlot(hist(task$result()))
 
 ### 3. Shiny ExtendedTask: Cancellation
 
-The app below is a demonstration of mirai’s cancellation capability.
-Cancellation is performed in the same way irrespective of where the
-mirai task may be executing, locally or remotely.
+This demonstrates cancellation, which works identically for local or
+remote tasks.
 
-It builds on the introductory app by adding a button that sends an
-infinite sleep extendedTask. This will block execution as we are using a
-single daemon - any new extendedTasks will be queued behind this
-never-ending task. There is also a button to cancel that blocking task
-and allow any queued plots to continue processing.
+This adds an infinite sleep button that blocks execution (using one
+daemon). New tasks queue behind it. A cancel button stops the blocking
+task, resuming queued plots.
 
-It works by assigning a reference to the mirai created in the
-`extendedTask$new()` method, which can then be passed to
-[`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md).
+Assign a mirai reference in `ExtendedTask$new()`, then pass to
+[`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md):
 
 ``` r
 library(shiny)
@@ -264,19 +239,16 @@ based.*
 
 ### 4. Shiny ExtendedTask: Generative Art
 
-The following app produces pretty spiral patterns.
+This app generates spiral patterns asynchronously.
 
-The user can add multiple plots, making use of Shiny modules, each
-having a different calculation time.
+Users add multiple plots via Shiny modules, each with different
+calculation times.
 
-The plots are generated asynchronously, and it is easy to see the
-practical limitations of the number of daemons set. For example, if
-updating 4 plots, and there are only 3 daemons, the 4th plot will not
-start to be generated until one of the other plots has finished.
+Daemon limits become visible: with 3 daemons and 4 plots, the 4th waits
+for another to finish.
 
-By wrapping the `runApp()` call in `with(daemons(...), ...)` the daemons
-are set up for the duration of the app, exiting automatically when the
-app is stopped.
+Wrapping `runApp()` in `with(daemons(...), ...)` sets up daemons for the
+app’s duration, exiting automatically on stop.
 
 ``` r
 library(shiny)
@@ -359,29 +331,20 @@ with(daemons(3), runApp(app))
 *The above example builds on original code by Joe Cheng, Daniel Woodie
 and William Landau.*
 
-The above uses
-[`environment()`](https://rdrr.io/r/base/environment.html) instead of
-`...` as an alternative and equivalent way of passing variables present
-in the calling environment to the mirai.
+This uses [`environment()`](https://rdrr.io/r/base/environment.html)
+instead of `...` to pass calling environment variables to mirai.
 
-The key components to using this ExtendedTask example are:
+**Key components:**
 
-1.  In the UI, use
-    [`bslib::input_task_button()`](https://rstudio.github.io/bslib/reference/input_task_button.html).
-    This is a button which is disabled during computation to prevent
-    additional clicks.
+1.  **UI**: Use
+    [`bslib::input_task_button()`](https://rstudio.github.io/bslib/reference/input_task_button.html):
 
 ``` r
 input_task_button(ns("resample"), "Resample")
 ```
 
-2.  In the server, create an ExtendedTask object by calling
-    `ExtendedTask$new()` on an anonymous function passing *named*
-    arguments to
-    [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), and
-    bind it to the button created in (1). These are passed through to
-    the mirai by the use of
-    [`environment()`](https://rdrr.io/r/base/environment.html).
+2.  **Server**: Create ExtendedTask with named arguments passed through
+    [`environment()`](https://rdrr.io/r/base/environment.html):
 
 ``` r
 task <- ExtendedTask$new(
@@ -389,16 +352,13 @@ task <- ExtendedTask$new(
 ) |> bind_task_button("resample")
 ```
 
-3.  In the server, create an observer on the input button, which invokes
-    the ExtendedTask, supplying the arguments to the anonymous function
-    above.
+3.  **Server**: Observe button, invoke ExtendedTask with arguments:
 
 ``` r
 observeEvent(input$resample, task$invoke(calc_time, run_task))
 ```
 
-4.  In the server, create a render function for the output, which
-    consumes the result of the ExtendedTask.
+4.  **Server**: Render output consuming result:
 
 ``` r
 output$plot <- renderPlot(plot_result(task$result()))
@@ -406,16 +366,13 @@ output$plot <- renderPlot(plot_result(task$result()))
 
 ### 5. Shiny ExtendedTask: mirai map
 
-A `mirai_map` also has an
+`mirai_map` has an
 [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-method, which allows it to be used directly in a Shiny ExtendedTask. It
-will resolve when the entire map operation completes or at least one
-mirai in the map is rejected.
+method for direct use in ExtendedTask. Resolves when the entire map
+completes or any mirai is rejected.
 
-This example, uses
-[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md) to
-perform multiple calculations simultaneously in multiple daemons,
-returning the results asynchronously.
+This performs multiple simultaneous calculations across daemons,
+returning results asynchronously:
 
 ``` r
 library(shiny)
@@ -464,13 +421,12 @@ with(daemons(4), runApp(app))
 
 ### 6. Shiny Async: Coin Flips
 
-The below example demonstrates how to integrate a
-[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
-operation into a Shiny app in an observer, without using ExtendedTask.
+This integrates
+[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md) into
+a Shiny observer without ExtendedTask.
 
-By specifying the ‘.promise’ argument, this registers a promise action
-against each mapped operation. These can then be used to update reactive
-values or otherwise interact with the Shiny app.
+The ‘.promise’ argument registers promise actions for each mapped
+operation, updating reactive values or interacting with the app:
 
 ``` r
 library(shiny)
@@ -537,11 +493,10 @@ for use of `crew` with Shiny. Please see
 
 ### 7. Shiny Async: Progress Bar
 
-The below example uses a
-[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
-operation in an observer to update a Shiny progress bar with custom
-messages, and also to update a reactive value once the entire map
-operation has completed (asynchronously).
+This uses
+[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md) to
+update a Shiny progress bar with custom messages and a reactive value
+upon completion (asynchronously):
 
 ``` r
 library(shiny)
@@ -606,19 +561,17 @@ with(daemons(8), runApp(app))
 
 ### 8. Plumber GET Endpoint
 
-mirai may be used as an asynchronous backend for
+mirai serves as an async backend for
 [`plumber`](https://www.rplumber.io/) pipelines.
 
-In this example, the plumber router code is run in a daemon process
-itself so that it does not block the current process - this is useful in
-interactive sessions, but otherwise just taking the code within the
-outer [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call
-will suffice.
+This runs the plumber router in a daemon process to avoid blocking
+(useful in interactive sessions; otherwise use code within the outer
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call
+directly).
 
-The /echo endpoint takes a GET request, sleeps for 1 second (simulating
-an expensive computation) and simply returns the ‘msg’ request header
-together with a timestamp and the process ID of the process it is run
-on.
+The /echo endpoint accepts GET requests, sleeps 1 second (simulating
+expensive computation), and returns the ‘msg’ header with timestamp and
+process ID:
 
 ``` r
 library(mirai)
@@ -658,12 +611,11 @@ m <- mirai({
 })
 ```
 
-The API can be queried using an async HTTP client such as
+Query the API using an async HTTP client like
 [`nanonext::ncurl_aio()`](https://nanonext.r-lib.org/reference/ncurl_aio.html).
 
-Here, all 8 requests are submitted at once, but we note that that
-responses have differing timestamps as only 4 can be processed at any
-one time (limited by the number of daemons set).
+All 8 requests submit at once, but responses have differing timestamps
+(only 4 process simultaneously due to daemon limit):
 
 ``` r
 library(nanonext)
@@ -676,40 +628,38 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"1\"],\"pid\":[65457]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"2\"],\"pid\":[65452]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"3\"],\"pid\":[65455]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:06\"],\"msg\":[\"4\"],\"pid\":[65450]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"5\"],\"pid\":[65452]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"6\"],\"pid\":[65455]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"7\"],\"pid\":[65450]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:07\"],\"msg\":[\"8\"],\"pid\":[65457]}"
+#> [1] "{\"error\":\"500 - Internal server error\"}"
 
 daemons(0)
 ```
 
 ### 9. Plumber POST Endpoint
 
-This is the equivalent using a POST endpoint, accepting a JSON
-instruction sent as request data.
+This uses a POST endpoint accepting JSON request data.
 
-Note that `req$postBody` should always be accessed in the router process
-and passed in as an argument to the ‘mirai’, as this is retrieved using
-a connection that is not serializable.
+Always access `req$postBody` in the router process and pass to mirai as
+an argument (it uses a non-serializable connection):
 
 ``` r
 library(mirai)
@@ -751,8 +701,7 @@ m <- mirai({
 })
 ```
 
-Querying the endpoint produces the same set of outputs as the previous
-example.
+Querying produces the same output as the previous example:
 
 ``` r
 library(nanonext)
@@ -766,28 +715,28 @@ res <- lapply(
 )
 collect_aio(res)
 #> [[1]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"1\"],\"pid\":[65722]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:11\"],\"msg\":[\"1\"],\"pid\":[71207]}"
 #> 
 #> [[2]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"2\"],\"pid\":[65727]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:12\"],\"msg\":[\"2\"],\"pid\":[71207]}"
 #> 
 #> [[3]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"3\"],\"pid\":[65724]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:11\"],\"msg\":[\"3\"],\"pid\":[71217]}"
 #> 
 #> [[4]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:10\"],\"msg\":[\"4\"],\"pid\":[65720]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:11\"],\"msg\":[\"4\"],\"pid\":[71205]}"
 #> 
 #> [[5]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"5\"],\"pid\":[65720]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:12\"],\"msg\":[\"5\"],\"pid\":[71217]}"
 #> 
 #> [[6]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"6\"],\"pid\":[65727]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:12\"],\"msg\":[\"6\"],\"pid\":[71223]}"
 #> 
 #> [[7]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"7\"],\"pid\":[65722]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:12\"],\"msg\":[\"7\"],\"pid\":[71205]}"
 #> 
 #> [[8]]
-#> [1] "{\"time\":[\"2025-10-05 19:32:11\"],\"msg\":[\"8\"],\"pid\":[65724]}"
+#> [1] "{\"time\":[\"2025-11-26 00:03:11\"],\"msg\":[\"8\"],\"pid\":[71223]}"
 
 daemons(0)
 ```

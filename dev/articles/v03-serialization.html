@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Serialization - Arrow, ADBC, polars, torch • mirai</title>
+<title>mirai - Serialization (Arrow, ADBC, polars, torch) • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Serialization - Arrow, ADBC, polars, torch">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - Serialization (Arrow, ADBC, polars, torch)">
 <meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -43,13 +43,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Serialization - Arrow, ADBC, polars, torch</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>mirai - Serialization (Arrow, ADBC, polars, torch)</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v03-serialization.Rmd" class="external-link"><code>vignettes/v03-serialization.Rmd</code></a></small>
@@ -94,12 +94,11 @@
 <div class="section level3">
 <h3 id="serialization-arrow-polars-and-beyond">1. Serialization: Arrow, polars and beyond<a class="anchor" aria-label="anchor" href="#serialization-arrow-polars-and-beyond"></a>
 </h3>
-<p>Native R serialization is used for sending data between host and
-daemons. Some R objects by their nature cannot be serialized, such as
-those accessed via an external pointer. In these cases, performing mirai
-operations on them would normally error.</p>
-<p>Using the <a href="https://arrow.apache.org/docs/r/" class="external-link"><code>arrow</code></a> package
-as an example:</p>
+<p>Native R serialization transfers data between host and daemons.
+Objects accessed via external pointers cannot be serialized and normally
+error in mirai operations.</p>
+<p>Using <a href="https://arrow.apache.org/docs/r/" class="external-link"><code>arrow</code></a> as an
+example:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/" class="external-link">arrow</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -113,11 +112,11 @@ as an example:</p>
 <span><span class="co">#&gt; 'miraiError' chr Error: Invalid &lt;Table&gt;, external pointer to null</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>However, <code><a href="../reference/serial_config.html">serial_config()</a></code> can be used to create custom
-serialization configurations, specifying functions that hook into R’s
-native serialization mechanism for reference objects (‘refhooks’).</p>
-<p>This configuration may then be passed to the ‘serial’ argument of a
-<code><a href="../reference/daemons.html">daemons()</a></code> call.</p>
+<p><code><a href="../reference/serial_config.html">serial_config()</a></code> creates custom serialization
+configurations with functions that hook into R’s native serialization
+mechanism for reference objects (‘refhooks’).</p>
+<p>Pass this configuration to the ‘serial’ argument of
+<code><a href="../reference/daemons.html">daemons()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span></span>
 <span>  <span class="st">"ArrowTabular"</span>,</span>
@@ -146,14 +145,11 @@ native serialization mechanism for reference objects (‘refhooks’).</p>
 <span><span class="co">#&gt; [1] "some text"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>It can be seen that this time, the arrow table is handled seamlessly.
-This is the case even when the object is deeply nested inside lists or
-other structures.</p>
-<p>Multiple serialization functions may be registered to handle
-different object classes. As an example, we can use Arrow in combination
-with <a href="https://pola-rs.github.io/r-polars/" class="external-link"><code>polars</code></a>, a
-‘lightning fast’ dataframe library written in Rust (requires polars
-&gt;= 1.0.0), in the following way:</p>
+<p>The arrow table now handles seamlessly, even when deeply nested in
+lists or other structures.</p>
+<p>Register multiple serialization functions for different object
+classes. This example combines Arrow with <a href="https://pola-rs.github.io/r-polars/" class="external-link"><code>polars</code></a>, a
+Rust dataframe library (requires polars &gt;= 1.0.0):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -191,17 +187,15 @@ with <a href="https://pola-rs.github.io/r-polars/" class="external-link"><code>p
 <div class="section level3">
 <h3 id="serialization-torch">2. Serialization: Torch<a class="anchor" aria-label="anchor" href="#serialization-torch"></a>
 </h3>
-<p>Tensors from the <a href="https://torch.mlverse.org/" class="external-link"><code>torch</code></a> package may be
-used seamlessly in mirai computations.</p>
-<p>Setup Steps:</p>
+<p><a href="https://torch.mlverse.org/" class="external-link"><code>torch</code></a> tensors
+work seamlessly in mirai computations.</p>
+<p><strong>Setup:</strong></p>
 <ol style="list-style-type: decimal">
-<li>Create the serialization configuration, specifying ‘class’ as
-‘torch_tensor’.</li>
-<li>Set up daemons, supplying the configuration to the ‘serial’
-argument.</li>
-<li>(Optional) Use <code><a href="../reference/everywhere.html">everywhere()</a></code> to make the
-<code>torch</code> package available on all daemons for
-convenience.</li>
+<li>Create serialization configuration with ‘class’ as
+‘torch_tensor’</li>
+<li>Set up daemons, supplying configuration to ‘serial’</li>
+<li>(Optional) Use <code><a href="../reference/everywhere.html">everywhere()</a></code> to load <code>torch</code>
+on all daemons</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
@@ -216,12 +210,10 @@ convenience.</li>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, serial <span class="op">=</span> <span class="va">cfg</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://torch.mlverse.org/docs" class="external-link">torch</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Example Usage:</p>
-<p>The below example creates a convolutional neural network using
-<code>torch::nn_module()</code>.</p>
-<p>A set of model parameters is also specified.</p>
-<p>The model specification and parameters are then passed to and
-initialized within a parallel process.</p>
+<p><strong>Example Usage:</strong></p>
+<p>This creates a convolutional neural network with
+<code>torch::nn_module()</code>, specifies parameters, then initializes
+them in a parallel process:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">nn_module</span><span class="op">(</span></span>
 <span>  initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">in_size</span>, <span class="va">out_size</span><span class="op">)</span> <span class="op">{</span></span>
@@ -244,48 +236,47 @@ initialized within a parallel process.</p>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; An `nn_module` containing 1,040 parameters.</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; ── Modules ─────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; • conv1: &lt;nn_conv2d&gt; #520 parameters</span></span>
 <span><span class="co">#&gt; • conv2: &lt;nn_conv2d&gt; #520 parameters</span></span></code></pre></div>
-<p>The returned model is an object containing many tensor elements.</p>
+<p>The returned model contains many tensor elements:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">parameters</span><span class="op">$</span><span class="va">conv1.weight</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
 <span><span class="co">#&gt; (1,1,.,.) = </span></span>
-<span><span class="co">#&gt;   0.0908  0.0460  0.1045 -0.0790  0.0880</span></span>
-<span><span class="co">#&gt;  -0.0069  0.1784 -0.1328  0.1755 -0.1033</span></span>
-<span><span class="co">#&gt;  -0.1428 -0.0733  0.0696  0.1000 -0.1565</span></span>
-<span><span class="co">#&gt;   0.0460  0.0485  0.1853  0.0970 -0.1119</span></span>
-<span><span class="co">#&gt;  -0.0799 -0.0552 -0.0889  0.0086  0.1952</span></span>
+<span><span class="co">#&gt;  -0.1218  0.1835 -0.1114 -0.1365 -0.1824</span></span>
+<span><span class="co">#&gt;   0.1107 -0.0498 -0.1219 -0.0938 -0.1570</span></span>
+<span><span class="co">#&gt;  -0.1944  0.0355  0.1750 -0.1612 -0.1590</span></span>
+<span><span class="co">#&gt;  -0.0806 -0.1906 -0.0272 -0.1732 -0.0491</span></span>
+<span><span class="co">#&gt;  -0.0079 -0.0874 -0.1256  0.1276  0.0664</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (2,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0831 -0.1367  0.0896 -0.1574 -0.1586</span></span>
-<span><span class="co">#&gt;  -0.1490 -0.0808 -0.1637 -0.1876  0.0190</span></span>
-<span><span class="co">#&gt;  -0.1224  0.0978 -0.0446  0.1532 -0.1613</span></span>
-<span><span class="co">#&gt;  -0.1477 -0.0427  0.1231  0.0174 -0.1507</span></span>
-<span><span class="co">#&gt;   0.1036  0.1193  0.1798  0.1320  0.0741</span></span>
+<span><span class="co">#&gt;  -0.1450 -0.0371  0.0601 -0.1578  0.0918</span></span>
+<span><span class="co">#&gt;   0.1118 -0.0800  0.0359  0.0452  0.1182</span></span>
+<span><span class="co">#&gt;   0.0516  0.0109  0.0186  0.1399 -0.1431</span></span>
+<span><span class="co">#&gt;   0.1720 -0.0919  0.0616  0.0937  0.1511</span></span>
+<span><span class="co">#&gt;  -0.0270  0.0936  0.1510  0.1995  0.1934</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (3,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0074  0.1343 -0.0903  0.1079  0.1009</span></span>
-<span><span class="co">#&gt;  -0.1618  0.1391  0.1301 -0.0983 -0.1804</span></span>
-<span><span class="co">#&gt;  -0.1534  0.0612  0.1402 -0.0081  0.0157</span></span>
-<span><span class="co">#&gt;   0.1846  0.1652  0.1725 -0.0199 -0.0243</span></span>
-<span><span class="co">#&gt;   0.0234  0.0039  0.0280 -0.1897  0.0476</span></span>
+<span><span class="co">#&gt;   0.1055  0.0056  0.0491 -0.0096  0.0655</span></span>
+<span><span class="co">#&gt;   0.1950  0.0676  0.0254  0.0834 -0.0401</span></span>
+<span><span class="co">#&gt;   0.1658  0.1767 -0.0338  0.1644  0.1806</span></span>
+<span><span class="co">#&gt;  -0.0346 -0.1521  0.0490  0.1153  0.0755</span></span>
+<span><span class="co">#&gt;  -0.0832  0.0074 -0.0607  0.1704  0.1454</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (4,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0248  0.0536  0.1141 -0.1415  0.0791</span></span>
-<span><span class="co">#&gt;  -0.1637  0.0823 -0.1708 -0.1474 -0.1588</span></span>
-<span><span class="co">#&gt;  -0.0692  0.1054  0.0048 -0.0694  0.1760</span></span>
-<span><span class="co">#&gt;   0.0049  0.1237  0.1670  0.1171 -0.0228</span></span>
-<span><span class="co">#&gt;  -0.1769 -0.1000  0.1073  0.1777 -0.0203</span></span>
+<span><span class="co">#&gt;   0.1091  0.1982  0.1185  0.1655  0.1716</span></span>
+<span><span class="co">#&gt;   0.1987 -0.0517 -0.0115 -0.0641  0.0294</span></span>
+<span><span class="co">#&gt;   0.0078 -0.0942 -0.1629 -0.1114 -0.0833</span></span>
+<span><span class="co">#&gt;   0.0395 -0.0101  0.0837  0.1523  0.0673</span></span>
+<span><span class="co">#&gt;  -0.0984  0.0988 -0.1154  0.0453 -0.1577</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (5,1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.0123  0.1480  0.1773 -0.0896 -0.1685</span></span>
+<span><span class="co">#&gt;   0.0630 -0.0820 -0.1399  0.0528 -0.0896</span></span>
 <span><span class="co">#&gt; ... [the output was truncated (use n=-1 to disable)]</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{20,1,5,5} ][ requires_grad = TRUE ]</span></span></code></pre></div>
-<p>It is usual for model parameters to then be passed to an
-optimizer.</p>
-<p>This can also be initialized within a parallel process.</p>
+<p>Pass model parameters to an optimizer, also initialized in a parallel
+process:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">optim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">optim_rmsprop</span><span class="op">(</span>params <span class="op">=</span> <span class="va">params</span><span class="op">)</span>, params <span class="op">=</span> <span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">parameters</span><span class="op">)</span></span>
 <span></span>
@@ -308,27 +299,23 @@ optimizer.</p>
 <span><span class="co">#&gt;     step_helper: function (closure, loop_fun)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Above, tensors and complex objects containing tensors were passed
-seamlessly between host and daemon processes, in the same way as any
-other R object.</p>
-<p>The custom serialization in mirai leverages R’s own native ‘refhook’
-mechanism to allow completely transparent usage. Designed to be fast and
-efficient, data copies are minimized and the ‘official’ serialization
-methods from the <code>torch</code> package are used directly.</p>
+<p>Tensors and complex objects containing tensors pass seamlessly
+between host and daemons like any R object.</p>
+<p>Custom serialization leverages R’s native ‘refhook’ mechanism for
+transparent usage. Fast and efficient, it minimizes data copies and uses
+official <code>torch</code> serialization methods directly.</p>
 </div>
 <div class="section level3">
 <h3 id="database-hosting-using-arrow-database-connectivity">3. Database Hosting using Arrow Database Connectivity<a class="anchor" aria-label="anchor" href="#database-hosting-using-arrow-database-connectivity"></a>
 </h3>
-<p>It is possible using the <code>DBI</code> interface to access and
-manipulate data in the Apache Arrow data format efficiently through ABDC
-(Arrow Database Connectivity).</p>
-<p>The example below creates an in-memory SQLite connection using the
+<p>Use <code>DBI</code> to access and manipulate Apache Arrow data
+efficiently through ADBC (Arrow Database Connectivity).</p>
+<p>This creates an in-memory SQLite connection using the
 <code>adbcsqlite</code> backend.</p>
-<p>Serialization is set up with the relevant serialization functions
-from the <code>arrow</code> package as part of the
-<code><a href="../reference/daemons.html">daemons()</a></code> call. Note that the specified class is
-‘nanoarrow_array_stream’ as <code>nanoarrow</code> is the backend for
-all queries made by the DBI <code>db*Arrow()</code> functions.</p>
+<p>Serialization uses <code>arrow</code> functions in the
+<code><a href="../reference/daemons.html">daemons()</a></code> call. The class is ‘nanoarrow_array_stream’ since
+<code>nanoarrow</code> backs all DBI <code>db*Arrow()</code>
+queries:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
@@ -346,8 +333,8 @@ all queries made by the DBI <code>db*Arrow()</code> functions.</p>
 <span>    <span class="va">con</span> <span class="op">&lt;&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">adbi</span><span class="fu">::</span><span class="fu">adbi</span><span class="op">(</span><span class="st">"adbcsqlite"</span><span class="op">)</span>, uri <span class="op">=</span> <span class="st">":memory:"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/mirai.html">mirai()</a></code> calls may then be used to write to or query the
-database all in the Arrow format.</p>
+<p>Use <code><a href="../reference/mirai.html">mirai()</a></code> to write or query the database in Arrow
+format:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">dbWriteTableArrow</span><span class="op">(</span><span class="va">con</span>, <span class="st">"iris"</span>, <span class="va">iris</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
@@ -370,9 +357,8 @@ database all in the Arrow format.</p>
 <span><span class="co">#&gt; $Petal.Length &lt;double&gt;</span></span>
 <span><span class="co">#&gt; $Petal.Width &lt;double&gt;</span></span>
 <span><span class="co">#&gt; $Species &lt;string&gt;</span></span></code></pre></div>
-<p>Due to the tight integration of the mirai serialization mechanism
-with R’s ‘refhook’ system, we can easily return complex / nested objects
-containing multiple queries in the Arrow format:</p>
+<p>Tight integration with R’s ‘refhook’ system allows returning complex
+nested objects with multiple Arrow queries:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">dbGetQueryArrow</span><span class="op">(</span><span class="va">con</span>, <span class="st">'SELECT * FROM iris WHERE "Sepal.Length" &lt; 4.6'</span><span class="op">)</span></span>
@@ -420,8 +406,8 @@ containing multiple queries in the Arrow format:</p>
 <span><span class="co">#&gt; $Petal.Length &lt;double&gt;</span></span>
 <span><span class="co">#&gt; $Petal.Width &lt;double&gt;</span></span>
 <span><span class="co">#&gt; $Species &lt;string&gt;</span></span></code></pre></div>
-<p>As before, <code><a href="../reference/everywhere.html">everywhere()</a></code> can be used to cleanly tear down
-the databases, prior to resetting daemons.</p>
+<p>Use <code><a href="../reference/everywhere.html">everywhere()</a></code> to cleanly tear down databases before
+resetting daemons:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="fu">dbDisconnect</span><span class="op">(</span><span class="va">con</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
@@ -429,22 +415,19 @@ the databases, prior to resetting daemons.</p>
 <div class="section level3">
 <h3 id="shiny-mirai-dbi-adbc-integrated-example">4. Shiny / mirai / DBI / ADBC Integrated Example<a class="anchor" aria-label="anchor" href="#shiny-mirai-dbi-adbc-integrated-example"></a>
 </h3>
-<p>The following is an example of how database connections hosted in
-mirai daemons may be used to power a Shiny app.</p>
-<p>The one-time <code>serialization()</code> setup ensures seamless
-transport of Apache Arrow data, and occurs in the global environment
-outside of <code>server()</code>.</p>
-<p>A new database connection is created in a new daemon process for
-every new Shiny session. The resources are freed when a sesssion ends.
-This logic is all defined within <code>server()</code>. A unique ID is
-used to identify each session, and is specified as the ‘compute profile’
-for daemons.</p>
-<p>Non-dispatcher daemons are created as scheduling is not required (all
-queries expected to take roughly the same time, and in this case each
-session uses only one daemon anyway).</p>
-<p>Shiny ExtendedTask is then used to perform each query via a
-<code><a href="../reference/mirai.html">mirai()</a></code> call, using the session-specific compute
-profile.</p>
+<p>This demonstrates database connections hosted in mirai daemons
+powering a Shiny app.</p>
+<p>One-time <code>serialization()</code> setup ensures seamless Arrow
+data transport in the global environment outside
+<code>server()</code>.</p>
+<p>Each Shiny session creates a new database connection in a new daemon
+process, freeing resources when the session ends. This logic lives in
+<code>server()</code>. A unique ID identifies each session and specifies
+the daemons ‘compute profile’.</p>
+<p>Non-dispatcher daemons work since scheduling isn’t needed (all
+queries take a similar time, each session uses one daemon).</p>
+<p>Shiny ExtendedTask performs queries via <code><a href="../reference/mirai.html">mirai()</a></code> using
+the session-specific compute profile:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/" class="external-link">secretbase</a></span><span class="op">)</span></span>

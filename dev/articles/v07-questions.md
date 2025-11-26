@@ -1,65 +1,48 @@
-# Community FAQs
+# mirai - Community FAQs
 
-This vignette is designed to provide a knowledgebase for questions posed
-by the community, and will be added to over time.
+This vignette provides answers to common questions from the community.
 
 ### 1. Migration from `future_promise()`
 
-For use within Shiny, it should be straightforward translating
-ExtendedTask or other async code that was originally written for use
-with a
-[`promises::future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html).
+Translating Shiny ExtendedTask or async code from
+[`promises::future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html)
+to mirai is straightforward.
 
-Note:
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html)
-exists in the promises package as we had to find a workaround to make
-`future(...)` always async. `future(...)` by itself is not always async
-as it blocks as soon as it runs out of parallel processes on which to
-run tasks.
-
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) on the other
-hand is built as an async framework, so there’s no need for an
-additional function from the promises package. You should simply use a
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) directly in
-place of a
+exists because `future(...)` alone isn’t always async - it blocks when
+parallel processes run out.
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) is built as
+an async framework, so use it directly in place of
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html).
 
 **Globals:**
 
-One important difference is that a
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html)
-by default tries to infer all the global variables that are required by
-the expression. If your code depended on this convenience feature then
-you will need to instead pass these in via the `...` of
+by default infers required global variables. If your code depended on
+this, pass variables explicitly via `...` in
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md). A mirai
-requires that the expression be self-contained, with any variables or
-helper functions explicitly supplied to it.
+requires self-contained expressions with all variables or helper
+functions explicitly supplied.
 
-On the other hand, if your code previously used the `globals` argument
-to supply these variables, then you can pass this directly to the
-`.args` of [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md)
-if it is a named list.
+If your code used the `globals` argument, pass it directly to `.args` in
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) (if it’s a
+named list).
 
-Regardless of using
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) or
-[`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html),
-we recommend that you always pass globals explicitly. This matches what
-actually happens in multi-process parallelism, and is hence
-better-suited to programmatic use. Automatic globals detection is an
-imperfect abstraction that can lead to unpredictable edge cases, or
-simply slower operation through sending more than required to daemons.
-Explicit passing of variables allows for reliable and transparent
-behaviour that remains robust over time.
+**Always pass globals explicitly.** This matches the behaviour of
+multi-process parallelism and is suited for programmatic use. Automatic
+globals detection creates an imperfect abstraction leading to
+unpredictable edge cases or slower operation from sending unnecessary
+data to daemons. Explicitly passing variables ensures reliable,
+transparent behaviour.
 
 **Capture globals using
 [`environment()`](https://rdrr.io/r/base/environment.html):**
 
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) allows
-passing an environment to `...` or to `.args`. This is especially useful
-for Shiny ExtendedTask, where it is invoked with a set of arguments. By
-using `mirai::mirai({...}, environment())` you automatically capture the
-variables provided to the invoke method. See the Shiny vignette for
-example usage.
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) accepts an
+environment passed to `...` or `.args`. This is useful for Shiny
+ExtendedTask invoked with arguments. Using
+`mirai::mirai({...}, environment())` automatically captures variables
+provided to the invoke method. See the Shiny vignette for examples.
 
 **Special Case: `...`:**
 
@@ -96,10 +79,9 @@ Note that here
 
 ### 2. Setting the random seed
 
-The following example was raised as being potentially counter-intuitive,
-given that default ‘cleanup’ settings at each daemon ensures that
-variables in the global environment, of which `.Random.seed` is one, do
-not carry over to subsequent runs.
+This example may seem counter-intuitive: default ‘cleanup’ settings at
+each daemon ensure global environment variables don’t carry over to
+subsequent runs. This can be assumed to include `.Random.seed`.
 
 ``` r
 library(mirai)
@@ -138,96 +120,85 @@ mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 daemons(0)
 ```
 
-The reason the change in random seed persists in all circumstances is
-due to this being a special case, arising from the use of L’Ecuyer CMRG
-streams to provide parallel-safe random numbers.
+Random seed changes persist because mirai uses L’Ecuyer CMRG streams for
+parallel-safe random numbers.
 
-Streams can be thought of as entry points to the pseudo random number
-line far away from each other to ensure that random results in each
-daemon are independent from one another. The random seed is not reset
-after each mirai call to ensure that however many random draws are made
-in any mirai call, the next random draw follows on in the stream, and
-hence have the desired statistical properties.
+Streams are entry points on the pseudo-random number line, far apart to
+ensure independent random results across daemons. The random seed isn’t
+reset after each mirai call - this ensures that random draws continue
+along the stream, maintaining desired statistical properties regardless
+of how many draws occur per call.
 
-Hence normally, the random seed should be set once on the host process
-when daemons are created, rather than in each daemon.
+**Set the random seed once on the host process when creating daemons,
+not in each daemon.**
 
-For numerical reproducibility, set the `seed` argument to
-[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) (see the
-Random Number Generation section of the reference vignette for further
-details).
+For numerical reproducibility, set the `seed` argument in
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) (see
+Random Number Generation in the reference vignette).
 
 ### 3. Accessing package functions during development
 
-A mirai call usually requires package-namespaced functions. However the
-latest version of a package in development is often loaded dynamically
-by `devtools::load_all()` or the underlying `pkgload::load_all()` for
-quick iteration.
+A mirai call usually requires package-namespaced functions. However,
+development packages are often loaded dynamically by
+`devtools::load_all()` or `pkgload::load_all()` for quick iteration.
 
-In this case, use
+Use
 [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md) to
-also call `devtools::load_all()` on all (local) daemons. They will then
-have access to the same functions as your host session for subsequent
+call `devtools::load_all()` on all (local) daemons. They’ll then access
+the same functions as your host session for subsequent
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) calls.
 
-### 4. Why does it take time for `mirai()` to execute when it’s meant to return immediately?
+### 4. Why does `mirai()` take time when it’s meant to return immediately?
 
-A [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call is
-meant to return almost instantaneously. The same when invoked by a Shiny
-`ExtendedTask`. The only reason it would take time is if you are passing
-through large objects, which then need to be serialized to be sent to
+A [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call
+returns almost instantaneously, as does Shiny `ExtendedTask`. The only
+reason it takes time is passing large objects requiring serialization to
 the parallel process.
 
-Care should be taken when you pass a function or environment to
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) in the `...`
-or `.args` arguments. This is as a function includes its closure
-(enclosing environment), and an environment its parent environments.
-This means you could be passing more than you bargained for.
+Be careful passing functions or environments to
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) via `...` or
+`.args`. Functions include their closure (enclosing environment), and
+environments include parent environments. You may be passing more than
+intended.
 
-Generally, `lobstr::obj_size()` from the lobstr package is a great
-function for checking the actual size of an object (capturing many cases
-more accurately than the base R `object.size`).
+Use `lobstr::obj_size()` from the lobstr package to check actual object
+size (more accurate than base R’s `object.size`).
 
-As mitigation for accidentally passing large objects:
+**Mitigation for large objects:**
 
-- For functions, use `carrier::crate()` from the carrier package. This
-  is what we use in purrr, and it makes sure only what’s necessary is
-  ‘crated’ with the function. To crate an existing function, use an
-  anonymous function (making sure to also supply anything required by
-  `fn` as part of the `...`):
+- **Functions**: Use `carrier::crate()` from the carrier package (used
+  in purrr). This ensures only necessary components are ‘crated’ with
+  the function. To crate an existing function, use an anonymous function
+  (supplying anything required by `fn` via `...`):
 
 ``` r
 func <- carrier::crate(\(x) fn(x), fn = fn)
 ```
 
-- For environments, consider using `parent.env(e) <- emptyenv()`. This
-  is not required for R6 classes as they are already isolated by
-  default. Regardless of any parent environment, an environment / R6
-  class could still contain many items that are not needed by the
-  parallel process, in which case consider passing individual members
-  (`env$x`, `env$y`) rather than the entire object (`env`) where
-  possible.
+- **Environments**: Consider `parent.env(e) <- emptyenv()`. Not required
+  for R6 classes (already isolated by default). Environments or R6
+  classes may contain unnecessary items for the parallel process -
+  consider passing individual members (`env$x`, `env$y`) rather than the
+  entire object (`env`).
 
-### 5. How to create daemons on-demand or shutdown daemons when they’re not used
+### 5. Creating daemons on-demand or shutting down idle daemons
 
-Setting daemons can be totally separate from the task of actually
-launching (deploying) them. To just set daemons when you’re using only
-your local machine:
+Setting daemons is separate from launching (deploying) them. To set
+daemons for local use:
 
 ``` r
 daemons(url = local_url())
 ```
 
-or if you’re using your local machine and/or remote machines:
+For local and/or remote machines:
 
 ``` r
 daemons(url = host_url())
 ```
 
-This sets up daemons. You can think of this as a ‘base station’ that
-listens for incoming daemon connections.
+This creates a ‘base station’ listening for incoming daemon connections.
 
-When you actually want to launch (deploy) a daemon, you may use either:
+To launch (deploy) a daemon:
 
 ``` r
 launch_local()
@@ -239,30 +210,27 @@ or
 launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config()
 ```
 
-The key to adopting a flexible-use pattern that lets you scale up and
-down is to specify one of the following arguments to the `...` argument
-of
+For flexible scaling up and down, specify one of these arguments to
+`...` in
 [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
 or
 [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md).
-You may also supply these to the initial
-[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) call for
-them to apply by default for all launches:
+Supply these to the initial
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) call to
+apply by default for all launches:
 
-- `maxtasks`: integer number of tasks to perform before exiting.
-- `idletime`: milliseconds idle time before exiting.
-- `walltime`: milliseconds (soft) wall time before exiting (i.e. at
-  least this amount of time, and possibly more as there is no forcible
-  timeout mid-task)
+- `maxtasks`: Integer number of tasks to perform before exiting
+- `idletime`: Milliseconds idle time before exiting
+- `walltime`: Milliseconds soft wall time before exiting (at least this
+  amount, possibly more - no forcible timeout mid-task)
 
-As an example, to launch a daemon to perform one task only:
+To launch a daemon for one task only:
 
 ``` r
 launch_remote(remote = ssh_config("ssh://servername"), maxtasks = 1L)
 ```
 
-In this way, you may use
+This enables on-demand HPC cluster jobs via
 [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
-to launch jobs on an HPC cluster on demand, without using persistent
-daemons. Note that you will incur the latency costs of however long it
-takes to launch the job.
+without persistent daemons. Note: you incur latency costs from job
+launch time.

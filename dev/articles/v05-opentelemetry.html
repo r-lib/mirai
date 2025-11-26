@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>OpenTelemetry • mirai</title>
+<title>mirai - OpenTelemetry • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="OpenTelemetry">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - OpenTelemetry">
 <meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -43,13 +43,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>OpenTelemetry</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>mirai - OpenTelemetry</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v05-opentelemetry.Rmd" class="external-link"><code>vignettes/v05-opentelemetry.Rmd</code></a></small>
@@ -94,13 +94,12 @@
 <div class="section level3">
 <h3 id="introduction">1. Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
-<p>mirai provides comprehensive OpenTelemetry (otel) tracing support for
-observing asynchronous operations and distributed computation.</p>
-<p>When the <code>otel</code> and <code>otelsdk</code> packages are
-installed and tracing is enabled, mirai automatically creates spans to
-track the lifecycle of daemon management, async operations, and task
-execution.</p>
-<p>This enables detailed monitoring of:</p>
+<p>mirai provides comprehensive OpenTelemetry (otel) tracing for
+observing async operations and distributed computation.</p>
+<p>With <code>otel</code> and <code>otelsdk</code> installed and tracing
+enabled, mirai automatically creates spans tracking daemon management,
+async operations, and task execution lifecycles.</p>
+<p><strong>Detailed monitoring of:</strong></p>
 <ul>
 <li>Task submission and completion times</li>
 <li>Daemon lifecycle and performance</li>
@@ -111,28 +110,28 @@ execution.</p>
 <div class="section level3">
 <h3 id="automatic-tracing-setup">2. Automatic Tracing Setup<a class="anchor" aria-label="anchor" href="#automatic-tracing-setup"></a>
 </h3>
-<p>Tracing is automatically enabled when:</p>
+<p>Tracing enables automatically when:</p>
 <ol style="list-style-type: decimal">
-<li>The <code>otel</code> and <code>otelsdk</code> packages are
-installed; and</li>
+<li>
+<code>otel</code> and <code>otelsdk</code> packages are
+installed</li>
 <li>OpenTelemetry tracing is configured and enabled (see <a href="https://otelsdk.r-lib.org/reference/collecting.html" class="external-link uri">https://otelsdk.r-lib.org/reference/collecting.html</a>)</li>
 </ol>
-<p>No additional action is required - mirai will automatically detect
-the presence of OpenTelemetry and begin tracing.</p>
+<p>No additional action needed - mirai automatically detects
+OpenTelemetry and begins tracing.</p>
 </div>
 <div class="section level3">
 <h3 id="span-types-and-hierarchy">3. Span Types and Hierarchy<a class="anchor" aria-label="anchor" href="#span-types-and-hierarchy"></a>
 </h3>
-<p>mirai creates several types of spans to represent different
+<p>mirai creates several span types representing different
 operations.</p>
 <div class="section level4">
 <h4 id="core-span-types">3.1 Core Span Types<a class="anchor" aria-label="anchor" href="#core-span-types"></a>
 </h4>
 <p><strong><code>daemons set</code> /
 <code>daemons reset</code></strong></p>
-<p>Root span for a compute profile, created when daemons are set, and
-when they are reset. The span name includes the URL for easy
-identification.</p>
+<p>Root span for a compute profile, created when daemons are set/reset.
+Span name includes URL for easy identification.</p>
 <ul>
 <li>Kind: <code>internal</code>
 </li>
@@ -153,8 +152,8 @@ identification.</p>
 </ul>
 <p><strong><code>daemon connect</code> /
 <code>daemon disconnect</code></strong></p>
-<p>Daemon process span, created when a daemon connects, and when it
-disconnects. The span name includes the URL for easy identification.</p>
+<p>Daemon process span, created when a daemon connects/disconnects. Span
+name includes URL for easy identification.</p>
 <ul>
 <li>Kind: <code>internal</code>
 </li>
@@ -170,7 +169,7 @@ disconnects. The span name includes the URL for easy identification.</p>
 </li>
 </ul>
 <p><strong><code>mirai_map</code></strong></p>
-<p>Parallel map operation span. Encompasses the entire map operation
+<p>Parallel map operation span encompassing the entire map operation
 across multiple mirai tasks.</p>
 <ul>
 <li>Kind: <code>internal</code>
@@ -178,15 +177,15 @@ across multiple mirai tasks.</p>
 </ul>
 <p><strong><code>mirai</code></strong></p>
 <p>Client-side async task span. Created when <code><a href="../reference/mirai.html">mirai()</a></code> is
-called and ends as soon as it returns.</p>
+called, ends when it returns.</p>
 <ul>
 <li>Kind: <code>client</code>
 </li>
 <li>Attributes: <code>mirai.id</code> (unique task identifier)</li>
 </ul>
 <p><strong><code>daemon eval</code></strong></p>
-<p>Server-side task evaluation span. Tracks for the duration of actual
-mirai evaluation on the daemon.</p>
+<p>Server-side task evaluation span. Tracks actual mirai evaluation
+duration on the daemon.</p>
 <ul>
 <li>Kind: <code>server</code>
 </li>
@@ -195,8 +194,8 @@ mirai evaluation on the daemon.</p>
 <div class="section level4">
 <h4 id="span-relationships-and-context-propagation">3.2 Span Relationships and Context Propagation<a class="anchor" aria-label="anchor" href="#span-relationships-and-context-propagation"></a>
 </h4>
-<p>The spans form a distributed structure that traces the complete
-lifecycle of async operations:</p>
+<p>Spans form a distributed structure tracing the complete async
+operation lifecycle:</p>
 <pre><code>daemons set (compute profile - top level)
 daemon connect (daemon process 1 - top level)
 ...
@@ -217,57 +216,56 @@ daemons reset ──link→ daemons set
 daemon disconnect (daemon process 1) ──link→ daemon connect
 ...
 daemon disconnect (daemon process N) ──link→ daemon connect</code></pre>
-<p><strong>Context Propagation</strong>: the context is automatically
-packaged with each <code><a href="../reference/mirai.html">mirai()</a></code> call and extracted on the daemon
-side, enabling proper parent-child relationships across process
+<p><strong>Context Propagation</strong>: Context automatically packaged
+with each <code><a href="../reference/mirai.html">mirai()</a></code> call and extracted on the daemon side,
+enabling proper parent-child relationships across process
 boundaries.</p>
-<p><strong>Span Links</strong>: tasks are linked to their compute
-profile’s <code>daemons set</code> span on the client side, and to each
-<code>daemon connect</code> span on the server side, showing exactly
-where each evaluation happened. When daemons are reset and the
-respective daemons disconnect, these events are recorded in new spans
-which link back to the original spans.</p>
+<p><strong>Span Links</strong>: Tasks link to their compute profile’s
+<code>daemons set</code> span (client-side) and each
+<code>daemon connect</code> span (server-side), showing exactly where
+evaluation occurred. When daemons reset and disconnect, new spans record
+these events linking back to the originals.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="status-and-error-tracking">4. Status and Error Tracking<a class="anchor" aria-label="anchor" href="#status-and-error-tracking"></a>
 </h3>
-<p><code>daemon eval</code> spans automatically track the success or
-failure of operations.</p>
-<p><strong>Status Values</strong></p>
+<p><code>daemon eval</code> spans automatically track operation success
+or failure.</p>
+<p><strong>Status Values:</strong></p>
 <ul>
 <li>
-<code>'ok'</code> or <code>'unset'</code> - completed
-successfully</li>
+<code>'ok'</code> or <code>'unset'</code> - successful
+completion</li>
 <li>
-<code>'error'</code>, with description <code>'miraiError'</code> -
-failed with an error</li>
+<code>'error'</code> with description <code>'miraiError'</code> -
+error failure</li>
 <li>
-<code>'error'</code>, with description <code>'miraiInterrupt'</code>
-- was interrupted</li>
+<code>'error'</code> with description <code>'miraiInterrupt'</code>
+- interrupted</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="monitoring-and-observability">5. Monitoring and Observability<a class="anchor" aria-label="anchor" href="#monitoring-and-observability"></a>
 </h3>
-<p>The OpenTelemetry spans provide rich observability into mirai
+<p>OpenTelemetry spans provide rich observability into mirai
 operations.</p>
-<p><strong>Performance Monitoring</strong></p>
+<p><strong>Performance Monitoring:</strong></p>
 <ul>
-<li>Track task execution times from submission to completion</li>
+<li>Track task execution times (submission to completion)</li>
 <li>Monitor daemon utilization and load balancing</li>
-<li>Identify bottlenecks in distributed computation</li>
+<li>Identify distributed computation bottlenecks</li>
 </ul>
-<p><strong>Error Analysis</strong></p>
+<p><strong>Error Analysis:</strong></p>
 <ul>
 <li>Correlate errors with specific tasks and daemons</li>
-<li>Track error rates across different types of operations</li>
-<li>Debug issues in distributed environments</li>
+<li>Track error rates across operation types</li>
+<li>Debug distributed environment issues</li>
 </ul>
-<p><strong>Distributed Tracing</strong></p>
+<p><strong>Distributed Tracing:</strong></p>
 <ul>
 <li>Follow task execution across network boundaries</li>
-<li>Understand the complete lifecycle of async operations</li>
+<li>Understand complete async operation lifecycles</li>
 <li>Correlate client-side requests with server-side execution</li>
 </ul>
 </div>
@@ -275,15 +273,16 @@ operations.</p>
 <h3 id="integration-with-observability-platforms">6. Integration with Observability Platforms<a class="anchor" aria-label="anchor" href="#integration-with-observability-platforms"></a>
 </h3>
 <p>mirai’s OpenTelemetry implementation works seamlessly with any
-OpenTelemetry-compatible observability platform, including:</p>
+compatible observability platform:</p>
 <ul>
 <li>Grafana</li>
 <li>Pydantic Logfire</li>
 <li>Jaeger</li>
-<li>Any of those listed at <a href="https://otelsdk.r-lib.org/reference/collecting.html" class="external-link uri">https://otelsdk.r-lib.org/reference/collecting.html</a>.</li>
+<li>Any listed at <a href="https://otelsdk.r-lib.org/reference/collecting.html" class="external-link uri">https://otelsdk.r-lib.org/reference/collecting.html</a>
+</li>
 </ul>
-<p>The tracer name used by mirai is <code>org.r-lib.mirai</code>, making
-it easy to filter and identify mirai-related traces.</p>
+<p>The tracer name <code>org.r-lib.mirai</code> enables easy filtering
+and identification of mirai-related traces.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

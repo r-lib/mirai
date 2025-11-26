@@ -19,13 +19,13 @@
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="articles/v07-questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -70,10 +70,19 @@
 <strong>daemon()</strong>: The daemon instance that runs in background processes to execute tasks</li>
 <li>
 <strong>dispatcher()</strong>: Optional scheduler process that ensures optimal FIFO scheduling and enables features like cancellation and custom serialization</li>
+<li>
+<strong>mirai_map()</strong>: Asynchronous parallel map over lists/vectors with progress bars and early stopping</li>
+<li>
+<strong>everywhere()</strong>: Evaluates expressions on all connected daemons (for loading packages/exporting data)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="message-passing-topology">Message-Passing Topology<a class="anchor" aria-label="anchor" href="#message-passing-topology"></a></h3>
-<p>The network topology has daemons <strong>dial into</strong> the host/dispatcher (not vice versa). The host/dispatcher listens at a URL, allowing dynamic addition/removal of compute resources. This inverted topology design enables: - Local daemons via IPC - Remote daemons via TCP/TLS (including automatic zero-config TLS certificate generation) - Distributed computing across networks - True dynamic scaling</p>
+<p>The network topology has daemons <strong>dial into</strong> the host/dispatcher (not vice versa). The host/dispatcher listens at a URL, allowing dynamic addition/removal of compute resources. This inverted topology design enables: - Local daemons via IPC (Unix sockets on Linux/macOS, named pipes on Windows) - Remote daemons via TCP/TLS (including automatic zero-config TLS certificate generation) - Distributed computing across networks - True dynamic scaling</p>
+</div>
+<div class="section level3">
+<h3 id="dispatcher-vs-direct-connection">Dispatcher vs. Direct Connection<a class="anchor" aria-label="anchor" href="#dispatcher-vs-direct-connection"></a></h3>
+<p><strong>With Dispatcher (default)</strong>: <code>dispatcher = TRUE</code> - Optimal FIFO scheduling - tasks queued and sent to next available daemon - Enables mirai cancellation via <code><a href="reference/stop_mirai.html">stop_mirai()</a></code> - Enables timeout cancellation (not just timeout detection) - Required for custom serialization configurations - Slight additional overhead</p>
+<p><strong>Direct Connection</strong>: <code>dispatcher = FALSE</code> - Round-robin distribution - tasks sent directly to daemons - Lower overhead, more resource-efficient - Best for similar-length tasks or when concurrent tasks &lt; available daemons - No cancellation or custom serialization support</p>
 </div>
 <div class="section level3">
 <h3 id="evaluation-model">Evaluation Model<a class="anchor" aria-label="anchor" href="#evaluation-model"></a></h3>
@@ -85,8 +94,12 @@
 </div>
 <div class="section level3">
 <h3 id="random-number-generation">Random Number Generation<a class="anchor" aria-label="anchor" href="#random-number-generation"></a></h3>
-<p>Uses L’Ecuyer-CMRG RNG streams for statistical independence across parallel processes, following base R’s parallel package conventions. Can be seeded at the compute profile level for reproducible results.</p>
-</div>
+<p>Uses L’Ecuyer-CMRG RNG streams for statistical independence across parallel processes, following base R’s parallel package conventions.</p>
+<ul><li>
+<strong>Default (<code>seed = NULL</code>)</strong>: New stream per daemon (statistically sound, non-reproducible across runs)</li>
+<li>
+<strong>Reproducible (<code>seed = integer</code>)</strong>: New stream per mirai call (deterministic, reproducible results)</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="development-commands">Development Commands<a class="anchor" aria-label="anchor" href="#development-commands"></a></h2>
@@ -129,17 +142,17 @@
 <div class="section level3">
 <h3 id="r-directory-structure">R/ Directory Structure<a class="anchor" aria-label="anchor" href="#r-directory-structure"></a></h3>
 <ul><li>
-<strong>mirai.R</strong>: Core mirai() function, unresolved(), call_mirai(), stop_mirai()</li>
+<strong>mirai.R</strong>: Core mirai() function, unresolved(), call_mirai(), stop_mirai(), everywhere(), race_mirai()</li>
 <li>
-<strong>daemons.R</strong>: Setup functions for daemon infrastructure including daemons(), remote configurations, compute profiles</li>
+<strong>daemons.R</strong>: Setup functions for daemon infrastructure including daemons(), remote configurations, compute profiles, with_daemons(), local_daemons()</li>
 <li>
 <strong>daemon.R</strong>: The daemon instance implementation that runs in background processes</li>
 <li>
-<strong>dispatcher.R</strong>: Dispatcher process for optimal scheduling</li>
+<strong>dispatcher.R</strong>: Dispatcher process for optimal FIFO scheduling</li>
 <li>
-<strong>map.R</strong>: mirai_map() for parallel map operations with promises integration</li>
+<strong>map.R</strong>: mirai_map() for parallel map operations with collection options (.flat, .progress, .stop)</li>
 <li>
-<strong>launchers.R</strong>: launch_local() and launch_remote() for deploying daemons</li>
+<strong>launchers.R</strong>: launch_local() and launch_remote() for deploying daemons; remote_config(), ssh_config(), cluster_config()</li>
 <li>
 <strong>parallel.R</strong>: Integration with R’s parallel package via make_cluster() - the first official alternative communications backend for R</li>
 <li>
@@ -179,6 +192,63 @@
 <div class="section level2">
 <h2 id="cicd">CI/CD<a class="anchor" aria-label="anchor" href="#cicd"></a></h2>
 <p>GitHub Actions workflows in .github/workflows/: - <strong>R-CMD-check.yaml</strong>: Comprehensive checks across multiple R versions (oldrel-1, release, devel) and platforms (Ubuntu, macOS, Windows) - <strong>test-coverage.yaml</strong>: Code coverage via codecov - <strong>pkgdown.yaml</strong>: Documentation site generation - <strong>shiny-coreci.yaml</strong>: Shiny core CI integration - <strong>rhub.yaml</strong>: Additional platform testing</p>
+</div>
+<div class="section level2">
+<h2 id="remote-daemon-deployment">Remote Daemon Deployment<a class="anchor" aria-label="anchor" href="#remote-daemon-deployment"></a></h2>
+<div class="section level3">
+<h3 id="ssh-direct-connection">SSH Direct Connection<a class="anchor" aria-label="anchor" href="#ssh-direct-connection"></a></h3>
+<ul><li>Requires SSH key-based authentication</li>
+<li>Host port must be open to inbound connections from remotes</li>
+<li>Daemons dial back to host URL directly</li>
+<li>Use <code>ssh_config(remotes, tunnel = FALSE)</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="ssh-tunnelling">SSH Tunnelling<a class="anchor" aria-label="anchor" href="#ssh-tunnelling"></a></h3>
+<ul><li>Use when firewall blocks inbound connections to host</li>
+<li>Creates reverse SSH tunnel: remote port -&gt; host port</li>
+<li>Host URL must be <code>tcp://127.0.0.1:port</code> (use <code>local_url(tcp = TRUE)</code>)</li>
+<li>Daemons dial into their own localhost, traffic tunnels through SSH</li>
+<li>Use <code>ssh_config(remotes, tunnel = TRUE)</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="hpc-cluster-managers">HPC Cluster Managers<a class="anchor" aria-label="anchor" href="#hpc-cluster-managers"></a></h3>
+<p>Supported via <code><a href="reference/cluster_config.html">cluster_config()</a></code>: - <strong>Slurm</strong>: sbatch (batch), srun (interactive) - <strong>SGE</strong>: qsub - <strong>Torque/PBS</strong>: qsub - <strong>LSF</strong>: bsub</p>
+<p>Configuration includes job options (memory, output files, etc.) and optional module loading commands.</p>
+</div>
+<div class="section level3">
+<h3 id="manual-deployment">Manual Deployment<a class="anchor" aria-label="anchor" href="#manual-deployment"></a></h3>
+<p>Use <code><a href="reference/remote_config.html">remote_config()</a></code> with empty arguments to generate shell commands for manual copy/paste to remote machines.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="helper-functions">Helper Functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
+<div class="section level3">
+<h3 id="url-constructors">URL Constructors<a class="anchor" aria-label="anchor" href="#url-constructors"></a></h3>
+<ul><li>
+<code>host_url(tls, port)</code>: Constructs host URL based on detected IP address</li>
+<li>
+<code>local_url(tcp, port)</code>: Generates IPC URL or localhost TCP URL</li>
+</ul></div>
+<div class="section level3">
+<h3 id="scope-management">Scope Management<a class="anchor" aria-label="anchor" href="#scope-management"></a></h3>
+<ul><li>
+<code>with_daemons(.compute, expr)</code>: Temporarily use a specific compute profile</li>
+<li>
+<code>local_daemons(.compute, frame)</code>: Set profile for current scope</li>
+</ul></div>
+<div class="section level3">
+<h3 id="status-and-monitoring">Status and Monitoring<a class="anchor" aria-label="anchor" href="#status-and-monitoring"></a></h3>
+<ul><li>
+<code>status(.compute)</code>: Detailed status (connections, URL, mirai counts)</li>
+<li>
+<code>info(.compute)</code>: Concise statistics vector</li>
+<li>
+<code>daemons_set(.compute)</code>: Check if daemons exist</li>
+<li>
+<code>require_daemons(.compute)</code>: Error if daemons not set</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="package-conventions">Package Conventions<a class="anchor" aria-label="anchor" href="#package-conventions"></a></h2>

@@ -21,13 +21,13 @@ resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub."><me
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
@@ -75,7 +75,7 @@ resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.</p>
 
 <dt id="arg-options">options<a class="anchor" aria-label="anchor" href="#arg-options"></a></dt>
 <dd><p>options as would be supplied inside a script file passed to
-<code>command</code>, e.g. "#SBATCH –mem=10G", each separated by a new line. See
+<code>command</code>, e.g. "#SBATCH –mem=16G", each separated by a new line. See
 examples below.
 <br> Other shell commands e.g. to change working directory may also be
 included.
@@ -108,7 +108,7 @@ for generic configurations.</p></div>
 <span class="r-in"><span><span class="fu">cluster_config</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  command <span class="op">=</span> <span class="st">"sbatch"</span>,</span></span>
 <span class="r-in"><span>  options <span class="op">=</span> <span class="st">"#SBATCH --job-name=mirai</span></span></span>
-<span class="r-in"><span><span class="st">             #SBATCH --mem=10G</span></span></span>
+<span class="r-in"><span><span class="st">             #SBATCH --mem=16G</span></span></span>
 <span class="r-in"><span><span class="st">             #SBATCH --output=job.out</span></span></span>
 <span class="r-in"><span><span class="st">             module load R/4.5.0"</span>,</span></span>
 <span class="r-in"><span>  rscript <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span></span></span>
@@ -117,7 +117,7 @@ for generic configurations.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/bin/sh"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sbatch&lt;&lt;'EOF'\n#!/bin/sh\n#SBATCH --job-name=mirai\n#SBATCH --mem=10G\n#SBATCH --output=job.out\nmodule load R/4.5.0\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sbatch&lt;&lt;'EOF'\n#!/bin/sh\n#SBATCH --job-name=mirai\n#SBATCH --mem=16G\n#SBATCH --output=job.out\nmodule load R/4.5.0\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "."                                                                                                                     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "\nEOF"                                                                                                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -132,7 +132,7 @@ for generic configurations.</p></div>
 <span class="r-in"><span><span class="fu">cluster_config</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  command <span class="op">=</span> <span class="st">"qsub"</span>,</span></span>
 <span class="r-in"><span>  options <span class="op">=</span> <span class="st">"#$ -N mirai</span></span></span>
-<span class="r-in"><span><span class="st">             #$ -l mem_free=10G</span></span></span>
+<span class="r-in"><span><span class="st">             #$ -l mem_free=16G</span></span></span>
 <span class="r-in"><span><span class="st">             #$ -o job.out</span></span></span>
 <span class="r-in"><span><span class="st">             module load R/4.5.0"</span>,</span></span>
 <span class="r-in"><span>  rscript <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span></span></span>
@@ -141,7 +141,7 @@ for generic configurations.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/bin/sh"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "qsub&lt;&lt;'EOF'\n#!/bin/sh\n#$ -N mirai\n#$ -l mem_free=10G\n#$ -o job.out\nmodule load R/4.5.0\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "qsub&lt;&lt;'EOF'\n#!/bin/sh\n#$ -N mirai\n#$ -l mem_free=16G\n#$ -o job.out\nmodule load R/4.5.0\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "."                                                                                            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "\nEOF"                                                                                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -156,7 +156,7 @@ for generic configurations.</p></div>
 <span class="r-in"><span><span class="fu">cluster_config</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  command <span class="op">=</span> <span class="st">"qsub"</span>,</span></span>
 <span class="r-in"><span>  options <span class="op">=</span> <span class="st">"#PBS -N mirai</span></span></span>
-<span class="r-in"><span><span class="st">             #PBS -l mem=10gb</span></span></span>
+<span class="r-in"><span><span class="st">             #PBS -l mem=16gb</span></span></span>
 <span class="r-in"><span><span class="st">             #PBS -o job.out</span></span></span>
 <span class="r-in"><span><span class="st">             module load R/4.5.0"</span>,</span></span>
 <span class="r-in"><span>  rscript <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span></span></span>
@@ -165,7 +165,7 @@ for generic configurations.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/bin/sh"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "qsub&lt;&lt;'EOF'\n#!/bin/sh\n#PBS -N mirai\n#PBS -l mem=10gb\n#PBS -o job.out\nmodule load R/4.5.0\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "qsub&lt;&lt;'EOF'\n#!/bin/sh\n#PBS -N mirai\n#PBS -l mem=16gb\n#PBS -o job.out\nmodule load R/4.5.0\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "."                                                                                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "\nEOF"                                                                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -180,7 +180,7 @@ for generic configurations.</p></div>
 <span class="r-in"><span><span class="fu">cluster_config</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  command <span class="op">=</span> <span class="st">"bsub"</span>,</span></span>
 <span class="r-in"><span>  options <span class="op">=</span> <span class="st">"#BSUB -J mirai</span></span></span>
-<span class="r-in"><span><span class="st">             #BSUB -M 10000</span></span></span>
+<span class="r-in"><span><span class="st">             #BSUB -M 16000</span></span></span>
 <span class="r-in"><span><span class="st">             #BSUB -o job.out</span></span></span>
 <span class="r-in"><span><span class="st">             module load R/4.5.0"</span>,</span></span>
 <span class="r-in"><span>  rscript <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Rhome.html" class="external-link">R.home</a></span><span class="op">(</span><span class="st">"bin"</span><span class="op">)</span>, <span class="st">"Rscript"</span><span class="op">)</span></span></span>
@@ -189,7 +189,7 @@ for generic configurations.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/bin/sh"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bsub&lt;&lt;'EOF'\n#!/bin/sh\n#BSUB -J mirai\n#BSUB -M 10000\n#BSUB -o job.out\nmodule load R/4.5.0\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bsub&lt;&lt;'EOF'\n#!/bin/sh\n#BSUB -J mirai\n#BSUB -M 16000\n#BSUB -o job.out\nmodule load R/4.5.0\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "."                                                                                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "\nEOF"                                                                                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

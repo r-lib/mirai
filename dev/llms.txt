@@ -245,17 +245,19 @@ in this project you agree to abide by its terms.
 
 ### All vignettes
 
-- [mirai - Minimalist Async Evaluation Framework for
-  R](https://mirai.r-lib.org/dev/articles/mirai.md):
-- [Mirai Map](https://mirai.r-lib.org/dev/articles/v01-map.md):
-- [Promises - Shiny and
-  Plumber](https://mirai.r-lib.org/dev/articles/v02-promises.md):
-- [Serialization - Arrow, ADBC, polars,
-  torch](https://mirai.r-lib.org/dev/articles/v03-serialization.md):
-- [Communications Backend for
+- [mirai - Quick
+  Reference](https://mirai.r-lib.org/dev/articles/mirai.md):
+- [mirai - Reference
+  Manual](https://mirai.r-lib.org/dev/articles/v01-reference.md):
+- [mirai - Promises (Shiny and
+  Plumber)](https://mirai.r-lib.org/dev/articles/v02-promises.md):
+- [mirai - Serialization (Arrow, ADBC, polars,
+  torch)](https://mirai.r-lib.org/dev/articles/v03-serialization.md):
+- [mirai - Communications Backend for
   R](https://mirai.r-lib.org/dev/articles/v04-parallel.md):
-- [OpenTelemetry](https://mirai.r-lib.org/dev/articles/v05-opentelemetry.md):
-- [For Package
+- [mirai -
+  OpenTelemetry](https://mirai.r-lib.org/dev/articles/v05-opentelemetry.md):
+- [mirai - For Package
   Authors](https://mirai.r-lib.org/dev/articles/v06-packages.md):
-- [Community
+- [mirai - Community
   FAQs](https://mirai.r-lib.org/dev/articles/v07-questions.md):

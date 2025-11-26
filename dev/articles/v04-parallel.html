@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Communications Backend for R • mirai</title>
+<title>mirai - Communications Backend for R • mirai</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Communications Backend for R">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="mirai - Communications Backend for R">
 <meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -43,13 +43,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01-map.html">Mirai Map</a></li>
-    <li><a class="dropdown-item" href="../articles/v02-promises.html">Promises - Shiny and Plumber</a></li>
-    <li><a class="dropdown-item" href="../articles/v03-serialization.html">Serialization - Arrow, ADBC, polars, torch</a></li>
-    <li><a class="dropdown-item" href="../articles/v04-parallel.html">Communications Backend for R</a></li>
-    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">OpenTelemetry</a></li>
-    <li><a class="dropdown-item" href="../articles/v06-packages.html">For Package Authors</a></li>
-    <li><a class="dropdown-item" href="../articles/v07-questions.html">Community FAQs</a></li>
+<li><a class="dropdown-item" href="../articles/v01-reference.html">mirai - Reference Manual</a></li>
+    <li><a class="dropdown-item" href="../articles/v02-promises.html">mirai - Promises (Shiny and Plumber)</a></li>
+    <li><a class="dropdown-item" href="../articles/v03-serialization.html">mirai - Serialization (Arrow, ADBC, polars, torch)</a></li>
+    <li><a class="dropdown-item" href="../articles/v04-parallel.html">mirai - Communications Backend for R</a></li>
+    <li><a class="dropdown-item" href="../articles/v05-opentelemetry.html">mirai - OpenTelemetry</a></li>
+    <li><a class="dropdown-item" href="../articles/v06-packages.html">mirai - For Package Authors</a></li>
+    <li><a class="dropdown-item" href="../articles/v07-questions.html">mirai - Community FAQs</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Communications Backend for R</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>mirai - Communications Backend for R</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v04-parallel.Rmd" class="external-link"><code>vignettes/v04-parallel.Rmd</code></a></small>
@@ -94,33 +94,30 @@
 <div class="section level3">
 <h3 id="mirai-parallel-clusters">1. Mirai Parallel Clusters<a class="anchor" aria-label="anchor" href="#mirai-parallel-clusters"></a>
 </h3>
-<p>mirai provides an alternative communications backend for R. This
-functionality was developed to fulfil a request by R Core at R Project
-Sprint 2023.</p>
-<p>A ‘miraiCluster’ is recognised as one of the official cluster types
-in R 4.5, and may be created by
-<code>parallel::makeCluster(type = "MIRAI")</code>. This function calls
-<code><a href="../reference/make_cluster.html">make_cluster()</a></code>, which may also be used to create a
-‘miraiCluster’ directly.</p>
+<p>mirai provides an alternative communications backend for R, developed
+to fulfill an R Core request at R Project Sprint 2023.</p>
+<p>‘miraiCluster’ is an official cluster type in R 4.5, created via
+<code>parallel::makeCluster(type = "MIRAI")</code>. This calls
+<code><a href="../reference/make_cluster.html">make_cluster()</a></code>, which can also create ‘miraiCluster’
+directly.</p>
 <ul>
-<li>Specify ‘n’ to launch nodes on the local machine.</li>
-<li>Specify ‘url’ for receiving connections from remote nodes.</li>
-<li>Optionally, specify ‘remote’ to launch remote daemons using a remote
-configuration generated by <code><a href="../reference/ssh_config.html">ssh_config()</a></code>,
-<code>cluster_config</code> or <code><a href="../reference/remote_config.html">remote_config()</a></code>.</li>
+<li>Specify ‘n’ to launch local nodes</li>
+<li>Specify ‘url’ to receive remote node connections</li>
+<li>Optionally specify ‘remote’ to launch remote daemons using
+configurations from <code><a href="../reference/ssh_config.html">ssh_config()</a></code>,
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code> or <code><a href="../reference/remote_config.html">remote_config()</a></code>
+</li>
 </ul>
-<p>Created clusters may be used for any function in the
-<code>parallel</code> base package such as
-<code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parallel::clusterApply()</a></code> or
-<code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parallel::parLapply()</a></code>, or the load-balanced versions such
-as <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parallel::parLapplyLB()</a></code>.</p>
+<p>Use clusters with any <code>parallel</code> package function
+(<code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">clusterApply()</a></code>, <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply()</a></code>,
+<code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapplyLB()</a></code>, etc.):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">6</span>, type <span class="op">=</span> <span class="st">"MIRAI"</span><span class="op">)</span></span>
 <span><span class="va">cl</span></span>
-<span><span class="co">#&gt; &lt; miraiCluster | ID: `0` nodes: 6 active: TRUE &gt;</span></span>
+<span><span class="co">#&gt; &lt; miraiCluster | ID: `6` nodes: 6 active: TRUE &gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapply</a></span><span class="op">(</span><span class="va">cl</span>, <span class="va">iris</span>, <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $Sepal.Length</span></span>
 <span><span class="co">#&gt; [1] 5.843333</span></span>
@@ -136,42 +133,37 @@ as <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Species</span></span>
 <span><span class="co">#&gt; [1] NA</span></span></code></pre></div>
-<p><code><a href="../reference/status.html">status()</a></code> may be called on a ’miraiCluster` to query the
-number of connected nodes at any time.</p>
+<p>Call <code><a href="../reference/status.html">status()</a></code> on a ‘miraiCluster’ to query connected
+nodes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/status.html">status</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $connections</span></span>
 <span><span class="co">#&gt; [1] 6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $daemons</span></span>
-<span><span class="co">#&gt; [1] "ipc:///tmp/17a6f7acaa486a0965f8cc93"</span></span>
+<span><span class="co">#&gt; [1] "abstract://5a335f57a7147dfa61e2a2e1"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">stopCluster</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span></code></pre></div>
-<p>Making a cluster specifying ‘url’ without ‘remote’ causes the shell
-commands for manual deployment of nodes to be printed to the
-console.</p>
+<p>Specifying ‘url’ without ‘remote’ prints shell commands for manual
+node deployment:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_cluster.html">make_cluster</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2</span>, url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Shell commands for deployment on nodes:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.216.56.131:56086",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-2073136245,467375440,180068625,-1065429090,1847832455,-1308333540))'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:32813",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-2017547658,214728319,548191924,-1363682779,426938530,-1028125765))'</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [2]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.216.56.131:56086",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,1128753498,-761681793,-797169560,1768314793,2144223490,1125401129))'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.71:32813",dispatcher=FALSE,cleanup=FALSE,rs=c(10407,-1867685510,-159147708,-691588212,540247216,961983403,-147487023))'</span></span>
 <span><span class="fu"><a href="../reference/make_cluster.html">stop_cluster</a></span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="foreach-support">2. Foreach Support<a class="anchor" aria-label="anchor" href="#foreach-support"></a>
 </h3>
-<p>A ‘miraiCluster’ may also be registered by <a href="https://cran.r-project.org/package=doParallel" class="external-link"><code>doParallel</code></a>
-for use with the <a href="https://cran.r-project.org/package=foreach" class="external-link"><code>foreach</code></a>
-package.</p>
-<p>Running some parallel examples for the <code>foreach()</code>
-function:</p>
+<p>Register ‘miraiCluster’ with <a href="https://cran.r-project.org/package=doParallel" class="external-link"><code>doParallel</code></a>
+for use with <a href="https://cran.r-project.org/package=foreach" class="external-link"><code>foreach</code></a>.</p>
+<p>Parallel <code>foreach()</code> examples:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RevolutionAnalytics/doparallel" class="external-link">doParallel</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: foreach</span></span>
-<span><span class="co">#&gt; Loading required package: iterators</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RevolutionAnalytics/foreach" class="external-link">foreach</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">6</span>, type <span class="op">=</span> <span class="st">"MIRAI"</span><span class="op">)</span></span>
@@ -181,10 +173,10 @@ function:</p>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu">foreach</span><span class="op">(</span>i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, .combine <span class="op">=</span> <span class="va">rbind</span><span class="op">)</span> <span class="op">%dopar%</span></span>
 <span>  <span class="op">(</span><span class="va">m</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               [,1]       [,2]     [,3]</span></span>
-<span><span class="co">#&gt; result.1 -1.462197   2.532811 1.929385</span></span>
-<span><span class="co">#&gt; result.2 -3.332547   1.902017 4.430530</span></span>
-<span><span class="co">#&gt; result.3  6.080006 -10.961048 7.881042</span></span>
+<span><span class="co">#&gt;                 [,1]      [,2]        [,3]</span></span>
+<span><span class="co">#&gt; result.1 -46.2302113 70.803471 -21.5732593</span></span>
+<span><span class="co">#&gt; result.2  -5.8061198  6.682595   2.1235251</span></span>
+<span><span class="co">#&gt; result.3   0.8150484  1.465484   0.7194677</span></span>
 <span></span>
 <span><span class="co"># simple parallel matrix multiply</span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">16</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span></span>
