@@ -1,7 +1,7 @@
 ---
-title: "Serialization - Arrow, ADBC, polars, torch"
+title: "mirai - Serialization (Arrow, ADBC, polars, torch)"
 vignette: >
-  %\VignetteIndexEntry{Serialization - Arrow, ADBC, polars, torch}
+  %\VignetteIndexEntry{mirai - Serialization (Arrow, ADBC, polars, torch)}
   %\VignetteEngine{litedown::vignette}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,11 +17,10 @@ knitr::opts_chunk$set(
 
 ### 1. Serialization: Arrow, polars and beyond
 
-Native R serialization is used for sending data between host and daemons.
-Some R objects by their nature cannot be serialized, such as those accessed via an external pointer.
-In these cases, performing mirai operations on them would normally error.
+Native R serialization transfers data between host and daemons.
+Objects accessed via external pointers cannot be serialized and normally error in mirai operations.
 
-Using the [`arrow`](https://arrow.apache.org/docs/r/) package as an example:
+Using [`arrow`](https://arrow.apache.org/docs/r/) as an example:
 
 ```{r}
 #| label: arrowfail
@@ -37,9 +36,9 @@ m[]
 
 daemons(0)
 ```
-However, `serial_config()` can be used to create custom serialization configurations, specifying functions that hook into R's native serialization mechanism for reference objects ('refhooks').
+`serial_config()` creates custom serialization configurations with functions that hook into R's native serialization mechanism for reference objects ('refhooks').
 
-This configuration may then be passed to the 'serial' argument of a `daemons()` call.
+Pass this configuration to the 'serial' argument of `daemons()`:
 
 ```{r}
 #| label: arrowpass
@@ -58,11 +57,10 @@ m[]
 
 daemons(0)
 ```
-It can be seen that this time, the arrow table is handled seamlessly.
-This is the case even when the object is deeply nested inside lists or other structures.
+The arrow table now handles seamlessly, even when deeply nested in lists or other structures.
 
-Multiple serialization functions may be registered to handle different object classes.
-As an example, we can use Arrow in combination with [`polars`](https://pola-rs.github.io/r-polars/), a 'lightning fast' dataframe library written in Rust (requires polars >= 1.0.0), in the following way:
+Register multiple serialization functions for different object classes.
+This example combines Arrow with [`polars`](https://pola-rs.github.io/r-polars/), a Rust dataframe library (requires polars >= 1.0.0):
 ```{r}
 #| label: polars
 daemons(
@@ -84,13 +82,13 @@ daemons(0)
 
 ### 2. Serialization: Torch
 
-Tensors from the [`torch`](https://torch.mlverse.org/) package may be used seamlessly in mirai computations.
+[`torch`](https://torch.mlverse.org/) tensors work seamlessly in mirai computations.
 
-Setup Steps:
+**Setup:**
 
-1. Create the serialization configuration, specifying 'class' as 'torch_tensor'.
-1. Set up daemons, supplying the configuration to the 'serial' argument.
-1. (Optional) Use `everywhere()` to make the `torch` package available on all daemons for convenience.
+1. Create serialization configuration with 'class' as 'torch_tensor'
+2. Set up daemons, supplying configuration to 'serial'
+3. (Optional) Use `everywhere()` to load `torch` on all daemons
 
 ```{r}
 #| label: tensors
@@ -107,13 +105,9 @@ daemons(1, serial = cfg)
 
 everywhere(library(torch))
 ```
-Example Usage:
+**Example Usage:**
 
-The below example creates a convolutional neural network using `torch::nn_module()`.
-
-A set of model parameters is also specified.
-
-The model specification and parameters are then passed to and initialized within a parallel process.
+This creates a convolutional neural network with `torch::nn_module()`, specifies parameters, then initializes them in a parallel process:
 
 ```{r}
 #| label: tensors2
@@ -137,14 +131,12 @@ m <- mirai(do.call(model, params), model = model, params = params)
 
 m[]
 ```
-The returned model is an object containing many tensor elements.
+The returned model contains many tensor elements:
 ```{r}
 #| label: tensors3
 m$data$parameters$conv1.weight
 ```
-It is usual for model parameters to then be passed to an optimizer.
-
-This can also be initialized within a parallel process.
+Pass model parameters to an optimizer, also initialized in a parallel process:
 ```{r}
 #| label: tensors4
 optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
@@ -153,17 +145,19 @@ optim[]
 
 daemons(0)
 ```
-Above, tensors and complex objects containing tensors were passed seamlessly between host and daemon processes, in the same way as any other R object.
+Tensors and complex objects containing tensors pass seamlessly between host and daemons like any R object.
 
-The custom serialization in mirai leverages R's own native 'refhook' mechanism to allow completely transparent usage. Designed to be fast and efficient, data copies are minimized and the 'official' serialization methods from the `torch` package are used directly.
+Custom serialization leverages R's native 'refhook' mechanism for transparent usage.
+Fast and efficient, it minimizes data copies and uses official `torch` serialization methods directly.
 
 ### 3. Database Hosting using Arrow Database Connectivity
 
-It is possible using the `DBI` interface to access and manipulate data in the Apache Arrow data format efficiently through ABDC (Arrow Database Connectivity).
+Use `DBI` to access and manipulate Apache Arrow data efficiently through ADBC (Arrow Database Connectivity).
 
-The example below creates an in-memory SQLite connection using the `adbcsqlite` backend.
+This creates an in-memory SQLite connection using the `adbcsqlite` backend.
 
-Serialization is set up with the relevant serialization functions from the `arrow` package as part of the `daemons()` call. Note that the specified class is 'nanoarrow_array_stream' as `nanoarrow` is the backend for all queries made by the DBI `db*Arrow()` functions.
+Serialization uses `arrow` functions in the `daemons()` call.
+The class is 'nanoarrow_array_stream' since `nanoarrow` backs all DBI `db*Arrow()` queries:
 
 ```{r}
 #| label: arrow1
@@ -185,7 +179,7 @@ everywhere(
 )
 
 ```
-`mirai()` calls may then be used to write to or query the database all in the Arrow format.
+Use `mirai()` to write or query the database in Arrow format:
 ```{r}
 #| label: arrow2
 m <- mirai(dbWriteTableArrow(con, "iris", iris))
@@ -195,7 +189,7 @@ m[]
 m <- mirai(dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6'))
 m[]
 ```
-Due to the tight integration of the mirai serialization mechanism with R's 'refhook' system, we can easily return complex / nested objects containing multiple queries in the Arrow format:
+Tight integration with R's 'refhook' system allows returning complex nested objects with multiple Arrow queries:
 ```{r}
 #| label: arrow3
 m <- mirai({
@@ -207,7 +201,7 @@ m <- mirai({
 })
 m[]
 ```
-As before, `everywhere()` can be used to cleanly tear down the databases, prior to resetting daemons.
+Use `everywhere()` to cleanly tear down databases before resetting daemons:
 ```{r}
 #| label: arrow4
 everywhere(dbDisconnect(con))
@@ -216,15 +210,17 @@ daemons(0)
 
 ### 4. Shiny / mirai / DBI / ADBC Integrated Example
 
-The following is an example of how database connections hosted in mirai daemons may be used to power a Shiny app.
+This demonstrates database connections hosted in mirai daemons powering a Shiny app.
 
-The one-time `serialization()` setup ensures seamless transport of Apache Arrow data, and occurs in the global environment outside of `server()`.
+One-time `serialization()` setup ensures seamless Arrow data transport in the global environment outside `server()`.
 
-A new database connection is created in a new daemon process for every new Shiny session. The resources are freed when a sesssion ends. This logic is all defined within `server()`. A unique ID is used to identify each session, and is specified as the 'compute profile' for daemons.
+Each Shiny session creates a new database connection in a new daemon process, freeing resources when the session ends.
+This logic lives in `server()`.
+A unique ID identifies each session and specifies the daemons 'compute profile'.
 
-Non-dispatcher daemons are created as scheduling is not required (all queries expected to take roughly the same time, and in this case each session uses only one daemon anyway).
+Non-dispatcher daemons work since scheduling isn't needed (all queries take a similar time, each session uses one daemon).
 
-Shiny ExtendedTask is then used to perform each query via a `mirai()` call, using the session-specific compute profile.
+Shiny ExtendedTask performs queries via `mirai()` using the session-specific compute profile:
 
 ```{r}
 #| label: demo
