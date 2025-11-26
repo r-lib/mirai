@@ -38,7 +38,7 @@ Expressions must be self-contained:
 - Package functions must be namespaced with `::` or loaded via `library()` within the expression.
 - Pass required functions, data, or objects explicitly via `...` or `.args`.
 
-> This is a 100% reliable evaluation model that corresponds to the underlying implementation - any attempt to abstract away from it is inherently imperfect, and we do not compromise on this point.
+> This explicit design perfectly matches message-passing parallelism - attempting to infer global variables would introduce unreliability, which we do not compromise on.
 
 This example mimics an expensive calculation:
 
