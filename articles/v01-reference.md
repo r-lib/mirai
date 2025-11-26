@@ -28,8 +28,8 @@ Expressions must be self-contained:
   `.args`.
 
 > This explicit design perfectly matches message-passing parallelism -
-> attempting to infer global variables would introduce unreliability,
-> which we do not compromise on.
+> attempting to infer global variables introduces unreliability, which
+> we do not compromise on.
 
 This example mimics an expensive calculation:
 
