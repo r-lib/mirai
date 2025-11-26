@@ -1,0 +1,58 @@
+# Error Validators
+
+Validator functions for error value types created by mirai.
+
+## Usage
+
+``` r
+is_mirai_error(x)
+
+is_mirai_interrupt(x)
+
+is_error_value(x)
+```
+
+## Arguments
+
+- x:
+
+  an object.
+
+## Value
+
+Logical value TRUE or FALSE.
+
+## Details
+
+Is the object a 'miraiError'. When execution in a 'mirai' process fails,
+the error message is returned as a character string of class
+'miraiError' and 'errorValue'. The elements of the original condition
+are accessible via `$` on the error object. A stack trace is also
+available at `$stack.trace`.
+
+Is the object a 'miraiInterrupt'. When an ongoing 'mirai' is sent a user
+interrupt, it will resolve to an empty character string classed as
+'miraiInterrupt' and 'errorValue'.
+
+Is the object an 'errorValue', such as a 'mirai' timeout, a 'miraiError'
+or a 'miraiInterrupt'. This is a catch-all condition that includes all
+returned error values.
+
+## Examples
+
+``` r
+if (FALSE) { # interactive()
+m <- mirai(stop())
+call_mirai(m)
+is_mirai_error(m$data)
+is_mirai_interrupt(m$data)
+is_error_value(m$data)
+m$data$stack.trace
+
+m2 <- mirai(Sys.sleep(1L), .timeout = 100)
+call_mirai(m2)
+is_mirai_error(m2$data)
+is_mirai_interrupt(m2$data)
+is_error_value(m2$data)
+}
+```
