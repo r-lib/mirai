@@ -3,11 +3,11 @@
 Designed for simplicity, a 'mirai' evaluates an R expression
 asynchronously, locally or distributed over the network. Built on
 'nanonext' and 'NNG' for modern networking and concurrency, scales
-efficiently to millions of tasks over thousands of persistent parallel
-processes. Provides optimal scheduling over fast 'IPC', TCP, and TLS
-connections, integrating with SSH or cluster managers. Implements
-event-driven promises for reactive programming, and supports custom
-serialization for cross-language data types.
+efficiently to millions of tasks over thousands of parallel processes.
+Provides optimal scheduling over fast 'IPC', TCP, and TLS connections,
+integrating with SSH or cluster managers. Implements event-driven
+promises for reactive programming, and supports custom serialization for
+cross-language data types.
 
 ## Notes
 
