@@ -4,6 +4,7 @@
 
 * OpenTelemetry: 'daemon connect' spans are now recorded only after a connection has actually been made (#511).
 * Fixes a bug which caused mirai to remain unresolved after switching from synchronous daemons to dispatcher daemons in the same session (#509).
+* `mirai_map()` now returns invisibly, consistent with `mirai()`.
 
 # mirai 2.5.2
 

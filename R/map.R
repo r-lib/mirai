@@ -210,7 +210,7 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
     }
   }
 
-  `class<-`(vec, "mirai_map")
+  invisible(`class<-`(vec, "mirai_map"))
 }
 
 #' @export
