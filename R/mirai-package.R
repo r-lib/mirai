@@ -71,7 +71,7 @@ cli_enabled <- FALSE
 .. <- new.env()
 .opts <- list2env(list(.flat = .flat, .progress = .progress, .stop = .stop))
 .limit_long <- 10000L
-.limit_long_secs <- 10L
+.limit_long_secs <- as.integer(.limit_long * 0.001)
 .limit_short <- 5000L
 .sleep_daemons <- 200L
 .sleep_signal <- 10L

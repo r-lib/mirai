@@ -723,6 +723,12 @@ query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, bloc
   recv(sock, mode = recv_mode, block = block)
 }
 
+sync_with <- function(cv, message_key, sync = 0L) {
+  while (!until(cv, .limit_long)) {
+    message(sprintf(._[[message_key]], sync <- sync + .limit_long_secs))
+  }
+}
+
 launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL) {
   cv <- cv()
   urld <- local_url()
@@ -748,11 +754,8 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
   data <- list(Sys.getenv("R_DEFAULT_PACKAGES"), tls, pass, serial, envir[["stream"]])
-  sync <- 0L
 
-  while (!until(cv, .limit_long)) {
-    message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
-  }
+  sync_with(cv, "sync_dispatcher")
 
   pipe_notify(sock, NULL, add = TRUE)
   send(sock, data, mode = 1L, block = TRUE)
@@ -763,9 +766,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
     }
   }
   raio <- recv_aio(sock, mode = 2L, cv = cv)
-  while (!until(cv, .limit_long)) {
-    message(sprintf(._[["sync_dispatcher"]], sync <- sync + .limit_long_secs))
-  }
+  sync_with(cv, "sync_dispatcher")
 
   `[[<-`(envir, "url", collect_aio(raio))
 }
@@ -781,11 +782,8 @@ launch_daemons <- function(seq, dots, envir) {
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
-  sync <- 0L
   for (i in seq) {
-    while (!until(cv, .limit_long)) {
-      message(sprintf(._[["sync_daemons"]], sync <- sync + .limit_long_secs))
-    }
+    sync_with(cv, "sync_daemons")
   }
   pipe_notify(sock, NULL, add = TRUE)
 }
