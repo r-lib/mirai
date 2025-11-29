@@ -10,6 +10,9 @@
 - Fixes a bug which caused mirai to remain unresolved after switching
   from synchronous daemons to dispatcher daemons in the same session
   ([\#509](https://github.com/r-lib/mirai/issues/509)).
+- [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
+  now returns invisibly, consistent with
+  [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
 
 ## mirai 2.5.2
 
