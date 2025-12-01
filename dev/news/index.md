@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.5.3
+
+CRAN release: 2025-12-01
+
 ##### Updates
 
 - OpenTelemetry: ‘daemon connect’ spans are now recorded only after a
