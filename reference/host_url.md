@@ -62,16 +62,16 @@ and named pipes on Windows.
 ``` r
 host_url()
 #>                 eth0              docker0 
-#> "tcp://10.1.0.105:0" "tcp://172.17.0.1:0" 
+#> "tcp://10.1.0.184:0" "tcp://172.17.0.1:0" 
 host_url(tls = TRUE)
 #>                     eth0                  docker0 
-#> "tls+tcp://10.1.0.105:0" "tls+tcp://172.17.0.1:0" 
+#> "tls+tcp://10.1.0.184:0" "tls+tcp://172.17.0.1:0" 
 host_url(tls = TRUE, port = 5555)
 #>                        eth0                     docker0 
-#> "tls+tcp://10.1.0.105:5555" "tls+tcp://172.17.0.1:5555" 
+#> "tls+tcp://10.1.0.184:5555" "tls+tcp://172.17.0.1:5555" 
 
 local_url()
-#> [1] "abstract://49897acd89205a10272f1b76"
+#> [1] "abstract://a37b73037c1d15f32a1c1c86"
 local_url(tcp = TRUE)
 #> [1] "tcp://127.0.0.1:0"
 local_url(tcp = TRUE, port = 5555)

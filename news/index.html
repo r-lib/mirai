@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,9 +48,19 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.5.3" id="mirai-253">mirai 2.5.3<a class="anchor" aria-label="anchor" href="#mirai-253"></a></h2><p class="text-muted">CRAN release: 2025-12-01</p>
+<div class="section level5">
+<h5 id="updates-2-5-3">Updates<a class="anchor" aria-label="anchor" href="#updates-2-5-3"></a></h5>
+<ul><li>OpenTelemetry: ‘daemon connect’ spans are now recorded only after a connection has actually been made (<a href="https://github.com/r-lib/mirai/issues/511" class="external-link">#511</a>).</li>
+<li>Fixes a bug which caused mirai to remain unresolved after switching from synchronous daemons to dispatcher daemons in the same session (<a href="https://github.com/r-lib/mirai/issues/509" class="external-link">#509</a>).</li>
+<li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> now returns invisibly, consistent with <code><a href="../reference/mirai.html">mirai()</a></code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.5.2" id="mirai-252">mirai 2.5.2<a class="anchor" aria-label="anchor" href="#mirai-252"></a></h2><p class="text-muted">CRAN release: 2025-11-05</p>
 <div class="section level5">

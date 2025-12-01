@@ -1,5 +1,21 @@
 # Changelog
 
+## mirai 2.5.3
+
+CRAN release: 2025-12-01
+
+##### Updates
+
+- OpenTelemetry: ‘daemon connect’ spans are now recorded only after a
+  connection has actually been made
+  ([\#511](https://github.com/r-lib/mirai/issues/511)).
+- Fixes a bug which caused mirai to remain unresolved after switching
+  from synchronous daemons to dispatcher daemons in the same session
+  ([\#509](https://github.com/r-lib/mirai/issues/509)).
+- [`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md) now
+  returns invisibly, consistent with
+  [`mirai()`](https://mirai.r-lib.org/reference/mirai.md).
+
 ## mirai 2.5.2
 
 CRAN release: 2025-11-05
