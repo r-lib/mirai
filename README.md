@@ -18,8 +18,8 @@ DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 
 ### ミライ
 
-<br /> みらい 未来 <br /><br /> Minimalist Async Evaluation Framework
-for R <br /><br />
+*moving already* <br /><br /> Minimalist Async Evaluation Framework for
+R <br /><br />
 
 → Run R code in parallel while keeping your session free
 
@@ -63,7 +63,7 @@ m[]
 #> [1] 142
 
 mp
-#> < mirai map [4/9] >
+#> < mirai map [0/9] >
 mp[.flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
@@ -171,9 +171,10 @@ discussions.
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) \|
-[nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
-View](https://cran.r-project.org/view=HighPerformanceComputing)
+- [mirai](https://mirai.r-lib.org/)
+- [nanonext](https://nanonext.r-lib.org/)
+- [CRAN HPC Task
+  View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 –
 

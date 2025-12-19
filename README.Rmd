@@ -26,8 +26,7 @@ knitr::opts_chunk$set(
 
 ### ミライ
 
-<br />
-みらい  未来
+*moving already*
 <br /><br />
 Minimalist Async Evaluation Framework for R
 <br /><br />
@@ -140,9 +139,9 @@ mirai serves as a foundation for asynchronous, parallel and distributed computin
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) | 
-[nanonext](https://nanonext.r-lib.org/) | 
-[CRAN HPC Task View](https://cran.r-project.org/view=HighPerformanceComputing)
+- [mirai](https://mirai.r-lib.org/)
+- [nanonext](https://nanonext.r-lib.org/)
+- [CRAN HPC Task View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 --
 

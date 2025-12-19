@@ -5,6 +5,7 @@
 \alias{mirai-package}
 \title{mirai: Minimalist Async Evaluation Framework for R}
 \description{
+\emph{moving already} \cr \cr
 Designed for simplicity, a 'mirai' evaluates an R expression asynchronously,
 locally or distributed over the network. Built on 'nanonext' and 'NNG' for
 modern networking and concurrency, scales efficiently to millions of tasks
