@@ -284,9 +284,13 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   seed <- envir[["seed"]]
   on.exit(`[[<-`(envir, "seed", seed))
   `[[<-`(envir, "seed", NULL)
-  vec <- marked(lapply(seq_len(xlen), function(i) {
-    mirai(.expr, ..., .args = .args, .compute = .compute)
-  }))
+  vec <- lapply(seq_len(xlen), function(i) {
+    if (i < xlen) {
+      marked(mirai(.expr, ..., .args = .args, .compute = .compute))
+    } else {
+      mirai(.expr, ..., .args = .args, .compute = .compute)
+    }
+  })
   `[[<-`(envir, "everywhere", vec)
   invisible(`class<-`(vec, "mirai_map"))
 }
