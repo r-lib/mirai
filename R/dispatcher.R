@@ -192,14 +192,14 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
               if (is_marked) {
                 item[["sync"]] && next
                 `[[<-`(item, "sync", TRUE)
+              } else {
+                item[["sync"]] && next
+                lapply(outq, `[[<-`, "sync", FALSE)
               }
               send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
               `[[<-`(item, "ctx", inq[[1L]][["ctx"]])
               `[[<-`(item, "msgid", inq[[1L]][["msgid"]])
               inq[[1L]] <- NULL
-              if (is_marked && (!length(inq) || !.read_marker(inq[[1L]][["req"]]))) {
-                lapply(outq, `[[<-`, "sync", FALSE)
-              }
               break
             }
         }
