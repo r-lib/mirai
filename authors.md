@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/r-lib/mirai/blob/v2.5.3/inst/CITATION)
+[`inst/CITATION`](https://github.com/r-lib/mirai/blob/release/inst/CITATION)
 
 Gao C (2025). *mirai: Minimalist Async Evaluation Framework for R*. R
 package version 2.5.3, <https://doi.org/10.5281/zenodo.7912722>.

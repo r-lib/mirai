@@ -2,8 +2,7 @@
 
 ### ミライ
 
-  
-みらい 未来  
+*moving already*  
   
 Minimalist Async Evaluation Framework for R  
   
@@ -50,7 +49,7 @@ m[]
 #> [1] 142
 
 mp
-#> < mirai map [4/9] >
+#> < mirai map [0/9] >
 mp[.flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
@@ -159,9 +158,10 @@ discussions.
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) \|
-[nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
-View](https://cran.r-project.org/view=HighPerformanceComputing)
+- [mirai](https://mirai.r-lib.org/)
+- [nanonext](https://nanonext.r-lib.org/)
+- [CRAN HPC Task
+  View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 –
 
