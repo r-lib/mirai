@@ -287,8 +287,7 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   vec <- marked(lapply(seq_len(xlen), function(i) {
     mirai(.expr, ..., .args = .args, .compute = .compute)
   }))
-  m <- mirai({})
-  `[[<-`(envir, "everywhere", c(vec, list(m)))
+  `[[<-`(envir, "everywhere", vec)
   invisible(`class<-`(vec, "mirai_map"))
 }
 
