@@ -290,6 +290,21 @@ mid-task)</li>
 <code><a href="../reference/cluster_config.html">cluster_config()</a></code> without persistent daemons. Note: you
 incur latency costs from job launch time.</p>
 </div>
+<div class="section level3">
+<h3 id="launching-daemons---vanilla">6. Launching daemons <code>--vanilla</code><a class="anchor" aria-label="anchor" href="#launching-daemons---vanilla"></a>
+</h3>
+<p>By default, daemons load <code>.Renviron</code> and
+<code>.Rprofile</code> files at startup. This can slow down daemon
+initialization if these files contain expensive operations such as
+<code>renv::status()</code> checks.</p>
+<p>To skip loading startup files, use <code><a href="../reference/remote_config.html">remote_config()</a></code> to
+pass the <code>--vanilla</code> flag:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cfg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/remote_config.html">remote_config</a></span><span class="op">(</span>command <span class="op">=</span> <span class="st">"Rscript"</span>, rscript <span class="op">=</span> <span class="st">"--vanilla"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span>, url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span><span class="op">)</span>, remote <span class="op">=</span> <span class="va">cfg</span><span class="op">)</span></span></code></pre></div>
+<p>Other flags, for default packages etc., may also be passed in the
+same way.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
