@@ -63,6 +63,7 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
 
   inq <- outq <- list()
   connections <- count <- 0L
+  syncing <- FALSE
   envir <- new.env(hash = FALSE, parent = emptyenv())
   `[[<-`(envir, "stream", res)
 
@@ -189,11 +190,12 @@ dispatcher <- function(host, url = NULL, n = 0L, ...) {
         for (item in outq) {
           item[["msgid"]] ||
             {
+              item[["sync"]] && next
               if (is_marked) {
-                item[["sync"]] && next
                 `[[<-`(item, "sync", TRUE)
-              } else {
-                item[["sync"]] && next
+                syncing <- TRUE
+              } else if (syncing) {
+                syncing <- FALSE
                 lapply(outq, `[[<-`, "sync", FALSE)
               }
               send(psock, inq[[1L]][["req"]], mode = 2L, pipe = item[["pipe"]], block = TRUE)
