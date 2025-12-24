@@ -700,5 +700,5 @@ mk_mirai_error <- function(cnd, sc) {
 }
 
 .miraiInterrupt <- `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))
-.connectionReset <- `class<-`(19L, c("errorValue", "try-error"))
+.connReset <- serialize(`class<-`(19L, c("errorValue", "try-error")), NULL)
 .snapshot <- expression(on.exit(mirai:::snapshot(), add = TRUE))
