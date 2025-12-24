@@ -4,6 +4,9 @@
 
 *moving already*  
   
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)  
+  
 Minimalist Async Evaluation Framework for R  
   
 

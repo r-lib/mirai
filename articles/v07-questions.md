@@ -231,3 +231,21 @@ This enables on-demand HPC cluster jobs via
 [`cluster_config()`](https://mirai.r-lib.org/reference/cluster_config.md)
 without persistent daemons. Note: you incur latency costs from job
 launch time.
+
+### 6. Launching daemons `--vanilla`
+
+By default, daemons load `.Renviron` and `.Rprofile` files at startup.
+This can slow down daemon initialization if these files contain
+expensive operations such as `renv::status()` checks.
+
+To skip loading startup files, use
+[`remote_config()`](https://mirai.r-lib.org/reference/remote_config.md)
+to pass the `--vanilla` flag:
+
+``` r
+cfg <- remote_config(command = "Rscript", rscript = "--vanilla")
+daemons(6, url = local_url(), remote = cfg)
+```
+
+Other flags, for default packages etc., may also be passed in the same
+way.
