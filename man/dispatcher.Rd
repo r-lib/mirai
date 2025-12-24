@@ -23,7 +23,7 @@ launching daemons. These include \code{asyncdial}, \code{autoexit}, \code{cleanu
 \code{output}, \code{maxtasks}, \code{idletime}, \code{walltime} and \code{tlscert}.}
 }
 \value{
-Invisible NULL.
+Invisibly, an integer exit code: 0L for normal termination.
 }
 \description{
 Dispatches tasks from a host to daemons for processing, using FIFO
