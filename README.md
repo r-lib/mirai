@@ -12,14 +12,13 @@ status](https://r-lib.r-universe.dev/badges/mirai)](https://r-lib.r-universe.dev
 [![R-CMD-check](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/mirai/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codecov.io/gh/r-lib/mirai)
-[![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <!-- badges: end -->
 
 ### ミライ
 
-*moving already* <br /><br /> Minimalist Async Evaluation Framework for
-R <br /><br />
+*moving already* <br /><br /> [![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
+<br /><br /> Minimalist Async Evaluation Framework for R <br /><br />
 
 → Run R code in parallel while keeping your session free
 
