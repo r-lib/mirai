@@ -40,7 +40,7 @@ dispatcher(host, url = NULL, n = 0L, ...)
 
 ## Value
 
-Invisible NULL.
+Invisibly, an integer exit code: 0L for normal termination.
 
 ## Details
 

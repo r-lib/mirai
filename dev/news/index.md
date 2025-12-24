@@ -2,6 +2,8 @@
 
 ## mirai (development version)
 
+- Requires nanonext \>= \[1.7.2.9000\].
+
 ## mirai 2.5.3
 
 CRAN release: 2025-12-01
