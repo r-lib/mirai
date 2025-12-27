@@ -2,6 +2,11 @@
 
 ## mirai (development version)
 
+##### Updates
+
+- A `miraiError` gains `conditionCall` and `conditionMessage` methods
+  ([@jan-swissre](https://github.com/jan-swissre),
+  [\#529](https://github.com/r-lib/mirai/issues/529))
 - Requires nanonext \>= \[1.7.2.9000\].
 
 ## mirai 2.5.3
