@@ -641,6 +641,14 @@ print.miraiInterrupt <- function(x, ...) {
   grep(pattern, names(attributes(x)), value = TRUE, fixed = TRUE)
 }
 
+#' @export
+#'
+conditionCall.miraiError <- function(c) attr(c, "call")
+
+#' @export
+#'
+conditionMessage.miraiError <- function(c) attr(c, "message")
+
 # internals --------------------------------------------------------------------
 
 ephemeral_daemon <- function(data, timeout) {

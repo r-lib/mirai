@@ -209,15 +209,11 @@ connection &&
     test_notnull(me)
     if (is_mirai_error(me)) {
       test_type("list", me$stack.trace)
-    }
-    if (is_mirai_error(me)) {
       test_true(length(me$stack.trace) >= 2L)
-    }
-    if (is_mirai_error(me)) {
       test_true(all(as.logical(lapply(me$stack.trace, is.language))))
-    }
-    if (is_mirai_error(me)) {
       test_type("character", me$condition.class)
+      test_type("character", conditionMessage(me))
+      test_type("language", conditionCall(me))
     }
     test_false(is_mirai_interrupt(me))
     test_class("errorValue", me)
