@@ -16,15 +16,15 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/r-lib/mirai/blob/main/inst/CITATION)
+[`DESCRIPTION`](https://github.com/r-lib/mirai/blob/main/DESCRIPTION)
 
 Gao C (2025). *mirai: Minimalist Async Evaluation Framework for R*. R
-package version 2.5.3.9000, <https://doi.org/10.5281/zenodo.7912722>.
+package version 2.5.3.9000, <https://mirai.r-lib.org>.
 
     @Manual{,
       title = {mirai: Minimalist Async Evaluation Framework for R},
       author = {Charlie Gao},
       year = {2025},
       note = {R package version 2.5.3.9000},
-      url = {https://doi.org/10.5281/zenodo.7912722},
+      url = {https://mirai.r-lib.org},
     }
