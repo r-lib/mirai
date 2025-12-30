@@ -1,104 +1,17 @@
-# minitest - a minimal testing framework v0.0.4 --------------------------------
+# minitest - a minimal testing framework v0.0.5 --------------------------------
 test_library <- function(package) library(package = package, character.only = TRUE)
-test_true <- function(x) {
-  invisible(
-    isTRUE(x) ||
-      {
-        print(x)
-        stop("the above was returned instead of TRUE")
-      }
-  )
-}
-test_false <- function(x) {
-  invisible(
-    isFALSE(x) ||
-      {
-        print(x)
-        stop("the above was returned instead of FALSE")
-      }
-  )
-}
-test_null <- function(x) {
-  invisible(
-    is.null(x) ||
-      {
-        print(x)
-        stop("the above was returned instead of NULL")
-      }
-  )
-}
-test_notnull <- function(x) {
-  invisible(!is.null(x) || stop("returns NULL when expected to be not NULL"))
-}
-test_zero <- function(x) {
-  invisible(
-    x == 0L ||
-      {
-        print(x)
-        stop("the above was returned instead of 0L")
-      }
-  )
-}
-test_type <- function(type, x) {
-  invisible(
-    typeof(x) == type ||
-      {
-        stop("object of type '", typeof(x), "' was returned instead of '", type, "'")
-      }
-  )
-}
-test_class <- function(class, x) {
-  invisible(
-    inherits(x, class) ||
-      {
-        stop(
-          "object of class '",
-          paste(class(x), collapse = ", "),
-          "' was returned instead of '",
-          class,
-          "'"
-        )
-      }
-  )
-}
-test_equal <- function(a, b) {
-  invisible(
-    a == b ||
-      {
-        print(a)
-        print(b)
-        stop("the above expressions were not equal")
-      }
-  )
-}
-test_identical <- function(a, b) {
-  invisible(
-    identical(a, b) ||
-      {
-        print(a)
-        print(b)
-        stop("the above expressions were not identical")
-      }
-  )
-}
-test_print <- function(x) {
-  invisible(
-    is.character(capture.output(print(x))) ||
-      stop("print output of expression cannot be captured as a character value")
-  )
-}
-test_error <- function(x, containing = "") {
-  invisible(
-    inherits(x <- tryCatch(x, error = identity), "error") &&
-      grepl(containing, x[["message"]], fixed = TRUE) ||
-      stop(
-        "Expected error message containing: ",
-        containing,
-        "\nActual error message: ",
-        x[["message"]]
-      )
-  )
-}
+test_true <- function(x) invisible(isTRUE(x) || {print(x); stop("the above was returned instead of TRUE")})
+test_false <- function(x) invisible(isFALSE(x) || {print(x); stop("the above was returned instead of FALSE")})
+test_null <- function(x) invisible(is.null(x) || {print(x); stop("the above was returned instead of NULL")})
+test_notnull <- function(x) invisible(!is.null(x) || stop("returns NULL when expected to be not NULL"))
+test_zero <- function(x) invisible(x == 0L || {print(x); stop("the above was returned instead of 0L")})
+test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
+test_class <- function(class, x) invisible(inherits(x, class) || {stop("object of class '", paste(class(x), collapse = ", "), "' was returned instead of '", class, "'")})
+test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
+test_identical <- function(a, b) invisible(identical(a, b) || {print(a); print(b); stop("the above expressions were not identical")})
+test_print <- function(x) invisible(is.character(capture.output(print(x))) || stop("print output of expression cannot be captured as a character value"))
+test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("Expected error message containing: ", containing, "\nActual error message: ", x[["message"]]))
+NOT_CRAN <- Sys.getenv("NOT_CRAN") == "true"
 # ------------------------------------------------------------------------------
 
 test_library("mirai")
@@ -148,9 +61,7 @@ test_type("list", ssh_config("ssh://remotehost", tunnel = TRUE))
 test_type("list", cluster_config())
 test_true(is_mirai_interrupt(r <- mirai:::mk_interrupt_error()))
 test_print(r)
-test_true(is_mirai_error(
-  r <- `class<-`("Error in: testing\n", c("miraiError", "errorValue", "try-error"))
-))
+test_true(is_mirai_error(r <- `class<-`("Error in: testing\n", c("miraiError", "errorValue", "try-error"))))
 test_print(r)
 test_false(on_daemon())
 test_equal(mirai:::.DollarNames.miraiError(r, "c"), "class")
@@ -158,621 +69,455 @@ test_true(mirai:::is.promising.mirai())
 test_true(mirai:::is.promising.mirai_map())
 test_error(everywhere({}))
 test_null(nextstream())
-for (i in 0:4) {
+for (i in 0:4)
   test_type("character", nextcode(i))
-}
 test_null(register_serial("test_klass1", serialize, unserialize))
-test_null(register_serial(
-  c("test_klass2", "test_klass3"),
-  list(serialize, serialize),
-  list(unserialize, unserialize)
-))
+test_null(register_serial(c("test_klass2", "test_klass3"), list(serialize, serialize), list(unserialize, unserialize)))
 test_equal(length(mirai:::.[["serial"]][[3L]]), 3L)
 # mirai and daemons tests
-connection &&
-  {
-    Sys.sleep(1L)
-    .n <- function() m
-    m <- mirai(
-      {
-        Sys.sleep(0.1)
-        q <- m + .n() + 2L
-        q / m
-      },
-      m = 2L,
-      .args = environment(),
-      .timeout = 2000L
-    )
-    test_identical(call_mirai(m), m)
-    test_type("integer", attr(m, "id"))
-    if (!is_error_value(m$data)) {
-      test_equal(m$data, 3L)
-    }
-    Sys.sleep(1L)
-    `lang obj` <- quote(m + n + 2L)
-    args <- c(m = 2L, n = 4L)
-    m <- mirai(.expr = `lang obj`, .args = args, .timeout = 2000L)
-    if (!is_error_value(call_mirai(m)$data)) {
-      test_equal(m$data, 8L)
-    }
-    test_false(stop_mirai(m))
-    Sys.sleep(1L)
-    m <- mirai(mirai::on_daemon(), .timeout = 2000L)
-    if (!is_error_value(m[])) {
-      test_true(m[])
-    }
-    Sys.sleep(1L)
-    test_true(d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
-    test_print(d)
-    test_true(daemons_set())
-    me <- mirai(mirai::mirai(), .timeout = 2000L)[]
-    test_notnull(me)
-    if (is_mirai_error(me)) {
-      test_type("list", me$stack.trace)
-      test_true(length(me$stack.trace) >= 2L)
-      test_true(all(as.logical(lapply(me$stack.trace, is.language))))
-      test_type("character", me$condition.class)
-      test_type("character", conditionMessage(me))
-      test_type("language", conditionCall(me))
-    }
-    test_false(is_mirai_interrupt(me))
-    test_class("errorValue", me)
-    test_print(me)
-    m <- mirai(mirai::on_daemon(), .timeout = 2000L)
-    if (!is_error_value(m[])) {
-      test_true(m[])
-    }
-    df <- data.frame(a = 1, b = 2, .Random.seed = 0)
-    dm <- mirai(as.matrix(df), .args = list(df = df), .timeout = 2000L)
-    test_true(is_mirai(call_mirai(dm)))
-    test_false(unresolved(dm))
-    if (!is_error_value(dm$data)) {
-      test_class("matrix", dm$data)
-    }
-    test_print(dm)
-    m1 <- mirai(Sys.sleep(0.1), .timeout = 200L)
-    m3 <- mirai({}, .timeout = 200L)
-    m2 <- mirai(Sys.sleep(0.1), .timeout = 200L)
-    test_type("list", race_mirai(list(m1, m2)))
-    test_type("list", race_mirai(list(m1, m2)))
-    test_type("list", race_mirai(list(m1, m2)))
-    test_type("integer", info())
-    test_type("integer", status()[["connections"]])
-    test_type("character", status()[["daemons"]])
-    test_type("character", mlc <- launch_remote())
-    test_class("miraiLaunchCmd", mlc)
-    test_print(mlc)
-    test_error(
-      launch_remote(1L, remote = remote_config(command = "echo", args = "invalid")),
-      "must be an element"
-    )
-    test_error(
-      launch_remote(
-        3L,
-        remote = remote_config(command = "echo", args = list(c("test", "."), c("test", ".")))
-      ),
-      "must equal the length"
-    )
-    test_false(daemons(0L))
-    Sys.sleep(1L)
-    test_true(daemons(
-      1L,
-      dispatcher = FALSE,
-      maxtasks = 10L,
-      walltime = 10000L,
-      idletime = 20000L,
-      cleanup = FALSE,
-      output = TRUE,
-      .compute = "new"
-    ))
-    test_type("character", nextget("url", .compute = "new"))
-    test_type("integer", nextstream(.compute = "new"))
-    test_true(require_daemons("new", call = environment()))
-    Sys.sleep(1.5)
-    run_checks_on <- function(.compute, check) {
-      local_daemons(.compute)
-      check
-    }
-    run_checks_on("new", test_type("list", everywhere({}, as.environment(df))))
-    test_zero(status()$connections)
-    with_daemons("new", {
-      mn <- mirai("test1")
-      mp <- mirai(b + 1)
-    })
-    Sys.sleep(1L)
-    if (!unresolved(mn$data)) {
-      test_equal(mn$data, "test1")
-    }
-    if (!unresolved(mp$data)) {
-      test_equal(mp$data, 3)
-    }
-    Sys.sleep(1L)
-    test_type("integer", status(.compute = "new")[["connections"]])
-    test_error(
-      mirai_map(1:2, "a function", .compute = "new"),
-      "must be of type function, not character"
-    )
-    test_false(daemons(0L, .compute = "new"))
+connection && {
+  Sys.sleep(1L)
+  .n <- function() m
+  m <- mirai({
+    Sys.sleep(0.1)
+    q <- m + .n() + 2L
+    q / m
+  }, m = 2L, .args = environment(), .timeout = 2000L)
+  test_identical(call_mirai(m), m)
+  test_type("integer", attr(m, "id"))
+  if (!is_error_value(m$data)) test_equal(m$data, 3L)
+  Sys.sleep(1L)
+  `lang obj` <- quote(m + n + 2L)
+  args <- c(m = 2L, n = 4L)
+  m <- mirai(.expr = `lang obj`, .args = args, .timeout = 2000L)
+  if (!is_error_value(call_mirai(m)$data)) test_equal(m$data, 8L)
+  test_false(stop_mirai(m))
+  Sys.sleep(1L)
+  m <- mirai(mirai::on_daemon(), .timeout = 2000L)
+  if (!is_error_value(m[])) test_true(m[])
+  Sys.sleep(1L)
+  test_true(d <- daemons(1L, dispatcher = FALSE, asyncdial = FALSE, seed = 1546L))
+  test_print(d)
+  test_true(daemons_set())
+  me <- mirai(mirai::mirai(), .timeout = 2000L)[]
+  test_notnull(me)
+  if (is_mirai_error(me)) test_type("list", me$stack.trace)
+  if (is_mirai_error(me)) test_true(length(me$stack.trace) >= 2L)
+  if (is_mirai_error(me)) test_true(all(as.logical(lapply(me$stack.trace, is.language))))
+  if (is_mirai_error(me)) test_type("character", me$condition.class)
+  if (is_mirai_error(me)) test_type("character", conditionMessage(me))
+  if (is_mirai_error(me)) test_type("language", conditionCall(me))
+  test_false(is_mirai_interrupt(me))
+  test_class("errorValue", me)
+  test_print(me)
+  m <- mirai(mirai::on_daemon(), .timeout = 2000L)
+  if (!is_error_value(m[])) test_true(m[])
+  df <- data.frame(a = 1, b = 2, .Random.seed = 0)
+  dm <- mirai(as.matrix(df), .args = list(df = df), .timeout = 2000L)
+  test_true(is_mirai(call_mirai(dm)))
+  test_false(unresolved(dm))
+  if (!is_error_value(dm$data)) test_class("matrix", dm$data)
+  test_print(dm)
+  m1 <- mirai(Sys.sleep(0.1), .timeout = 200L)
+  m3 <- mirai({}, .timeout = 200L)
+  m2 <- mirai(Sys.sleep(0.1), .timeout = 200L)
+  test_type("list", race_mirai(list(m1, m2)))
+  test_type("list", race_mirai(list(m1, m2)))
+  test_type("list", race_mirai(list(m1, m2)))
+  test_type("integer", info())
+  test_type("integer", status()[["connections"]])
+  test_type("character", status()[["daemons"]])
+  test_type("character", mlc <- launch_remote())
+  test_class("miraiLaunchCmd", mlc)
+  test_print(mlc)
+  test_error(launch_remote(1L, remote = remote_config(command = "echo", args = "invalid")), "must be an element")
+  test_error(launch_remote(3L, remote = remote_config(command = "echo", args = list(c("test", "."), c("test", ".")))), "must equal the length")
+  test_false(daemons(0L))
+  Sys.sleep(1L)
+  test_true(daemons(1L, dispatcher = FALSE, maxtasks = 10L, walltime = 10000L, idletime = 20000L, cleanup = FALSE, output = TRUE, .compute = "new"))
+  test_type("character", nextget("url", .compute = "new"))
+  test_type("integer", nextstream(.compute = "new"))
+  test_true(require_daemons("new", call = environment()))
+  Sys.sleep(1.5)
+  run_checks_on <- function(.compute, check) {
+    local_daemons(.compute)
+    check
   }
+  run_checks_on("new", test_type("list", everywhere({}, as.environment(df))))
+  test_zero(status()$connections)
+  with_daemons("new", {
+    mn <- mirai("test1")
+    mp <- mirai(b + 1)
+  })
+  Sys.sleep(1L)
+  if (!unresolved(mn$data)) test_equal(mn$data, "test1")
+  if (!unresolved(mp$data)) test_equal(mp$data, 3)
+  Sys.sleep(1L)
+  test_type("integer", status(.compute = "new")[["connections"]])
+  test_error(mirai_map(1:2, "a function", .compute = "new"), "must be of type function, not character")
+  test_false(daemons(0L, .compute = "new"))
+}
 # additional daemons tests
-connection &&
-  {
-    Sys.sleep(1L)
-    test_true(daemons(url = value <- local_url(), dispatcher = FALSE))
-    test_identical(status()$daemons, value)
-    test_identical(nextget("url"), value)
-    test_type(
-      "character",
-      launch_remote(
-        remote = remote_config(
-          command = "echo",
-          args = list(c("Test out:", ".", ">/dev/null")),
-          rscript = "/usr/lib/R/bin/Rscript"
-        )
-      )
-    )
-    test_error(
-      launch_remote(remote = ssh_config("ssh://127.0.0.1:5456", tunnel = TRUE)),
-      "127.0.0.1"
-    )
-    test_false(daemons(0L))
-    Sys.sleep(1L)
-    test_true(daemons(
-      n = 2L,
-      url = value <- "ws://:0",
-      dispatcher = FALSE,
-      remote = remote_config(quote = TRUE)
-    ))
-    test_true(status()$daemons != value)
-    test_false(daemons(0L))
-  }
+connection && {
+  Sys.sleep(1L)
+  test_true(daemons(url = value <- local_url(), dispatcher = FALSE))
+  test_identical(status()$daemons, value)
+  test_identical(nextget("url"), value)
+  test_type("character", launch_remote(remote = remote_config(command = "echo", args = list(c("Test out:", ".", ">/dev/null")), rscript = "/usr/lib/R/bin/Rscript")))
+  test_error(launch_remote(remote = ssh_config("ssh://127.0.0.1:5456", tunnel = TRUE)), "127.0.0.1")
+  test_false(daemons(0L))
+  Sys.sleep(1L)
+  test_true(daemons(n = 2L, url = value <- "ws://:0", dispatcher = FALSE, remote = remote_config(quote = TRUE)))
+  test_true(status()$daemons != value)
+  test_false(daemons(0L))
+}
 # mirai_map tests
-connection &&
-  {
-    Sys.sleep(1L)
-    m <- with(daemons(1, dispatcher = FALSE, .compute = "ml"), {
-      if (
-        tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) TRUE) &&
-          tryCatch(mirai_map(list(1, "a", 2), sum)[.flat], error = function(e) TRUE)
-      ) {
-        mirai_map(1:3, rnorm, .args = list(mean = 20, 2))[]
-      }
-    })
-    test_false(is_mirai_map(m))
-    test_type("list", m)
-    test_equal(length(m), 3L)
-    test_true(all(as.logical(lapply(m, is.numeric))))
-    Sys.sleep(1L)
-    test_true(daemons(1, dispatcher = FALSE))
-    mp <- mirai_map(
-      list(x = "a"),
-      function(...) do(...),
-      do = function(x, y) sprintf("%s%s", x, y),
-      .args = list("b")
-    )
-    test_print(mp)
-    test_identical(collect_mirai(mp, list(.flat = TRUE))[["x"]], "ab")
-    test_identical(call_mirai(mp)[["x"]][["data"]], "ab")
-    mres <- mirai_map(data.frame(1:3, 3:1), sum, .args = list(3L))[.flat]
-    test_true(all(mres == 7L))
-    test_null(names(mres))
-    test_true(all(mirai_map(list(c(a = 1, b = 1, c = 1), 3), sum)[.flat] == 3))
-    test_type("language", mirai_map(list(quote(1 + 2)), identity)[][[1]])
-    test_class("Date", mirai_map(data.frame(x = as.Date("2020-01-01")), identity)[][[1]])
-    test_true(is_mirai_error(mirai_map(1:2, function(x) daemons(1))[][[1]]))
-    test_false(daemons(0L))
-  }
+connection && {
+  Sys.sleep(1L)
+  m <- with(daemons(1, dispatcher = FALSE, .compute = "ml"), {
+    if (tryCatch(mirai_map(list(1, "a", 2), sum)[.stop], error = function(e) TRUE) &&
+        tryCatch(mirai_map(list(1, "a", 2), sum)[.flat], error = function(e) TRUE))
+      mirai_map(1:3, rnorm, .args = list(mean = 20, 2))[]
+  })
+  test_false(is_mirai_map(m))
+  test_type("list", m)
+  test_equal(length(m), 3L)
+  test_true(all(as.logical(lapply(m, is.numeric))))
+  Sys.sleep(1L)
+  test_true(daemons(1, dispatcher = FALSE))
+  mp <- mirai_map(list(x = "a"), function(...) do(...), do = function(x, y) sprintf("%s%s", x, y), .args = list("b"))
+  test_print(mp)
+  test_identical(collect_mirai(mp, list(.flat = TRUE))[["x"]], "ab")
+  test_identical(call_mirai(mp)[["x"]][["data"]], "ab")
+  mres <- mirai_map(data.frame(1:3, 3:1), sum, .args = list(3L))[.flat]
+  test_true(all(mres == 7L))
+  test_null(names(mres))
+  test_true(all(mirai_map(list(c(a = 1, b = 1, c = 1), 3), sum)[.flat] == 3))
+  test_type("language", mirai_map(list(quote(1+2)), identity)[][[1]])
+  test_class("Date", mirai_map(data.frame(x = as.Date("2020-01-01")), identity)[][[1]])
+  test_true(is_mirai_error(mirai_map(1:2, function(x) daemons(1))[][[1]]))
+  test_false(daemons(0L))
+}
 # parallel cluster tests
 library(parallel)
-connection &&
-  {
-    Sys.sleep(1L)
-    cluster <- make_cluster(1)
-    test_class("miraiCluster", cluster)
-    test_class("cluster", cluster)
-    test_equal(length(cluster), 1L)
-    test_class("miraiNode", cluster[[1]])
-    test_print(cluster[[1]])
-    test_type("list", cluster[1])
-    test_type("character", launch_remote(cluster))
-    test_type("character", launch_remote(cluster[[1L]]))
-    test_type("list", status(cluster))
-    clusterSetRNGStream(cluster, 123)
-    j <- clusterEvalQ(cluster, expr = globalenv()[[".Random.seed"]])
-    a <- parSapply(cluster, 1:4, runif)
-    setDefaultCluster(cluster)
-    res <- parLapply(X = 1:10, fun = rnorm)
-    test_type("list", res)
-    test_equal(length(res), 10L)
-    test_type("double", res[[1L]])
-    test_equal(length(res[[1L]]), 1L)
-    test_type("double", res[[10L]])
-    test_equal(length(res[[10L]]), 10L)
-    res <- parLapplyLB(X = 1:10, fun = rnorm)
-    test_type("list", res)
-    test_equal(length(res), 10L)
-    test_type("double", res[[1L]])
-    test_equal(length(res[[1L]]), 1L)
-    test_type("double", res[[10L]])
-    test_equal(length(res[[10L]]), 10L)
-    test_identical(parSapply(NULL, 1:4, factorial), c(1, 2, 6, 24))
-    test_identical(parSapplyLB(NULL, 1:8, factorial), c(1, 2, 6, 24, 120, 720, 5040, 40320))
-    df <- data.frame(a = c(1, 2, 3), b = c(6, 7, 8))
-    test_identical(parApply(cluster, df, 2, sum), `names<-`(c(6, 21), c("a", "b")))
-    test_identical(parCapply(cluster, df, sum), `names<-`(c(6, 21), c("a", "b")))
-    test_identical(parRapply(cluster, df, sum), `names<-`(c(7, 9, 11), c("1", "2", "3")))
-    res <- clusterEvalQ(expr = globalenv()[[".Random.seed"]][[1L]])
-    test_type("integer", res[[1L]])
-    test_error(
-      clusterEvalQ(cluster, elephant()),
-      "Error in elephant(): could not find function \"elephant\""
-    )
-    test_null(stop_cluster(cluster))
-    Sys.sleep(1L)
-    test_class("miraiCluster", cl <- make_cluster(1))
-    test_true(attr(cl, "id") != attr(cluster, "id"))
-    clusterSetRNGStream(cl, 123)
-    k <- clusterEvalQ(cl, expr = globalenv()[[".Random.seed"]])
-    b <- parSapply(cl, 1:4, runif)
-    test_identical(j, k)
-    test_identical(a, b)
-    test_identical(clusterApply(cl, 1:2, get("+"), 3), list(4, 5))
-    xx <- 1
-    clusterExport(cl, "xx", environment())
-    test_identical(clusterCall(cl, function(y) xx + y, 2), list(3))
-    test_identical(
-      clusterMap(
-        cl,
-        function(x, y) seq_len(x) + y,
-        c(a = 1, b = 2, c = 3),
-        c(A = 10, B = 0, C = -10)
-      ),
-      list(a = 11, b = c(1, 2), c = c(-9, -8, -7))
-    )
-    test_identical(parSapply(cl, 1:20, get("+"), 3), as.double(4:23))
-    test_null(stopCluster(cl))
-    test_error(parLapply(cluster, 1:10, runif), "cluster is no longer active")
-    Sys.sleep(1L)
-    test_print(cl <- make_cluster(url = local_url()))
-    test_null(stopCluster(cl))
-    Sys.sleep(1L)
-    test_print(cl <- make_cluster(n = 1, url = local_url(), remote = remote_config()))
-    test_null(stopCluster(cl))
-  }
+connection && {
+  Sys.sleep(1L)
+  cluster <- make_cluster(1)
+  test_class("miraiCluster", cluster)
+  test_class("cluster", cluster)
+  test_equal(length(cluster), 1L)
+  test_class("miraiNode", cluster[[1]])
+  test_print(cluster[[1]])
+  test_type("list", cluster[1])
+  test_type("character", launch_remote(cluster))
+  test_type("character", launch_remote(cluster[[1L]]))
+  test_type("list", status(cluster))
+  clusterSetRNGStream(cluster, 123)
+  j <- clusterEvalQ(cluster, expr = globalenv()[[".Random.seed"]])
+  a <- parSapply(cluster, 1:4, runif)
+  setDefaultCluster(cluster)
+  res <- parLapply(X = 1:10, fun = rnorm)
+  test_type("list", res)
+  test_equal(length(res), 10L)
+  test_type("double", res[[1L]])
+  test_equal(length(res[[1L]]), 1L)
+  test_type("double", res[[10L]])
+  test_equal(length(res[[10L]]), 10L)
+  res <- parLapplyLB(X = 1:10, fun = rnorm)
+  test_type("list", res)
+  test_equal(length(res), 10L)
+  test_type("double", res[[1L]])
+  test_equal(length(res[[1L]]), 1L)
+  test_type("double", res[[10L]])
+  test_equal(length(res[[10L]]), 10L)
+  test_identical(parSapply(NULL, 1:4, factorial), c(1, 2, 6, 24))
+  test_identical(parSapplyLB(NULL, 1:8, factorial), c(1, 2, 6, 24, 120, 720, 5040, 40320))
+  df <- data.frame(a = c(1, 2, 3), b = c(6, 7, 8))
+  test_identical(parApply(cluster, df, 2, sum), `names<-`(c(6, 21), c("a", "b")))
+  test_identical(parCapply(cluster, df, sum), `names<-`(c(6, 21), c("a", "b")))
+  test_identical(parRapply(cluster, df, sum), `names<-`(c(7, 9, 11), c("1", "2", "3")))
+  res <- clusterEvalQ(expr = globalenv()[[".Random.seed"]][[1L]])
+  test_type("integer", res[[1L]])
+  test_error(clusterEvalQ(cluster, elephant()), "Error in elephant(): could not find function \"elephant\"")
+  test_null(stop_cluster(cluster))
+  Sys.sleep(1L)
+  test_class("miraiCluster", cl <- make_cluster(1))
+  test_true(attr(cl, "id") != attr(cluster, "id"))
+  clusterSetRNGStream(cl, 123)
+  k <- clusterEvalQ(cl, expr = globalenv()[[".Random.seed"]])
+  b <- parSapply(cl, 1:4, runif)
+  test_identical(j, k)
+  test_identical(a, b)
+  test_identical(clusterApply(cl, 1:2, get("+"), 3), list(4, 5))
+  xx <- 1
+  clusterExport(cl, "xx", environment())
+  test_identical(clusterCall(cl, function(y) xx + y, 2), list(3))
+  test_identical(clusterMap(cl, function(x, y) seq_len(x) + y, c(a =  1, b = 2, c = 3), c(A = 10, B = 0, C = -10)),
+            list(a = 11, b = c(1, 2), c = c(-9, -8, -7)))
+  test_identical(parSapply(cl, 1:20, get("+"), 3), as.double(4:23))
+  test_null(stopCluster(cl))
+  test_error(parLapply(cluster, 1:10, runif), "cluster is no longer active")
+  Sys.sleep(1L)
+  test_print(cl <- make_cluster(url = local_url()))
+  test_null(stopCluster(cl))
+  Sys.sleep(1L)
+  test_print(cl <- make_cluster(n = 1, url = local_url(), remote = remote_config()))
+  test_null(stopCluster(cl))
+}
 # advanced daemons and dispatcher tests
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    Sys.sleep(0.5)
-    test_true(daemons(url = "ws://:0", correctype = 0L, token = TRUE))
-    test_false(daemons(0L))
-    test_zero(with(daemons(url = "tcp://:0", correcttype = c(1, 0), token = TRUE), {
-      8L - 9L + 1L
-    }))
-    test_true(daemons(n = 2, "ws://:0"))
-    test_type("character", nextget("dispatcher"))
-    test_equal(length(nextget("url")), 1L)
-    Sys.sleep(1L)
-    status <- status()
-    test_type("list", status)
-    test_zero(status[["connections"]])
-    test_type("integer", status[["mirai"]])
-    test_zero(status[["mirai"]][["awaiting"]])
-    test_zero(status[["mirai"]][["executing"]])
-    test_zero(status[["mirai"]][["completed"]])
-    test_true(daemons(2, correcttype = NA))
-    test_equal(status()[["connections"]], 2L)
-    test_type("list", res <- mirai_map(c(1, 1), rnorm)[.progress])
-    test_type("double", res[[1L]])
-    test_type("double", res[[2L]])
-    Sys.sleep(0.5)
-    test_false(daemons(0L))
-    Sys.sleep(1L)
-    test_true(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
-    test_type(
-      "character",
-      launch_remote(
-        remote = ssh_config(
-          c("ssh://remotehost", "ssh://remotenode"),
-          tunnel = TRUE,
-          command = "echo"
-        )
-      )
-    )
-    test_equal(launch_local(), 1L)
-    Sys.sleep(1L)
-    test_true(grepl("CERTIFICATE", launch_remote(), fixed = TRUE))
-    q <- quote(list2env(list(b = 2), envir = globalenv()))
-    m <- mirai("Seattle", .timeout = 1000)
-    if (!is_error_value(m[])) {
-      test_equal(m[], "Seattle")
-    }
-    test_class("errorValue", mirai(q(), .timeout = 1000)[])
-    test_true(daemons(sync = TRUE, .compute = "seq"))
-    with_daemons("seq", {
-      everywhere({}, foo = "bar")
-      test_equal(mirai(foo)[], "bar")
-      test_error(launch_local(), "daemons cannot be launched")
-      test_error(launch_remote(), "synchronous compute profiles")
-      task <- mirai(substitute())
-    })
-    test_false(daemons(0, .compute = "seq"))
-    res <- task[]
-    test_true(missing(res))
-    test_type("integer", .Random.seed)
-  }
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  test_true(daemons(url = "ws://:0", correctype = 0L, token = TRUE))
+  test_false(daemons(0L))
+  test_zero(with(daemons(url = "tcp://:0", correcttype = c(1, 0), token = TRUE), {8L - 9L + 1L}))
+  test_true(daemons(n = 2, "ws://:0"))
+  test_type("character", nextget("dispatcher"))
+  test_equal(length(nextget("url")), 1L)
+  Sys.sleep(1L)
+  status <- status()
+  test_type("list", status)
+  test_zero(status[["connections"]])
+  test_type("integer", status[["mirai"]])
+  test_zero(status[["mirai"]][["awaiting"]])
+  test_zero(status[["mirai"]][["executing"]])
+  test_zero(status[["mirai"]][["completed"]])
+  test_true(daemons(2, correcttype = NA))
+  test_equal(status()[["connections"]], 2L)
+  test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
+  test_type("double", res[[1L]])
+  test_type("double", res[[2L]])
+  Sys.sleep(0.5)
+  test_false(daemons(0L))
+  Sys.sleep(1L)
+  test_true(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
+  test_type("character", launch_remote(remote = ssh_config(c("ssh://remotehost", "ssh://remotenode"), tunnel = TRUE, command = "echo")))
+  test_equal(launch_local(), 1L)
+  Sys.sleep(1L)
+  test_true(grepl("CERTIFICATE", launch_remote(), fixed = TRUE))
+  q <- quote(list2env(list(b = 2), envir = globalenv()))
+  m <- mirai("Seattle", .timeout = 1000)
+  if (!is_error_value(m[])) test_equal(m[], "Seattle")
+  test_class("errorValue", mirai(q(), .timeout = 1000)[])
+  test_true(daemons(sync = TRUE, .compute = "seq"))
+  with_daemons("seq", {
+    everywhere({}, foo = "bar")
+    test_equal(mirai(foo)[], "bar")
+    test_error(launch_local(), "daemons cannot be launched")
+    test_error(launch_remote(), "synchronous compute profiles")
+    task <- mirai(substitute())
+  })
+  test_false(daemons(0, .compute = "seq"))
+  res <- task[]
+  test_true(missing(res))
+  test_type("integer", .Random.seed)
+}
 # TLS tests
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    Sys.sleep(0.5)
-    cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
-    test_true(daemons(url = host_url(), pass = "test", serial = cfg))
-    if (.Platform$OS.type == "unix") {
-      test_type(
-        "character",
-        launch_remote(
-          remote = cluster_config(
-            command = "/bin/sh",
-            options = "#SBATCH",
-            rscript = file.path(R.home("bin"), "Rscript")
-          )
-        )
-      )
-    }
-    test_equal(launch_local(1L), 1L)
-    Sys.sleep(1L)
-    q <- quote({
-      list2env(list(b = 2), envir = globalenv())
-      0L
-    })
-    mm <- everywhere(q)
-    test_type("list", mm)
-    test_zero(sum(collect_mirai(mm, ".flat")))
-    m <- mirai(b, .timeout = 1000)
-    if (!is_error_value(m[])) {
-      test_equal(m[], 2L)
-    }
-    test_false(daemons(0))
-    test_tls <- function(cert) {
-      file <- tempfile()
-      on.exit(unlink(file))
-      cat(cert[["server"]], file = file)
-      daemons(url = "tls+tcp://127.0.0.1:0", tls = file, tlscert = cert[["client"]]) &&
-        is.character(nextget("tls")) &&
-        grepl("cert.pem", launch_remote(tlscert = "cert.pem"), fixed = TRUE) &&
-        daemons(0L)
-    }
-    test_false(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
+  test_true(daemons(url = host_url(), pass = "test", serial = cfg))
+  if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
+  test_equal(launch_local(1L), 1L)
+  Sys.sleep(1L)
+  q <- quote({ list2env(list(b = 2), envir = globalenv()); 0L})
+  mm <- everywhere(q)
+  test_type("list", mm)
+  test_zero(sum(collect_mirai(mm, ".flat")))
+  m <- mirai(b, .timeout = 1000)
+  if (!is_error_value(m[])) test_equal(m[], 2L)
+  test_false(daemons(0))
+  test_tls <- function(cert) {
+    file <- tempfile()
+    on.exit(unlink(file))
+    cat(cert[["server"]], file = file)
+    daemons(url = "tls+tcp://127.0.0.1:0", tls = file, tlscert = cert[["client"]]) &&
+      is.character(nextget("tls")) &&
+      grepl("cert.pem", launch_remote(tlscert = "cert.pem"), fixed = TRUE) &&
+      daemons(0L)
   }
+  test_false(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
+}
 # promises tests
-connection &&
-  requireNamespace("promises", quietly = TRUE) &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    run_now <- getNamespace("later")[["run_now"]]
-    Sys.sleep(0.5)
-    test_true(daemons(1, notused = "wrongtype"))
-    test_true(grepl("://", launch_remote(1L), fixed = TRUE))
-    test_true(promises::is.promise(p1 <- promises::as.promise(mirai("completed"))))
-    test_true(promises::is.promise(p2 <- promises::`%...>%`(mirai(Sys.sleep(0.1)), identity())))
-    test_true(promises::is.promise(p3 <- promises::as.promise(call_mirai(mirai("completed")))))
-    test_true(promises::is.promise(promises::then(mirai(stop()), identity, function(x) {
-      test_true(inherits(x, "simpleError"))
-    })))
-    run_now(1L)
-    test_true(promises::is.promise(promises::then(
-      mirai(Sys.sleep(0.1), .timeout = 10),
-      identity,
-      function(x) test_true(inherits(x, "simpleError"))
-    )))
-    run_now(1L)
-    test_true(promises::is.promise(promises::then(call_mirai(mirai(stop())), identity, function(x) {
-      test_true(inherits(x, "simpleError"))
-    })))
-    run_now(1L)
-    test_true(promises::is.promise(promises::then(
-      call_mirai(mirai(Sys.sleep(0.1), .timeout = 10)),
-      identity,
-      function(x) test_true(inherits(x, "simpleError"))
-    )))
-    run_now(1L)
-    test_zero(mirai_map(0:1, function(x) x, .promise = identity)[][[1L]])
-    mat <- matrix(1:4, nrow = 2L)
-    dimnames(mat) <- list(c("a", "b"), c("y", "x"))
-    test_true(is_mirai_map(mp <- mirai_map(mat, function(x, y) x - y, .promise = list(identity))))
-    test_true(promises::is.promise(promises::as.promise(mp)))
-    test_true(all(mp[.flat, .stop] == 2L))
-    test_identical(names(mp[]), c("a", "b"))
-    test_class(
-      "errorValue",
-      mirai_map(1, function(x) stop(x), .promise = list(identity, identity))[][[1L]]
-    )
-    run_now(1L)
-    test_false(daemons(NULL))
-  }
+connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
+  run_now <- getNamespace("later")[["run_now"]]
+  Sys.sleep(0.5)
+  test_true(daemons(1, notused = "wrongtype"))
+  test_true(grepl("://", launch_remote(1L), fixed = TRUE))
+  test_true(promises::is.promise(p1 <- promises::as.promise(mirai("completed"))))
+  test_true(promises::is.promise(p2 <- promises::`%...>%`(mirai(Sys.sleep(0.1)), identity())))
+  test_true(promises::is.promise(p3 <- promises::as.promise(call_mirai(mirai("completed")))))
+  test_true(promises::is.promise(promises::then(mirai(stop()), identity, function(x) test_true(inherits(x, "simpleError")))))
+  run_now(1L)
+  test_true(promises::is.promise(promises::then(mirai(Sys.sleep(0.1), .timeout = 10), identity, function(x) test_true(inherits(x, "simpleError")))))
+  run_now(1L)
+  test_true(promises::is.promise(promises::then(call_mirai(mirai(stop())), identity, function(x) test_true(inherits(x, "simpleError")))))
+  run_now(1L)
+  test_true(promises::is.promise(promises::then(call_mirai(mirai(Sys.sleep(0.1), .timeout = 10)), identity, function(x) test_true(inherits(x, "simpleError")))))
+  run_now(1L)
+  test_zero(mirai_map(0:1, function(x) x, .promise = identity)[][[1L]])
+  mat <- matrix(1:4, nrow = 2L)
+  dimnames(mat) <- list(c("a", "b"), c("y", "x"))
+  test_true(is_mirai_map(mp <- mirai_map(mat, function(x, y) x - y, .promise = list(identity))))
+  test_true(promises::is.promise(promises::as.promise(mp)))
+  test_true(all(mp[.flat, .stop] == 2L))
+  test_identical(names(mp[]), c("a", "b"))
+  test_class("errorValue", mirai_map(1, function(x) stop(x), .promise = list(identity, identity))[][[1L]])
+  run_now(1L)
+  test_false(daemons(NULL))
+}
 # mirai daemon limits tests
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    Sys.sleep(0.5)
-    test_true(daemons(1, cleanup = FALSE, maxtasks = 2L))
-    test_true(daemons_set("default"))
-    test_equal(mirai(1)[], mirai(1)[])
-    m <- mirai(0L)
-    Sys.sleep(1L)
-    res <- info()
-    test_zero(res[["connections"]])
-    test_equal(res[["awaiting"]], 1L)
-    test_equal(launch_local(1, idletime = 5000L, walltime = 500L), 1L)
-    test_zero(m[])
-    Sys.sleep(1L)
-    res <- info()
-    test_zero(res[["connections"]])
-    test_equal(res[["cumulative"]], 2L)
-    test_false(daemons(0))
-    test_true(daemons(1, dispatcher = FALSE, maxtasks = 1L))
-    test_zero(mirai(0L)[])
-    Sys.sleep(0.5)
-    test_zero(info()[["connections"]])
-    test_equal(launch_local(1, idletime = 200L, walltime = 1000L), 1L)
-    test_zero(mirai(0)[])
-    Sys.sleep(1L)
-    res <- info()
-    test_zero(res[["connections"]])
-    test_true(is.na(res[["cumulative"]]))
-    test_false(daemons(0))
-  }
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  test_true(daemons(1, cleanup = FALSE, maxtasks = 2L))
+  test_true(daemons_set("default"))
+  test_equal(mirai(1)[], mirai(1)[])
+  m <- mirai(0L)
+  Sys.sleep(1L)
+  res <- info()
+  test_zero(res[["connections"]])
+  test_equal(res[["awaiting"]], 1L)
+  test_equal(launch_local(1, idletime = 5000L, walltime = 500L), 1L)
+  test_zero(m[])
+  Sys.sleep(1L)
+  res <- info()
+  test_zero(res[["connections"]])
+  test_equal(res[["cumulative"]], 2L)
+  test_false(daemons(0))
+  test_true(daemons(1, dispatcher = FALSE, maxtasks = 1L))
+  test_zero(mirai(0L)[])
+  Sys.sleep(0.5)
+  test_zero(info()[["connections"]])
+  test_equal(launch_local(1, idletime = 200L, walltime = 1000L), 1L)
+  test_zero(mirai(0)[])
+  Sys.sleep(1L)
+  res <- info()
+  test_zero(res[["connections"]])
+  test_true(is.na(res[["cumulative"]]))
+  test_false(daemons(0))
+}
 # mirai cancellation tests
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    Sys.sleep(0.5)
-    Sys.unsetenv("R_DEFAULT_PACKAGES")
-    test_true(daemons(1, dispatcher = TRUE, cleanup = FALSE))
-    m1 <- mirai({
-      Sys.sleep(1)
-      res <<- "m1 done"
-    })
-    m2 <- mirai({
-      Sys.sleep(1)
-      res <<- "m2 done"
-    })
-    Sys.sleep(0.1)
-    test_true(stop_mirai(m2))
-    test_true(stop_mirai(m1))
-    test_true(m2$data >= 20L)
-    test_true(m1$data >= 20L)
-    test_class("errorValue", mirai(res)[])
-    m <- mirai_map(1:10, function(x) {
-      Sys.sleep(2)
-      y <<- TRUE
-    })
-    Sys.sleep(0.1)
-    s <- stop_mirai(m)
-    test_true(all(m[] >= 20L))
-    test_class("errorValue", mirai(y)[])
-    test_identical(s, !logical(10L))
-    test_equal(info()[["connections"]], 1L)
-    test_equal(length(nextget("url")), 1L)
-    test_class("miraiLaunchCmd", launch_remote(1))
-    test_false(daemons(0))
-  }
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  Sys.unsetenv("R_DEFAULT_PACKAGES")
+  test_true(daemons(1, dispatcher = TRUE, cleanup = FALSE))
+  m1 <- mirai({ Sys.sleep(1); res <<- "m1 done" })
+  m2 <- mirai({ Sys.sleep(1); res <<- "m2 done" })
+  Sys.sleep(0.1)
+  test_true(stop_mirai(m2))
+  test_true(stop_mirai(m1))
+  test_true(m2$data >= 20L)
+  test_true(m1$data >= 20L)
+  test_class("errorValue", mirai(res)[])
+  m <- mirai_map(1:10, function(x) { Sys.sleep(2); y <<- TRUE })
+  Sys.sleep(0.1)
+  s <- stop_mirai(m)
+  test_true(all(m[] >= 20L))
+  test_class("errorValue", mirai(y)[])
+  test_identical(s, !logical(10L))
+  test_equal(info()[["connections"]], 1L)
+  test_equal(length(nextget("url")), 1L)
+  test_class("miraiLaunchCmd", launch_remote(1))
+  test_false(daemons(0))
+}
 # additional stress testing
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    Sys.sleep(0.5)
-    q <- vector(mode = "list", length = 10000L)
-    Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
-    test_true(daemons(4))
-    Sys.unsetenv("R_DEFAULT_PACKAGES")
-    test_class("mirai_map", everywhere(a <<- FALSE))
-    test_true(all(everywhere(a <<- TRUE)[.flat]))
-    test_true(all(mirai_map(1:10, function(x) a)[.flat]))
-    for (i in seq_len(10000L)) {
-      q[[i]] <- mirai(1L)
-      attr(q[[i]], "info") <- info()
-    }
-    test_equal(sum(unlist(collect_mirai(q))), 10000L)
-    test_true(all(as.logical(lapply(lapply(q, attr, "info"), is.integer))))
-    for (i in seq_len(10000L)) {
-      q[[i]] <- mirai({
-        Sys.sleep(0.001)
-        rnorm(1)
-      })
-      attr(q[[i]], "info") <- info()
-    }
-    test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
-    test_true(all(as.logical(lapply(lapply(q, attr, "info"), is.integer))))
-    test_equal(info()[["completed"]], 20018L)
-    test_false(daemons(0))
-  }
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  q <- vector(mode = "list", length = 10000L)
+  Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
+  test_true(daemons(4))
+  Sys.unsetenv("R_DEFAULT_PACKAGES")
+  test_class("mirai_map", everywhere(a <<- FALSE))
+  test_true(all(everywhere(a <<- TRUE)[.flat]))
+  test_true(all(mirai_map(1:10, function(x) a)[.flat]))
+  for (i in seq_len(10000L)) {q[[i]] <- mirai(1L); attr(q[[i]], "info") <- info()}
+  test_equal(sum(unlist(collect_mirai(q))), 10000L)
+  test_true(all(as.logical(lapply(lapply(q, attr, "info"), is.integer))))
+  for (i in seq_len(10000L)) {q[[i]] <- mirai({Sys.sleep(0.001); rnorm(1)}); attr(q[[i]], "info") <- info()}
+  test_equal(length(unique(unlist(collect_mirai(q)))), 10000L)
+  test_true(all(as.logical(lapply(lapply(q, attr, "info"), is.integer))))
+  test_equal(info()[["completed"]], 20018L)
+  test_false(daemons(0))
+}
 # reproducible RNG tests
-connection &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    test_true(daemons(2, seed = 1234L))
-    test_equal(launch_local(), 1L)
-    test_type("character", launch_remote())
-    test_class("mirai_map", everywhere(TRUE, .min = 3L))
-    m <- mirai_map(1:12, rnorm)[]
+connection && NOT_CRAN && {
+  test_true(daemons(2, seed = 1234L))
+  test_equal(launch_local(), 1L)
+  test_type("character", launch_remote())
+  test_class("mirai_map", everywhere(TRUE, .min = 3L))
+  m <- mirai_map(1:12, rnorm)[]
+  test_false(daemons(0))
+  Sys.sleep(0.5)
+  test_true(daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
+  with_daemons("gpu", {
+    test_class("mirai_map", everywhere(TRUE))
+    n <- mirai_map(1:12, rnorm)[]
+    test_false(daemons(NULL))
+  })
+  test_false(daemons_set("gpu"))
+  test_identical(m, n)
+}
+connection && requireNamespace("otelsdk", quietly = TRUE) && NOT_CRAN && {
+  record <- mirai:::with_otel_record({
+    url <- local_url()
+    purl <- nanonext::parse_url(url)
+    test_true(daemons(url = url, dispatcher = FALSE))
+    mp <- mirai_map(1:3, rnorm)
+    m1 <- mirai(stop("error"))
+    m2 <- mirai(getNamespace("rlang")$interrupt())
+    test_equal(daemon(url = url, autoexit = FALSE, maxtasks = 5L, dispatcher = FALSE), 3L)
+    test_true(is_error_value(m2[]))
     test_false(daemons(0))
-    Sys.sleep(0.5)
-    test_true(daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
-    with_daemons("gpu", {
-      test_class("mirai_map", everywhere(TRUE))
-      n <- mirai_map(1:12, rnorm)[]
-      test_false(daemons(NULL))
-    })
-    test_false(daemons_set("gpu"))
-    test_identical(m, n)
-  }
-connection &&
-  requireNamespace("otelsdk", quietly = TRUE) &&
-  Sys.getenv("NOT_CRAN") == "true" &&
-  {
-    record <- mirai:::with_otel_record({
-      url <- local_url()
-      purl <- nanonext::parse_url(url)
-      test_true(daemons(url = url, dispatcher = FALSE))
-      mp <- mirai_map(1:3, rnorm)
-      m1 <- mirai(stop("error"))
-      m2 <- mirai(getNamespace("rlang")$interrupt())
-      test_equal(daemon(url = url, autoexit = FALSE, maxtasks = 5L, dispatcher = FALSE), 3L)
-      test_true(is_error_value(m2[]))
-      test_false(daemons(0))
-    })
-    traces <- record$traces
-    test_equal(length(traces), 15L)
-    test_true(startsWith(traces[[1L]]$name, "daemons set"))
-    test_equal(traces[[1L]]$kind, "internal")
-    test_equal(traces[[1L]]$attributes$server.address, purl[["path"]])
-    test_equal(length(traces[[1L]]$attributes$server.port), 0L)
-    test_equal(traces[[1L]]$attributes$network.transport, purl[["scheme"]])
-    test_false(traces[[1L]]$attributes$mirai.dispatcher)
-    test_equal(traces[[1L]]$attributes$mirai.compute, "default")
-    test_equal(traces[[2L]]$name, "mirai")
-    test_equal(traces[[2L]]$kind, "client")
-    test_equal(traces[[2L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
-    test_true(traces[[3L]]$attributes$mirai.id > traces[[2L]]$attributes$mirai.id)
-    test_equal(traces[[3L]]$parent, traces[[2L]]$parent)
-    test_equal(traces[[4L]]$links[[1L]]$span_id, traces[[3L]]$links[[1L]]$span_id)
-    test_equal(traces[[5L]]$name, "mirai_map")
-    test_equal(traces[[5L]]$kind, "internal")
-    test_equal(traces[[5L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
-    test_equal(traces[[5L]]$span_id, traces[[3L]]$parent)
-    test_equal(traces[[5L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
-    test_equal(traces[[6L]]$name, "mirai")
-    test_equal(traces[[6L]]$kind, "client")
-    test_equal(traces[[6L]]$parent, record$traces[[5L]]$parent)
-    test_equal(traces[[6L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
-    test_true(startsWith(traces[[8L]]$name, "daemon connect"))
-    test_equal(traces[[8L]]$kind, "internal")
-    test_equal(traces[[8L]]$attributes$server.address, purl[["path"]])
-    test_equal(length(traces[[8L]]$attributes$server.port), 0L)
-    test_equal(traces[[8L]]$attributes$network.transport, purl[["scheme"]])
-    test_equal(traces[[9L]]$name, "daemon eval")
-    test_equal(traces[[9L]]$kind, "server")
-    test_equal(traces[[9L]]$parent, traces[[2L]]$span_id)
-    test_equal(traces[[9L]]$links[[1L]]$span_id, traces[[8L]]$span_id)
-    test_equal(traces[[12L]]$status, "error")
-    test_equal(traces[[12L]]$description, "miraiError")
-    test_equal(traces[[13L]]$status, "error")
-    test_true(startsWith(traces[[13L]]$description, "mirai"))
-    test_true(startsWith(traces[[14L]]$name, "daemon disconnect"))
-    test_equal(traces[[14L]]$kind, "internal")
-    test_equal(traces[[14L]]$attributes$server.address, purl[["path"]])
-    test_equal(length(traces[[14L]]$attributes$server.port), 0L)
-    test_equal(traces[[14L]]$attributes$network.transport, purl[["scheme"]])
-    test_equal(traces[[14L]]$links[[1L]]$span_id, traces[[8L]]$span_id)
-    test_true(startsWith(traces[[15L]]$name, "daemons reset"))
-    test_equal(traces[[15L]]$kind, "internal")
-    test_equal(traces[[15L]]$attributes$server.address, purl[["path"]])
-    test_equal(length(traces[[15L]]$attributes$server.port), 0L)
-    test_equal(traces[[15L]]$attributes$network.transport, purl[["scheme"]])
-    test_false(traces[[15L]]$attributes$mirai.dispatcher)
-    test_equal(traces[[15L]]$attributes$mirai.compute, "default")
-  }
+  })
+  traces <- record$traces
+  test_equal(length(traces), 15L)
+  test_true(startsWith(traces[[1L]]$name, "daemons set"))
+  test_equal(traces[[1L]]$kind, "internal")
+  test_equal(traces[[1L]]$attributes$server.address, purl[["path"]])
+  test_equal(length(traces[[1L]]$attributes$server.port), 0L)
+  test_equal(traces[[1L]]$attributes$network.transport, purl[["scheme"]])
+  test_false(traces[[1L]]$attributes$mirai.dispatcher)
+  test_equal(traces[[1L]]$attributes$mirai.compute, "default")
+  test_equal(traces[[2L]]$name, "mirai")
+  test_equal(traces[[2L]]$kind, "client")
+  test_equal(traces[[2L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
+  test_true(traces[[3L]]$attributes$mirai.id > traces[[2L]]$attributes$mirai.id)
+  test_equal(traces[[3L]]$parent, traces[[2L]]$parent)
+  test_equal(traces[[4L]]$links[[1L]]$span_id, traces[[3L]]$links[[1L]]$span_id)
+  test_equal(traces[[5L]]$name, "mirai_map")
+  test_equal(traces[[5L]]$kind, "internal")
+  test_equal(traces[[5L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
+  test_equal(traces[[5L]]$span_id, traces[[3L]]$parent)
+  test_equal(traces[[5L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
+  test_equal(traces[[6L]]$name, "mirai")
+  test_equal(traces[[6L]]$kind, "client")
+  test_equal(traces[[6L]]$parent, record$traces[[5L]]$parent)
+  test_equal(traces[[6L]]$links[[1L]]$span_id, traces[[1L]]$span_id)
+  test_true(startsWith(traces[[8L]]$name, "daemon connect"))
+  test_equal(traces[[8L]]$kind, "internal")
+  test_equal(traces[[8L]]$attributes$server.address, purl[["path"]])
+  test_equal(length(traces[[8L]]$attributes$server.port), 0L)
+  test_equal(traces[[8L]]$attributes$network.transport, purl[["scheme"]])
+  test_equal(traces[[9L]]$name, "daemon eval")
+  test_equal(traces[[9L]]$kind, "server")
+  test_equal(traces[[9L]]$parent, traces[[2L]]$span_id)
+  test_equal(traces[[9L]]$links[[1L]]$span_id, traces[[8L]]$span_id)
+  test_equal(traces[[12L]]$status, "error")
+  test_equal(traces[[12L]]$description, "miraiError")
+  test_equal(traces[[13L]]$status, "error")
+  test_true(startsWith(traces[[13L]]$description, "mirai"))
+  test_true(startsWith(traces[[14L]]$name, "daemon disconnect"))
+  test_equal(traces[[14L]]$kind, "internal")
+  test_equal(traces[[14L]]$attributes$server.address, purl[["path"]])
+  test_equal(length(traces[[14L]]$attributes$server.port), 0L)
+  test_equal(traces[[14L]]$attributes$network.transport, purl[["scheme"]])
+  test_equal(traces[[14L]]$links[[1L]]$span_id, traces[[8L]]$span_id)
+  test_true(startsWith(traces[[15L]]$name, "daemons reset"))
+  test_equal(traces[[15L]]$kind, "internal")
+  test_equal(traces[[15L]]$attributes$server.address, purl[["path"]])
+  test_equal(length(traces[[15L]]$attributes$server.port), 0L)
+  test_equal(traces[[15L]]$attributes$network.transport, purl[["scheme"]])
+  test_false(traces[[15L]]$attributes$mirai.dispatcher)
+  test_equal(traces[[15L]]$attributes$mirai.compute, "default")
+}
 test_false(daemons(0))
 Sys.sleep(1L)
