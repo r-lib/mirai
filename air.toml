@@ -4,6 +4,6 @@ indent-width = 2
 indent-style = "space"
 line-ending = "auto"
 persistent-line-breaks = false
-exclude = []
+exclude = ["tests/"]
 default-exclude = true
 skip = []
