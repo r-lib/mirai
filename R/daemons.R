@@ -162,25 +162,25 @@
 #' @examplesIf interactive()
 #' # Create 2 local daemons (using dispatcher)
 #' daemons(2)
-#' status()
+#' info()
 #' # Reset to zero
 #' daemons(0)
 #'
 #' # Create 2 local daemons (not using dispatcher)
 #' daemons(2, dispatcher = FALSE)
-#' status()
+#' info()
 #' # Reset to zero
 #' daemons(0)
 #'
 #' # Set up dispatcher accepting TLS over TCP connections
 #' daemons(url = host_url(tls = TRUE))
-#' status()
+#' info()
 #' # Reset to zero
 #' daemons(0)
 #'
 #' # Set host URL for remote daemons to dial into
 #' daemons(url = host_url(), dispatcher = FALSE)
-#' status()
+#' info()
 #' # Reset to zero
 #' daemons(0)
 #'
@@ -362,7 +362,7 @@ print.miraiDaemons <- function(x, ...) print(unclass(x))
 #'   }
 #' )
 #'
-#' status()
+#' Sys.getpid()
 #'
 #' @export
 #'
@@ -400,12 +400,7 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'
 #' @seealso [info()] for more succinct information statistics.
 #'
-#' @examplesIf interactive()
-#' status()
-#' daemons(url = "tcp://[::1]:0")
-#' status()
-#' daemons(0)
-#'
+#' @keywords internal
 #' @export
 #'
 status <- function(.compute = NULL) {
@@ -435,8 +430,6 @@ status <- function(.compute = NULL) {
 #'
 #' @return Named integer vector or else `NULL` if the compute profile is yet to
 #'   be set up.
-#'
-#' @seealso [status()] for more verbose status information.
 #'
 #' @examples
 #' info()
@@ -519,22 +512,18 @@ require_daemons <- function(.compute = NULL, call = environment()) {
 #' daemons(1, dispatcher = FALSE, .compute = "gpu")
 #'
 #' with_daemons("cpu", {
-#'   s1 <- status()
 #'   m1 <- mirai(Sys.getpid())
 #' })
 #'
 #' with_daemons("gpu", {
-#'   s2 <- status()
 #'   m2 <- mirai(Sys.getpid())
 #'   m3 <- mirai(Sys.getpid(), .compute = "cpu")
 #'   local_daemons("cpu")
 #'   m4 <- mirai(Sys.getpid())
 #' })
 #'
-#' s1$daemons
 #' m1[]
 #'
-#' s2$daemons
 #' m2[] # different to m1
 #'
 #' m3[] # same as m1

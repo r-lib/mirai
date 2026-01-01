@@ -26,18 +26,18 @@
 #'
 #' @examplesIf interactive()
 #' daemons(url = host_url(), dispatcher = FALSE)
-#' status()
+#' info()
 #' launch_local(1L, cleanup = FALSE)
 #' launch_remote(1L, cleanup = FALSE)
 #' Sys.sleep(1)
-#' status()
+#' info()
 #' daemons(0)
 #'
 #' daemons(url = host_url(tls = TRUE))
-#' status()
+#' info()
 #' launch_local(2L, output = TRUE)
 #' Sys.sleep(1)
-#' status()
+#' info()
 #' daemons(0)
 #'
 #' @export

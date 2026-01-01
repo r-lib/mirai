@@ -220,17 +220,6 @@ The event-driven approach consumes no resources while waiting and stays synchron
 info()
 ```
 
-`status()` provides more detail:
-
-1. `connections`: active connections
-2. `daemons`: connection URL
-3. `mirai`: task summary
-
-```{r}
-#| label: status
-status()
-```
-
 Set daemons to zero to reset.
 This reverts to creating a new background process per request.
 
@@ -258,10 +247,10 @@ Tasks may queue behind long-running tasks while other daemons sit idle.
 
 This resource-light approach suits similar-length tasks or when concurrent tasks don't exceed available daemons.
 
-Status now shows 6 connections and the host URL:
+Info now shows 6 connections:
 ```{r}
 #| label: daemonsqv
-status()
+info()
 ```
 
 #### everywhere()
@@ -397,10 +386,10 @@ Calling `host_url()` without a port uses '0', which automatically assigns a free
 #| label: localqueue
 daemons(url = host_url())
 ```
-Query the assigned port with `status()`:
+Query `launch_remote()` for the assigned port:
 ```{r}
 #| label: remotev2
-status()
+launch_remote()
 ```
 Dynamically scale the number of daemons up or down as needed.
 
@@ -632,7 +621,7 @@ Settings save under this name.
 
 Specify `.compute` in `mirai()` to use a profile (`NULL` uses 'default').
 
-Other functions (`status()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
+Other functions (`info()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
 
 #### `with_daemons()` and `local_daemons()`
 
@@ -644,22 +633,17 @@ daemons(1, .compute = "cpu")
 daemons(1, .compute = "gpu")
 
 with_daemons("cpu", {
-  s1 <- status()
   m1 <- mirai(Sys.getpid())
 })
 
 with_daemons("gpu", {
-  s2 <- status()
   m2 <- mirai(Sys.getpid())
   m3 <- mirai(Sys.getpid(), .compute = "cpu")
   local_daemons("cpu")
   m4 <- mirai(Sys.getpid())
 })
 
-s1$daemons
 m1[]
-
-s2$daemons
 m2[] # different to m1
 
 m3[] # same as m1
