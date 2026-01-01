@@ -37,14 +37,3 @@ A named list comprising:
 
 [`info()`](https://mirai.r-lib.org/dev/reference/info.md) for more
 succinct information statistics.
-
-## Examples
-
-``` r
-if (FALSE) { # interactive()
-status()
-daemons(url = "tcp://[::1]:0")
-status()
-daemons(0)
-}
-```

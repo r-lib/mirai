@@ -37,11 +37,6 @@ The returned statistics are:
 For non-dispatcher daemons: only 'connections' will be available and the
 other values will be `NA`.
 
-## See also
-
-[`status()`](https://mirai.r-lib.org/dev/reference/status.md) for more
-verbose status information.
-
 ## Examples
 
 ``` r

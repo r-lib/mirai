@@ -58,8 +58,6 @@
   : Create Serialization Configuration
 - [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
   : SSH Remote Launch Configuration
-- [`status()`](https://mirai.r-lib.org/dev/reference/status.md) : Status
-  Information
 - [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md)
   : mirai (Stop)
 - [`unresolved()`](https://mirai.r-lib.org/dev/reference/unresolved.md)

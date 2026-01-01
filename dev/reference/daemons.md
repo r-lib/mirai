@@ -255,25 +255,25 @@ for managing the compute profile used locally.
 if (FALSE) { # interactive()
 # Create 2 local daemons (using dispatcher)
 daemons(2)
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Create 2 local daemons (not using dispatcher)
 daemons(2, dispatcher = FALSE)
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Set up dispatcher accepting TLS over TCP connections
 daemons(url = host_url(tls = TRUE))
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Set host URL for remote daemons to dial into
 daemons(url = host_url(), dispatcher = FALSE)
-status()
+info()
 # Reset to zero
 daemons(0)
 
@@ -311,7 +311,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 7078
+#> [1] 8943
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -320,5 +320,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 7078
+#> [1] 8943
 ```

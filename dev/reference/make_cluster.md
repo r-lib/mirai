@@ -96,12 +96,6 @@ may be called at any time on a 'miraiCluster' to return the shell
 commands for deployment of all nodes, or on a 'miraiNode' to return the
 command for a single node.
 
-## Status
-
-Call [`status()`](https://mirai.r-lib.org/dev/reference/status.md) on a
-'miraiCluster' to check the number of currently active connections as
-well as the host URL.
-
 ## Errors
 
 Errors are thrown by the parallel package mechanism if one or more nodes

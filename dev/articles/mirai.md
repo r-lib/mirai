@@ -371,11 +371,10 @@ m$data$condition.class      # Original error classes
 m$data$message              # Error message
 ```
 
-## 11. Monitoring and Status
+## 11. Monitoring
 
 ``` r
-status()                    # Detailed status
-info()                      # Concise statistics
+info()                      # Connection and task statistics
 
 daemons_set()               # Check if daemons exist
 require_daemons()           # Error if not set
