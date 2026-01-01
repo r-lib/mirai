@@ -29,14 +29,7 @@ been received (either completed or cancelled).
 Retrieve status information for the specified compute profile, comprising
 current connections and daemons status.
 }
-\examples{
-\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-status()
-daemons(url = "tcp://[::1]:0")
-status()
-daemons(0)
-\dontshow{\}) # examplesIf}
-}
 \seealso{
 \code{\link[=info]{info()}} for more succinct information statistics.
 }
+\keyword{internal}

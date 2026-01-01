@@ -37,6 +37,3 @@ info()
 daemons(0)
 
 }
-\seealso{
-\code{\link[=status]{status()}} for more verbose status information.
-}

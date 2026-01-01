@@ -44,11 +44,6 @@
 #' shell commands for deployment of all nodes, or on a 'miraiNode' to return the
 #' command for a single node.
 #'
-#' @section Status:
-#'
-#' Call [status()] on a 'miraiCluster' to check the number of currently active
-#' connections as well as the host URL.
-#'
 #' @section Errors:
 #'
 #' Errors are thrown by the \pkg{parallel} package mechanism if one or more

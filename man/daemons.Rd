@@ -199,25 +199,25 @@ be carried out with the desired \code{.compute} argument specified.
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # Create 2 local daemons (using dispatcher)
 daemons(2)
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Create 2 local daemons (not using dispatcher)
 daemons(2, dispatcher = FALSE)
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Set up dispatcher accepting TLS over TCP connections
 daemons(url = host_url(tls = TRUE))
-status()
+info()
 # Reset to zero
 daemons(0)
 
 # Set host URL for remote daemons to dial into
 daemons(url = host_url(), dispatcher = FALSE)
-status()
+info()
 # Reset to zero
 daemons(0)
 

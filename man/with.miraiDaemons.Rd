@@ -37,6 +37,6 @@ with(
   }
 )
 
-status()
+Sys.getpid()
 \dontshow{\}) # examplesIf}
 }
