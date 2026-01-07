@@ -119,11 +119,17 @@ connection && {
   if (!is_error_value(dm$data)) test_class("matrix", dm$data)
   test_print(dm)
   m1 <- mirai(Sys.sleep(0.1), .timeout = 200L)
-  m3 <- mirai({}, .timeout = 200L)
-  m2 <- mirai(Sys.sleep(0.1), .timeout = 200L)
-  test_type("list", race_mirai(list(m1, m2)))
-  test_type("list", race_mirai(list(m1, m2)))
-  test_type("list", race_mirai(list(m1, m2)))
+  m2 <- mirai({}, .timeout = 200L)
+  m3 <- mirai(Sys.sleep(0.1), .timeout = 200L)
+  test_zero(race_mirai(list()))
+  ml <- list(m1, m2, m3)
+  while (length(ml)) {
+    idx <- race_mirai(ml)
+    test_type("integer", idx)
+    test_true(idx >= 1L && idx <= length(ml))
+    test_class("mirai", ml[[idx]])
+    ml <- ml[-idx]
+  }
   test_type("integer", info())
   test_type("integer", status()[["connections"]])
   test_type("character", status()[["daemons"]])

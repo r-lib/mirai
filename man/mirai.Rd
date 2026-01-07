@@ -7,26 +7,24 @@
 mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 }
 \arguments{
-\item{.expr}{an expression to evaluate asynchronously (of arbitrary length,
-wrapped in \{ \} where necessary), \strong{or else} a pre-constructed language
-object.}
+\item{.expr}{(expression) code to evaluate asynchronously, or a language
+object. Wrap multi-line expressions in \code{{}}.}
 
-\item{...}{(optional) \strong{either} named arguments (name = value pairs)
-specifying objects referenced, but not defined, in \code{.expr}, \strong{or} an
-environment containing such objects. See 'evaluation' section below.}
-
-\item{.args}{(optional) \strong{either} a named list specifying objects
-referenced, but not defined, in \code{.expr}, \strong{or} an environment containing
-such objects. These objects will remain local to the evaluation environment
-as opposed to those supplied in \code{...} above - see 'evaluation' section
+\item{...}{(named arguments | environment) objects required by \code{.expr},
+assigned to the daemon's global environment. See 'evaluation' section
 below.}
 
-\item{.timeout}{integer value in milliseconds, or NULL for no timeout. A
-mirai will resolve to an 'errorValue' 5 (timed out) if evaluation exceeds
-this limit.}
+\item{.args}{(named list | environment) objects required by .expr, kept local
+to the evaluation environment (unlike \code{...}). See 'evaluation' section
+below.}
 
-\item{.compute}{character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.}
+\item{.timeout}{(integer) timeout in milliseconds. The mirai resolves to an
+'errorValue' 5 (timed out) if evaluation exceeds this limit. \code{NULL}
+(default) for no timeout.}
+
+\item{.compute}{(character) name of the compute profile. Each profile has its
+own independent set of daemons. \code{NULL} (default) uses the 'default'
+profile.}
 }
 \value{
 A 'mirai' object.

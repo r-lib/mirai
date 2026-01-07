@@ -1,8 +1,15 @@
 # mirai (development version)
 
+#### Breaking Changes
+
+* `race_mirai()` now returns the integer index of the first resolved 'mirai'
+  instead of the entire list. Returns immediately if any mirai is already
+  resolved, and returns `0L` for empty lists. This enables efficient removal
+  from the list via `remaining <- remaining[-idx]`.
+
 #### Updates
 
-* A `miraiError` gains `conditionCall` and `conditionMessage` methods (@jan-swissre, #529) 
+* A `miraiError` gains `conditionCall` and `conditionMessage` methods (@jan-swissre, #529)
 * Requires nanonext >= [1.7.2.9000].
 
 # mirai 2.5.3
