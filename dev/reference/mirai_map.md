@@ -1,8 +1,8 @@
 # mirai Map
 
 Asynchronous parallel map of a function over a list or vector using
-mirai, with optional promises integration. Performs multiple map over
-the rows of a dataframe or matrix.
+mirai, with optional promises integration. For matrix or dataframe
+inputs, maps over rows.
 
 ## Usage
 
@@ -14,32 +14,29 @@ mirai_map(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL)
 
 - .x:
 
-  a list or atomic vector. Also accepts a matrix or dataframe, in which
-  case multiple map is performed over its rows.
+  (list \| vector \| matrix \| data.frame) input to map over. For matrix
+  or dataframe, maps over rows (see Multiple Map section).
 
 - .f:
 
-  a function to be applied to each element of `.x`, or row of `.x` as
-  the case may be.
+  (function) applied to each element of `.x`, or each row of a matrix /
+  dataframe.
 
 - ...:
 
-  (optional) named arguments (name = value pairs) specifying objects
-  referenced, but not defined, in `.f`.
+  (named arguments) objects referenced but not defined in `.f`.
 
 - .args:
 
-  (optional) further constant arguments to `.f`, provided as a list.
+  (list) constant arguments passed to `.f`.
 
 - .promise:
 
-  (optional) if supplied, registers a promise against each mirai. Either
-  a function, supplied to the `onFulfilled` argument of
-  [`promises::then()`](https://rstudio.github.io/promises/reference/then.html)
-  or a list of 2 functions, supplied respectively to `onFulfilled` and
-  `onRejected` of
+  (function \| list) registers a promise against each mirai. Either an
+  `onFulfilled` function, or a list of (`onFulfilled`, `onRejected`)
+  functions for
   [`promises::then()`](https://rstudio.github.io/promises/reference/then.html).
-  Using this argument requires the promises package.
+  Requires the promises package.
 
 - .compute:
 
@@ -107,7 +104,7 @@ using [`t()`](https://rdrr.io/r/base/t.html).
 
 ## Nested Maps
 
-At times you way wish to run maps within maps. To do this, the function
+At times you may wish to run maps within maps. To do this, the function
 provided to the outer map needs to include a call to
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) to set
 daemons used by the inner map. To guard against inadvertently spawning

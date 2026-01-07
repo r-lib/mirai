@@ -13,7 +13,7 @@ stop_mirai(x)
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  (mirai \| list) a 'mirai' object or list of 'mirai' objects.
 
 ## Value
 

@@ -9,34 +9,23 @@ function should not need to be called directly.
 ## Usage
 
 ``` r
-dispatcher(host, url = NULL, n = 0L, ...)
+dispatcher(host, url = NULL, n = 0L)
 ```
 
 ## Arguments
 
 - host:
 
-  the character URL dispatcher should dial in to, typically an IPC
-  address.
+  (character) URL to dial into, typically an IPC address.
 
 - url:
 
-  the character URL dispatcher should listen at (and daemons should dial
-  in to), including the port to connect to e.g. tcp://hostname:5555' or
-  'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
-  connections.
+  (character) URL to listen at for daemon connections, e.g.
+  'tcp://hostname:5555'. Use 'tls+tcp://' for secure TLS.
 
 - n:
 
-  if specified, the integer number of daemons to be launched locally by
-  the host process.
-
-- ...:
-
-  (optional) additional arguments passed through to
-  [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) if
-  launching daemons. These include `asyncdial`, `autoexit`, `cleanup`,
-  `output`, `maxtasks`, `idletime`, `walltime` and `tlscert`.
+  (integer) number of local daemons launched by host.
 
 ## Value
 

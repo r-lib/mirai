@@ -20,12 +20,11 @@ local_daemons(.compute, frame = parent.frame())
 
 - expr:
 
-  an expression to evaluate.
+  (expression) to evaluate using the compute profile.
 
 - frame:
 
-  the frame (environment) to which the daemons compute profile is
-  scoped.
+  (environment) scope for the compute profile setting.
 
 ## Value
 

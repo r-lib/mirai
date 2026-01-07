@@ -34,10 +34,9 @@ everywhere(.expr, ..., .args = list(), .min = 1L, .compute = NULL)
 
 - .min:
 
-  (only applicable when using dispatcher) integer minimum number of
-  daemons on which to evaluate the expression. A synchronization point
-  is created, which can be useful for remote daemons, as these may take
-  some time to connect.
+  (integer) minimum daemons to evaluate on (dispatcher only). Creates a
+  synchronization point, useful for remote daemons that take time to
+  connect.
 
 - .compute:
 

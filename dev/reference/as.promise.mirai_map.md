@@ -1,6 +1,7 @@
 # Make mirai_map Promise
 
-Creates a 'promise' from a 'mirai_map'.
+Creates a 'promise' from a 'mirai_map'. S3 method for
+[`promises::as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html).
 
 ## Usage
 
@@ -13,7 +14,7 @@ as.promise(x)
 
 - x:
 
-  an object of class 'mirai_map'.
+  (mirai_map) object to convert to promise.
 
 ## Value
 
@@ -21,20 +22,15 @@ A 'promise' object.
 
 ## Details
 
-This function is an S3 method for the generic
-[`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-for class 'mirai_map'.
+Allows a 'mirai_map' to be used with the promise pipe `%...>%`,
+scheduling a function to run upon resolution of all mirai.
+
+Uses
+[`promises::promise_all()`](https://rstudio.github.io/promises/reference/promise_all.html)
+internally: resolves to a list of values if all succeed, or rejects with
+the first error encountered.
 
 Requires the promises package.
-
-Allows a 'mirai_map' to be used with the promise pipe `%...>%`, which
-schedules a function to run upon resolution of the entire 'mirai_map'.
-
-The implementation internally uses
-[`promises::promise_all()`](https://rstudio.github.io/promises/reference/promise_all.html).
-If all of the promises were successful, the returned promise will
-resolve to a list of the promise values; if any promise fails, the first
-error to be encountered will be used to reject the returned promise.
 
 ## Examples
 

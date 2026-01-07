@@ -16,7 +16,7 @@ race_mirai(x, .compute = NULL)
 
 - x:
 
-  a list of 'mirai' objects.
+  (list) of 'mirai' objects.
 
 - .compute:
 

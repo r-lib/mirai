@@ -14,26 +14,19 @@ cluster_config(command = "sbatch", options = "", rscript = "Rscript")
 
 - command:
 
-  filename of executable e.g. "sbatch" for Slurm. Replace with "qsub"
-  for SGE / Torque / PBS, or "bsub" for LSF. See examples below.
+  (character) cluster manager executable: `"sbatch"` (Slurm), `"qsub"`
+  (SGE/Torque/PBS), or `"bsub"` (LSF).
 
 - options:
 
-  options as would be supplied inside a script file passed to `command`,
-  e.g. "#SBATCH –mem=16G", each separated by a new line. See examples
-  below.  
-  Other shell commands e.g. to change working directory may also be
-  included.  
-  For certain setups, "module load R" as a final line is required, or
-  for example "module load R/4.5.0" for a specific R version.  
-  For the avoidance of doubt, the initial shebang line such as
-  "#!/bin/bash" is not required.
+  (character) script options for `command` (e.g. "#SBATCH –mem=16G"),
+  newline-separated. May include shell commands such as "module load
+  R/4.5.0". Shebang line such as "#!/bin/bash" not required.
 
 - rscript:
 
-  filename of the R executable. Use the full path of the Rscript
-  executable on the remote machine if necessary. If launching on
-  Windows, `"Rscript"` should be replaced with `"Rscript.exe"`.
+  (character) Rscript executable. Use full path if needed, or
+  `"Rscript.exe"` on Windows.
 
 ## Value
 

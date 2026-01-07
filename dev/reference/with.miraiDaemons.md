@@ -16,16 +16,16 @@ with(data, expr, ...)
 
 - data:
 
-  a call to
+  (miraiDaemons) return value from
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md).
 
 - expr:
 
-  an expression to evaluate.
+  (expression) to evaluate with daemons active.
 
 - ...:
 
-  not used.
+  unused.
 
 ## Value
 

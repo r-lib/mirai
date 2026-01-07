@@ -15,8 +15,8 @@ unresolved(x)
 
 - x:
 
-  a 'mirai' object or list of 'mirai' objects, or a 'mirai' value stored
-  at `$data`.
+  (mirai \| list \| mirai value) a 'mirai', list of 'mirai' objects, or
+  value from `$data`.
 
 ## Value
 

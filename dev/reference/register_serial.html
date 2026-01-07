@@ -77,19 +77,18 @@ Once registered, the functions apply to all <code><a href="daemons.html">daemons
 
 
 <dl><dt id="arg-class">class<a class="anchor" aria-label="anchor" href="#arg-class"></a></dt>
-<dd><p>a character string (or vector) of the class of object custom
-serialization functions are applied to, e.g. <code>'ArrowTabular'</code> or
-<code>c('torch_tensor', 'ArrowTabular')</code>.</p></dd>
+<dd><p>(character) class name(s) for custom serialization, e.g.
+<code>'ArrowTabular'</code> or <code>c('torch_tensor', 'ArrowTabular')</code>.</p></dd>
 
 
 <dt id="arg-sfunc">sfunc<a class="anchor" aria-label="anchor" href="#arg-sfunc"></a></dt>
-<dd><p>a function (or list of functions) that accepts a reference
-object inheriting from <code>class</code> and returns a raw vector.</p></dd>
+<dd><p>(function | list) serialization function(s) accepting a
+reference object and returning a raw vector.</p></dd>
 
 
 <dt id="arg-ufunc">ufunc<a class="anchor" aria-label="anchor" href="#arg-ufunc"></a></dt>
-<dd><p>a function (or list of functions) that accepts a raw vector and
-returns a reference object.</p></dd>
+<dd><p>(function | list) unserialization function(s) accepting a raw
+vector and returning a reference object.</p></dd>
 
 </dl></div>
     <div class="section level2">

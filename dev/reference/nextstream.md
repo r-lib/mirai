@@ -29,15 +29,13 @@ nextcode(xc)
 
 - x:
 
-  character value of item to retrieve. One of `"n"` (number of
-  dispatcher daemons), `"dispatcher"` (the URL dispatcher uses to
-  connect to host) `"url"` (the URL to connect to dispatcher from
-  daemons) or `"tls"` (the stored client TLS configuration for use by
-  daemons).
+  (character) item to retrieve: `"n"` (daemon count), `"dispatcher"`
+  (dispatcher-to-host URL), `"url"` (daemon connection URL), or `"tls"`
+  (client TLS configuration).
 
 - xc:
 
-  integer return value of
+  (integer) return value from
   [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md).
 
 ## Value
@@ -76,7 +74,7 @@ nextstream()
 #> [6]   302119711 -1829637341
 
 nextget("url")
-#> [1] "abstract://f291e46a7405e62a739746e3"
+#> [1] "abstract://8b83965848f2600823ef2913"
 
 daemons(0)
 

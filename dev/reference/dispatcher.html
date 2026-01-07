@@ -66,7 +66,7 @@ directly.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dispatcher</span><span class="op">(</span><span class="va">host</span>, url <span class="op">=</span> <span class="cn">NULL</span>, n <span class="op">=</span> <span class="fl">0L</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dispatcher</span><span class="op">(</span><span class="va">host</span>, url <span class="op">=</span> <span class="cn">NULL</span>, n <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,26 +74,16 @@ directly.</p>
 
 
 <dl><dt id="arg-host">host<a class="anchor" aria-label="anchor" href="#arg-host"></a></dt>
-<dd><p>the character URL dispatcher should dial in to, typically an IPC
-address.</p></dd>
+<dd><p>(character) URL to dial into, typically an IPC address.</p></dd>
 
 
 <dt id="arg-url">url<a class="anchor" aria-label="anchor" href="#arg-url"></a></dt>
-<dd><p>the character URL dispatcher should listen at (and daemons should
-dial in to), including the port to connect to e.g. tcp://hostname:5555' or
-'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
-connections.</p></dd>
+<dd><p>(character) URL to listen at for daemon connections, e.g.
+'tcp://hostname:5555'. Use 'tls+tcp://' for secure TLS.</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>if specified, the integer number of daemons to be launched locally
-by the host process.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>(optional) additional arguments passed through to <code><a href="daemon.html">daemon()</a></code> if
-launching daemons. These include <code>asyncdial</code>, <code>autoexit</code>, <code>cleanup</code>,
-<code>output</code>, <code>maxtasks</code>, <code>idletime</code>, <code>walltime</code> and <code>tlscert</code>.</p></dd>
+<dd><p>(integer) number of local daemons launched by host.</p></dd>
 
 </dl></div>
     <div class="section level2">

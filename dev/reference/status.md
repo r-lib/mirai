@@ -13,10 +13,8 @@ status(.compute = NULL)
 
 - .compute:
 
-  character value for the compute profile to query, or NULL to query the
-  'default' profile.
-
-  **or** a 'miraiCluster' to obtain its status.
+  (character \| miraiCluster) compute profile name, or `NULL` for
+  'default'. Also accepts a 'miraiCluster'.
 
 ## Value
 

@@ -16,7 +16,7 @@ is_error_value(x)
 
 - x:
 
-  an object.
+  (object) to test.
 
 ## Value
 

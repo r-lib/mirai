@@ -17,19 +17,18 @@ register_serial(class, sfunc, ufunc)
 
 - class:
 
-  a character string (or vector) of the class of object custom
-  serialization functions are applied to, e.g. `'ArrowTabular'` or
-  `c('torch_tensor', 'ArrowTabular')`.
+  (character) class name(s) for custom serialization, e.g.
+  `'ArrowTabular'` or `c('torch_tensor', 'ArrowTabular')`.
 
 - sfunc:
 
-  a function (or list of functions) that accepts a reference object
-  inheriting from `class` and returns a raw vector.
+  (function \| list) serialization function(s) accepting a reference
+  object and returning a raw vector.
 
 - ufunc:
 
-  a function (or list of functions) that accepts a raw vector and
-  returns a reference object.
+  (function \| list) unserialization function(s) accepting a raw vector
+  and returning a reference object.
 
 ## Value
 

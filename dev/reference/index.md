@@ -36,7 +36,7 @@
   : Error Validators
 - [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
   [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
-  : Launch Daemon
+  : Launch Daemons
 - [`make_cluster()`](https://mirai.r-lib.org/dev/reference/make_cluster.md)
   [`stop_cluster()`](https://mirai.r-lib.org/dev/reference/make_cluster.md)
   : Make Mirai Cluster

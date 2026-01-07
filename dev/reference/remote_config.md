@@ -18,32 +18,24 @@ remote_config(
 
 - command:
 
-  the command used to effect the daemon launch on the remote machine as
-  a character string (e.g. `"ssh"`). Defaults to `"ssh"` for
-  `ssh_config`, although may be substituted for the full path to a
-  specific SSH application. The default NULL for `remote_config` does
-  not carry out any launches, but causes
-  [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
-  to return the shell commands for manual deployment on remote machines.
+  (character) shell command for launching daemons (e.g. `"ssh"`). `NULL`
+  returns shell commands for manual deployment without launching.
 
 - args:
 
-  (optional) arguments passed to `command`, as a character vector that
-  must include `"."` as an element, which will be substituted for the
-  daemon launch command. Alternatively, a list of such character vectors
-  to effect multiple launches (one for each list element).
+  (character vector) arguments to `command`, must include `"."` as
+  placeholder for the daemon launch command. May be a list of vectors
+  for multiple launches.
 
 - rscript:
 
-  filename of the R executable. Use the full path of the Rscript
-  executable on the remote machine if necessary. If launching on
-  Windows, `"Rscript"` should be replaced with `"Rscript.exe"`.
+  (character) Rscript executable. Use full path if needed, or
+  `"Rscript.exe"` on Windows.
 
 - quote:
 
-  logical value whether or not to quote the daemon launch command (not
-  required for Slurm `"srun"` for example, but required for Slurm
-  `"sbatch"` or `"ssh"`).
+  (logical) whether to quote the daemon launch command. Required for
+  `"sbatch"` and `"ssh"`, not for `"srun"`.
 
 ## Value
 

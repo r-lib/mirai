@@ -17,19 +17,18 @@ serial_config(class, sfunc, ufunc)
 
 - class:
 
-  a character string (or vector) of the class of object custom
-  serialization functions are applied to, e.g. `'ArrowTabular'` or
-  `c('torch_tensor', 'ArrowTabular')`.
+  (character) class name(s) for custom serialization, e.g.
+  `'ArrowTabular'` or `c('torch_tensor', 'ArrowTabular')`.
 
 - sfunc:
 
-  a function (or list of functions) that accepts a reference object
-  inheriting from `class` and returns a raw vector.
+  (function \| list) serialization function(s) accepting a reference
+  object and returning a raw vector.
 
 - ufunc:
 
-  a function (or list of functions) that accepts a raw vector and
-  returns a reference object.
+  (function \| list) unserialization function(s) accepting a raw vector
+  and returning a reference object.
 
 ## Value
 
@@ -53,7 +52,7 @@ cfg
 #> [[2]][[1]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x56023eb46378>
+#> <environment: 0x5621d275b6d8>
 #> 
 #> 
 #> [[3]]
@@ -65,7 +64,7 @@ cfg
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x56023eb3a6c0>
+#> <bytecode: 0x5621d2767470>
 #> <environment: namespace:base>
 #> 
 #> 
@@ -83,12 +82,12 @@ cfg2
 #> [[2]][[1]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x56023eb46378>
+#> <environment: 0x5621d275b6d8>
 #> 
 #> [[2]][[2]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x56023eb46378>
+#> <environment: 0x5621d275b6d8>
 #> 
 #> 
 #> [[3]]
@@ -100,7 +99,7 @@ cfg2
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x56023eb3a6c0>
+#> <bytecode: 0x5621d2767470>
 #> <environment: namespace:base>
 #> 
 #> [[3]][[2]]
@@ -111,7 +110,7 @@ cfg2
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x56023eb3a6c0>
+#> <bytecode: 0x5621d2767470>
 #> <environment: namespace:base>
 #> 
 #> 

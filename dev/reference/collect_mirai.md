@@ -14,14 +14,12 @@ collect_mirai(x, options = NULL)
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  (mirai \| list) a 'mirai' object or list of 'mirai' objects.
 
 - options:
 
-  (if `x` is a list of mirai) a character vector comprising any
-  combination of collection options for
-  [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md),
-  such as `".flat"` or `c(".progress", ".stop")`.
+  (character) collection options for list input, e.g. `".flat"` or
+  `c(".progress", ".stop")`. See Options section.
 
 ## Value
 
