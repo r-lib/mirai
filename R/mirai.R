@@ -23,22 +23,20 @@
 #' Specify `.compute` to send the mirai using a specific compute profile (if
 #' previously created by [daemons()]), otherwise leave as `"default"`.
 #'
-#' @param .expr an expression to evaluate asynchronously (of arbitrary length,
-#'   wrapped in \{ \} where necessary), **or else** a pre-constructed language
-#'   object.
-#' @param ... (optional) **either** named arguments (name = value pairs)
-#'   specifying objects referenced, but not defined, in `.expr`, **or** an
-#'   environment containing such objects. See 'evaluation' section below.
-#' @param .args (optional) **either** a named list specifying objects
-#'   referenced, but not defined, in `.expr`, **or** an environment containing
-#'   such objects. These objects will remain local to the evaluation environment
-#'   as opposed to those supplied in `...` above - see 'evaluation' section
+#' @param .expr (expression) code to evaluate asynchronously, or a language
+#'   object. Wrap multi-line expressions in `{}`.
+#' @param ... (named arguments | environment) objects required by `.expr`,
+#'   assigned to the daemon's global environment. See 'evaluation' section
 #'   below.
-#' @param .timeout integer value in milliseconds, or NULL for no timeout. A
-#'   mirai will resolve to an 'errorValue' 5 (timed out) if evaluation exceeds
-#'   this limit.
-#' @param .compute character value for the compute profile to use (each has its
-#'   own independent set of daemons), or NULL to use the 'default' profile.
+#' @param .args (named list | environment) objects required by .expr, kept local
+#'   to the evaluation environment (unlike `...`). See 'evaluation' section
+#'   below.
+#' @param .timeout (integer) timeout in milliseconds. The mirai resolves to an
+#'   'errorValue' 5 (timed out) if evaluation exceeds this limit. `NULL`
+#'   (default) for no timeout.
+#' @param .compute (character) name of the compute profile. Each profile has its
+#'   own independent set of daemons. `NULL` (default) uses the 'default'
+#'   profile.
 #'
 #' @return A 'mirai' object.
 #'
@@ -355,43 +353,55 @@ call_mirai <- call_aio_
 #' mirai (Race)
 #'
 #' Accepts a list of 'mirai' objects, such as those returned by [mirai_map()].
-#' Waits for the next 'mirai' to resolve if at least one is still in progress,
-#' blocking but user-interruptible. If none of the objects supplied are
-#' unresolved, the function returns immediately.
+#' Returns the index of the first resolved 'mirai'. If any mirai is already
+#' resolved, returns immediately. Otherwise waits for at least one to resolve,
+#' blocking but user-interruptible.
 #'
-#' All of the 'mirai' objects supplied must belong to the same compute profile -
-#' the currently-active one i.e. 'default' unless within a [with_daemons()] or
-#' [local_daemons()] scope.
+#' All of the 'mirai' objects supplied must belong to the same compute profile.
 #'
-#' @inheritParams call_mirai
+#' @param x a list of 'mirai' objects.
+#' @inheritParams mirai
 #'
-#' @return The passed object (invisibly).
+#' @return Integer index of the first resolved 'mirai' (invisibly), or
+#'   \code{0L} if the list is empty.
+#'
+#' @details When called on a list where some mirais are already resolved,
+#'   returns the index of the first resolved mirai immediately without waiting.
+#'   When all mirais are unresolved, blocks until at least one resolves. If
+#'   multiple mirais resolve during the same wait iteration, returns the
+#'   index of the first resolved in list order.
+#'
+#'   This enables an efficient "process as completed" pattern:
+#'   \preformatted{
+#'   remaining <- list(m1, m2, m3)
+#'   while (length(remaining) > 0) {
+#'     idx <- race_mirai(remaining)
+#'     process(remaining[[idx]]$data)
+#'     remaining <- remaining[-idx]
+#'   }
+#'   }
 #'
 #' @seealso [call_mirai()]
 #'
 #' @examplesIf interactive()
 #' daemons(2)
-#' m1 <- mirai(Sys.sleep(0.2))
-#' m2 <- mirai(Sys.sleep(0.1))
-#' start <- Sys.time()
-#' race_mirai(list(m1, m2))
-#' Sys.time() - start
-#' race_mirai(list(m1, m2))
-#' Sys.time() - start
+#' m1 <- mirai({ Sys.sleep(0.2); "one" })
+#' m2 <- mirai({ Sys.sleep(0.1); "two" })
+#' m3 <- mirai({ Sys.sleep(0.3); "three" })
+#' remaining <- list(m1, m2, m3)
+#' while (length(remaining) > 0) {
+#'   idx <- race_mirai(remaining)
+#'   print(remaining[[idx]]$data)
+#'   remaining <- remaining[-idx]
+#' }
 #' daemons(0)
 #'
 #' @export
 #'
-race_mirai <- function(x) {
-  envir <- compute_env(NULL)
+race_mirai <- function(x, .compute = NULL) {
+  envir <- compute_env(.compute)
   is.null(envir) && stop(._[["daemons_unset"]])
-  cv <- envir[["cv"]]
-  missing(cv) && return(invisible(x))
-  cv_reset(cv)
-  n <- .unresolved(x)
-  n || return(invisible(x))
-  while (wait_(cv) && .unresolved(x) == n) {}
-  invisible(x)
+  invisible(race_aio(x, envir[["cv"]]))
 }
 
 #' mirai (Collect Value)
