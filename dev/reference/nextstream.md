@@ -23,8 +23,9 @@ nextcode(xc)
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 - x:
 
@@ -75,7 +76,7 @@ nextstream()
 #> [6]   302119711 -1829637341
 
 nextget("url")
-#> [1] "abstract://29d15caaf5a53f567069f231"
+#> [1] "abstract://fa17826a81cc0a938fb49b31"
 
 daemons(0)
 

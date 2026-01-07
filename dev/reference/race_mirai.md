@@ -2,34 +2,53 @@
 
 Accepts a list of 'mirai' objects, such as those returned by
 [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md).
-Waits for the next 'mirai' to resolve if at least one is still in
-progress, blocking but user-interruptible. If none of the objects
-supplied are unresolved, the function returns immediately.
+Returns the index of the first resolved 'mirai'. If any mirai is already
+resolved, returns immediately. Otherwise waits for at least one to
+resolve, blocking but user-interruptible.
 
 ## Usage
 
 ``` r
-race_mirai(x)
+race_mirai(x, .compute = NULL)
 ```
 
 ## Arguments
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  a list of 'mirai' objects.
+
+- .compute:
+
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 ## Value
 
-The passed object (invisibly).
+Integer index of the first resolved 'mirai' (invisibly), or `0L` if the
+list is empty.
 
 ## Details
 
 All of the 'mirai' objects supplied must belong to the same compute
-profile - the currently-active one i.e. 'default' unless within a
-[`with_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md)
-or
-[`local_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md)
-scope.
+profile.
+
+When called on a list where some mirais are already resolved, returns
+the index of the first resolved mirai immediately without waiting. When
+all mirais are unresolved, blocks until at least one resolves. If
+multiple mirais resolve during the same wait iteration, returns the
+index of the first resolved in list order.
+
+This enables an efficient "process as completed" pattern:
+
+      remaining <- list(m1, m2, m3)
+      while (length(remaining) > 0) {
+        idx <- race_mirai(remaining)
+        process(remaining[[idx]]$data)
+        remaining <- remaining[-idx]
+      }
+      
 
 ## See also
 
@@ -40,13 +59,15 @@ scope.
 ``` r
 if (FALSE) { # interactive()
 daemons(2)
-m1 <- mirai(Sys.sleep(0.2))
-m2 <- mirai(Sys.sleep(0.1))
-start <- Sys.time()
-race_mirai(list(m1, m2))
-Sys.time() - start
-race_mirai(list(m1, m2))
-Sys.time() - start
+m1 <- mirai({ Sys.sleep(0.2); "one" })
+m2 <- mirai({ Sys.sleep(0.1); "two" })
+m3 <- mirai({ Sys.sleep(0.3); "three" })
+remaining <- list(m1, m2, m3)
+while (length(remaining) > 0) {
+  idx <- race_mirai(remaining)
+  print(remaining[[idx]]$data)
+  remaining <- remaining[-idx]
+}
 daemons(0)
 }
 ```

@@ -45,8 +45,9 @@ launch_remote(n = 1L, remote = remote_config(), ..., .compute = NULL)
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 - remote:
 

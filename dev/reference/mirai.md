@@ -15,34 +15,32 @@ mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 
 - .expr:
 
-  an expression to evaluate asynchronously (of arbitrary length, wrapped
-  in { } where necessary), **or else** a pre-constructed language
-  object.
+  (expression) code to evaluate asynchronously, or a language object.
+  Wrap multi-line expressions in
+  [`{}`](https://rdrr.io/r/base/Paren.html).
 
 - ...:
 
-  (optional) **either** named arguments (name = value pairs) specifying
-  objects referenced, but not defined, in `.expr`, **or** an environment
-  containing such objects. See 'evaluation' section below.
+  (named arguments \| environment) objects required by `.expr`, assigned
+  to the daemon's global environment. See 'evaluation' section below.
 
 - .args:
 
-  (optional) **either** a named list specifying objects referenced, but
-  not defined, in `.expr`, **or** an environment containing such
-  objects. These objects will remain local to the evaluation environment
-  as opposed to those supplied in `...` above - see 'evaluation' section
+  (named list \| environment) objects required by .expr, kept local to
+  the evaluation environment (unlike `...`). See 'evaluation' section
   below.
 
 - .timeout:
 
-  integer value in milliseconds, or NULL for no timeout. A mirai will
-  resolve to an 'errorValue' 5 (timed out) if evaluation exceeds this
-  limit.
+  (integer) timeout in milliseconds. The mirai resolves to an
+  'errorValue' 5 (timed out) if evaluation exceeds this limit. `NULL`
+  (default) for no timeout.
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 ## Value
 

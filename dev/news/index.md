@@ -2,6 +2,14 @@
 
 ## mirai (development version)
 
+##### Breaking Changes
+
+- [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
+  now returns the integer index of the first resolved ‘mirai’ instead of
+  the entire list. Returns immediately if any mirai is already resolved,
+  and returns `0L` for empty lists. This enables efficient removal from
+  the list via `remaining <- remaining[-idx]`.
+
 ##### Updates
 
 - A `miraiError` gains `conditionCall` and `conditionMessage` methods
