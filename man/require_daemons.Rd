@@ -7,8 +7,9 @@
 require_daemons(.compute = NULL, call = environment())
 }
 \arguments{
-\item{.compute}{character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.}
+\item{.compute}{(character) name of the compute profile. Each profile has its
+own independent set of daemons. \code{NULL} (default) uses the 'default'
+profile.}
 
 \item{call}{(only used if the \pkg{cli} package is installed) the
 execution environment of a currently running function, e.g.

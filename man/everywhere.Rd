@@ -7,18 +7,15 @@
 everywhere(.expr, ..., .args = list(), .min = 1L, .compute = NULL)
 }
 \arguments{
-\item{.expr}{an expression to evaluate asynchronously (of arbitrary length,
-wrapped in \{ \} where necessary), \strong{or else} a pre-constructed language
-object.}
+\item{.expr}{(expression) code to evaluate asynchronously, or a language
+object. Wrap multi-line expressions in \code{{}}.}
 
-\item{...}{(optional) \strong{either} named arguments (name = value pairs)
-specifying objects referenced, but not defined, in \code{.expr}, \strong{or} an
-environment containing such objects. See 'evaluation' section below.}
+\item{...}{(named arguments | environment) objects required by \code{.expr},
+assigned to the daemon's global environment. See 'evaluation' section
+below.}
 
-\item{.args}{(optional) \strong{either} a named list specifying objects
-referenced, but not defined, in \code{.expr}, \strong{or} an environment containing
-such objects. These objects will remain local to the evaluation environment
-as opposed to those supplied in \code{...} above - see 'evaluation' section
+\item{.args}{(named list | environment) objects required by .expr, kept local
+to the evaluation environment (unlike \code{...}). See 'evaluation' section
 below.}
 
 \item{.min}{(only applicable when using dispatcher) integer minimum number of
@@ -26,8 +23,9 @@ daemons on which to evaluate the expression. A synchronization point is
 created, which can be useful for remote daemons, as these may take some
 time to connect.}
 
-\item{.compute}{character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.}
+\item{.compute}{(character) name of the compute profile. Each profile has its
+own independent set of daemons. \code{NULL} (default) uses the 'default'
+profile.}
 }
 \value{
 A 'mirai_map' (list of 'mirai' objects).

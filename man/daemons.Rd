@@ -75,8 +75,9 @@ comprising (i) the TLS certificate (optionally certificate chain) and
 with a password) For security, should be provided through a function that
 returns this value, rather than directly.}
 
-\item{.compute}{character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.}
+\item{.compute}{(character) name of the compute profile. Each profile has its
+own independent set of daemons. \code{NULL} (default) uses the 'default'
+profile.}
 }
 \value{
 Invisibly, logical \code{TRUE} when creating daemons and \code{FALSE} when

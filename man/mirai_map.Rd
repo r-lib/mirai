@@ -25,8 +25,9 @@ mirai. Either a function, supplied to the \code{onFulfilled} argument of
 \code{onFulfilled} and \code{onRejected} of \code{promises::then()}. Using this argument
 requires the \pkg{promises} package.}
 
-\item{.compute}{character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.}
+\item{.compute}{(character) name of the compute profile. Each profile has its
+own independent set of daemons. \code{NULL} (default) uses the 'default'
+profile.}
 }
 \value{
 A 'mirai_map' (list of 'mirai' objects).
