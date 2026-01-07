@@ -13,26 +13,21 @@ ssh_config(
 )
 }
 \arguments{
-\item{remotes}{the character URL or vector of URLs to SSH into, using the
-'ssh://' scheme and including the port open for SSH connections (defaults
-to 22 if not specified), e.g. 'ssh://10.75.32.90:22' or 'ssh://nodename'.}
+\item{remotes}{(character) URL(s) to SSH into using scheme 'ssh://', e.g.
+'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22.}
 
-\item{tunnel}{logical value, whether to use SSH tunnelling. If TRUE, requires
-the \code{\link[=daemons]{daemons()}} \code{url} hostname to be '127.0.0.1'. See the 'SSH Tunnelling'
-section below for further details.}
+\item{tunnel}{(logical) whether to use SSH tunnelling. Requires \code{url}
+hostname '127.0.0.1' (use \code{\link[=local_url]{local_url()}} with \code{tcp = TRUE}). See SSH
+Tunnelling section.}
 
-\item{timeout}{maximum time in seconds allowed for connection setup.}
+\item{timeout}{(integer) maximum seconds for connection setup.}
 
-\item{command}{the command used to effect the daemon launch on the remote
-machine as a character string (e.g. \code{"ssh"}). Defaults to \code{"ssh"} for
-\code{ssh_config}, although may be substituted for the full path to a specific
-SSH application. The default NULL for \code{remote_config} does not carry out
-any launches, but causes \code{\link[=launch_remote]{launch_remote()}} to return the shell commands for
-manual deployment on remote machines.}
+\item{command}{(character) shell command for launching daemons (e.g.
+\code{"ssh"}). \code{NULL} returns shell commands for manual deployment without
+launching.}
 
-\item{rscript}{filename of the R executable. Use the full path of the Rscript
-executable on the remote machine if necessary. If launching on Windows,
-\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
+\item{rscript}{(character) Rscript executable. Use full path if needed, or
+\code{"Rscript.exe"} on Windows.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

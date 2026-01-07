@@ -11,10 +11,8 @@ require_daemons(.compute = NULL, call = environment())
 own independent set of daemons. \code{NULL} (default) uses the 'default'
 profile.}
 
-\item{call}{(only used if the \pkg{cli} package is installed) the
-execution environment of a currently running function, e.g.
-\code{environment()}. The function will be mentioned in error messages as the
-source of the error.}
+\item{call}{(environment) execution environment for error attribution, e.g.
+\code{environment()}. Used by \pkg{cli} for error messages.}
 }
 \value{
 Invisibly, logical \code{TRUE}, or else errors.

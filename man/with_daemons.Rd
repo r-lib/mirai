@@ -14,10 +14,9 @@ local_daemons(.compute, frame = parent.frame())
 own independent set of daemons. \code{NULL} (default) uses the 'default'
 profile.}
 
-\item{expr}{an expression to evaluate.}
+\item{expr}{(expression) to evaluate using the compute profile.}
 
-\item{frame}{the frame (environment) to which the daemons compute profile is
-scoped.}
+\item{frame}{(environment) scope for the compute profile setting.}
 }
 \value{
 For \strong{with_daemons}: the return value of \code{expr}. \cr

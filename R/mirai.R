@@ -215,10 +215,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' involve random numbers.
 #'
 #' @inheritParams mirai
-#' @param .min (only applicable when using dispatcher) integer minimum number of
-#'   daemons on which to evaluate the expression. A synchronization point is
-#'   created, which can be useful for remote daemons, as these may take some
-#'   time to connect.
+#' @param .min (integer) minimum daemons to evaluate on (dispatcher only).
+#'   Creates a synchronization point, useful for remote daemons that take time
+#'   to connect.
 #'
 #' @return A 'mirai_map' (list of 'mirai' objects).
 #'
@@ -307,7 +306,7 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
 #' `x[]` may also be used to wait for and return the value of a mirai `x`, and
 #' is the equivalent of `call_mirai(x)$data`.
 #'
-#' @param x a 'mirai' object, or list of 'mirai' objects.
+#' @param x (mirai | list) a 'mirai' object or list of 'mirai' objects.
 #'
 #' @return The passed object (invisibly). For a 'mirai', the retrieved value is
 #'   stored at `$data`.
@@ -359,7 +358,7 @@ call_mirai <- call_aio_
 #'
 #' All of the 'mirai' objects supplied must belong to the same compute profile.
 #'
-#' @param x a list of 'mirai' objects.
+#' @param x (list) of 'mirai' objects.
 #' @inheritParams mirai
 #'
 #' @return Integer index of the first resolved 'mirai' (invisibly), or
@@ -416,9 +415,8 @@ race_mirai <- function(x, .compute = NULL) {
 #' `x[]` is an equivalent way to wait for and return the value of a mirai `x`.
 #'
 #' @inheritParams call_mirai
-#' @param options (if `x` is a list of mirai) a character vector comprising any
-#'   combination of collection options for [mirai_map()], such as `".flat"` or
-#'   `c(".progress", ".stop")`.
+#' @param options (character) collection options for list input, e.g. `".flat"`
+#'   or `c(".progress", ".stop")`. See Options section.
 #'
 #' @return An object (the return value of the 'mirai'), or a list of such
 #'   objects (the same length as `x`, preserving names).
@@ -504,8 +502,8 @@ stop_mirai <- stop_request
 #'
 #' Suitable for use in control flow statements such as `while` or `if`.
 #'
-#' @param x a 'mirai' object or list of 'mirai' objects, or a 'mirai' value
-#'   stored at `$data`.
+#' @param x (mirai | list | mirai value) a 'mirai', list of 'mirai' objects, or
+#'   value from `$data`.
 #'
 #' @return Logical TRUE if `x` is an unresolved 'mirai' or 'mirai' value or the
 #'   list contains at least one unresolved 'mirai', or FALSE otherwise.
@@ -524,7 +522,7 @@ unresolved <- unresolved
 #'
 #' Is the object a 'mirai' or 'mirai_map'.
 #'
-#' @param x an object.
+#' @param x (object) to test.
 #'
 #' @return Logical TRUE if `x` is of class 'mirai' or 'mirai_map' respectively,
 #'   FALSE otherwise.
@@ -567,7 +565,7 @@ is_mirai_map <- function(x) inherits(x, "mirai_map")
 #' 'miraiInterrupt'. This is a catch-all condition that includes all returned
 #' error values.
 #'
-#' @param x an object.
+#' @param x (object) to test.
 #'
 #' @return Logical value TRUE or FALSE.
 #'

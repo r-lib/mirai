@@ -13,7 +13,7 @@ is_mirai_interrupt(x)
 is_error_value(x)
 }
 \arguments{
-\item{x}{an object.}
+\item{x}{(object) to test.}
 }
 \value{
 Logical value TRUE or FALSE.

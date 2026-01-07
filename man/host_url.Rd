@@ -10,16 +10,13 @@ host_url(tls = FALSE, port = 0)
 local_url(tcp = FALSE, port = 0)
 }
 \arguments{
-\item{tls}{logical value whether to use TLS. If TRUE, the scheme used will be
-'tls+tcp://'.}
+\item{tls}{(logical) whether to use TLS (scheme 'tls+tcp://').}
 
-\item{port}{numeric port to use. \code{0} is a wildcard value that automatically
-assigns a free ephemeral port. For \code{host_url}, this port should be open to
-connections from the network addresses the daemons are connecting from. For
-\code{local_url}, is only taken into account if \code{tcp = TRUE}.}
+\item{port}{(integer) port number. \code{0} assigns a free ephemeral port. For
+\code{\link[=host_url]{host_url()}}, must be open to daemon connections. For \code{\link[=local_url]{local_url()}}, only
+used when \code{tcp = TRUE}.}
 
-\item{tcp}{logical value whether to use a TCP connection. This must be TRUE
-for use with SSH tunnelling.}
+\item{tcp}{(logical) whether to use TCP. Required for SSH tunnelling.}
 }
 \value{
 A character vector (comprising a valid URL or URLs), named for

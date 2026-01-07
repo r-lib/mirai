@@ -7,8 +7,8 @@
 unresolved(x)
 }
 \arguments{
-\item{x}{a 'mirai' object or list of 'mirai' objects, or a 'mirai' value
-stored at \verb{$data}.}
+\item{x}{(mirai | list | mirai value) a 'mirai', list of 'mirai' objects, or
+value from \verb{$data}.}
 }
 \value{
 Logical TRUE if \code{x} is an unresolved 'mirai' or 'mirai' value or the

@@ -7,7 +7,7 @@
 race_mirai(x, .compute = NULL)
 }
 \arguments{
-\item{x}{a list of 'mirai' objects.}
+\item{x}{(list) of 'mirai' objects.}
 
 \item{.compute}{(character) name of the compute profile. Each profile has its
 own independent set of daemons. \code{NULL} (default) uses the 'default'

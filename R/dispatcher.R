@@ -13,21 +13,16 @@
 #' tasks are only sent to daemons that can begin immediate execution of the
 #' task.
 #'
-#' @inheritParams daemons
-#' @param host the character URL dispatcher should dial in to, typically an IPC
-#'   address.
-#' @param url the character URL dispatcher should listen at (and daemons should
-#'   dial in to), including the port to connect to e.g. tcp://hostname:5555' or
-#'   'tcp://10.75.32.70:5555'. Specify 'tls+tcp://' to use secure TLS
-#'   connections.
-#' @param n if specified, the integer number of daemons to be launched locally
-#'   by the host process.
+#' @param host (character) URL to dial into, typically an IPC address.
+#' @param url (character) URL to listen at for daemon connections, e.g.
+#'   'tcp://hostname:5555'. Use 'tls+tcp://' for secure TLS.
+#' @param n (integer) number of local daemons launched by host.
 #'
 #' @return Invisibly, an integer exit code: 0L for normal termination.
 #'
 #' @export
 #'
-dispatcher <- function(host, url = NULL, n = 0L, ...) {
+dispatcher <- function(host, url = NULL, n = 0L) {
   cv <- cv()
   sock <- socket("rep")
   on.exit(reap(sock))

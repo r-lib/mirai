@@ -15,17 +15,14 @@
 
 #' Make mirai Promise
 #'
-#' Creates a 'promise' from a 'mirai'.
+#' Creates a 'promise' from a 'mirai'. S3 method for `promises::as.promise()`.
 #'
-#' This function is an S3 method for the generic `as.promise()` for class
-#' 'mirai'.
+#' Allows a 'mirai' to be used with the promise pipe `%...>%`, scheduling a
+#' function to run upon resolution.
 #'
 #' Requires the \pkg{promises} package.
 #'
-#' Allows a 'mirai' to be used with the promise pipe `%...>%`, which schedules a
-#' function to run upon resolution of the 'mirai'.
-#'
-#' @param x an object of class 'mirai'.
+#' @param x (mirai) object to convert to promise.
 #'
 #' @return A 'promise' object.
 #'
@@ -64,22 +61,18 @@ handle_fulfilled <- function(value, .visible) {
 
 #' Make mirai_map Promise
 #'
-#' Creates a 'promise' from a 'mirai_map'.
+#' Creates a 'promise' from a 'mirai_map'. S3 method for
+#' `promises::as.promise()`.
 #'
-#' This function is an S3 method for the generic `as.promise()` for class
-#' 'mirai_map'.
+#' Allows a 'mirai_map' to be used with the promise pipe `%...>%`, scheduling a
+#' function to run upon resolution of all mirai.
+#'
+#' Uses `promises::promise_all()` internally: resolves to a list of values if
+#' all succeed, or rejects with the first error encountered.
 #'
 #' Requires the \pkg{promises} package.
 #'
-#' Allows a 'mirai_map' to be used with the promise pipe `%...>%`, which
-#' schedules a function to run upon resolution of the entire 'mirai_map'.
-#'
-#' The implementation internally uses `promises::promise_all()`. If all of the
-#' promises were successful, the returned promise will resolve to a list of the
-#' promise values; if any promise fails, the first error to be encountered will
-#' be used to reject the returned promise.
-#'
-#' @param x an object of class 'mirai_map'.
+#' @param x (mirai_map) object to convert to promise.
 #'
 #' @return A 'promise' object.
 #'

@@ -7,11 +7,10 @@
 collect_mirai(x, options = NULL)
 }
 \arguments{
-\item{x}{a 'mirai' object, or list of 'mirai' objects.}
+\item{x}{(mirai | list) a 'mirai' object or list of 'mirai' objects.}
 
-\item{options}{(if \code{x} is a list of mirai) a character vector comprising any
-combination of collection options for \code{\link[=mirai_map]{mirai_map()}}, such as \code{".flat"} or
-\code{c(".progress", ".stop")}.}
+\item{options}{(character) collection options for list input, e.g. \code{".flat"}
+or \code{c(".progress", ".stop")}. See Options section.}
 }
 \value{
 An object (the return value of the 'mirai'), or a list of such

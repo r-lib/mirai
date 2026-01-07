@@ -7,11 +7,11 @@
 \method{with}{miraiDaemons}(data, expr, ...)
 }
 \arguments{
-\item{data}{a call to \code{\link[=daemons]{daemons()}}.}
+\item{data}{(miraiDaemons) return value from \code{\link[=daemons]{daemons()}}.}
 
-\item{expr}{an expression to evaluate.}
+\item{expr}{(expression) to evaluate with daemons active.}
 
-\item{...}{not used.}
+\item{...}{unused.}
 }
 \value{
 The return value of \code{expr}.

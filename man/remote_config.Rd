@@ -12,25 +12,19 @@ remote_config(
 )
 }
 \arguments{
-\item{command}{the command used to effect the daemon launch on the remote
-machine as a character string (e.g. \code{"ssh"}). Defaults to \code{"ssh"} for
-\code{ssh_config}, although may be substituted for the full path to a specific
-SSH application. The default NULL for \code{remote_config} does not carry out
-any launches, but causes \code{\link[=launch_remote]{launch_remote()}} to return the shell commands for
-manual deployment on remote machines.}
+\item{command}{(character) shell command for launching daemons (e.g.
+\code{"ssh"}). \code{NULL} returns shell commands for manual deployment without
+launching.}
 
-\item{args}{(optional) arguments passed to \code{command}, as a character vector
-that must include \code{"."} as an element, which will be substituted for the
-daemon launch command. Alternatively, a list of such character vectors to
-effect multiple launches (one for each list element).}
+\item{args}{(character vector) arguments to \code{command}, must include \code{"."} as
+placeholder for the daemon launch command. May be a list of vectors for
+multiple launches.}
 
-\item{rscript}{filename of the R executable. Use the full path of the Rscript
-executable on the remote machine if necessary. If launching on Windows,
-\code{"Rscript"} should be replaced with \code{"Rscript.exe"}.}
+\item{rscript}{(character) Rscript executable. Use full path if needed, or
+\code{"Rscript.exe"} on Windows.}
 
-\item{quote}{logical value whether or not to quote the daemon launch command
-(not required for Slurm \code{"srun"} for example, but required for Slurm
-\code{"sbatch"} or \code{"ssh"}).}
+\item{quote}{(logical) whether to quote the daemon launch command. Required
+for \code{"sbatch"} and \code{"ssh"}, not for \code{"srun"}.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument

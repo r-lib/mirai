@@ -17,12 +17,11 @@ nextcode(xc)
 own independent set of daemons. \code{NULL} (default) uses the 'default'
 profile.}
 
-\item{x}{character value of item to retrieve. One of \code{"n"} (number of
-dispatcher daemons), \code{"dispatcher"} (the URL dispatcher uses to connect to
-host) \code{"url"} (the URL to connect to dispatcher from daemons) or \code{"tls"}
-(the stored client TLS configuration for use by daemons).}
+\item{x}{(character) item to retrieve: \code{"n"} (daemon count), \code{"dispatcher"}
+(dispatcher-to-host URL), \code{"url"} (daemon connection URL), or \code{"tls"}
+(client TLS configuration).}
 
-\item{xc}{integer return value of \code{\link[=daemon]{daemon()}}.}
+\item{xc}{(integer) return value from \code{\link[=daemon]{daemon()}}.}
 }
 \value{
 For \code{nextstream}: a length 7 integer vector, as given by

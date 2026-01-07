@@ -10,7 +10,7 @@ is_mirai(x)
 is_mirai_map(x)
 }
 \arguments{
-\item{x}{an object.}
+\item{x}{(object) to test.}
 }
 \value{
 Logical TRUE if \code{x} is of class 'mirai' or 'mirai_map' respectively,

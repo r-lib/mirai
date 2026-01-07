@@ -18,10 +18,9 @@ below.}
 to the evaluation environment (unlike \code{...}). See 'evaluation' section
 below.}
 
-\item{.min}{(only applicable when using dispatcher) integer minimum number of
-daemons on which to evaluate the expression. A synchronization point is
-created, which can be useful for remote daemons, as these may take some
-time to connect.}
+\item{.min}{(integer) minimum daemons to evaluate on (dispatcher only).
+Creates a synchronization point, useful for remote daemons that take time
+to connect.}
 
 \item{.compute}{(character) name of the compute profile. Each profile has its
 own independent set of daemons. \code{NULL} (default) uses the 'default'

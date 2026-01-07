@@ -7,15 +7,14 @@
 register_serial(class, sfunc, ufunc)
 }
 \arguments{
-\item{class}{a character string (or vector) of the class of object custom
-serialization functions are applied to, e.g. \code{'ArrowTabular'} or
-\code{c('torch_tensor', 'ArrowTabular')}.}
+\item{class}{(character) class name(s) for custom serialization, e.g.
+\code{'ArrowTabular'} or \code{c('torch_tensor', 'ArrowTabular')}.}
 
-\item{sfunc}{a function (or list of functions) that accepts a reference
-object inheriting from \code{class} and returns a raw vector.}
+\item{sfunc}{(function | list) serialization function(s) accepting a
+reference object and returning a raw vector.}
 
-\item{ufunc}{a function (or list of functions) that accepts a raw vector and
-returns a reference object.}
+\item{ufunc}{(function | list) unserialization function(s) accepting a raw
+vector and returning a reference object.}
 }
 \value{
 Invisible NULL.

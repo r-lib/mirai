@@ -7,23 +7,20 @@
 mirai_map(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL)
 }
 \arguments{
-\item{.x}{a list or atomic vector. Also accepts a matrix or dataframe, in
-which case multiple map is performed over its rows.}
+\item{.x}{(list | vector | matrix | data.frame) input to map over. For matrix
+or dataframe, maps over rows (see Multiple Map section).}
 
-\item{.f}{a function to be applied to each element of \code{.x}, or row of \code{.x} as
-the case may be.}
+\item{.f}{(function) applied to each element of \code{.x}, or each row of a
+matrix / dataframe.}
 
-\item{...}{(optional) named arguments (name = value pairs) specifying objects
-referenced, but not defined, in \code{.f}.}
+\item{...}{(named arguments) objects referenced but not defined in \code{.f}.}
 
-\item{.args}{(optional) further constant arguments to \code{.f}, provided as a
-list.}
+\item{.args}{(list) constant arguments passed to \code{.f}.}
 
-\item{.promise}{(optional) if supplied, registers a promise against each
-mirai. Either a function, supplied to the \code{onFulfilled} argument of
-\code{promises::then()} or a list of 2 functions, supplied respectively to
-\code{onFulfilled} and \code{onRejected} of \code{promises::then()}. Using this argument
-requires the \pkg{promises} package.}
+\item{.promise}{(function | list) registers a promise against each mirai.
+Either an \code{onFulfilled} function, or a list of (\code{onFulfilled},
+\code{onRejected}) functions for \code{\link[promises:then]{promises::then()}}. Requires the \pkg{promises}
+package.}
 
 \item{.compute}{(character) name of the compute profile. Each profile has its
 own independent set of daemons. \code{NULL} (default) uses the 'default'
@@ -34,8 +31,8 @@ A 'mirai_map' (list of 'mirai' objects).
 }
 \description{
 Asynchronous parallel map of a function over a list or vector using
-\pkg{mirai}, with optional \pkg{promises} integration. Performs multiple map
-over the rows of a dataframe or matrix.
+\pkg{mirai}, with optional \pkg{promises} integration. For matrix or
+dataframe inputs, maps over rows.
 }
 \details{
 Sends each application of function \code{.f} on an element of \code{.x} (or row of
@@ -93,7 +90,7 @@ transpose a matrix using \code{\link[=t]{t()}}.
 \section{Nested Maps}{
 
 
-At times you way wish to run maps within maps. To do this, the function
+At times you may wish to run maps within maps. To do this, the function
 provided to the outer map needs to include a call to \code{\link[=daemons]{daemons()}} to set
 daemons used by the inner map. To guard against inadvertently spawning an
 excessive number of daemons on the same machine, attempting to launch local

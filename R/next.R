@@ -38,10 +38,9 @@ nextstream <- function(.compute = "default") next_stream(..[[.compute]])
 #'
 #' `nextget` retrieves the specified item from the specified compute profile.
 #'
-#' @param x character value of item to retrieve. One of `"n"` (number of
-#'   dispatcher daemons), `"dispatcher"` (the URL dispatcher uses to connect to
-#'   host) `"url"` (the URL to connect to dispatcher from daemons) or `"tls"`
-#'   (the stored client TLS configuration for use by daemons).
+#' @param x (character) item to retrieve: `"n"` (daemon count), `"dispatcher"`
+#'   (dispatcher-to-host URL), `"url"` (daemon connection URL), or `"tls"`
+#'   (client TLS configuration).
 #'
 #' @return For `nextget`: the requested item, or else NULL if not present.
 #'
@@ -55,7 +54,7 @@ nextget <- function(x, .compute = "default") ..[[.compute]][[x]]
 #'
 #' `nextcode` translates integer exit codes returned by [daemon()].
 #'
-#' @param xc integer return value of [daemon()].
+#' @param xc (integer) return value from [daemon()].
 #'
 #' @return For `nextcode`: character string.
 #'

@@ -7,7 +7,7 @@
 stop_mirai(x)
 }
 \arguments{
-\item{x}{a 'mirai' object, or list of 'mirai' objects.}
+\item{x}{(mirai | list) a 'mirai' object or list of 'mirai' objects.}
 }
 \value{
 Logical TRUE if the cancellation request was successful (was awaiting

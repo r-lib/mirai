@@ -7,27 +7,23 @@
 \method{as.promise}{mirai_map}(x)
 }
 \arguments{
-\item{x}{an object of class 'mirai_map'.}
+\item{x}{(mirai_map) object to convert to promise.}
 }
 \value{
 A 'promise' object.
 }
 \description{
-Creates a 'promise' from a 'mirai_map'.
+Creates a 'promise' from a 'mirai_map'. S3 method for
+\code{promises::as.promise()}.
 }
 \details{
-This function is an S3 method for the generic \code{as.promise()} for class
-'mirai_map'.
+Allows a 'mirai_map' to be used with the promise pipe \verb{\%...>\%}, scheduling a
+function to run upon resolution of all mirai.
+
+Uses \code{promises::promise_all()} internally: resolves to a list of values if
+all succeed, or rejects with the first error encountered.
 
 Requires the \pkg{promises} package.
-
-Allows a 'mirai_map' to be used with the promise pipe \verb{\%...>\%}, which
-schedules a function to run upon resolution of the entire 'mirai_map'.
-
-The implementation internally uses \code{promises::promise_all()}. If all of the
-promises were successful, the returned promise will resolve to a list of the
-promise values; if any promise fails, the first error to be encountered will
-be used to reject the returned promise.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("promises", quietly = TRUE)) withAutoprint(\{ # examplesIf}

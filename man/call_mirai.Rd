@@ -7,7 +7,7 @@
 call_mirai(x)
 }
 \arguments{
-\item{x}{a 'mirai' object, or list of 'mirai' objects.}
+\item{x}{(mirai | list) a 'mirai' object or list of 'mirai' objects.}
 }
 \value{
 The passed object (invisibly). For a 'mirai', the retrieved value is
