@@ -312,7 +312,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 8923
+#> [1] 9024
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -321,5 +321,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 8923
+#> [1] 9024
 ```
