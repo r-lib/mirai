@@ -511,7 +511,7 @@ posit_workbench_launch <- function(n, args) {
   cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
   nzchar(server) && nzchar(cookie) || return()
   json <- sprintf(
-    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"name":"mirai_daemon","exe":"Rscript","args":["-e","\'mirai::daemon(\\"%s\\")\'"]}}}',
+    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"resourceProfile":"default","name":"mirai_daemon","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
     args[["name"]],
     args[["image"]],
     nextget("url")
