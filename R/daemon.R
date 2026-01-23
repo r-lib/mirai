@@ -120,6 +120,8 @@ daemon <- function(
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
+        # handle possibility of an (empty) cancellation message received late
+        length(m) || next
         is.integer(m) &&
           {
             m == 5L || next
