@@ -91,7 +91,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
 
   if (length(remote) == 2L) {
     remote[["platform"]] == "posit_workbench" || stop(._[["posit_api"]])
-    return(posit_workbench_launch(n, args, Sys.getenv("PWB_API_KEY")))
+    return(posit_workbench_launch(n, remote[["args"]]))
   }
 
   command <- remote[["command"]]
@@ -406,8 +406,8 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'
 #' @export
 #'
-posit_workbench_config <- function(apikey = Sys.getenv("PWB_API_KEY")) {
-  args <- posit_get_info(apikey)
+posit_workbench_config <- function() {
+  args <- posit_get_info()
   is.null(args) && stop(._[["posit_api"]])
   list(platform = "posit_workbench", args = args)
 }
@@ -495,24 +495,23 @@ find_dot <- function(args) {
   sel
 }
 
-posit_get_info <- function(apikey) {
+posit_get_info <- function() {
   server <- Sys.getenv("RS_SERVER_ADDRESS")
-  nzchar(server) || return()
-  info <- ncurl(
-    url = file.path(server, "api", "get_compute_envs"),
-    headers = c(Authorization = sprintf("Bearer %s", apikey))
-  )
+  cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  nzchar(server) && nzchar(cookie) || return()
+  info <- ncurl(url = file.path(server, "api", "get_compute_envs"), headers = c(Cookie = cookie))
   info[["status"]] == 200L || return()
   json <- info[["data"]]
   image <- sub('.*"defaultImage"\\s*:\\s*"([^"]*)".*', '\\1', json, perl = TRUE)
   list(name = "Kubernetes", image = image)
 }
 
-posit_workbench_launch <- function(n, args, apikey) {
+posit_workbench_launch <- function(n, args) {
   server <- Sys.getenv("RS_SERVER_ADDRESS")
-  nzchar(server) || return()
+  cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  nzchar(server) && nzchar(cookie) || return()
   json <- sprintf(
-    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"resourceProfile":"default","name":"mirai_daemon","exe":"Rscript","args":["-e","mirai::daemon(\\"%s\\")"]}}}',
+    '{"method":"launch_job","kwparams":{"job":{"cluster":"%s","container":{"image":"%s"},"name":"mirai_daemon","exe":"Rscript","args":["-e","\'mirai::daemon(\\"%s\\")\'"]}}}',
     args[["name"]],
     args[["image"]],
     nextget("url")
@@ -520,7 +519,7 @@ posit_workbench_launch <- function(n, args, apikey) {
   res <- ncurl(
     url = file.path(server, "api", "launch_job"),
     method = "POST",
-    headers = c(Authorization = sprintf("Bearer %s", apikey)),
+    headers = c(Cookie = cookie),
     data = json
   )
 }

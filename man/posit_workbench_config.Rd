@@ -4,7 +4,7 @@
 \alias{posit_workbench_config}
 \title{Posit Workbench Launch Configuration}
 \usage{
-posit_workbench_config(apikey = Sys.getenv("PWB_API_KEY"))
+posit_workbench_config()
 }
 \arguments{
 \item{apikey}{your 32 character Posit Workbench API key.}
