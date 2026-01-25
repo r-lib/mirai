@@ -130,13 +130,19 @@ daemon <- function(
           }
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
           {
-            suspendInterrupts(marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)))
+            tryCatch(
+              marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)),
+              interrupt = function(cnd) marked(send(sock, mk_interrupt_error(), mode = 1L, block = TRUE))
+            )
             aio <- recv_aio(sock, mode = 8L, cv = cv)
             xc <- 2L + (task >= maxtasks)
             wait(cv)
             break
           }
-        suspendInterrupts(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
+        tryCatch(
+          send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE),
+          interrupt = function(cnd) send(sock, mk_interrupt_error(), mode = 1L, block = TRUE)
+        )
         if (cleanup) {
           do_cleanup()
         }
