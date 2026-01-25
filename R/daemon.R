@@ -215,15 +215,15 @@ eval_mirai <- function(._mirai_., sock = NULL) {
     withCallingHandlers(
       {
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
-        spn <- otel_eval_span(._mirai_.[["._otel_."]])
+        sock <- otel_eval_span(._mirai_.[["._otel_."]])
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = function(cnd) {
-        otel_set_span_error(spn, "miraiError")
+        otel_set_span_error(sock, "miraiError")
         invokeRestart("mirai_error", cnd, sys.calls())
       },
       interrupt = function(cnd) {
-        otel_set_span_error(spn, "miraiInterrupt")
+        otel_set_span_error(sock, "miraiInterrupt")
         invokeRestart("mirai_interrupt")
       }
     ),
