@@ -116,7 +116,7 @@ daemon <- function(
         `opt<-`(sock, "serial", bundle[[2L]])
       }
       snapshot()
-      repeat {
+      suspendInterrupts(repeat {
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
@@ -130,25 +130,25 @@ daemon <- function(
           }
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
           {
-            suspendInterrupts(marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)))
+            marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
             aio <- recv_aio(sock, mode = 8L, cv = cv)
             xc <- 2L + (task >= maxtasks)
             wait(cv)
             break
           }
-        suspendInterrupts(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
+        send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
         if (cleanup) {
           do_cleanup()
         }
         task <- task + 1L
-      }
+      })
     }
   } else {
     if (is.numeric(rs)) {
       `[[<-`(globalenv(), ".Random.seed", as.integer(rs))
     }
     snapshot()
-    repeat {
+    suspendInterrupts(repeat {
       ctx <- .context(sock)
       aio <- recv_aio(ctx, mode = 1L, timeout = timeout, cv = cv)
       wait(cv) || break
@@ -170,7 +170,7 @@ daemon <- function(
         do_cleanup()
       }
       task <- task + 1L
-    }
+    })
   }
 
   if (!output) {
