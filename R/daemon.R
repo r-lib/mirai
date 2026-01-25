@@ -120,16 +120,14 @@ daemon <- function(
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
-        # handle possibility of a cancellation message received late:
-        # could be empty, integer, or raw (if deserialization failed)
-        length(m) || next
+        # handle cancellation received late: raw (if deserialization failed)
+        is.raw(m) && next
         is.integer(m) &&
           {
             m == 5L || next
             xc <- 1L
             break
           }
-        is.raw(m) && next
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
           {
             marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
