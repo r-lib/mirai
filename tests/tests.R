@@ -423,6 +423,11 @@ connection && NOT_CRAN && {
   test_equal(info()[["connections"]], 1L)
   test_equal(length(nextget("url")), 1L)
   test_class("miraiLaunchCmd", launch_remote(1))
+  for (i in 1:25) {
+    m <- mirai_map(1:5, function(x) stop("error"))
+    tryCatch(m[.stop], error = identity)
+  }
+  test_equal(info()[["connections"]], 1L)
   test_false(daemons(0))
 }
 # additional stress testing
