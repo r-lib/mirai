@@ -214,7 +214,7 @@ daemon <- function(
 eval_mirai <- function(._mirai_., sock = NULL) {
   if (length(sock)) {
     cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-    on.exit(suspendInterrupts(stop_aio(cancel)))
+    on.exit(stop_aio(cancel))
   }
   withRestarts(
     withCallingHandlers(
