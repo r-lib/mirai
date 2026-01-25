@@ -224,11 +224,11 @@ eval_mirai <- function(._mirai_., sock = NULL) {
     ),
     error = function(cnd) {
       otel_set_span_error(sock, "miraiError")
-      mk_mirai_error(cnd, .[["syscalls"]])
+      mk_mirai_error(cnd)
     },
     interrupt = function(cnd) {
       otel_set_span_error(sock, "miraiInterrupt")
-      .miraiInterrupt
+      mk_mirai_interrupt()
     }
   )
 }
