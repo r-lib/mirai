@@ -694,8 +694,6 @@ deparse_safe <- function(x) {
   deparse(x, width.cutoff = 500L, backtick = TRUE, control = NULL, nlines = 1L)
 }
 
-mk_interrupt_error <- function() .miraiInterrupt
-
 mk_mirai_error <- function(cnd, sc) {
   eval_call <- "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
   cnd[["condition.class"]] <- class(cnd)
@@ -712,6 +710,7 @@ mk_mirai_error <- function(cnd, sc) {
     sc <- sc[-1L]
   }
   cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
+  `[[<-`(., "syscalls", NULL)
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 

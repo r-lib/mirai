@@ -130,19 +130,13 @@ daemon <- function(
           }
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
           {
-            tryCatch(
-              marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)),
-              interrupt = function(cnd) marked(send(sock, mk_interrupt_error(), mode = 1L, block = TRUE))
-            )
+            marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
             aio <- recv_aio(sock, mode = 8L, cv = cv)
             xc <- 2L + (task >= maxtasks)
             wait(cv)
             break
           }
-        tryCatch(
-          send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE),
-          interrupt = function(cnd) send(sock, mk_interrupt_error(), mode = 1L, block = TRUE)
-        )
+        send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
         if (cleanup) {
           do_cleanup()
         }
@@ -217,7 +211,7 @@ eval_mirai <- function(._mirai_., sock = NULL) {
     cancel <- recv_aio(sock, mode = 8L, cv = substitute())
     on.exit(stop_aio(cancel))
   }
-  withRestarts(
+  tryCatch(
     withCallingHandlers(
       {
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
@@ -225,16 +219,17 @@ eval_mirai <- function(._mirai_., sock = NULL) {
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = function(cnd) {
-        otel_set_span_error(sock, "miraiError")
-        invokeRestart("mirai_error", cnd, sys.calls())
-      },
-      interrupt = function(cnd) {
-        otel_set_span_error(sock, "miraiInterrupt")
-        invokeRestart("mirai_interrupt")
+        `[[<-`(., "syscalls", sys.calls())
       }
     ),
-    mirai_error = mk_mirai_error,
-    mirai_interrupt = mk_interrupt_error
+    error = function(cnd) {
+      otel_set_span_error(sock, "miraiError")
+      mk_mirai_error(cnd, .[["syscalls"]])
+    },
+    interrupt = function(cnd) {
+      otel_set_span_error(sock, "miraiInterrupt")
+      .miraiInterrupt
+    }
   )
 }
 
