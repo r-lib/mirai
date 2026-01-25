@@ -120,7 +120,8 @@ daemon <- function(
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
-        # handle possibility of an (empty) cancellation message received late
+        # handle possibility of a cancellation message received late:
+        # could be empty, integer, or raw (if deserialization failed)
         length(m) || next
         is.integer(m) &&
           {
@@ -128,6 +129,7 @@ daemon <- function(
             xc <- 1L
             break
           }
+        is.raw(m) && next
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
           {
             marked(send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE))
@@ -136,7 +138,10 @@ daemon <- function(
             wait(cv)
             break
           }
-        send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE)
+        tryCatch(
+          send(sock, eval_mirai(m, sock), mode = 1L, block = TRUE),
+          interrupt = function(cnd) send(sock, mk_interrupt_error(), mode = 1L, block = TRUE)
+        )
         if (cleanup) {
           do_cleanup()
         }
@@ -207,13 +212,13 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 eval_mirai <- function(._mirai_., sock = NULL) {
+  if (length(sock)) {
+    cancel <- recv_aio(sock, mode = 8L, cv = substitute())
+    on.exit(suspendInterrupts(stop_aio(cancel)))
+  }
   withRestarts(
     withCallingHandlers(
       {
-        if (length(sock)) {
-          cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-          on.exit(stop_aio(cancel))
-        }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         sock <- otel_eval_span(._mirai_.[["._otel_."]])
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())

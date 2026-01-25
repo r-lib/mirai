@@ -245,7 +245,7 @@ print.mirai_map <- function(x, ...) {
     is_error_value(xi) && stop_m(x, i, xi)
     typeof(xi) != typ &&
       {
-        stop_mirai(x)
+        stop_mirai(.subset(x, vapply(x, .unresolved, FALSE)))
         cli_enabled ||
           stop(
             sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
@@ -315,7 +315,7 @@ mmap <- function(x, dots) {
 }
 
 stop_m <- function(x, i, xi) {
-  stop_mirai(x)
+  stop_mirai(.subset(x, vapply(x, .unresolved, FALSE)))
   cli_enabled || stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
   name <- names(x)[i]
   cli::cli_abort(
