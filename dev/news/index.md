@@ -12,6 +12,9 @@
 
 ##### Updates
 
+- Fixes a bug whereby repeated mirai cancellation could sometimes cause
+  a daemon to exit prematurely
+  ([\#546](https://github.com/r-lib/mirai/issues/546)).
 - A `miraiError` gains `conditionCall` and `conditionMessage` methods
   ([@jan-swissre](https://github.com/jan-swissre),
   [\#529](https://github.com/r-lib/mirai/issues/529))
