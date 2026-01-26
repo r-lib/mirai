@@ -120,6 +120,8 @@ daemon <- function(
         aio <- recv_aio(sock, mode = 1L, timeout = timeout, cv = cv)
         wait(cv) || break
         m <- collect_aio(aio)
+        # handle cancellation received late: raw (if deserialization failed)
+        is.raw(m) && next
         is.integer(m) &&
           {
             m == 5L || next
@@ -205,28 +207,29 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 eval_mirai <- function(._mirai_., sock = NULL) {
-  withRestarts(
+  if (length(sock)) {
+    cancel <- recv_aio(sock, mode = 8L, cv = substitute())
+    on.exit(stop_aio(cancel))
+  }
+  tryCatch(
     withCallingHandlers(
       {
-        if (length(sock)) {
-          cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-          on.exit(stop_aio(cancel))
-        }
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         sock <- otel_eval_span(._mirai_.[["._otel_."]])
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
       },
       error = function(cnd) {
-        otel_set_span_error(sock, "miraiError")
-        invokeRestart("mirai_error", cnd, sys.calls())
-      },
-      interrupt = function(cnd) {
-        otel_set_span_error(sock, "miraiInterrupt")
-        invokeRestart("mirai_interrupt")
+        `[[<-`(., "syscalls", sys.calls())
       }
     ),
-    mirai_error = mk_mirai_error,
-    mirai_interrupt = mk_interrupt_error
+    error = function(cnd) {
+      otel_set_span_error(sock, "miraiError")
+      mk_mirai_error(cnd)
+    },
+    interrupt = function(cnd) {
+      otel_set_span_error(sock, "miraiInterrupt")
+      mk_mirai_interrupt()
+    }
   )
 }
 

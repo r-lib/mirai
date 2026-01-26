@@ -8,6 +8,7 @@
 
 #### Updates
 
+* Fixes a bug whereby repeated mirai cancellation could sometimes cause a daemon to exit prematurely (#546).
 * A `miraiError` gains `conditionCall` and `conditionMessage` methods (@jan-swissre, #529)
 * Requires nanonext >= [1.7.2.9000].
 

@@ -59,7 +59,7 @@ test_true(grepl("5555", local_url(tcp = TRUE, port = 5555), fixed = TRUE))
 test_type("list", ssh_config("ssh://remotehost"))
 test_type("list", ssh_config("ssh://remotehost", tunnel = TRUE))
 test_type("list", cluster_config())
-test_true(is_mirai_interrupt(r <- mirai:::mk_interrupt_error()))
+test_true(is_mirai_interrupt(r <- mirai:::mk_mirai_interrupt()))
 test_print(r)
 test_true(is_mirai_error(r <- `class<-`("Error in: testing\n", c("miraiError", "errorValue", "try-error"))))
 test_print(r)
@@ -423,6 +423,11 @@ connection && NOT_CRAN && {
   test_equal(info()[["connections"]], 1L)
   test_equal(length(nextget("url")), 1L)
   test_class("miraiLaunchCmd", launch_remote(1))
+  for (i in 1:25) {
+    m <- mirai_map(1:5, function(x) stop("error"))
+    tryCatch(m[.stop], error = identity)
+  }
+  test_equal(info()[["connections"]], 1L)
   test_false(daemons(0))
 }
 # additional stress testing

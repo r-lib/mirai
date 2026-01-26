@@ -694,9 +694,11 @@ deparse_safe <- function(x) {
   deparse(x, width.cutoff = 500L, backtick = TRUE, control = NULL, nlines = 1L)
 }
 
-mk_interrupt_error <- function() .miraiInterrupt
+mk_mirai_interrupt <- function() `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))
 
-mk_mirai_error <- function(cnd, sc) {
+mk_mirai_error <- function(cnd) {
+  sc <- .[["syscalls"]]
+  `[[<-`(., "syscalls", NULL)
   eval_call <- "eval(._mirai_.[[\"._expr_.\"]], envir = ._mirai_., enclos = globalenv())"
   cnd[["condition.class"]] <- class(cnd)
   cnd[["call"]] <- `attributes<-`(.subset2(cnd, "call"), NULL)
@@ -715,6 +717,5 @@ mk_mirai_error <- function(cnd, sc) {
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 
-.miraiInterrupt <- `class<-`("", c("miraiInterrupt", "errorValue", "try-error"))
 .connReset <- serialize(`class<-`(19L, c("errorValue", "try-error")), NULL)
 .snapshot <- expression(on.exit(mirai:::snapshot(), add = TRUE))
