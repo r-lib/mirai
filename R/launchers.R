@@ -388,8 +388,6 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' Generates a remote configuration for launching daemons via the default
 #' configured Posit Workbench launcher method.
 #'
-#' @param apikey your 32 character Posit Workbench API key.
-#'
 #' @inherit remote_config return
 #'
 #' @seealso [ssh_config()], [cluster_config()], and [remote_config()] for other

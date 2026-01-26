@@ -6,9 +6,6 @@
 \usage{
 posit_workbench_config()
 }
-\arguments{
-\item{apikey}{your 32 character Posit Workbench API key.}
-}
 \value{
 A list in the required format to be supplied to the \code{remote} argument
 of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remote()}}.
