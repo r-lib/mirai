@@ -237,7 +237,8 @@ daemons <- function(
     remote <- serial <- tls <- pass <- NULL
   }
 
-  if (is.character(url)) {
+  if (length(url)) {
+    is.character(url) || stop(sprintf(._[["character_url"]], typeof(url)))
     res <- if (is.null(envir)) {
       url <- url[1L]
       envir <- init_envir_stream(seed)
