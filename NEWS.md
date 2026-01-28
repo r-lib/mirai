@@ -6,6 +6,10 @@
   Returns immediately if any mirai is already resolved, and returns `0L` for empty lists.
   This enables efficient removal from the list via `remaining <- remaining[-idx]`.
 
+#### New Features
+
+* Adds `posit_workbench_config()` to launch remote daemons using the default Posit Workbench launcher (currently only supports Rstudio Pro sessions).
+
 #### Updates
 
 * Fixes an issue in `daemons()` where supplying a non-character value to `url` causes local daemons to be launched instead of thowing an error (#549).
