@@ -12,6 +12,11 @@
 
 ##### Updates
 
+- Fixes an issue in
+  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) where
+  supplying a non-character value to `url` causes local daemons to be
+  launched instead of thowing an error
+  ([\#549](https://github.com/r-lib/mirai/issues/549)).
 - Fixes a bug whereby repeated mirai cancellation could sometimes cause
   a daemon to exit prematurely
   ([\#546](https://github.com/r-lib/mirai/issues/546)).
