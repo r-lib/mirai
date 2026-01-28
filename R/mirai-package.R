@@ -80,6 +80,7 @@ cli_enabled <- FALSE
 ._ <- list2env(
   list(
     arglen = "`n` must equal the length of `args`, or either must be 1",
+    character_url = "`url` must be of type character, not %s",
     cluster_inactive = "cluster is no longer active",
     daemons_unset = "daemons must be set to use this function",
     dot_required = "`.` must be an element of the character vector(s) supplied to `args`",
