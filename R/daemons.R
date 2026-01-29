@@ -674,7 +674,7 @@ args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
 
 args_dispatcher <- function(urld, url, n) {
   shQuote(sprintf(
-    ".libPaths(c(\"%s\",.libPaths()));mirai::dispatcher(\"%s\",url=\"%s\",n=%d)",
+    ".libPaths(\"%s\");mirai::dispatcher(\"%s\",url=\"%s\",n=%d)",
     libp(),
     urld,
     url,
