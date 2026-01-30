@@ -150,7 +150,7 @@ launch_local()
 ```
 or
 ```r
-launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config()
+launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config() / http_config()
 ```
 For flexible scaling up and down, specify one of these arguments to `...` in `launch_local()` or `launch_remote()`. Supply these to the initial `daemons()` call to apply by default for all launches:
 

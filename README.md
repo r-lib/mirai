@@ -39,8 +39,8 @@ install.packages("mirai")
 `mirai()` evaluates an R expression asynchronously in a parallel
 process.
 
-`daemons()` sets up persistent background processes for parallel
-computations.
+`daemons()` sets up *daemons*: persistent background processes that
+receive and execute tasks.
 
 ``` r
 library(mirai)
@@ -62,24 +62,50 @@ m[]
 #> [1] 142
 
 mp
-#> < mirai map [0/9] >
+#> < mirai map [4/9] >
 mp[.flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
 daemons(0)
 ```
 
+### Architecture
+
+`mirai()` sends tasks to daemons for parallel execution.
+
+A *compute profile* is a pool of connected daemons. Multiple profiles
+can coexist, directing tasks to different resources.
+
+*Hub architecture*: host listens at a URL, daemons connect to it — add
+or remove daemons at any time. Launch locally or remotely via different
+methods, and mix freely:
+
+                                ┌ Compute Profile ┐
+      launch_local() ···········│▸ Daemon ──┐     │
+                                │           │     │
+      ssh_config() ·············│▸ Daemon ──┼─────┼──▸ Host
+                                │           │     │    daemons(url = host_url())
+      cluster_config() ·········│▸ Daemon ──┤     │
+                                │           │     │
+      http_config() ············│▸ Daemon ──┘     │
+                                └─────────────────┘
+                                ┌ Compute Profile ┐
+                                │  Daemon ──┐     │
+                                │           ├─────┼──▸ Host
+                                │  Daemon ──┘     │    daemons(2)
+                                └─────────────────┘
+
 ### Design Philosophy
 
-→ **Dynamic Architecture**
+→ *Dynamic Architecture*
 
-- Inverted topology, where daemons connect to host, enables true dynamic
-  scaling
+- Hub architecture — host listens, daemons connect — enables true
+  dynamic scaling
 - Optimal load balancing through efficient FIFO dispatcher scheduling
 - Event-driven promises complete with zero latency (and no polling
   overhead)
 
-→ **Modern Foundation**
+→ *Modern Foundation*
 
 - Built on [NNG](https://nng.nanomsg.org/) via
   [nanonext](https://nanonext.r-lib.org/), scales reliably to millions
@@ -89,7 +115,7 @@ daemons(0)
 - Native support for IPC, TCP, and zero-config TLS with automatic
   certificate generation
 
-→ **Production First**
+→ *Production First*
 
 - Clear evaluation model with explicit dependencies prevents surprises
   from hidden state
@@ -98,7 +124,7 @@ daemons(0)
 - OpenTelemetry integration for observability across distributed
   processes
 
-→ **Deploy Everywhere**
+→ *Deploy Everywhere*
 
 - Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm,
   SGE, PBS, LSF)
