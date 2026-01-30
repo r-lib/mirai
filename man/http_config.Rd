@@ -5,7 +5,7 @@
 \title{HTTP Remote Launch Configuration}
 \usage{
 http_config(
-  url = posit_workbench_url(),
+  url = posit_workbench_url,
   method = "POST",
   cookie = posit_workbench_cookie,
   token = NULL,
@@ -13,7 +13,8 @@ http_config(
 )
 }
 \arguments{
-\item{url}{(character) URL endpoint for the launch API.}
+\item{url}{(character or function) URL endpoint for the launch API. May be a
+function returning the URL value.}
 
 \item{method}{(character) HTTP method, typically \code{"POST"}.}
 

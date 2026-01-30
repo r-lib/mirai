@@ -90,7 +90,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   tls <- envir[["tls"]]
 
   if (is.character(remote[["type"]]) && remote[["type"]] == "http") {
-    api_url <- remote[["url"]]
+    api_url <- if (is.function(remote[["url"]])) remote[["url"]]() else remote[["url"]]
     method <- remote[["method"]]
     cookie <- if (is.function(remote[["cookie"]])) remote[["cookie"]]() else remote[["cookie"]]
     token <- if (is.function(remote[["token"]])) remote[["token"]]() else remote[["token"]]
@@ -401,7 +401,8 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' default, automatically configures for Posit Workbench using environment
 #' variables.
 #'
-#' @param url (character) URL endpoint for the launch API.
+#' @param url (character or function) URL endpoint for the launch API. May be a
+#'   function returning the URL value.
 #' @param method (character) HTTP method, typically `"POST"`.
 #' @param cookie (character or function) session cookie value. May be a
 #'   function returning the cookie value. Set to `NULL` if not required for
@@ -439,7 +440,7 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' @export
 #'
 http_config <- function(
-  url = posit_workbench_url(),
+  url = posit_workbench_url,
   method = "POST",
   cookie = posit_workbench_cookie,
   token = NULL,
