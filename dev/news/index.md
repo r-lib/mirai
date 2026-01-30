@@ -2,6 +2,14 @@
 
 ## mirai (development version)
 
+##### New Features
+
+- Adds
+  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+  for launching remote daemons via HTTP APIs. By default, it
+  automatically configures for Posit Workbench using environment
+  variables, but can be customized for other platforms.
+
 ##### Breaking Changes
 
 - [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)

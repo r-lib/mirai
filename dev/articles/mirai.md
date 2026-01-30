@@ -5,8 +5,8 @@
 **mirai** = *future* in Japanese. Async evaluation framework for R built
 on NNG/nanonext.
 
-**Architecture**: daemons dial into host, a topology which facilitates
-dynamic scaling.
+**Hub architecture**: host listens at a URL, daemons connect to it,
+enabling dynamic scaling.
 
 This is a cheatsheet. Refer to the [mirai reference
 manual](https://mirai.r-lib.org/dev/articles/v01-reference.md) for a
@@ -18,16 +18,18 @@ detailed introduction.
   returns immediately, access result via `m[]` or `m$data`
 - **[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)**
   sets persistent background processes
-- **Dispatcher** enabled by default for optimal scheduling
-- **SSH tunnelling**: Use `local_url(tcp=TRUE)` + `tunnel=TRUE` when
-  ports blocked
-- **HPC clusters**: Use
-  [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
-  with appropriate scheduler
-- **Compute profiles**: Multiple independent daemon sets with `.compute`
-  parameter
+- **Launchers**:
+  [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md),
+  or
+  [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
+  with
+  [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md),
+  [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md),
+  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+- **Compute profiles**: Multiple independent daemon pools with
+  `.compute` parameter
 - **[`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)**:
-  Parallel map with progress bars, early stopping, flatmap
+  Async parallel map with progress bars, early stopping, flatmap
 
 ## 1. Basic mirai Usage
 
@@ -219,7 +221,18 @@ daemons(
 | **Torque/PBS** | `qsub`   | `#PBS -N NAME`            | `-l mem=16gb`     | `-l nodes=1:ppn=1`  |
 | **LSF**        | `bsub`   | `#BSUB -J NAME`           | `-M 16000`        | `-n 1`              |
 
-## 6. Manual Daemon Deployment
+## 6. HTTP Launcher
+
+``` r
+# Posit Workbench (auto-configures from environment variables)
+daemons(n = 2, url = host_url(), remote = http_config())
+```
+
+Supply
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+parameters (`url`, `method`, `cookie`, `token`, `data`) for custom APIs.
+
+## 7. Manual Daemon Deployment
 
 ### Generate Launch Commands
 
@@ -238,7 +251,7 @@ cmds <- launch_remote(
 print(cmds)
 ```
 
-## 7. Compute Profiles
+## 8. Compute Profiles
 
 ### Multiple Independent Profiles
 
@@ -270,7 +283,7 @@ local_daemons("cpu")
 m <- mirai(task())  # Uses "cpu" profile
 ```
 
-## 8. Common Patterns
+## 9. Common Patterns
 
 ### Temporary Daemons
 
@@ -301,7 +314,7 @@ launch_local(2)   # Add 2 daemons
 launch_local(2, idletime = 60000)
 ```
 
-## 9. mirai_map - Parallel Map
+## 10. mirai_map - Parallel Map
 
 ### Basic Usage
 
@@ -354,7 +367,7 @@ mat <- matrix(1:6, nrow = 3, dimnames = list(c("a","b","c"), c("x","y")))
 mirai_map(mat, function(x, y) x * y)[]
 ```
 
-## 10. Error Handling
+## 11. Error Handling
 
 ``` r
 m <- mirai(stop("error"))
@@ -371,7 +384,7 @@ m$data$condition.class      # Original error classes
 m$data$message              # Error message
 ```
 
-## 11. Monitoring
+## 12. Monitoring
 
 ``` r
 info()                      # Connection and task statistics
@@ -380,7 +393,7 @@ daemons_set()               # Check if daemons exist
 require_daemons()           # Error if not set
 ```
 
-## 12. Advanced Features
+## 13. Advanced Features
 
 ### Timeouts
 
@@ -454,7 +467,7 @@ daemons(
 )
 ```
 
-## 13. Dispatcher vs. Direct
+## 14. Dispatcher vs. Direct
 
 | Feature       | With Dispatcher (default) | Direct (dispatcher=FALSE) |
 |---------------|---------------------------|---------------------------|
@@ -465,7 +478,7 @@ daemons(
 | Overhead      | Slightly higher           | Minimal                   |
 | Use case      | Variable task times       | Similar task times        |
 
-## 14. Quick Decision Tree
+## 15. Quick Decision Tree
 
     ┌─ Need async in R?
     │
@@ -486,17 +499,20 @@ daemons(
        ├─ Remote with firewall/blocked ports
        │  └─ daemons(url = local_url(tcp = TRUE), remote = ssh_config(..., tunnel = TRUE))
        │
-       └─ HPC cluster (Slurm/SGE/PBS/LSF)
-          └─ daemons(url = host_url(), remote = cluster_config(...))
+       ├─ HPC cluster (Slurm/SGE/PBS/LSF)
+       │  └─ daemons(url = host_url(), remote = cluster_config(...))
+       │
+       └─ HTTP API (Posit Workbench, custom)
+          └─ daemons(url = host_url(), remote = http_config(...))
 
-## 15. Common Gotchas
+## 16. Common Gotchas
 
 ``` r
 # Expression Evaluation
-mirai(pkg::func(x), x = data)
 # Namespace functions OR library() inside expression
-mirai(func(x), func = my_func, x = data)
+mirai(pkg::func(x), x = data)
 # Pass dependencies explicitly via ... or .args
+mirai(func(x), func = my_func, x = data)
 
 # Dispatcher Required For
 stop_mirai(m)                           # Cancellation
@@ -504,8 +520,8 @@ mirai(task(), .timeout = 1000)          # Timeout cancellation
 daemons(4, serial = serial_config(...)) # Custom serialization
 
 # SSH Tunnelling
-daemons(url = local_url(tcp = TRUE), remote = ssh_config(..., tunnel = TRUE))
 # Must use 127.0.0.1 (not external IP) + tunnel = TRUE
+daemons(url = local_url(tcp = TRUE), remote = ssh_config(..., tunnel = TRUE))
 
 # TLS
 host_url(tls = TRUE)                    # Auto TLS (zero-config, just works)

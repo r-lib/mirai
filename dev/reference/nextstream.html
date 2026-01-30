@@ -53,7 +53,7 @@ nextcode translates integer exit codes returned by daemon()."><meta property="og
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Next &gt;&gt; Developer Interface</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/next.R" class="external-link"><code>R/next.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/workbench/R/next.R" class="external-link"><code>R/next.R</code></a></small>
       <div class="d-none name"><code>nextstream.Rd</code></div>
     </div>
 
@@ -116,14 +116,14 @@ next recursive stream is returned when the function is called again.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407   792815129 -1884879098 -1960710705   286126532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  1328909813 -1274208718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407   466761875   751420600  -515383463  -331456698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] -1206986481   -34040828</span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407 -1925600861  -765594404 -1351620210 -1371409380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]   302119711 -1829637341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407 -1171813903 -1636859713   -45560966  1701905993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  -739104734  -843469383</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"url"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://e0a02ed42ad60450fc1bbe83"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://8a6337c5918573348e1a900a"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Reference Manual</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/workbench/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
       <div class="d-none name"><code>v01-reference.Rmd</code></div>
     </div>
 
@@ -141,9 +141,9 @@ do not compromise on.</p>
 <span><span class="co"># Do work whilst unresolved</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 4.760203 4.546778 4.271302 5.897771 5.418475</span></span>
+<span><span class="co">#&gt; [1] 4.608395 5.237884 4.892962 6.079368 4.038861</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 4.760203 4.546778 4.271302 5.897771 5.418475</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 4.608395 5.237884 4.892962 6.079368 4.038861</span></span></code></pre></div>
 <p>A mirai is <em>unresolved</em> until its result is received, then
 <em>resolved</em>. Use <code><a href="../reference/unresolved.html">unresolved()</a></code> to check its state.</p>
 <p>Access results via <code>m$data</code> once resolved. This will be
@@ -174,7 +174,7 @@ equivalent:</p>
 <span></span>
 <span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 2.968334 3.913592 4.647860 3.475422 3.161870</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3.645233 1.379299 4.157368 3.521132 3.252595</span></span></code></pre></div>
 <p>This example performs an asynchronous write operation. Passing
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> to ‘.args’ conveniently provides all objects
 from the calling environment (like <code>x</code> and
@@ -514,7 +514,7 @@ automatically assigns a free ephemeral port:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.110:49249")'</span></span></code></pre></div>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.6.15:50320")'</span></span></code></pre></div>
 <p>Dynamically scale the number of daemons up or down as needed.</p>
 <p>Reset all connections:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -533,13 +533,16 @@ connect back to the host via TCP or TLS.</p>
 launchers run <code>Rscript</code> on remote machines.</p>
 <p>Supply a remote launch configuration to the ‘remote’ argument of
 <code><a href="../reference/daemons.html">daemons()</a></code> or <code><a href="../reference/launch_local.html">launch_remote()</a></code>.</p>
-<p>Three configuration options:</p>
+<p>Four configuration options:</p>
 <ol style="list-style-type: decimal">
 <li>
 <code><a href="../reference/ssh_config.html">ssh_config()</a></code> for SSH access</li>
 <li>
 <code><a href="../reference/cluster_config.html">cluster_config()</a></code> for HPC resource managers (Slurm, SGE,
 Torque/PBS, LSF)</li>
+<li>
+<code><a href="../reference/http_config.html">http_config()</a></code> for HTTP API launch (e.g., Posit
+Workbench)</li>
 <li>
 <code><a href="../reference/remote_config.html">remote_config()</a></code> for generic/custom launchers</li>
 </ol>
@@ -646,6 +649,32 @@ directory)</li>
 </div>
 </div>
 <div class="section level4">
+<h4 id="http-launcher">HTTP Launcher<a class="anchor" aria-label="anchor" href="#http-launcher"></a>
+</h4>
+<p><code><a href="../reference/http_config.html">http_config()</a></code> launches daemons via HTTP API. By default,
+it auto-configures for Posit Workbench using environment variables.</p>
+<p>Launch daemons in Posit Workbench:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2</span>, url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>, remote <span class="op">=</span> <span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>For custom HTTP APIs, provide URL, authentication, and request
+body:</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
+<span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span></span>
+<span>    url <span class="op">=</span> <span class="st">"https://api.example.com/launch"</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"POST"</span>,</span>
+<span>    token <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_API_KEY"</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="st">'{"command": "%s"}'</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The <code>data</code> argument should include <code>"%s"</code> as a
+placeholder where the daemon launch command is inserted.</p>
+<p>Parameters can be character values or functions returning values
+(evaluated at launch time for fresh credentials).</p>
+</div>
+<div class="section level4">
 <h4 id="generic-remote-configuration">Generic Remote Configuration<a class="anchor" aria-label="anchor" href="#generic-remote-configuration"></a>
 </h4>
 <p><code><a href="../reference/remote_config.html">remote_config()</a></code> provides a generic framework for custom
@@ -654,7 +683,7 @@ deployment commands.</p>
 is replaced with the daemon launch command.</p>
 <p><code><a href="../reference/cluster_config.html">cluster_config()</a></code> is easier for HPC, but
 <code><a href="../reference/remote_config.html">remote_config()</a></code> offers flexibility. Slurm example:</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -671,11 +700,11 @@ is replaced with the daemon launch command.</p>
 </h4>
 <p>Call <code><a href="../reference/launch_local.html">launch_remote()</a></code> without ‘remote’ to get shell
 commands for manual deployment:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.1.110:49250")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.6.15:50321")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -687,48 +716,48 @@ commands for manual deployment:</p>
 </h5>
 <p>Use <code>tls+tcp://</code> scheme or
 <code>host_url(tls = TRUE)</code>:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Keys and certificates generate automatically. Private keys remain on
 the host.</p>
 <p>Self-signed certificates are included in <code><a href="../reference/launch_local.html">launch_remote()</a></code>
 commands:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.1.110:49251",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjEuMTEwMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw</span></span>
-<span><span class="co">#&gt; MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjEu</span></span>
-<span><span class="co">#&gt; MTEwMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3</span></span>
-<span><span class="co">#&gt; DQEBAQUAA4ICDwAwggIKAoICAQDKpH86r1z96H3jCe7BWg/05sSKHK3UsOvTdHlK</span></span>
-<span><span class="co">#&gt; yNC8eBBN5RahtSqfY6WD0ZTKHVcxjnLXwi64Hio6nKC/6MKGCi0sN+dZufmLgZcF</span></span>
-<span><span class="co">#&gt; F3hpnHU7B5dRupXWCX0aNpQWQwzZgDaZv9yhLPgKM0qdtovJDrvLQyAivRlLxc3T</span></span>
-<span><span class="co">#&gt; cI7xr2BmOEpUji0XfUCnEnLBHq+QtkQF/LPGgzm2IQgH9pAbnsSbgxELgVCg+b9n</span></span>
-<span><span class="co">#&gt; Yj5+ddjdrf3YFVX8AMSDU+/uwZqsEuA5yh3QoXxh54PfstTo3hN9RT4aD96uBbY2</span></span>
-<span><span class="co">#&gt; jfI+PT5iNUWh0/XGg4R2f1iOa2em0DMnzbuob7OlpbfYMwbmycfZiZvgoqEi2mrJ</span></span>
-<span><span class="co">#&gt; b/rSREE5BStDBcEpwttclWRiu1XnfoSa8SvjURO9Tm6xZKv62Nr1X1zWTivsQ9Ip</span></span>
-<span><span class="co">#&gt; aj73YlHTHgpPbGOLsDBmjvud4qfmwIFt3vnxP6+56Rpe41A4RAVZ5Hml4UjpitaK</span></span>
-<span><span class="co">#&gt; HqohXRVp3aT4Ossul/dq73koaoWaa722pdYbRQgYQsSzCIJOmUoVSVZZ3eAc9e8s</span></span>
-<span><span class="co">#&gt; 8RMGeCoDajZqjas0vK0ZlYX1m1ts4aZy6hRpl1iuoLL9NGSkV3w2R8VRc8C7mSrw</span></span>
-<span><span class="co">#&gt; Sp/ikEjnUiwR2Eq8rcAQjmRi3nL9zIFfc35NYIxHJjwvoKJG+CUQ+8cCUGVr0FP9</span></span>
-<span><span class="co">#&gt; 9wVLPwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSGy9W8</span></span>
-<span><span class="co">#&gt; dKhH8Yzbb3cDaxfIMjskdDAfBgNVHSMEGDAWgBSGy9W8dKhH8Yzbb3cDaxfIMjsk</span></span>
-<span><span class="co">#&gt; dDANBgkqhkiG9w0BAQsFAAOCAgEAsN7A2pW+rFP2FvQr8P47ZlWKx0SJY1hU3otH</span></span>
-<span><span class="co">#&gt; nYhcxWD4cMXQWY7MUTSTmto75hMDUl/KKMxDdAZjwSVnZfy7CLN5+HVW5e1Jx7+8</span></span>
-<span><span class="co">#&gt; 85L6iGXH6WY71Su3AP5skEgHqudWKUX9EdW8JZ9ZxSxkTYvFfZKMevvIzWNxNctD</span></span>
-<span><span class="co">#&gt; xp55RY2q3l/DdYVNnChD4yUSeY1poWy+XVs2sA3xZ+Akea1zKy4tSEL0/LZdryUR</span></span>
-<span><span class="co">#&gt; EeXfa+slCrCuc6r1eZ9G53o/mPL1nPJYybVYNfvd05/61tYLfFTPHhqgMpMkxCnb</span></span>
-<span><span class="co">#&gt; NChft87ytoJN+I5o3Ztyf4BW89gUVhPisbza3AhfhqEwrzSp2Ks3H9BJutTGTzCn</span></span>
-<span><span class="co">#&gt; OdxTuhdoNre+ZozLEKLhLy1ZEiIpoBLob/UiZVDbHPEOeIxbGJg8GV6HWW9+krPR</span></span>
-<span><span class="co">#&gt; SycKHrDkAZBlH0VghPSwW59WIiSBh6cK7MK8FQi6IZH737dGPbSggDfSjM5bW05f</span></span>
-<span><span class="co">#&gt; YBhFDtiql+1711rat6yUCa9QcU2gK5iTUiojCGJOmR1kyrJZnFAglrK4IO6T2DlY</span></span>
-<span><span class="co">#&gt; /5aPncZfJ+VhteRtrszY3cLwLcUk9m8QIiUX/FY0cJ96WIftt4yLODfWMr0hmXmg</span></span>
-<span><span class="co">#&gt; eoa4DhwiBWgk/ItpXluOUOXVhLNBd24yJ2o+FsNhXIJnXXLnlnyLaA2Gmf3Eo5ax</span></span>
-<span><span class="co">#&gt; 2U4LNe0=</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.6.15:50322",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu</span></span>
+<span><span class="co">#&gt; MTY4LjYuMTUxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
+<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguNi4x</span></span>
+<span><span class="co">#&gt; NTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
+<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAk/oYGBoB+1SrEeAp3D0K0jChRqLH96a+tPbmdXwh</span></span>
+<span><span class="co">#&gt; NBiShkS46VOd2K8J3We4iiAvhgaDk5ZQqVChO9wmrqcJopijSDeZftOh78ckuoC3</span></span>
+<span><span class="co">#&gt; gg7kiimd1pOO2+d4iORo9KUPeQapvYz9DjGIuNm+itiudNjXeZCdaUgBOptkfjge</span></span>
+<span><span class="co">#&gt; 2gzlcTNL6FytsXVoGf1CdqzotrTguS/wB2fDVkb0FlPlovwL7vRfNkBy2EitBe3K</span></span>
+<span><span class="co">#&gt; uezws9E11aVh4QexyfCDNe5fP3K01/g2kWaVChuxYVdxQNGEQ4D0S45alydBXlGW</span></span>
+<span><span class="co">#&gt; fLNwoK0cHuJkHrgXSFgyOqq3csfNoPgI0NDsvFtRGrS6Bf8MN3i4T82IoFjrpcWH</span></span>
+<span><span class="co">#&gt; TYBjpNHN8kMHIJ1RJpE5cQQg7gxauFDBctaa0rh0Ka/yIznNqYAu2usIfReMj61T</span></span>
+<span><span class="co">#&gt; mdrZ5aGwOqGooRgp7PrniNU2G2Af7WbTEBC9BzW13nJIX/qtFmiTKMZ/iZtAfACk</span></span>
+<span><span class="co">#&gt; YLackIzf+EqIL/+lB2eXOvSNm81RzVKjtogtVb4+JdCqJEavJne/FyrxVgPs9CIb</span></span>
+<span><span class="co">#&gt; Zo8NsMhNEN5FtUGGAkZ06pBYJ1TVK+XrPQljIple3Ceoi07ICSr2fwRI+Qpg1RLo</span></span>
+<span><span class="co">#&gt; 20uEOov1M7DTOQwiiateMhuE2/nvn4VpJ+Oo8NsSBJAHy1noqrUs6y/OPG07kOe/</span></span>
+<span><span class="co">#&gt; YM8CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU0tTk5z69</span></span>
+<span><span class="co">#&gt; t+XDD8Iq0nc98H1lc4cwHwYDVR0jBBgwFoAU0tTk5z69t+XDD8Iq0nc98H1lc4cw</span></span>
+<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBABcP9CtxC0NpYQYmg+i0ZYLjUVRwJHN0s1C6oezz</span></span>
+<span><span class="co">#&gt; RNCz6knnI8dyySyqNXLq3C3JKxWNjQSPvW3q2fD/CDH5Ieg+S1PlvX3RwY/JWzLw</span></span>
+<span><span class="co">#&gt; vB35MFBO0qJDyMu1hLVqnioeLp22uRg2Cz5yQ1vVOYkTbNe/zV8Ng9reuMxGj4ws</span></span>
+<span><span class="co">#&gt; +djEHhLZNePW9dLo4Cd98UBhuxrBis2X4iA7Eawp+FkkjStfMZE7H25WpAcMBOH8</span></span>
+<span><span class="co">#&gt; KB90lnOAvMiQ696+lbQkAqmdLm6RAEwYMDgxGse7NZLE6sw3JEsmKiIGn7wCDqBd</span></span>
+<span><span class="co">#&gt; Rd9n+bHYq3dAkH6PnhIYS0NBrr4FKZvznNo314FHr46qSstkEeNaR3Cz74FK7t6a</span></span>
+<span><span class="co">#&gt; X1YsZvHAbDR91Xr9twrT+lPW+8yb5clKXb4D3XB2YY0ADPjP/86HpFDHdauO/Wso</span></span>
+<span><span class="co">#&gt; QQlGcZrk+vFKgU2rnqM7IFHrCQx5D4WYo5Ix2NwyQ/qqfiUYbfFrmPjtKioTp1fI</span></span>
+<span><span class="co">#&gt; dmijRyNuHrR5OvgOYzAaTTDeo4JHbQhSizHxQ0yS09fWIkkNpmXg4fWW+HTIACPk</span></span>
+<span><span class="co">#&gt; EODa2kKx4IQHYN3UiRPCgPViQ2yqrFOydPwRXwi4ubl3BxR2vf445rRabDI2e8ZT</span></span>
+<span><span class="co">#&gt; hMYmFLmEn72a2Dm6rPcx5zXIsOw0N9GMvOFtPgfOOkwdf4dxUEz3QphpWqPvjT4i</span></span>
+<span><span class="co">#&gt; O8FW</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level5">
@@ -806,7 +835,7 @@ machine).</li>
 <h3 id="compute-profiles">6. Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a>
 </h3>
 <p>The <code>.compute</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> creates
-separate, independent daemon sets (<em>compute profiles</em>) for
+separate, independent daemon pools (<em>compute profiles</em>) for
 heterogeneous compute requirements:</p>
 <ul>
 <li>Target daemons with specific specs (CPUs, memory, GPU,
@@ -826,7 +855,7 @@ profile (<code>NULL</code> uses ‘default’).</p>
 </h4>
 <p><code><a href="../reference/with_daemons.html">with_daemons()</a></code> or <code><a href="../reference/with_daemons.html">local_daemons()</a></code> with a
 profile name sets the default for all functions within that scope:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, .compute <span class="op">=</span> <span class="st">"cpu"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, .compute <span class="op">=</span> <span class="st">"gpu"</span><span class="op">)</span></span>
 <span></span>
@@ -842,14 +871,14 @@ profile name sets the default for all functions within that scope:</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 4503</span></span>
+<span><span class="co">#&gt; [1] 27905</span></span>
 <span><span class="va">m2</span><span class="op">[</span><span class="op">]</span> <span class="co"># different to m1</span></span>
-<span><span class="co">#&gt; [1] 4529</span></span>
+<span><span class="co">#&gt; [1] 27931</span></span>
 <span></span>
 <span><span class="va">m3</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 4503</span></span>
+<span><span class="co">#&gt; [1] 27905</span></span>
 <span><span class="va">m4</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 4503</span></span>
+<span><span class="co">#&gt; [1] 27905</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"cpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"gpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -861,7 +890,7 @@ profile name sets the default for all functions within that scope:</p>
 duration, then automatically resets them. Functions within the scope use
 the daemons’ compute profile.</p>
 <p>Designed for running Shiny apps with specific daemon counts:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="va">app</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Or:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, .compute <span class="op">=</span> <span class="st">"shiny"</span><span class="op">)</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="va">app</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -912,17 +941,17 @@ debugging with <code><a href="https://rdrr.io/r/base/browser.html" class="extern
 Only <code>seed</code> affects behavior with
 <code>sync = TRUE</code>.</p>
 <p>Example usage:</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run everything in sync:</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 3095</span></span>
+<span><span class="co">#&gt; [1] 6393</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 3095</span></span>
+<span><span class="co">#&gt; [1] 6393</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Use sync with the 'sync' compute profile:</span></span>
@@ -933,10 +962,10 @@ Only <code>seed</code> affects behavior with
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 3095</span></span>
+<span><span class="co">#&gt; [1] 6393</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 3095</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 6393</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

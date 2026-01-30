@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Quick Reference</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/mirai.Rmd" class="external-link"><code>vignettes/mirai.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/workbench/vignettes/mirai.Rmd" class="external-link"><code>vignettes/mirai.Rmd</code></a></small>
       <div class="d-none name"><code>mirai.Rmd</code></div>
     </div>
 
@@ -95,8 +95,8 @@
 </h2>
 <p><strong>mirai</strong> = <em>future</em> in Japanese. Async
 evaluation framework for R built on NNG/nanonext.</p>
-<p><strong>Architecture</strong>: daemons dial into host, a topology
-which facilitates dynamic scaling.</p>
+<p><strong>Hub architecture</strong>: host listens at a URL, daemons
+connect to it, enabling dynamic scaling.</p>
 <p>This is a cheatsheet. Refer to the <a href="v01-reference.html">mirai
 reference manual</a> for a detailed introduction.</p>
 </div>
@@ -112,20 +112,15 @@ result via <code>m[]</code> or <code>m$data</code>
 <strong><code><a href="../reference/daemons.html">daemons()</a></code></strong> sets persistent background
 processes</li>
 <li>
-<strong>Dispatcher</strong> enabled by default for optimal
-scheduling</li>
+<strong>Launchers</strong>: <code><a href="../reference/launch_local.html">launch_local()</a></code>, or
+<code><a href="../reference/launch_local.html">launch_remote()</a></code> with <code><a href="../reference/ssh_config.html">ssh_config()</a></code>,
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code>, <code><a href="../reference/http_config.html">http_config()</a></code>
+</li>
 <li>
-<strong>SSH tunnelling</strong>: Use
-<code>local_url(tcp=TRUE)</code> + <code>tunnel=TRUE</code> when ports
-blocked</li>
-<li>
-<strong>HPC clusters</strong>: Use <code><a href="../reference/cluster_config.html">cluster_config()</a></code>
-with appropriate scheduler</li>
-<li>
-<strong>Compute profiles</strong>: Multiple independent daemon sets
+<strong>Compute profiles</strong>: Multiple independent daemon pools
 with <code>.compute</code> parameter</li>
 <li>
-<strong><code><a href="../reference/mirai_map.html">mirai_map()</a></code></strong>: Parallel map with
+<strong><code><a href="../reference/mirai_map.html">mirai_map()</a></code></strong>: Async parallel map with
 progress bars, early stopping, flatmap</li>
 </ul>
 </div>
@@ -374,12 +369,22 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="manual-daemon-deployment">6. Manual Daemon Deployment<a class="anchor" aria-label="anchor" href="#manual-daemon-deployment"></a>
+<h2 id="http-launcher">6. HTTP Launcher<a class="anchor" aria-label="anchor" href="#http-launcher"></a>
+</h2>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Posit Workbench (auto-configures from environment variables)</span></span>
+<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2</span>, url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>, remote <span class="op">=</span> <span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Supply <code><a href="../reference/http_config.html">http_config()</a></code> parameters (<code>url</code>,
+<code>method</code>, <code>cookie</code>, <code>token</code>,
+<code>data</code>) for custom APIs.</p>
+</div>
+<div class="section level2">
+<h2 id="manual-daemon-deployment">7. Manual Daemon Deployment<a class="anchor" aria-label="anchor" href="#manual-daemon-deployment"></a>
 </h2>
 <div class="section level3">
 <h3 id="generate-launch-commands">Generate Launch Commands<a class="anchor" aria-label="anchor" href="#generate-launch-commands"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set daemons to listen</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -395,12 +400,12 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="compute-profiles">7. Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a>
+<h2 id="compute-profiles">8. Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a>
 </h2>
 <div class="section level3">
 <h3 id="multiple-independent-profiles">Multiple Independent Profiles<a class="anchor" aria-label="anchor" href="#multiple-independent-profiles"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create CPU profile</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, .compute <span class="op">=</span> <span class="st">"cpu"</span><span class="op">)</span></span>
 <span></span>
@@ -417,7 +422,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="scoped-profiles">Scoped Profiles<a class="anchor" aria-label="anchor" href="#scoped-profiles"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Temporarily use profile</span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"gpu"</span>, <span class="op">{</span></span>
 <span>  <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">train_model</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -429,12 +434,12 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="common-patterns">8. Common Patterns<a class="anchor" aria-label="anchor" href="#common-patterns"></a>
+<h2 id="common-patterns">9. Common Patterns<a class="anchor" aria-label="anchor" href="#common-patterns"></a>
 </h2>
 <div class="section level3">
 <h3 id="temporary-daemons">Temporary Daemons<a class="anchor" aria-label="anchor" href="#temporary-daemons"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="op">{</span></span>
 <span>  <span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">task1</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">task2</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -445,7 +450,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="mixed-localremote-resources">Mixed Local/Remote Resources<a class="anchor" aria-label="anchor" href="#mixed-localremote-resources"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_local</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>             <span class="co"># 2 local daemons</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://remote"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># 4 remote</span></span></code></pre></div>
@@ -453,7 +458,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="dynamic-scaling">Dynamic Scaling<a class="anchor" aria-label="anchor" href="#dynamic-scaling"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>   <span class="co"># Start listening</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_local</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>   <span class="co"># Add 2 daemons</span></span>
 <span><span class="co"># Later...</span></span>
@@ -462,12 +467,12 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="mirai_map---parallel-map">9. mirai_map - Parallel Map<a class="anchor" aria-label="anchor" href="#mirai_map---parallel-map"></a>
+<h2 id="mirai_map---parallel-map">10. mirai_map - Parallel Map<a class="anchor" aria-label="anchor" href="#mirai_map---parallel-map"></a>
 </h2>
 <div class="section level3">
 <h3 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Simple map</span></span>
@@ -490,7 +495,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="collection-options">Collection Options<a class="anchor" aria-label="anchor" href="#collection-options"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Flatten to vector</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="va">rnorm</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
 <span></span>
@@ -506,7 +511,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="multiple-map-over-dataframematrix">Multiple Map (over DataFrame/Matrix)<a class="anchor" aria-label="anchor" href="#multiple-map-over-dataframematrix"></a>
 </h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Map over dataframe rows</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">df</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">)</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
@@ -517,9 +522,9 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="error-handling">10. Error Handling<a class="anchor" aria-label="anchor" href="#error-handling"></a>
+<h2 id="error-handling">11. Error Handling<a class="anchor" aria-label="anchor" href="#error-handling"></a>
 </h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"error"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
 <span></span>
@@ -534,21 +539,21 @@ progress bars, early stopping, flatmap</li>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">message</span>              <span class="co"># Error message</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="monitoring">11. Monitoring<a class="anchor" aria-label="anchor" href="#monitoring"></a>
+<h2 id="monitoring">12. Monitoring<a class="anchor" aria-label="anchor" href="#monitoring"></a>
 </h2>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/info.html">info</a></span><span class="op">(</span><span class="op">)</span>                      <span class="co"># Connection and task statistics</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons_set.html">daemons_set</a></span><span class="op">(</span><span class="op">)</span>               <span class="co"># Check if daemons exist</span></span>
 <span><span class="fu"><a href="../reference/require_daemons.html">require_daemons</a></span><span class="op">(</span><span class="op">)</span>           <span class="co"># Error if not set</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="advanced-features">12. Advanced Features<a class="anchor" aria-label="anchor" href="#advanced-features"></a>
+<h2 id="advanced-features">13. Advanced Features<a class="anchor" aria-label="anchor" href="#advanced-features"></a>
 </h2>
 <div class="section level3">
 <h3 id="timeouts">Timeouts<a class="anchor" aria-label="anchor" href="#timeouts"></a>
 </h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Per-mirai timeout (requires dispatcher for auto-cancellation)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>  <span class="co"># 1 second</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span>  <span class="co"># Returns errorValue 5 (timed out)</span></span></code></pre></div>
@@ -556,7 +561,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="cancellation">Cancellation<a class="anchor" aria-label="anchor" href="#cancellation"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Cancel mirai (requires dispatcher)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/stop_mirai.html">stop_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>  <span class="co"># Attempts cancellation</span></span>
@@ -565,7 +570,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="evaluation-everywhere">Evaluation Everywhere<a class="anchor" aria-label="anchor" href="#evaluation-everywhere"></a>
 </h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load package on all daemons</span></span>
 <span><span class="fu"><a href="../reference/everywhere.html">everywhere</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -578,7 +583,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="random-seeds-reproducible">Random Seeds (Reproducible)<a class="anchor" aria-label="anchor" href="#random-seeds-reproducible"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Statistically-sound but non-reproducible (default)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, seed <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
@@ -588,7 +593,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="custom-serialization">Custom Serialization<a class="anchor" aria-label="anchor" href="#custom-serialization"></a>
 </h3>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For torch tensors, Arrow tables, Polars objects</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  <span class="fl">4</span>,</span>
@@ -606,7 +611,7 @@ progress bars, early stopping, flatmap</li>
 <div class="section level3">
 <h3 id="tls-configuration">TLS Configuration<a class="anchor" aria-label="anchor" href="#tls-configuration"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Auto TLS (zero-config certificates)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -619,7 +624,7 @@ progress bars, early stopping, flatmap</li>
 </div>
 </div>
 <div class="section level2">
-<h2 id="dispatcher-vs--direct">13. Dispatcher vs. Direct<a class="anchor" aria-label="anchor" href="#dispatcher-vs--direct"></a>
+<h2 id="dispatcher-vs--direct">14. Dispatcher vs. Direct<a class="anchor" aria-label="anchor" href="#dispatcher-vs--direct"></a>
 </h2>
 <table class="table">
 <thead><tr class="header">
@@ -662,7 +667,7 @@ progress bars, early stopping, flatmap</li>
 </table>
 </div>
 <div class="section level2">
-<h2 id="quick-decision-tree">14. Quick Decision Tree<a class="anchor" aria-label="anchor" href="#quick-decision-tree"></a>
+<h2 id="quick-decision-tree">15. Quick Decision Tree<a class="anchor" aria-label="anchor" href="#quick-decision-tree"></a>
 </h2>
 <pre><code>┌─ Need async in R?
 │
@@ -683,18 +688,21 @@ progress bars, early stopping, flatmap</li>
    ├─ Remote with firewall/blocked ports
    │  └─ daemons(url = local_url(tcp = TRUE), remote = ssh_config(..., tunnel = TRUE))
    │
-   └─ HPC cluster (Slurm/SGE/PBS/LSF)
-      └─ daemons(url = host_url(), remote = cluster_config(...))</code></pre>
+   ├─ HPC cluster (Slurm/SGE/PBS/LSF)
+   │  └─ daemons(url = host_url(), remote = cluster_config(...))
+   │
+   └─ HTTP API (Posit Workbench, custom)
+      └─ daemons(url = host_url(), remote = http_config(...))</code></pre>
 </div>
 <div class="section level2">
-<h2 id="common-gotchas">15. Common Gotchas<a class="anchor" aria-label="anchor" href="#common-gotchas"></a>
+<h2 id="common-gotchas">16. Common Gotchas<a class="anchor" aria-label="anchor" href="#common-gotchas"></a>
 </h2>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Expression Evaluation</span></span>
-<span><span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">pkg</span><span class="fu">::</span><span class="fu">func</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
 <span><span class="co"># Namespace functions OR library() inside expression</span></span>
-<span><span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">func</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, func <span class="op">=</span> <span class="va">my_func</span>, x <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">pkg</span><span class="fu">::</span><span class="fu">func</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
 <span><span class="co"># Pass dependencies explicitly via ... or .args</span></span>
+<span><span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">func</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, func <span class="op">=</span> <span class="va">my_func</span>, x <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Dispatcher Required For</span></span>
 <span><span class="fu"><a href="../reference/stop_mirai.html">stop_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>                           <span class="co"># Cancellation</span></span>
@@ -702,8 +710,8 @@ progress bars, early stopping, flatmap</li>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, serial <span class="op">=</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span> <span class="co"># Custom serialization</span></span>
 <span></span>
 <span><span class="co"># SSH Tunnelling</span></span>
-<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="va">...</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Must use 127.0.0.1 (not external IP) + tunnel = TRUE</span></span>
+<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">local_url</a></span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="va">...</span>, tunnel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># TLS</span></span>
 <span><span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>                    <span class="co"># Auto TLS (zero-config, just works)</span></span>

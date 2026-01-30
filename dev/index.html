@@ -106,7 +106,7 @@
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
 <p><code><a href="reference/mirai.html">mirai()</a></code> evaluates an R expression asynchronously in a parallel process.</p>
-<p><code><a href="reference/daemons.html">daemons()</a></code> sets up persistent background processes for parallel computations.</p>
+<p><code><a href="reference/daemons.html">daemons()</a></code> sets up <em>daemons</em>: persistent background processes that receive and execute tasks.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
@@ -127,34 +127,55 @@
 <span><span class="co">#&gt; [1] 142</span></span>
 <span></span>
 <span><span class="va">mp</span></span>
-<span><span class="co">#&gt; &lt; mirai map [0/9] &gt;</span></span>
+<span><span class="co">#&gt; &lt; mirai map [4/9] &gt;</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1]  1  4  9 16 25 36 49 64 81</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="architecture">Architecture<a class="anchor" aria-label="anchor" href="#architecture"></a>
+</h3>
+<p><code><a href="reference/mirai.html">mirai()</a></code> sends tasks to daemons for parallel execution.</p>
+<p>A <em>compute profile</em> is a pool of connected daemons. Multiple profiles can coexist, directing tasks to different resources.</p>
+<p><em>Hub architecture</em>: host listens at a URL, daemons connect to it — add or remove daemons at any time. Launch locally or remotely via different methods, and mix freely:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>                            ┌ Compute Profile ┐</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">launch_local</span>() ···········│▸ Daemon ──┐     │</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                            │           │     │</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">ssh_config</span>() ·············│▸ Daemon ──┼─────┼──▸ Host</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                            │           │     │    <span class="fu">daemons</span>(<span class="at">url =</span> <span class="fu">host_url</span>())</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">cluster_config</span>() ·········│▸ Daemon ──┤     │</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>                            │           │     │</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="fu">http_config</span>() ············│▸ Daemon ──┘     │</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>                            └─────────────────┘</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>                            ┌ Compute Profile ┐</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>                            │  Daemon ──┐     │</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>                            │           ├─────┼──▸ Host</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>                            │  Daemon ──┘     │    <span class="fu">daemons</span>(<span class="dv">2</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>                            └─────────────────┘</span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
 </h3>
-<p>→ <strong>Dynamic Architecture</strong></p>
+<p>→ <em>Dynamic Architecture</em></p>
 <ul>
-<li>Inverted topology, where daemons connect to host, enables true dynamic scaling</li>
+<li>Hub architecture — host listens, daemons connect — enables true dynamic scaling</li>
 <li>Optimal load balancing through efficient FIFO dispatcher scheduling</li>
 <li>Event-driven promises complete with zero latency (and no polling overhead)</li>
 </ul>
-<p>→ <strong>Modern Foundation</strong></p>
+<p>→ <em>Modern Foundation</em></p>
 <ul>
 <li>Built on <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> via <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a>, scales reliably to millions of tasks / thousands of processes</li>
 <li>High performance, with round-trip times measured in microseconds, not milliseconds</li>
 <li>Native support for IPC, TCP, and zero-config TLS with automatic certificate generation</li>
 </ul>
-<p>→ <strong>Production First</strong></p>
+<p>→ <em>Production First</em></p>
 <ul>
 <li>Clear evaluation model with explicit dependencies prevents surprises from hidden state</li>
 <li>Serialization support for cross-language data formats (torch tensors, Arrow tables)</li>
 <li>OpenTelemetry integration for observability across distributed processes</li>
 </ul>
-<p>→ <strong>Deploy Everywhere</strong></p>
+<p>→ <em>Deploy Everywhere</em></p>
 <ul>
 <li>Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)</li>
 <li>Modular compute profiles direct tasks to the most suitable resources</li>

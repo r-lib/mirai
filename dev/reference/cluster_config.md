@@ -36,10 +36,11 @@ A list in the required format to be supplied to the `remote` argument of
 
 ## See also
 
-[`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
-for SSH launch configurations, or
+[`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md),
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+and
 [`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md)
-for generic configurations.
+for other types of remote configuration.
 
 ## Examples
 

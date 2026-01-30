@@ -25,6 +25,8 @@
 - [`host_url()`](https://mirai.r-lib.org/dev/reference/host_url.md)
   [`local_url()`](https://mirai.r-lib.org/dev/reference/host_url.md) :
   URL Constructors
+- [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+  : HTTP Remote Launch Configuration
 - [`info()`](https://mirai.r-lib.org/dev/reference/info.md) :
   Information Statistics
 - [`is_mirai()`](https://mirai.r-lib.org/dev/reference/is_mirai.md)

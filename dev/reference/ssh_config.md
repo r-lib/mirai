@@ -88,10 +88,11 @@ to access via SSH, be it on the local network or the cloud.
 
 ## See also
 
-[`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
-for cluster resource manager launch configurations, or
+[`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md),
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+and
 [`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md)
-for generic configurations.
+for other types of remote configuration.
 
 ## Examples
 

@@ -45,10 +45,11 @@ A list in the required format to be supplied to the `remote` argument of
 
 ## See also
 
-[`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
-for SSH launch configurations, or
+[`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md),
 [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
-for cluster resource manager launch configurations.
+and
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+for other types of remote configuration.
 
 ## Examples
 
