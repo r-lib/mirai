@@ -105,29 +105,41 @@ A *compute profile* is a pool of connected daemons. Multiple profiles can coexis
 
 ### Design Philosophy
 
-→ *Dynamic Architecture*
+<details>
+<summary><strong>⚡ Dynamic Architecture</strong> — scale on demand</summary>
 
 - Hub architecture — host listens, daemons connect — enables true dynamic scaling
 - Optimal load balancing through efficient FIFO dispatcher scheduling
 - Event-driven promises complete with zero latency (and no polling overhead)
 
-→ *Modern Foundation*
+</details>
+
+<details>
+<summary><strong>⚙️ Modern Foundation</strong> — built for speed</summary>
 
 - Built on [NNG](https://nng.nanomsg.org/) via [nanonext](https://nanonext.r-lib.org/), scales reliably to millions of tasks / thousands of processes
 - High performance, with round-trip times measured in microseconds, not milliseconds
 - Native support for IPC, TCP, and zero-config TLS with automatic certificate generation
 
-→ *Production First*
+</details>
+
+<details>
+<summary><strong>🏭 Production First</strong> — reliable by design</summary>
 
 - Clear evaluation model with explicit dependencies prevents surprises from hidden state
 - Serialization support for cross-language data formats (torch tensors, Arrow tables)
 - OpenTelemetry integration for observability across distributed processes
 
-→ *Deploy Everywhere*
+</details>
+
+<details>
+<summary><strong>🌐 Deploy Everywhere</strong> — laptop to cluster</summary>
 
 - Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)
 - Modular compute profiles direct tasks to the most suitable resources
 - Combine local, remote, and HPC resources in a single compute profile
+
+</details>
 
 ### Powers the R Ecosystem
 

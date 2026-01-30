@@ -97,7 +97,12 @@ methods, and mix freely:
 
 ### Design Philosophy
 
-→ *Dynamic Architecture*
+<details>
+
+<summary>
+
+<strong>⚡ Dynamic Architecture</strong> — scale on demand
+</summary>
 
 - Hub architecture — host listens, daemons connect — enables true
   dynamic scaling
@@ -105,7 +110,14 @@ methods, and mix freely:
 - Event-driven promises complete with zero latency (and no polling
   overhead)
 
-→ *Modern Foundation*
+</details>
+
+<details>
+
+<summary>
+
+<strong>⚙️ Modern Foundation</strong> — built for speed
+</summary>
 
 - Built on [NNG](https://nng.nanomsg.org/) via
   [nanonext](https://nanonext.r-lib.org/), scales reliably to millions
@@ -115,7 +127,14 @@ methods, and mix freely:
 - Native support for IPC, TCP, and zero-config TLS with automatic
   certificate generation
 
-→ *Production First*
+</details>
+
+<details>
+
+<summary>
+
+<strong>🏭 Production First</strong> — reliable by design
+</summary>
 
 - Clear evaluation model with explicit dependencies prevents surprises
   from hidden state
@@ -124,12 +143,21 @@ methods, and mix freely:
 - OpenTelemetry integration for observability across distributed
   processes
 
-→ *Deploy Everywhere*
+</details>
+
+<details>
+
+<summary>
+
+<strong>🌐 Deploy Everywhere</strong> — laptop to cluster
+</summary>
 
 - Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm,
   SGE, PBS, LSF)
 - Modular compute profiles direct tasks to the most suitable resources
 - Combine local, remote, and HPC resources in a single compute profile
+
+</details>
 
 ### Powers the R Ecosystem
 
