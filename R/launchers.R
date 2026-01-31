@@ -532,32 +532,41 @@ find_dot <- function(args) {
   sel
 }
 
-posit_workbench_cookie <- function() Sys.getenv("RS_SESSION_RPC_COOKIE")
+posit_workbench_cookie <- function() posit_workbench_get("cookie")
 
-posit_workbench_url <- function() file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")
+posit_workbench_url <- function() posit_workbench_get("url")
 
-posit_workbench_data <- function() {
-  requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
-  url <- Sys.getenv("RS_SERVER_ADDRESS")
-  cookie <- posit_workbench_cookie()
-  nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
-  envs <- ncurl(file.path(url, "api", "get_compute_envs"), headers = c(Cookie = cookie))
-  envs[["status"]] == 200L || stop(._[["posit_api"]])
-  cluster <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]][[1L]]
-  lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", .libPaths()), collapse = ","))
-  cmd <- sprintf("{%s;%%s}", lp)
-  json <- list(
-    method = "launch_job",
-    kwparams = list(
-      job = list(
-        cluster = cluster[["name"]],
-        container = list(image = cluster[["defaultImage"]]),
-        resourceProfile = cluster[["resourceProfiles"]][[1L]][["name"]],
-        name = "mirai_daemon",
-        exe = "Rscript",
-        args = c("-e", cmd)
+posit_workbench_data <- function() posit_workbench_get("data")
+
+posit_workbench_get <- function(what) {
+  switch(
+    what,
+    cookie = Sys.getenv("RS_SESSION_RPC_COOKIE"),
+    url = file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job"),
+    data = {
+      requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
+      url <- Sys.getenv("RS_SERVER_ADDRESS")
+      cookie <- posit_workbench_cookie()
+      nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
+      envs <- ncurl(file.path(url, "api", "get_compute_envs"), headers = c(Cookie = cookie))
+      envs[["status"]] == 200L || stop(._[["posit_api"]])
+      cluster <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]][[1L]]
+      lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", .libPaths()), collapse = ","))
+      cmd <- sprintf("{%s;%%s}", lp)
+      json <- list(
+        method = "launch_job",
+        kwparams = list(
+          job = list(
+            cluster = cluster[["name"]],
+            container = list(image = cluster[["defaultImage"]]),
+            resourceProfile = cluster[["resourceProfiles"]][[1L]][["name"]],
+            name = "mirai_daemon",
+            exe = "Rscript",
+            args = c("-e", cmd)
+          )
+        )
       )
-    )
+      secretbase::jsonenc(json)
+    }
   )
-  secretbase::jsonenc(json)
 }
