@@ -44,4 +44,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Remotes:
     r-lib/nanonext,
-    shikokuchuo/secretbase@json
+    shikokuchuo/secretbase
