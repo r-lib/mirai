@@ -568,19 +568,6 @@ requireNamespace("secretbase", quietly = TRUE) && {
   test_equal(decoded[["kwparams"]][["job"]][["container"]][["image"]], "rstudio/r-base:latest")
   result2 <- mirai:::posit_workbench_data(rscript = "/usr/bin/Rscript")
   test_equal(secretbase::jsondec(result2)[["kwparams"]][["job"]][["exe"]], "/usr/bin/Rscript")
-  ns[["ncurl"]] <- function(url, ...) list(
-    status = 200L,
-    data = secretbase::jsonenc(list(
-      result = list(clusters = list(list(
-        name = "slurm-cluster", type = "Slurm",
-        resourceProfiles = list(list(name = "default"))
-      )))
-    ))
-  )
-  result3 <- mirai:::posit_workbench_data()
-  decoded3 <- secretbase::jsondec(result3)
-  test_equal(decoded3[["kwparams"]][["job"]][["cluster"]], "slurm-cluster")
-  test_null(decoded3[["kwparams"]][["job"]][["container"]])
   ns[["ncurl"]] <- original_ncurl
   lockBinding("ncurl", ns)
   if (nzchar(old_server)) Sys.setenv(RS_SERVER_ADDRESS = old_server) else Sys.unsetenv("RS_SERVER_ADDRESS")

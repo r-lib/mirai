@@ -554,14 +554,12 @@ posit_workbench_get <- function(what, rscript = NULL) {
       lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", .libPaths()), collapse = ","))
       job <- list(
         cluster = cluster[["name"]],
+        container = list(image = cluster[["defaultImage"]]),
         resourceProfile = cluster[["resourceProfiles"]][[1L]][["name"]],
         name = "mirai_daemon",
         exe = rscript,
         args = c("-e", sprintf("{%s;%%s}", lp))
       )
-      if (cluster[["type"]] == "Kubernetes") {
-        job <- c(job, list(container = list(image = cluster[["defaultImage"]])))
-      }
       json <- list(method = "launch_job", kwparams = list(job = job))
       secretbase::jsonenc(json)
     }
