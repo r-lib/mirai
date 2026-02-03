@@ -536,9 +536,9 @@ posit_workbench_cookie <- function() posit_workbench_get("cookie")
 
 posit_workbench_url <- function() posit_workbench_get("url")
 
-posit_workbench_data <- function() posit_workbench_get("data")
+posit_workbench_data <- function(rscript = "Rscript") posit_workbench_get("data", rscript)
 
-posit_workbench_get <- function(what) {
+posit_workbench_get <- function(what, rscript = NULL) {
   switch(
     what,
     cookie = Sys.getenv("RS_SESSION_RPC_COOKIE"),
@@ -556,7 +556,7 @@ posit_workbench_get <- function(what) {
         cluster = cluster[["name"]],
         resourceProfile = cluster[["resourceProfiles"]][[1L]][["name"]],
         name = "mirai_daemon",
-        exe = "Rscript",
+        exe = rscript,
         args = c("-e", sprintf("{%s;%%s}", lp))
       )
       if (cluster[["type"]] == "Kubernetes") {
