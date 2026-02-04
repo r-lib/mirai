@@ -157,30 +157,27 @@
 <div class="section level3">
 <h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
 </h3>
-<p>→ <em>Dynamic Architecture</em></p>
-<ul>
+<details><summary><strong>⚡ Dynamic Architecture</strong> — scale on demand
+</summary><ul>
 <li>Hub architecture — host listens, daemons connect — enables true dynamic scaling</li>
 <li>Optimal load balancing through efficient FIFO dispatcher scheduling</li>
 <li>Event-driven promises complete with zero latency (and no polling overhead)</li>
-</ul>
-<p>→ <em>Modern Foundation</em></p>
-<ul>
+</ul></details><details><summary><strong>⚙️ Modern Foundation</strong> — built for speed
+</summary><ul>
 <li>Built on <a href="https://nng.nanomsg.org/" class="external-link">NNG</a> via <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a>, scales reliably to millions of tasks / thousands of processes</li>
 <li>High performance, with round-trip times measured in microseconds, not milliseconds</li>
 <li>Native support for IPC, TCP, and zero-config TLS with automatic certificate generation</li>
-</ul>
-<p>→ <em>Production First</em></p>
-<ul>
+</ul></details><details><summary><strong>🏭 Production First</strong> — reliable by design
+</summary><ul>
 <li>Clear evaluation model with explicit dependencies prevents surprises from hidden state</li>
 <li>Serialization support for cross-language data formats (torch tensors, Arrow tables)</li>
 <li>OpenTelemetry integration for observability across distributed processes</li>
-</ul>
-<p>→ <em>Deploy Everywhere</em></p>
-<ul>
+</ul></details><details><summary><strong>🌐 Deploy Everywhere</strong> — laptop to cluster
+</summary><ul>
 <li>Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm, SGE, PBS, LSF)</li>
 <li>Modular compute profiles direct tasks to the most suitable resources</li>
 <li>Combine local, remote, and HPC resources in a single compute profile</li>
-</ul>
+</ul></details>
 </div>
 <div class="section level3">
 <h3 id="powers-the-r-ecosystem">Powers the R Ecosystem<a class="anchor" aria-label="anchor" href="#powers-the-r-ecosystem"></a>

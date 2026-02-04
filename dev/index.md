@@ -91,7 +91,7 @@ methods, and mix freely:
 
 ### Design Philosophy
 
-→ *Dynamic Architecture*
+**⚡ Dynamic Architecture** — scale on demand
 
 - Hub architecture — host listens, daemons connect — enables true
   dynamic scaling
@@ -99,7 +99,7 @@ methods, and mix freely:
 - Event-driven promises complete with zero latency (and no polling
   overhead)
 
-→ *Modern Foundation*
+**⚙️ Modern Foundation** — built for speed
 
 - Built on [NNG](https://nng.nanomsg.org/) via
   [nanonext](https://nanonext.r-lib.org/), scales reliably to millions
@@ -109,7 +109,7 @@ methods, and mix freely:
 - Native support for IPC, TCP, and zero-config TLS with automatic
   certificate generation
 
-→ *Production First*
+**🏭 Production First** — reliable by design
 
 - Clear evaluation model with explicit dependencies prevents surprises
   from hidden state
@@ -118,7 +118,7 @@ methods, and mix freely:
 - OpenTelemetry integration for observability across distributed
   processes
 
-→ *Deploy Everywhere*
+**🌐 Deploy Everywhere** — laptop to cluster
 
 - Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm,
   SGE, PBS, LSF)

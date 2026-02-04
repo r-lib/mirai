@@ -70,8 +70,8 @@ tryCatch(http_config(), error = identity)
 #> 
 #> $url
 #> function () 
-#> file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")
-#> <bytecode: 0x55b51dd66b18>
+#> posit_workbench_get("url")
+#> <bytecode: 0x55a36c70be38>
 #> <environment: namespace:mirai>
 #> 
 #> $method
@@ -79,35 +79,17 @@ tryCatch(http_config(), error = identity)
 #> 
 #> $cookie
 #> function () 
-#> Sys.getenv("RS_SESSION_RPC_COOKIE")
-#> <bytecode: 0x55b51dd67368>
+#> posit_workbench_get("cookie")
+#> <bytecode: 0x55a36c70c5a8>
 #> <environment: namespace:mirai>
 #> 
 #> $token
 #> NULL
 #> 
 #> $data
-#> function () 
-#> {
-#>     requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
-#>     url <- Sys.getenv("RS_SERVER_ADDRESS")
-#>     cookie <- posit_workbench_cookie()
-#>     nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
-#>     envs <- ncurl(file.path(url, "api", "get_compute_envs"), 
-#>         headers = c(Cookie = cookie))
-#>     envs[["status"]] == 200L || stop(._[["posit_api"]])
-#>     cluster <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]][[1L]]
-#>     lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", 
-#>         .libPaths()), collapse = ","))
-#>     cmd <- sprintf("{%s;%%s}", lp)
-#>     json <- list(method = "launch_job", kwparams = list(job = list(cluster = cluster[["name"]], 
-#>         container = list(image = cluster[["defaultImage"]]), 
-#>         resourceProfile = cluster[["resourceProfiles"]][[1L]][["name"]], 
-#>         name = "mirai_daemon", exe = "Rscript", args = c("-e", 
-#>             cmd))))
-#>     secretbase::jsonenc(json)
-#> }
-#> <bytecode: 0x55b51dd648e8>
+#> function (rscript = "Rscript") 
+#> posit_workbench_get("data", rscript)
+#> <bytecode: 0x55a36c709268>
 #> <environment: namespace:mirai>
 #> 
 
@@ -131,12 +113,12 @@ http_config(
 #> $cookie
 #> function () 
 #> Sys.getenv("MY_SESSION_COOKIE")
-#> <environment: 0x55b51dd7fb90>
+#> <environment: 0x55a36c726b30>
 #> 
 #> $token
 #> function () 
 #> Sys.getenv("MY_API_KEY")
-#> <environment: 0x55b51dd7fb90>
+#> <environment: 0x55a36c726b30>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"
