@@ -32,10 +32,10 @@
 #'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
 #'   .context cv cv_reset cv_signal cv_value dial .dispatcher ip_addr
-#'   is_error_value .keep listen .mark mclock monitor msleep nng_error opt opt<-
-#'   parse_url pipe_id pipe_notify race_aio random reap recv recv_aio request
-#'   send serial_config socket stat stop_aio stop_request tls_config unresolved
-#'   .unresolved until wait wait_ write_cert
+#'   is_error_value .keep listen .mark mclock monitor msleep ncurl nng_error opt
+#'   opt<- parse_url pipe_id pipe_notify race_aio random reap recv recv_aio
+#'   request send serial_config socket stat stop_aio stop_request tls_config
+#'   unresolved .unresolved until wait wait_ write_cert
 #'
 "_PACKAGE"
 
@@ -92,6 +92,8 @@ cli_enabled <- FALSE
     n_one = "`n` must be 1 or greater",
     n_zero = "the number of daemons must be zero or greater",
     numeric_n = "`n` must be numeric, did you mean to provide `url`?",
+    posit_api = "can only be used from Posit Workbench",
+    secretbase = "the secretbase package is required, try: `install.packages('secretbase')`",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
     sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     synchronous = "daemons cannot be launched for synchronous compute profiles",

@@ -411,11 +411,12 @@ Remote launchers run `Rscript` on remote machines.
 
 Supply a remote launch configuration to the 'remote' argument of `daemons()` or `launch_remote()`.
 
-Three configuration options:
+Four configuration options:
 
 1. `ssh_config()` for SSH access
 2. `cluster_config()` for HPC resource managers (Slurm, SGE, Torque/PBS, LSF)
-3. `remote_config()` for generic/custom launchers
+3. `http_config()` for HTTP API launch (e.g., Posit Workbench)
+4. `remote_config()` for generic/custom launchers
 
 All return simple lists that can be pre-constructed, saved, and reused.
 
@@ -531,6 +532,37 @@ daemons(
 )
 ```
 
+#### HTTP Launcher
+
+`http_config()` launches daemons via HTTP API. By default, it auto-configures for Posit Workbench using environment variables.
+
+Launch daemons in Posit Workbench:
+```{r}
+#| label: httpworkbench
+#| eval: false
+daemons(n = 2, url = host_url(), remote = http_config())
+```
+
+For custom HTTP APIs, provide URL, authentication, and request body:
+```{r}
+#| label: httpcustom
+#| eval: false
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = http_config(
+    url = "https://api.example.com/launch",
+    method = "POST",
+    token = function() Sys.getenv("MY_API_KEY"),
+    data = '{"command": "%s"}'
+  )
+)
+```
+
+The `data` argument should include `"%s"` as a placeholder where the daemon launch command is inserted.
+
+Parameters can be character values or functions returning values (evaluated at launch time for fresh credentials).
+
 #### Generic Remote Configuration
 
 `remote_config()` provides a generic framework for custom deployment commands.
@@ -611,7 +643,7 @@ Alternatively, generate certificates via a Certificate Signing Request (CSR) to 
 
 ### 6. Compute Profiles
 
-The `.compute` argument to `daemons()` creates separate, independent daemon sets (*compute profiles*) for heterogeneous compute requirements:
+The `.compute` argument to `daemons()` creates separate, independent daemon pools (*compute profiles*) for heterogeneous compute requirements:
 
 - Target daemons with specific specs (CPUs, memory, GPU, accelerators)
 - Split between local and remote computation

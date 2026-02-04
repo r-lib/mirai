@@ -60,6 +60,11 @@ test_true(grepl("5555", local_url(tcp = TRUE, port = 5555), fixed = TRUE))
 test_type("list", ssh_config("ssh://remotehost"))
 test_type("list", ssh_config("ssh://remotehost", tunnel = TRUE))
 test_type("list", cluster_config())
+test_type("list", cfg <- http_config(url = "https://example.com", cookie = "abc", data = '{"cmd":"%s"}'))
+test_equal(cfg$type, "http")
+test_equal(cfg$url, "https://example.com")
+test_equal(cfg$cookie, "abc")
+test_equal(cfg$data, '{"cmd":"%s"}')
 test_true(is_mirai_interrupt(r <- mirai:::mk_mirai_interrupt()))
 test_print(r)
 test_true(is_mirai_error(r <- `class<-`("Error in: testing\n", c("miraiError", "errorValue", "try-error"))))
@@ -324,6 +329,7 @@ connection && NOT_CRAN && {
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
   test_true(daemons(url = host_url(), pass = "test", serial = cfg))
   if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
+  test_type("list", launch_remote(2L, remote = http_config(url = "http://127.0.0.1:0", data = '{"cmd":"%s"}')))
   test_equal(launch_local(1L), 1L)
   Sys.sleep(1L)
   q <- quote({ list2env(list(b = 2), envir = globalenv()); 0L})
@@ -468,6 +474,7 @@ connection && NOT_CRAN && {
   test_false(daemons_set("gpu"))
   test_identical(m, n)
 }
+# OTel tests
 connection && requireNamespace("otelsdk", quietly = TRUE) && NOT_CRAN && {
   record <- mirai:::with_otel_record({
     url <- local_url()
@@ -530,6 +537,44 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && NOT_CRAN && {
   test_equal(traces[[15L]]$attributes$network.transport, purl[["scheme"]])
   test_false(traces[[15L]]$attributes$mirai.dispatcher)
   test_equal(traces[[15L]]$attributes$mirai.compute, "default")
+}
+# Posit Workbench tests
+requireNamespace("secretbase", quietly = TRUE) && {
+  old_server <- Sys.getenv("RS_SERVER_ADDRESS")
+  old_cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  Sys.setenv(RS_SERVER_ADDRESS = "http://127.0.0.1", RS_SESSION_RPC_COOKIE = "test_cookie")
+  test_equal(mirai:::posit_workbench_url(), "http://127.0.0.1/api/launch_job")
+  test_equal(mirai:::posit_workbench_cookie(), "test_cookie")
+  ns <- parent.env(getNamespace("mirai"))
+  original_ncurl <- ns[["ncurl"]]
+  unlockBinding("ncurl", ns)
+  ns[["ncurl"]] <- function(url, ...) list(
+    status = 200L,
+    data = secretbase::jsonenc(list(
+      result = list(clusters = list(list(
+        name = "k8s-cluster", type = "Kubernetes", defaultImage = "rstudio/r-base:latest",
+        resourceProfiles = list(list(name = "small"))
+      )))
+    ))
+  )
+  result <- mirai:::posit_workbench_data()
+  test_type("character", result)
+  decoded <- secretbase::jsondec(result)
+  test_equal(decoded[["method"]], "launch_job")
+  test_equal(decoded[["kwparams"]][["job"]][["cluster"]], "k8s-cluster")
+  test_equal(decoded[["kwparams"]][["job"]][["resourceProfile"]], "small")
+  test_equal(decoded[["kwparams"]][["job"]][["name"]], "mirai_daemon")
+  test_equal(decoded[["kwparams"]][["job"]][["exe"]], "Rscript")
+  test_equal(decoded[["kwparams"]][["job"]][["container"]][["image"]], "rstudio/r-base:latest")
+  result2 <- mirai:::posit_workbench_data(rscript = "/usr/bin/Rscript")
+  test_equal(secretbase::jsondec(result2)[["kwparams"]][["job"]][["exe"]], "/usr/bin/Rscript")
+  ns[["ncurl"]] <- original_ncurl
+  lockBinding("ncurl", ns)
+  if (nzchar(old_server)) Sys.setenv(RS_SERVER_ADDRESS = old_server) else Sys.unsetenv("RS_SERVER_ADDRESS")
+  if (nzchar(old_cookie)) Sys.setenv(RS_SESSION_RPC_COOKIE = old_cookie) else Sys.unsetenv("RS_SESSION_RPC_COOKIE")
+  test_type("character", mirai:::posit_workbench_url())
+  test_type("character", mirai:::posit_workbench_cookie())
+  nzchar(mirai:::posit_workbench_cookie()) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
 test_false(daemons(0))
 Sys.sleep(1L)

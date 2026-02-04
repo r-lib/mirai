@@ -9,9 +9,70 @@ template:
       <script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
 reference:
-- contents:
+- title: Async Evaluation
+  contents:
+  - mirai
+  - mirai_map
+  - call_mirai
+  - collect_mirai
+  - race_mirai
+  - stop_mirai
+  - unresolved
+  - everywhere
+
+- title: Daemon Infrastructure
+  contents:
+  - daemons
+  - launch_local
+  - launch_remote
+  - dispatcher
+  - daemon
+
+- title: Remote Configuration
+  contents:
+  - remote_config
+  - ssh_config
+  - cluster_config
+  - http_config
+  - host_url
+  - local_url
+
+- title: Compute Profiles
+  contents:
+  - info
+  - daemons_set
+  - require_daemons
+  - with_daemons
+  - local_daemons
+  - with.miraiDaemons
+
+- title: Serialization
+  contents:
+  - serial_config
+  - register_serial
+
+- title: Promises
+  contents:
+  - as.promise.mirai
+  - as.promise.mirai_map
+
+- title: Parallel Clusters
+  contents:
+  - make_cluster
+  - stop_cluster
+
+- title: Utilities
+  contents:
+  - is_mirai
+  - is_mirai_map
+  - is_mirai_error
+  - is_mirai_interrupt
+  - is_error_value
+  - on_daemon
+- title: Package
+  contents:
   - mirai-package
-  - matches("^[a-zA-Z]*")
+
 development:
   mode: auto
 news:

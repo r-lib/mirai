@@ -74,6 +74,6 @@ daemons(n = 2, url = host_url(), remote = cluster_config())
 
 }
 \seealso{
-\code{\link[=ssh_config]{ssh_config()}} for SSH launch configurations, or \code{\link[=remote_config]{remote_config()}}
-for generic configurations.
+\code{\link[=ssh_config]{ssh_config()}}, \code{\link[=http_config]{http_config()}} and \code{\link[=remote_config]{remote_config()}} for other
+types of remote configuration.
 }

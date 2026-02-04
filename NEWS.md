@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Adds `http_config()` for launching remote daemons via HTTP APIs. By default, it automatically configures for Posit Workbench using environment variables, but can be customized for other platforms.
+
 #### Breaking Changes
 
 * `race_mirai()` now returns the integer index of the first resolved 'mirai' instead of the entire list.
