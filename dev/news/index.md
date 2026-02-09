@@ -20,6 +20,11 @@
 
 ##### Updates
 
+- The
+  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
+  loop has been re-implemented entirely in C code in nanonext, and now
+  has roughly half the previous overhead
+  ([\#527](https://github.com/r-lib/mirai/issues/527)).
 - Fixes an issue in
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) where
   supplying a non-character value to `url` causes local daemons to be
@@ -31,7 +36,7 @@
 - A `miraiError` gains `conditionCall` and `conditionMessage` methods
   ([@jan-swissre](https://github.com/jan-swissre),
   [\#529](https://github.com/r-lib/mirai/issues/529))
-- Requires nanonext \>= \[1.7.2.9000\].
+- Requires nanonext \>= 1.8.0.
 
 ## mirai 2.5.3
 

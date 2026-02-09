@@ -63,10 +63,11 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Fixes an issue in <code><a href="../reference/daemons.html">daemons()</a></code> where supplying a non-character value to <code>url</code> causes local daemons to be launched instead of thowing an error (<a href="https://github.com/r-lib/mirai/issues/549" class="external-link">#549</a>).</li>
+<ul><li>The <code><a href="../reference/dispatcher.html">dispatcher()</a></code> loop has been re-implemented entirely in C code in nanonext, and now has roughly half the previous overhead (<a href="https://github.com/r-lib/mirai/issues/527" class="external-link">#527</a>).</li>
+<li>Fixes an issue in <code><a href="../reference/daemons.html">daemons()</a></code> where supplying a non-character value to <code>url</code> causes local daemons to be launched instead of thowing an error (<a href="https://github.com/r-lib/mirai/issues/549" class="external-link">#549</a>).</li>
 <li>Fixes a bug whereby repeated mirai cancellation could sometimes cause a daemon to exit prematurely (<a href="https://github.com/r-lib/mirai/issues/546" class="external-link">#546</a>).</li>
 <li>A <code>miraiError</code> gains <code>conditionCall</code> and <code>conditionMessage</code> methods (<a href="https://github.com/jan-swissre" class="external-link">@jan-swissre</a>, <a href="https://github.com/r-lib/mirai/issues/529" class="external-link">#529</a>)</li>
-<li>Requires nanonext &gt;= [1.7.2.9000].</li>
+<li>Requires nanonext &gt;= 1.8.0.</li>
 </ul></div>
 </div>
     <div class="section level2">
