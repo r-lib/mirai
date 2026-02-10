@@ -659,30 +659,24 @@ parse_tls <- function(tls) {
 libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
 
 args_daemon_direct <- function(url, dots, rs, tls = NULL) {
-  shQuote(sprintf(
+  sprintf(
     "mirai::daemon(\"%s\",dispatcher=FALSE%s%s,rs=c(%s))",
     url,
     dots,
     parse_tls(tls),
     paste0(rs, collapse = ",")
-  ))
+  )
 }
 
 args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
-  shQuote(sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls)))
+  sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls))
 }
 
 args_dispatcher <- function(urld, url, n) {
-  shQuote(sprintf(
-    ".libPaths(\"%s\");mirai::dispatcher(\"%s\",url=\"%s\",n=%d)",
-    libp(),
-    urld,
-    url,
-    n
-  ))
+  sprintf(".libPaths(\"%s\");mirai::dispatcher(\"%s\",url=\"%s\",n=%d)", libp(), urld, url, n)
 }
 
-launch_daemon <- function(args) system2(.command, args = c("-e", args), wait = FALSE)
+launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
 
 query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
   r <- send(sock, command, mode = send_mode, block = block)
@@ -708,7 +702,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL)
   }
   system2(
     .command,
-    args = c("--default-packages=NULL", "--vanilla", "-e", args_dispatcher(urld, url, n)),
+    args = c("--default-packages=NULL", "--vanilla", "-e", shQuote(args_dispatcher(urld, url, n))),
     wait = FALSE
   )
   if (is.null(serial)) {

@@ -98,7 +98,6 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
     headers <- c(Authorization = sprintf("Bearer %s", token), Cookie = cookie)
     res <- lapply(seq_len(n), function(i) {
       cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
-      cmd <- substr(cmd, 2L, nchar(cmd) - 1L)
       cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
       cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
       ncurl(url = api_url, method = method, headers = headers, data = sprintf(data, cmd))
@@ -131,7 +130,9 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
         cmds <- sprintf(
           "%s -e %s",
           rscript,
-          lapply(seq_along(args), function(i) write_args(url, dots, maybe_next_stream(envir), tls))
+          lapply(seq_along(args), function(i) {
+            shQuote(write_args(url, dots, maybe_next_stream(envir), tls))
+          })
         )
 
         for (i in seq_along(args)) {
@@ -152,7 +153,7 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   cmds <- sprintf(
     "%s -e %s",
     rscript,
-    lapply(seq_len(n), function(i) write_args(url, dots, maybe_next_stream(envir), tls))
+    lapply(seq_len(n), function(i) shQuote(write_args(url, dots, maybe_next_stream(envir), tls)))
   )
 
   if (length(command)) {
