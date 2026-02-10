@@ -534,7 +534,38 @@ daemons(
 
 #### HTTP Launcher
 
-`http_config()` launches daemons via HTTP API. By default, it auto-configures for Posit Workbench using environment variables.
+`http_config()` launches daemons via HTTP API.
+
+It takes the following arguments:
+
+- `url`: API endpoint URL
+- `method`: HTTP method (typically `"POST"`)
+- `cookie`: session cookie for authentication
+- `token`: bearer token for authentication
+- `data`: request body containing a `"%s"` placeholder where the daemon launch command is inserted
+
+Each argument accepts either a character value or a **function** returning a value.
+When a function is supplied, it is called at launch time (when `launch_remote()` runs), not when the configuration is created.
+This lazy evaluation ensures that dynamic values such as session cookies, API tokens, or endpoint URLs are always fresh at the moment of use.
+
+##### Default: Posit Workbench
+
+By default, `http_config()` auto-configures for Posit Workbench.
+The defaults for `url`, `cookie`, and `data` are functions (not function calls) that read Workbench environment information:
+
+```r
+http_config(
+  url = posit_workbench_url,     # reads server address at launch time
+  method = "POST",
+  cookie = posit_workbench_cookie, # reads session cookie at launch time
+  token = NULL,
+  data = posit_workbench_data    # queries the compute environment at launch time
+)
+```
+
+Because these are stored as functions, calling `http_config()` does no work — it simply saves the functions into the configuration list.
+Only when daemons are actually launched are the functions evaluated, at which point the environment variables are read and the API is queried.
+This means the configuration can be created early (e.g., at session start) while credentials that may change or expire are always obtained fresh.
 
 Launch daemons in Posit Workbench:
 ```{r}
@@ -543,7 +574,10 @@ Launch daemons in Posit Workbench:
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
 
-For custom HTTP APIs, provide URL, authentication, and request body:
+##### Custom HTTP APIs
+
+For custom HTTP APIs, provide URL, authentication, and request body.
+The `data` argument should include `"%s"` as a placeholder where the daemon launch command is inserted at launch time:
 ```{r}
 #| label: httpcustom
 #| eval: false
@@ -559,9 +593,8 @@ daemons(
 )
 ```
 
-The `data` argument should include `"%s"` as a placeholder where the daemon launch command is inserted.
-
-Parameters can be character values or functions returning values (evaluated at launch time for fresh credentials).
+Here, `token` is a function so the API key environment variable is read each time daemons are launched.
+The remaining arguments are plain character values used as-is.
 
 #### Generic Remote Configuration
 

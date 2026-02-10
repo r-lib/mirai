@@ -57,9 +57,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.608395 5.237884 4.892962 6.079368 4.038861
+#> [1] 5.904365 5.141153 4.670691 5.482619 4.673566
 m$data
-#> [1] 4.608395 5.237884 4.892962 6.079368 4.038861
+#> [1] 5.904365 5.141153 4.670691 5.482619 4.673566
 ```
 
 A mirai is *unresolved* until its result is received, then *resolved*.
@@ -87,7 +87,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.645233 1.379299 4.157368 3.521132 3.252595
+#> [1] 2.859170 2.253078 4.039321 4.404240 3.935956
 ```
 
 This example performs an asynchronous write operation.
@@ -436,7 +436,7 @@ Query `launch_remote()` for the assigned port:
 ``` r
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.6.15:50320")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.4.124:51167")'
 ```
 Dynamically scale the number of daemons up or down as needed.
 
@@ -578,7 +578,38 @@ daemons(
 
 #### HTTP Launcher
 
-`http_config()` launches daemons via HTTP API. By default, it auto-configures for Posit Workbench using environment variables.
+`http_config()` launches daemons via HTTP API.
+
+It takes the following arguments:
+
+- `url`: API endpoint URL
+- `method`: HTTP method (typically `"POST"`)
+- `cookie`: session cookie for authentication
+- `token`: bearer token for authentication
+- `data`: request body containing a `"%s"` placeholder where the daemon launch command is inserted
+
+Each argument accepts either a character value or a **function** returning a value.
+When a function is supplied, it is called at launch time (when `launch_remote()` runs), not when the configuration is created.
+This lazy evaluation ensures that dynamic values such as session cookies, API tokens, or endpoint URLs are always fresh at the moment of use.
+
+##### Default: Posit Workbench
+
+By default, `http_config()` auto-configures for Posit Workbench.
+The defaults for `url`, `cookie`, and `data` are functions (not function calls) that read Workbench environment information:
+
+```r
+http_config(
+  url = posit_workbench_url,     # reads server address at launch time
+  method = "POST",
+  cookie = posit_workbench_cookie, # reads session cookie at launch time
+  token = NULL,
+  data = posit_workbench_data    # queries the compute environment at launch time
+)
+```
+
+Because these are stored as functions, calling `http_config()` does no work — it simply saves the functions into the configuration list.
+Only when daemons are actually launched are the functions evaluated, at which point the environment variables are read and the API is queried.
+This means the configuration can be created early (e.g., at session start) while credentials that may change or expire are always obtained fresh.
 
 Launch daemons in Posit Workbench:
 
@@ -586,7 +617,10 @@ Launch daemons in Posit Workbench:
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
 
-For custom HTTP APIs, provide URL, authentication, and request body:
+##### Custom HTTP APIs
+
+For custom HTTP APIs, provide URL, authentication, and request body.
+The `data` argument should include `"%s"` as a placeholder where the daemon launch command is inserted at launch time:
 
 ``` r
 daemons(
@@ -601,9 +635,8 @@ daemons(
 )
 ```
 
-The `data` argument should include `"%s"` as a placeholder where the daemon launch command is inserted.
-
-Parameters can be character values or functions returning values (evaluated at launch time for fresh credentials).
+Here, `token` is a function so the API key environment variable is read each time daemons are launched.
+The remaining arguments are plain character values used as-is.
 
 #### Generic Remote Configuration
 
@@ -634,7 +667,7 @@ Call `launch_remote()` without 'remote' to get shell commands for manual deploym
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.6.15:50321")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.4.124:51168")'
 daemons(0)
 ```
 
@@ -657,36 +690,36 @@ Self-signed certificates are included in `launch_remote()` commands:
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.6.15:50322",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
-#> MTY4LjYuMTUxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
-#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguNi4x
-#> NTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEAk/oYGBoB+1SrEeAp3D0K0jChRqLH96a+tPbmdXwh
-#> NBiShkS46VOd2K8J3We4iiAvhgaDk5ZQqVChO9wmrqcJopijSDeZftOh78ckuoC3
-#> gg7kiimd1pOO2+d4iORo9KUPeQapvYz9DjGIuNm+itiudNjXeZCdaUgBOptkfjge
-#> 2gzlcTNL6FytsXVoGf1CdqzotrTguS/wB2fDVkb0FlPlovwL7vRfNkBy2EitBe3K
-#> uezws9E11aVh4QexyfCDNe5fP3K01/g2kWaVChuxYVdxQNGEQ4D0S45alydBXlGW
-#> fLNwoK0cHuJkHrgXSFgyOqq3csfNoPgI0NDsvFtRGrS6Bf8MN3i4T82IoFjrpcWH
-#> TYBjpNHN8kMHIJ1RJpE5cQQg7gxauFDBctaa0rh0Ka/yIznNqYAu2usIfReMj61T
-#> mdrZ5aGwOqGooRgp7PrniNU2G2Af7WbTEBC9BzW13nJIX/qtFmiTKMZ/iZtAfACk
-#> YLackIzf+EqIL/+lB2eXOvSNm81RzVKjtogtVb4+JdCqJEavJne/FyrxVgPs9CIb
-#> Zo8NsMhNEN5FtUGGAkZ06pBYJ1TVK+XrPQljIple3Ceoi07ICSr2fwRI+Qpg1RLo
-#> 20uEOov1M7DTOQwiiateMhuE2/nvn4VpJ+Oo8NsSBJAHy1noqrUs6y/OPG07kOe/
-#> YM8CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQU0tTk5z69
-#> t+XDD8Iq0nc98H1lc4cwHwYDVR0jBBgwFoAU0tTk5z69t+XDD8Iq0nc98H1lc4cw
-#> DQYJKoZIhvcNAQELBQADggIBABcP9CtxC0NpYQYmg+i0ZYLjUVRwJHN0s1C6oezz
-#> RNCz6knnI8dyySyqNXLq3C3JKxWNjQSPvW3q2fD/CDH5Ieg+S1PlvX3RwY/JWzLw
-#> vB35MFBO0qJDyMu1hLVqnioeLp22uRg2Cz5yQ1vVOYkTbNe/zV8Ng9reuMxGj4ws
-#> +djEHhLZNePW9dLo4Cd98UBhuxrBis2X4iA7Eawp+FkkjStfMZE7H25WpAcMBOH8
-#> KB90lnOAvMiQ696+lbQkAqmdLm6RAEwYMDgxGse7NZLE6sw3JEsmKiIGn7wCDqBd
-#> Rd9n+bHYq3dAkH6PnhIYS0NBrr4FKZvznNo314FHr46qSstkEeNaR3Cz74FK7t6a
-#> X1YsZvHAbDR91Xr9twrT+lPW+8yb5clKXb4D3XB2YY0ADPjP/86HpFDHdauO/Wso
-#> QQlGcZrk+vFKgU2rnqM7IFHrCQx5D4WYo5Ix2NwyQ/qqfiUYbfFrmPjtKioTp1fI
-#> dmijRyNuHrR5OvgOYzAaTTDeo4JHbQhSizHxQ0yS09fWIkkNpmXg4fWW+HTIACPk
-#> EODa2kKx4IQHYN3UiRPCgPViQ2yqrFOydPwRXwi4ubl3BxR2vf445rRabDI2e8ZT
-#> hMYmFLmEn72a2Dm6rPcx5zXIsOw0N9GMvOFtPgfOOkwdf4dxUEz3QphpWqPvjT4i
-#> O8FW
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.4.124:51169",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
+#> MTY4LjQuMTI0MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjQu
+#> MTI0MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQCsrsHMTuYuYke/lQoFw5Fao45x0s5bZwB2nRST
+#> rTioPRx30vqetDSjc36CYWctjvmZC6/D6E9UgXhqXfKjmg/DGC12LbzyVoTGk1on
+#> 3NnObtrPTWPE0N5bNawUrFccH5gzfjvybtmpYnjNPATl+Nl9VpylOUlZyrrEd8LF
+#> yvWZfjAEUwWyweXF2RSLoT596XMFPL+mEpYuGPmWUZaNGHCQjZhHmc8vVPMy12ws
+#> /iJuLYHeV6LtVhvSNML0lavtxfqcWYLQyt8Pag39b+siKkKZZIui6yvjkK+MXPL+
+#> OeZXExFycKU2WcOkinwxSFD3oMysURNGlSBPz/0wckjLyMCfRsUf/P6tKK1CajXs
+#> W//+0Slyk2cxtqAS3/6v/xXTg5unRkR6DMn9/4jxz6FtVil/Wolm2tTQb9VeL3fj
+#> zbOFBa9R5FgyNFABl44i2GO5BAw0pWf+/IH5gFJf21Y04xtzm7jF8xT/YAMOlmFz
+#> Okv6wy1EBlXbxh24gJhFrBhVRFUa1r1TNwH2YuZLII0pMh3Q9FGcNS9evWW31aS8
+#> stLLdIAcJRdacl9CjZe2GcKlCgbs5lxvtph/pEJZCV4IGoOzSnXfuuaH9ntHVf/e
+#> ux3AR8Q9rV8NcWHCcNNZI2RdIcIqJk3D5IVSMqFKRlBUUqvc71ABWqfvT0VEwggF
+#> v3LNkQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSN8LR9
+#> G1w+4EQqPiUsJoDgulxVNjAfBgNVHSMEGDAWgBSN8LR9G1w+4EQqPiUsJoDgulxV
+#> NjANBgkqhkiG9w0BAQsFAAOCAgEAKMKH6G2k9PosWagfFz0NzYOChmcYdaesSPJk
+#> lYzSx35dpNR89ESLOGoUuUuU0faWycPLEYAI0ESDqqExmQpQwey3aKmWZOtCCzgm
+#> XksqMm45MBPPkTfc0AbgiDjhXR8Af6EOwhNpcXcaJVaNo/KHNqDDhFUM3Jd2Xdcf
+#> eqEF4K2Q9/X/h3daSsOh4X3y+q5QaaVADsECIZ4hEOULABP3bdP6iRCj1IkakE6U
+#> hDafO4pVK1RFHh8Uy68rVw7IJtsuyIhqII6BFJG2sVV52qakwy8xPaTa7AOMRzzn
+#> FOEiqt36qO751zJ5AhSsZqEVz9jXaIgADSX7rWVffsGiyHSwqUKOIUcxZD53MXqd
+#> Ib4zJHqd6o8brDCOciDZZpjGAdVFbGQijW/eXZ4ETzPV/A+6h4OgqCaX7Fsi5Oag
+#> 7fy6BZvm3qGnXUH+kPzMs8/mxJCbd3sry/zN2MsLc0IZ3L5nAqQUGo/mzVqZSnY+
+#> O59TR3fTyhGWWe8v9ctGz7WwX5HPd9rEnkEJKG1UnlUl4uFluGSJnBmEZc9ZqLQW
+#> 00uwFy95f4AzGChe2DvzJMIdM0+ZlUX6Gk9/S2n1dqgyd7WmI8txE2UHBbnZAUpD
+#> 6hhKTceWchYUHlt80bQiAd39pUhQVYxfmh9sG0r0ON+4WCnDtuC+f/EXyV10EBaK
+#> amb/fp4=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -753,14 +786,14 @@ with_daemons("gpu", {
 })
 
 m1[]
-#> [1] 27905
+#> [1] 45691
 m2[] # different to m1
-#> [1] 27931
+#> [1] 45717
 
 m3[] # same as m1
-#> [1] 27905
+#> [1] 45691
 m4[] # same as m1
-#> [1] 27905
+#> [1] 45691
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -824,10 +857,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 6393
+#> [1] 45187
 #> 
 #> [[2]]
-#> [1] 6393
+#> [1] 45187
 
 
 # Use sync with the 'sync' compute profile:
@@ -838,8 +871,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 6393
+#> [1] 45187
 #> 
 #> [[2]]
-#> [1] 6393
+#> [1] 45187
 ```
