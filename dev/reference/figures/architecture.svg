@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 390" fill="none">
+  <rect width="720" height="390" fill="white" />
   <defs>
     <style>
       text {
@@ -20,20 +21,7 @@
       .arrow { fill: #59636e; }
       .arrow-accent { fill: #0969da; }
 
-      @media (prefers-color-scheme: dark) {
-        .profile-box { fill: #161b22; stroke: #30363d; }
-        .profile-label { fill: #8b949e; }
-        .daemon-dot { fill: #58a6ff; }
-        .daemon-label { fill: #e6edf3; }
-        .host-box { fill: #122117; stroke: #3fb950; }
-        .host-label { fill: #3fb950; }
-        .code-label { fill: #79c0ff; }
-        .launch-label { fill: #e6edf3; }
-        .conn { stroke: #6e7681; }
-        .dotted { stroke: #6e7681; }
-        .arrow { fill: #6e7681; }
-        .arrow-accent { fill: #58a6ff; }
-      }
+
     </style>
   </defs>
 
