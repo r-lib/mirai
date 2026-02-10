@@ -20,11 +20,11 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <br /><br /> Minimalist Async Evaluation Framework for R <br /><br />
 
-→ Run R code in parallel while keeping your session free
+→ Event-driven core with microsecond round-trips
 
-→ Scale seamlessly from your laptop to cloud servers or HPC clusters
+→ Hub architecture — scale dynamically from laptop to HPC and cloud
 
-→ Automate actions as soon as tasks complete
+→ OpenTelemetry tracing, promises for Shiny, and custom serialization
 
 <br />
 
