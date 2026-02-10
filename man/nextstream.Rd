@@ -45,10 +45,9 @@ for the specified compute profile and advances it to the next stream.
 These functions are exported for use by packages extending \pkg{mirai} with
 alternative launchers of \code{\link[=daemon]{daemon()}} processes.
 
-For \code{nextstream}: This function should be called for its return value
-when required. The function also has the side effect of automatically
-advancing the stream stored within the compute profile. This ensures that the
-next recursive stream is returned when the function is called again.
+For \code{nextstream}: Calling this function advances the stream stored within
+the compute profile. This ensures that the next recursive stream is returned
+on subsequent calls.
 }
 \examples{
 daemons(sync = TRUE)

@@ -31,22 +31,22 @@ A 'mirai_map' (list of 'mirai' objects).
 }
 \description{
 Evaluate an expression 'everywhere' on all connected daemons for the
-specified compute profile - this must be set prior to calling this function.
-Performs operations across daemons such as loading packages or exporting
-common data. Resultant changes to the global environment, loaded packages and
-options are persisted regardless of a daemon's \code{cleanup} setting.
+specified compute profile. Daemons must be set prior to calling this
+function. Performs operations across daemons such as loading packages or
+exporting common data. Resultant changes to the global environment, loaded
+packages and options are persisted regardless of a daemon's \code{cleanup}
+setting.
 }
 \details{
-If using dispatcher, this function forces a synchronization point at
-dispatcher, whereby the \code{\link[=everywhere]{everywhere()}} call must have been evaluated on all
-daemons prior to subsequent mirai evaluations taking place.
+If using dispatcher, this function forces a synchronization point: the
+\code{\link[=everywhere]{everywhere()}} call must complete on all daemons before subsequent mirai
+evaluations proceed.
 
 Calling \code{\link[=everywhere]{everywhere()}} does not affect the RNG stream for mirai calls when
 using a reproducible \code{seed} value at \code{\link[=daemons]{daemons()}}. This allows the seed
-associated for each mirai call to be the same, regardless of the number of
-daemons actually used to evaluate the code. Note that this means the code
-evaluated in an \code{\link[=everywhere]{everywhere()}} call is itself non-reproducible if it should
-involve random numbers.
+associated with each mirai call to be the same, regardless of the number of
+daemons used. However, code evaluated in an \code{\link[=everywhere]{everywhere()}} call is itself
+non-reproducible if it involves random numbers.
 }
 \section{Evaluation}{
 
@@ -62,10 +62,10 @@ Functions from a package should use namespaced calls such as
 \code{mirai::mirai()}, or else the package should be loaded beforehand as part of
 \code{.expr}.
 
-For evaluation to occur \emph{as if} in your global environment, supply objects to
-\code{...} rather than \code{.args}, e.g. for non-local variables or helper functions
-required by other functions, as scoping rules may otherwise prevent them from
-being found.
+Supply objects to \code{...} rather than \code{.args} for evaluation to occur \emph{as if}
+in your global environment. This is needed for non-local variables or helper
+functions required by other functions, which scoping rules may otherwise
+prevent from being found.
 }
 
 \examples{

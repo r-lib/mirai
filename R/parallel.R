@@ -44,15 +44,15 @@
 #' @section Errors:
 #'
 #' Errors are thrown by the \pkg{parallel} package mechanism if one or more
-#' nodes failed (quit unexpectedly). The resulting 'errorValue' returned is 19
+#' nodes failed (quit unexpectedly). The returned 'errorValue' is 19
 #' (Connection reset). Other types of error, e.g. in evaluation, result in the
 #' usual 'miraiError' being returned.
 #'
 #' @note The default behaviour of clusters created by this function is designed
 #'   to map as closely as possible to clusters created by the \pkg{parallel}
-#'   package. However, `...` arguments are passed onto [daemons()] for
-#'   additional customisation if desired, although resultant behaviour may not
-#'   always be supported.
+#'   package. However, `...` arguments are passed to [daemons()] for additional
+#'   customisation, and not all combinations may be supported by \pkg{parallel}
+#'   functions.
 #'
 #' @examplesIf interactive()
 #' cl <- make_cluster(2)

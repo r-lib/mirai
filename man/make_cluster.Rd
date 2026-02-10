@@ -46,9 +46,9 @@ For R version 4.5 or newer, \code{\link[parallel:makeCluster]{parallel::makeClus
 \note{
 The default behaviour of clusters created by this function is designed
 to map as closely as possible to clusters created by the \pkg{parallel}
-package. However, \code{...} arguments are passed onto \code{\link[=daemons]{daemons()}} for
-additional customisation if desired, although resultant behaviour may not
-always be supported.
+package. However, \code{...} arguments are passed to \code{\link[=daemons]{daemons()}} for additional
+customisation, and not all combinations may be supported by \pkg{parallel}
+functions.
 }
 \section{Remote Nodes}{
 
@@ -72,7 +72,7 @@ command for a single node.
 
 
 Errors are thrown by the \pkg{parallel} package mechanism if one or more
-nodes failed (quit unexpectedly). The resulting 'errorValue' returned is 19
+nodes failed (quit unexpectedly). The returned 'errorValue' is 19
 (Connection reset). Other types of error, e.g. in evaluation, result in the
 usual 'miraiError' being returned.
 }

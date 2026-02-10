@@ -248,22 +248,20 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #' The simplest use of SSH is to execute the daemon launch command on a remote
 #' machine, for it to dial back to the host / dispatcher URL.
 #'
-#' It is assumed that SSH key-based authentication is already in place. The
-#' relevant port on the host must also be open to inbound connections from the
-#' remote machine, and is hence suitable for use within trusted networks.
+#' SSH key-based authentication must already be in place. The relevant port on
+#' the host must be open to inbound connections from the remote machine. This
+#' approach is suited to trusted networks.
 #'
 #' @section SSH Tunnelling:
 #'
-#' Use of SSH tunnelling provides a convenient way to launch remote daemons
-#' without requiring the remote machine to be able to access the host. Often
-#' firewall configurations or security policies may prevent opening a port to
-#' accept outside connections.
+#' SSH tunnelling launches remote daemons without requiring the remote machine
+#' to access the host directly. Often firewall configurations or security
+#' policies may prevent opening a port to accept outside connections.
 #'
-#' In these cases SSH tunnelling offers a solution by creating a tunnel once the
-#' initial SSH connection is made. For simplicity, this SSH tunnelling
-#' implementation uses the same port on both host and daemon. SSH key-based
-#' authentication must already be in place, but no other configuration is
-#' required.
+#' A tunnel is created once the initial SSH connection is made. For simplicity,
+#' this SSH tunnelling implementation uses the same port on both host and
+#' daemon. SSH key-based authentication must already be in place, but no other
+#' configuration is required.
 #'
 #' To use tunnelling, set the hostname of the [daemons()] `url` argument to be
 #' '127.0.0.1'. Using [local_url()] with `tcp = TRUE` also does this for you.
@@ -273,8 +271,8 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #' to '127.0.0.1:5555' on its machine and the remotes each dial into
 #' '127.0.0.1:5555' on their own respective machines.
 #'
-#' This provides a means of launching daemons on any machine you are able to
-#' access via SSH, be it on the local network or the cloud.
+#' Daemons can be launched on any machine accessible via SSH, whether on the
+#' local network or in the cloud.
 #'
 #' @seealso [cluster_config()], [http_config()] and [remote_config()] for other
 #'   types of remote configuration.

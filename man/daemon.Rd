@@ -70,10 +70,9 @@ by \code{\link[=daemons]{daemons()}} and this function should not need to be inv
 unless deploying manually on remote resources.
 }
 \details{
-The network topology is such that daemons dial into the host or dispatcher,
-which listens at the \code{url} address. In this way, network resources may be
-added or removed dynamically and the host or dispatcher automatically
-distributes tasks to all available daemons.
+Daemons dial into the host or dispatcher, which listens at \code{url}. This
+allows network resources to be added or removed dynamically, with the host
+or dispatcher automatically distributing tasks to all connected daemons.
 }
 \section{Persistence}{
 

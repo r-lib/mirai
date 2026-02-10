@@ -8,10 +8,9 @@
 #' by [daemons()] and this function should not need to be invoked directly,
 #' unless deploying manually on remote resources.
 #'
-#' The network topology is such that daemons dial into the host or dispatcher,
-#' which listens at the `url` address. In this way, network resources may be
-#' added or removed dynamically and the host or dispatcher automatically
-#' distributes tasks to all available daemons.
+#' Daemons dial into the host or dispatcher, which listens at `url`. This
+#' allows network resources to be added or removed dynamically, with the host
+#' or dispatcher automatically distributing tasks to all connected daemons.
 #'
 #' @param url (character) host or dispatcher URL to dial into, e.g.
 #'   'tcp://hostname:5555' or 'tls+tcp://10.75.32.70:5555'.

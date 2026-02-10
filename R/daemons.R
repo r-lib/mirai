@@ -78,12 +78,12 @@
 #' cancellation using [stop_mirai()] or when using a `.timeout` argument to
 #' [mirai()], and (ii) the use of custom serialization configurations.
 #'
-#' Specifying `dispatcher = FALSE`, daemons connect directly to the host and
-#' tasks are distributed in a round-robin fashion, with tasks queued at each
-#' daemon. Optimal scheduling is not guaranteed as, depending on the duration of
-#' tasks, they can be queued at one daemon while others remain idle. However,
-#' this solution is the most resource-light, and suited to similar-length tasks,
-#' or where concurrent tasks typically do not exceed available daemons.
+#' With `dispatcher = FALSE`, daemons connect directly to the host and tasks
+#' are distributed round-robin, with tasks queued at each daemon. Optimal
+#' scheduling is not guaranteed, as tasks can queue at one daemon while others
+#' remain idle. However, this is the most lightweight option, suited to
+#' similar-length tasks or when concurrent tasks do not exceed available
+#' daemons.
 #'
 #' @section Distributed Computing:
 #'
@@ -120,11 +120,11 @@
 #'
 #' If `NULL`, the `"default"` compute profile is used. Providing a character
 #' value for `.compute` creates a new compute profile with the name specified.
-#' Each compute profile retains its own daemons settings, and may be operated
-#' independently of each other. Some usage examples follow:
+#' Each compute profile retains its own daemons settings and operates
+#' independently. Some usage examples follow:
 #'
-#' **local / remote** daemons may be set with a host URL and specifying
-#' `.compute` as `"remote"`, which creates a new compute profile. Subsequent
+#' **local / remote** daemons may be set by specifying a host URL and
+#' `.compute` as `"remote"`, creating a new compute profile. Subsequent
 #' [mirai()] calls may then be sent for local computation by not specifying the
 #' `.compute` argument, or for remote computation to connected daemons by
 #' specifying the `.compute` argument as `"remote"`.

@@ -14,15 +14,13 @@ The passed object (invisibly). For a 'mirai', the retrieved value is
 stored at \verb{$data}.
 }
 \description{
-Waits for the 'mirai' to resolve if still in progress, stores the value at
-\verb{$data}, and returns the 'mirai' object.
+Waits for the 'mirai' to resolve if still in progress (blocking but
+user-interruptible), stores the value at \verb{$data}, and returns the 'mirai'
+object.
 }
 \details{
 Accepts a list of 'mirai' objects, such as those returned by \code{\link[=mirai_map]{mirai_map()}},
 as well as individual 'mirai'.
-
-Waits for the asynchronous operation(s) to complete if still in progress,
-blocking but user-interruptible.
 
 \code{x[]} may also be used to wait for and return the value of a mirai \code{x}, and
 is the equivalent of \code{call_mirai(x)$data}.

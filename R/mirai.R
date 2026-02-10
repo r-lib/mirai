@@ -6,8 +6,6 @@
 #' persistent daemon (local or remote). This function will return immediately
 #' with a 'mirai', which will resolve to the evaluated result once complete.
 #'
-#' This function will return a 'mirai' object immediately.
-#'
 #' The value of a mirai may be accessed at any time at `$data`, and if yet
 #' to resolve, an 'unresolved' logical NA will be returned instead. Each mirai
 #' has an attribute `id`, which is a monotonically increasing integer identifier
@@ -53,19 +51,19 @@
 #' `mirai::mirai()`, or else the package should be loaded beforehand as part of
 #' `.expr`.
 #'
-#' For evaluation to occur *as if* in your global environment, supply objects to
-#' `...` rather than `.args`, e.g. for non-local variables or helper functions
-#' required by other functions, as scoping rules may otherwise prevent them from
-#' being found.
+#' Supply objects to `...` rather than `.args` for evaluation to occur *as if*
+#' in your global environment. This is needed for non-local variables or helper
+#' functions required by other functions, which scoping rules may otherwise
+#' prevent from being found.
 #'
 #' @section Timeouts:
 #'
 #' Specifying the `.timeout` argument ensures that the mirai always resolves.
 #' When using dispatcher, the mirai will be cancelled after it times out (as if
-#' [stop_mirai()] had been called). As in that case, there is no guarantee that
-#' any cancellation will be successful, if the code cannot be interrupted for
-#' instance. When not using dispatcher, the mirai task will continue to
-#' completion in the daemon process, even if it times out in the host process.
+#' [stop_mirai()] had been called). However, cancellation is not guaranteed --
+#' for example, compiled code may not be interruptible. When not using
+#' dispatcher, the mirai task continues to completion in the daemon process,
+#' even if it times out in the host process.
 #'
 #' @section Errors:
 #'
@@ -119,7 +117,7 @@
 #' file <- tempfile()
 #' cat("r <- rnorm(n)", file = file)
 #' m <- mirai({source(file); r}, file = file, n = n)
-#' call_mirai(m)$data
+#' call_mirai(m)$datado
 #' unlink(file)
 #'
 #' # use source(local = TRUE) when passing in local variables via '.args'
@@ -198,21 +196,21 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' Evaluate Everywhere
 #'
 #' Evaluate an expression 'everywhere' on all connected daemons for the
-#' specified compute profile - this must be set prior to calling this function.
-#' Performs operations across daemons such as loading packages or exporting
-#' common data. Resultant changes to the global environment, loaded packages and
-#' options are persisted regardless of a daemon's `cleanup` setting.
+#' specified compute profile. Daemons must be set prior to calling this
+#' function. Performs operations across daemons such as loading packages or
+#' exporting common data. Resultant changes to the global environment, loaded
+#' packages and options are persisted regardless of a daemon's `cleanup`
+#' setting.
 #'
-#' If using dispatcher, this function forces a synchronization point at
-#' dispatcher, whereby the [everywhere()] call must have been evaluated on all
-#' daemons prior to subsequent mirai evaluations taking place.
+#' If using dispatcher, this function forces a synchronization point: the
+#' [everywhere()] call must complete on all daemons before subsequent mirai
+#' evaluations proceed.
 #'
 #' Calling [everywhere()] does not affect the RNG stream for mirai calls when
 #' using a reproducible `seed` value at [daemons()]. This allows the seed
-#' associated for each mirai call to be the same, regardless of the number of
-#' daemons actually used to evaluate the code. Note that this means the code
-#' evaluated in an [everywhere()] call is itself non-reproducible if it should
-#' involve random numbers.
+#' associated with each mirai call to be the same, regardless of the number of
+#' daemons used. However, code evaluated in an [everywhere()] call is itself
+#' non-reproducible if it involves random numbers.
 #'
 #' @inheritParams mirai
 #' @param .min (integer) minimum daemons to evaluate on (dispatcher only).
@@ -294,14 +292,12 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
 
 #' mirai (Call Value)
 #'
-#' Waits for the 'mirai' to resolve if still in progress, stores the value at
-#' `$data`, and returns the 'mirai' object.
+#' Waits for the 'mirai' to resolve if still in progress (blocking but
+#' user-interruptible), stores the value at `$data`, and returns the 'mirai'
+#' object.
 #'
 #' Accepts a list of 'mirai' objects, such as those returned by [mirai_map()],
 #' as well as individual 'mirai'.
-#'
-#' Waits for the asynchronous operation(s) to complete if still in progress,
-#' blocking but user-interruptible.
 #'
 #' `x[]` may also be used to wait for and return the value of a mirai `x`, and
 #' is the equivalent of `call_mirai(x)$data`.
@@ -405,12 +401,9 @@ race_mirai <- function(x, .compute = NULL) {
 
 #' mirai (Collect Value)
 #'
-#' Waits for the 'mirai' to resolve if still in progress, and returns its value
-#' directly. It is a more efficient version of and equivalent to
+#' Waits for the 'mirai' to resolve if still in progress (blocking but
+#' interruptible) and returns its value directly. Equivalent to
 #' `call_mirai(x)$data`.
-#'
-#' This function will wait for the asynchronous operation(s) to complete if
-#' still in progress, blocking but interruptible.
 #'
 #' `x[]` is an equivalent way to wait for and return the value of a mirai `x`.
 #'
@@ -423,10 +416,10 @@ race_mirai <- function(x, .compute = NULL) {
 #'
 #' @section Options:
 #'
-#' As an alternative to a character vector, a list where the names are the
-#' collection options is also accepted. The value for `.progress` is passed to
-#' the cli progress bar - if a character value as the name, and if a list as
-#' named parameters to `cli::cli_progress_bar`. Examples:
+#' A named list may also be supplied instead of a character vector, where the
+#' names are the collection options. The value for `.progress` is passed to the
+#' cli progress bar: a character value sets the bar name, and a list is passed
+#' as named parameters to `cli::cli_progress_bar`. Examples:
 #' `c(.stop = TRUE, .progress = "bar name")` or
 #' `list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
 #'
@@ -467,15 +460,14 @@ collect_mirai <- function(x, options = NULL) {
 #' Stops a 'mirai' if still in progress, causing it to resolve immediately to an
 #' 'errorValue' 20 (Operation canceled).
 #'
-#' Using dispatcher allows cancellation of 'mirai'. In the case that the 'mirai'
-#' is awaiting execution, it is discarded from the queue and never evaluated. In
-#' the case it is already in execution, an interrupt will be sent.
+#' Cancellation requires dispatcher. If the 'mirai' is awaiting execution, it
+#' is discarded from the queue and never evaluated. If already executing, an
+#' interrupt is sent.
 #'
-#' A successful cancellation request does not guarantee successful cancellation:
-#' the task, or a portion of it, may have already completed before the interrupt
-#' is received. Even then, compiled code is not always interruptible. This
-#' should be noted, particularly if the code carries out side effects during
-#' execution, such as writing to files, etc.
+#' A cancellation request does not guarantee the task stops: it may have already
+#' completed before the interrupt is received, and compiled code is not always
+#' interruptible. Take care if the code performs side effects such as writing to
+#' files.
 #'
 #' @inheritParams call_mirai
 #'
