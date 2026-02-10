@@ -36,28 +36,33 @@ tasks.
 
 ``` r
 library(mirai)
+
+# Set up 5 background processes
 daemons(5)
 
+# Send work -- non-blocking, returns immediately
 m <- mirai({
   Sys.sleep(1)
   100 + 42
 })
+m
+#> < mirai [] >
 
+# Map work across daemons in parallel
 mp <- mirai_map(1:9, \(x) {
   Sys.sleep(1)
   x^2
 })
+mp
+#> < mirai map [0/9] >
 
-m
-#> < mirai [] >
+# Collect results when ready
 m[]
 #> [1] 142
-
-mp
-#> < mirai map [4/9] >
 mp[.flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
+# Shut down
 daemons(0)
 ```
 
