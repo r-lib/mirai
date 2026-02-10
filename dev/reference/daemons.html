@@ -197,12 +197,12 @@ connecting back to the host process, either directly or via dispatcher.</p>
 tasks, and ensures optimal FIFO scheduling. Dispatcher also enables (i) mirai
 cancellation using <code><a href="stop_mirai.html">stop_mirai()</a></code> or when using a <code>.timeout</code> argument to
 <code><a href="mirai.html">mirai()</a></code>, and (ii) the use of custom serialization configurations.</p>
-<p>Specifying <code>dispatcher = FALSE</code>, daemons connect directly to the host and
-tasks are distributed in a round-robin fashion, with tasks queued at each
-daemon. Optimal scheduling is not guaranteed as, depending on the duration of
-tasks, they can be queued at one daemon while others remain idle. However,
-this solution is the most resource-light, and suited to similar-length tasks,
-or where concurrent tasks typically do not exceed available daemons.</p>
+<p>With <code>dispatcher = FALSE</code>, daemons connect directly to the host and tasks
+are distributed round-robin, with tasks queued at each daemon. Optimal
+scheduling is not guaranteed, as tasks can queue at one daemon while others
+remain idle. However, this is the most lightweight option, suited to
+similar-length tasks or when concurrent tasks do not exceed available
+daemons.</p>
     </div>
     <div class="section level2">
     <h2 id="distributed-computing">Distributed Computing<a class="anchor" aria-label="anchor" href="#distributed-computing"></a></h2>
@@ -240,10 +240,10 @@ deployment.</p>
 
 <p>If <code>NULL</code>, the <code>"default"</code> compute profile is used. Providing a character
 value for <code>.compute</code> creates a new compute profile with the name specified.
-Each compute profile retains its own daemons settings, and may be operated
-independently of each other. Some usage examples follow:</p>
-<p><strong>local / remote</strong> daemons may be set with a host URL and specifying
-<code>.compute</code> as <code>"remote"</code>, which creates a new compute profile. Subsequent
+Each compute profile retains its own daemons settings and operates
+independently. Some usage examples follow:</p>
+<p><strong>local / remote</strong> daemons may be set by specifying a host URL and
+<code>.compute</code> as <code>"remote"</code>, creating a new compute profile. Subsequent
 <code><a href="mirai.html">mirai()</a></code> calls may then be sent for local computation by not specifying the
 <code>.compute</code> argument, or for remote computation to connected daemons by
 specifying the <code>.compute</code> argument as <code>"remote"</code>.</p>
@@ -323,7 +323,7 @@ profile used locally.</p></div>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">daemons</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7103</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Synchronous mode restricted to a specific compute profile</span></span></span>
 <span class="r-in"><span><span class="fu">daemons</span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span></span>
@@ -332,7 +332,7 @@ profile used locally.</p></div>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">daemons</span><span class="op">(</span><span class="fl">0</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7103</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -65,10 +65,10 @@ specifying `type = "MIRAI"` is equivalent to this function.
 
 The default behaviour of clusters created by this function is designed
 to map as closely as possible to clusters created by the parallel
-package. However, `...` arguments are passed onto
+package. However, `...` arguments are passed to
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) for
-additional customisation if desired, although resultant behaviour may
-not always be supported.
+additional customisation, and not all combinations may be supported by
+parallel functions.
 
 ## Remote Nodes
 
@@ -94,9 +94,9 @@ command for a single node.
 ## Errors
 
 Errors are thrown by the parallel package mechanism if one or more nodes
-failed (quit unexpectedly). The resulting 'errorValue' returned is 19
-(Connection reset). Other types of error, e.g. in evaluation, result in
-the usual 'miraiError' being returned.
+failed (quit unexpectedly). The returned 'errorValue' is 19 (Connection
+reset). Other types of error, e.g. in evaluation, result in the usual
+'miraiError' being returned.
 
 ## Examples
 

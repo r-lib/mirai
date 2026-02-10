@@ -55,8 +55,7 @@ Sends each application of function `.f` on an element of `.x` (or row of
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call. If
 `.x` is named, names are preserved.
 
-This simple and transparent behaviour is designed to make full use of
-mirai scheduling to minimise overall execution time.
+Takes advantage of mirai scheduling to minimise overall execution time.
 
 Facilitates recovery from partial failure by returning all 'miraiError'
 / 'errorValue' as the case may be, thus allowing only failures to be
@@ -95,8 +94,8 @@ row names are preserved as names of the output.
 
 This allows map over 2 or more arguments, and `.f` should accept at
 least as many arguments as there are columns. If the dataframe has
-names, or the matrix column dimnames, named arguments are provided to
-`.f`.
+column names, or the matrix has column dimnames, arguments are passed to
+`.f` by name.
 
 To map over **columns** instead, first wrap a dataframe in
 [`as.list()`](https://rdrr.io/r/base/list.html), or transpose a matrix
@@ -104,17 +103,15 @@ using [`t()`](https://rdrr.io/r/base/t.html).
 
 ## Nested Maps
 
-At times you may wish to run maps within maps. To do this, the function
-provided to the outer map needs to include a call to
+To run maps within maps, the function provided to the outer map must
+include a call to
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) to set
-daemons used by the inner map. To guard against inadvertently spawning
-an excessive number of daemons on the same machine, attempting to launch
+daemons for the inner map. To guard against inadvertently spawning an
+excessive number of daemons on the same machine, attempting to launch
 local daemons within a map using `daemons(n)` will error.
 
-A legitimate use of this pattern however is when the outer daemons are
-launched on remote machines, and you then wish to launch daemons locally
-on each of those machines. In this case, use the following solution:
-instead of a single call to `daemons(n)` make 2 separate calls to
+When the outer daemons run on remote machines and you want local daemons
+on each, use 2 separate calls instead of `daemons(n)`:
 `daemons(url = local_url()); launch_local(n)`. This is equivalent, and
 is permitted from within a map.
 

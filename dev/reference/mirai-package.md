@@ -18,9 +18,9 @@ communications is platform-dependent: abstract Unix domain sockets on
 Linux, Unix domain sockets on MacOS, Solaris and other POSIX platforms,
 and named pipes on Windows.
 
-This may be overriden, if desired, by specifying 'url' in the
-[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
-interface and launching daemons using
+This may be overridden by specifying 'url' in
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) and
+launching daemons using
 [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md).
 
 ## OpenTelemetry

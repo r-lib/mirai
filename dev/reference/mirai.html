@@ -105,8 +105,7 @@ profile.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function will return a 'mirai' object immediately.</p>
-<p>The value of a mirai may be accessed at any time at <code>$data</code>, and if yet
+    <p>The value of a mirai may be accessed at any time at <code>$data</code>, and if yet
 to resolve, an 'unresolved' logical NA will be returned instead. Each mirai
 has an attribute <code>id</code>, which is a monotonically increasing integer identifier
 in each session.</p>
@@ -132,10 +131,10 @@ supplied through <code>...</code> and/or <code>.args</code>, including self-defi
 Functions from a package should use namespaced calls such as
 <code>mirai::mirai()</code>, or else the package should be loaded beforehand as part of
 <code>.expr</code>.</p>
-<p>For evaluation to occur <em>as if</em> in your global environment, supply objects to
-<code>...</code> rather than <code>.args</code>, e.g. for non-local variables or helper functions
-required by other functions, as scoping rules may otherwise prevent them from
-being found.</p>
+<p>Supply objects to <code>...</code> rather than <code>.args</code> for evaluation to occur <em>as if</em>
+in your global environment. This is needed for non-local variables or helper
+functions required by other functions, which scoping rules may otherwise
+prevent from being found.</p>
     </div>
     <div class="section level2">
     <h2 id="timeouts">Timeouts<a class="anchor" aria-label="anchor" href="#timeouts"></a></h2>
@@ -144,10 +143,10 @@ being found.</p>
 
 <p>Specifying the <code>.timeout</code> argument ensures that the mirai always resolves.
 When using dispatcher, the mirai will be cancelled after it times out (as if
-<code><a href="stop_mirai.html">stop_mirai()</a></code> had been called). As in that case, there is no guarantee that
-any cancellation will be successful, if the code cannot be interrupted for
-instance. When not using dispatcher, the mirai task will continue to
-completion in the daemon process, even if it times out in the host process.</p>
+<code><a href="stop_mirai.html">stop_mirai()</a></code> had been called). However, cancellation is not guaranteed –
+for example, compiled code may not be interruptible. When not using
+dispatcher, the mirai task continues to completion in the daemon process,
+even if it times out in the host process.</p>
     </div>
     <div class="section level2">
     <h2 id="errors">Errors<a class="anchor" aria-label="anchor" href="#errors"></a></h2>
@@ -205,7 +204,7 @@ interrupts, and timeouts.</p>
 <span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"r &lt;- rnorm(n)"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">mirai</span><span class="op">(</span><span class="op">{</span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>; <span class="va">r</span><span class="op">}</span>, file <span class="op">=</span> <span class="va">file</span>, n <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">datado</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use source(local = TRUE) when passing in local variables via '.args'</span></span></span>

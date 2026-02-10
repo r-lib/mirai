@@ -48,8 +48,6 @@ A 'mirai' object.
 
 ## Details
 
-This function will return a 'mirai' object immediately.
-
 The value of a mirai may be accessed at any time at `$data`, and if yet
 to resolve, an 'unresolved' logical NA will be returned instead. Each
 mirai has an attribute `id`, which is a monotonically increasing integer
@@ -82,10 +80,10 @@ functions. Functions from a package should use namespaced calls such as
 `mirai::mirai()`, or else the package should be loaded beforehand as
 part of `.expr`.
 
-For evaluation to occur *as if* in your global environment, supply
-objects to `...` rather than `.args`, e.g. for non-local variables or
-helper functions required by other functions, as scoping rules may
-otherwise prevent them from being found.
+Supply objects to `...` rather than `.args` for evaluation to occur *as
+if* in your global environment. This is needed for non-local variables
+or helper functions required by other functions, which scoping rules may
+otherwise prevent from being found.
 
 ## Timeouts
 
@@ -93,11 +91,10 @@ Specifying the `.timeout` argument ensures that the mirai always
 resolves. When using dispatcher, the mirai will be cancelled after it
 times out (as if
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md)
-had been called). As in that case, there is no guarantee that any
-cancellation will be successful, if the code cannot be interrupted for
-instance. When not using dispatcher, the mirai task will continue to
-completion in the daemon process, even if it times out in the host
-process.
+had been called). However, cancellation is not guaranteed – for example,
+compiled code may not be interruptible. When not using dispatcher, the
+mirai task continues to completion in the daemon process, even if it
+times out in the host process.
 
 ## Errors
 
@@ -156,7 +153,7 @@ n <- 10L
 file <- tempfile()
 cat("r <- rnorm(n)", file = file)
 m <- mirai({source(file); r}, file = file, n = n)
-call_mirai(m)$data
+call_mirai(m)$datado
 unlink(file)
 
 # use source(local = TRUE) when passing in local variables via '.args'

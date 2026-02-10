@@ -116,9 +116,9 @@ the console.</p>
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>The default behaviour of clusters created by this function is designed
 to map as closely as possible to clusters created by the <span class="pkg">parallel</span>
-package. However, <code>...</code> arguments are passed onto <code><a href="daemons.html">daemons()</a></code> for
-additional customisation if desired, although resultant behaviour may not
-always be supported.</p>
+package. However, <code>...</code> arguments are passed to <code><a href="daemons.html">daemons()</a></code> for additional
+customisation, and not all combinations may be supported by <span class="pkg">parallel</span>
+functions.</p>
     </div>
     <div class="section level2">
     <h2 id="remote-nodes">Remote Nodes<a class="anchor" aria-label="anchor" href="#remote-nodes"></a></h2>
@@ -142,7 +142,7 @@ command for a single node.</p>
 
 
 <p>Errors are thrown by the <span class="pkg">parallel</span> package mechanism if one or more
-nodes failed (quit unexpectedly). The resulting 'errorValue' returned is 19
+nodes failed (quit unexpectedly). The returned 'errorValue' is 19
 (Connection reset). Other types of error, e.g. in evaluation, result in the
 usual 'miraiError' being returned.</p>
     </div>

@@ -158,10 +158,9 @@ positive value if a self-imposed limit was reached: 1L (idletime), 2L
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The network topology is such that daemons dial into the host or dispatcher,
-which listens at the <code>url</code> address. In this way, network resources may be
-added or removed dynamically and the host or dispatcher automatically
-distributes tasks to all available daemons.</p>
+    <p>Daemons dial into the host or dispatcher, which listens at <code>url</code>. This
+allows network resources to be added or removed dynamically, with the host
+or dispatcher automatically distributing tasks to all connected daemons.</p>
     </div>
     <div class="section level2">
     <h2 id="persistence">Persistence<a class="anchor" aria-label="anchor" href="#persistence"></a></h2>

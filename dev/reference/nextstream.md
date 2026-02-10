@@ -56,11 +56,9 @@ These functions are exported for use by packages extending mirai with
 alternative launchers of
 [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) processes.
 
-For `nextstream`: This function should be called for its return value
-when required. The function also has the side effect of automatically
-advancing the stream stored within the compute profile. This ensures
-that the next recursive stream is returned when the function is called
-again.
+For `nextstream`: Calling this function advances the stream stored
+within the compute profile. This ensures that the next recursive stream
+is returned on subsequent calls.
 
 ## Examples
 
@@ -74,7 +72,7 @@ nextstream()
 #> [6]  -739104734  -843469383
 
 nextget("url")
-#> [1] "abstract://ee9999ae4e470b67f1431b99"
+#> [1] "abstract://0232a553eca7643e636ed8fb"
 
 daemons(0)
 

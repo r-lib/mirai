@@ -106,10 +106,9 @@ been created.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>These functions are exported for use by packages extending <span class="pkg">mirai</span> with
 alternative launchers of <code><a href="daemon.html">daemon()</a></code> processes.</p>
-<p>For <code>nextstream</code>: This function should be called for its return value
-when required. The function also has the side effect of automatically
-advancing the stream stored within the compute profile. This ensures that the
-next recursive stream is returned when the function is called again.</p>
+<p>For <code>nextstream</code>: Calling this function advances the stream stored within
+the compute profile. This ensures that the next recursive stream is returned
+on subsequent calls.</p>
     </div>
 
     <div class="section level2">
@@ -123,7 +122,7 @@ next recursive stream is returned when the function is called again.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6]  -739104734  -843469383</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"url"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://ee9999ae4e470b67f1431b99"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://0232a553eca7643e636ed8fb"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

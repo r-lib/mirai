@@ -1,7 +1,7 @@
 # Evaluate Everywhere
 
 Evaluate an expression 'everywhere' on all connected daemons for the
-specified compute profile - this must be set prior to calling this
+specified compute profile. Daemons must be set prior to calling this
 function. Performs operations across daemons such as loading packages or
 exporting common data. Resultant changes to the global environment,
 loaded packages and options are persisted regardless of a daemon's
@@ -50,17 +50,17 @@ A 'mirai_map' (list of 'mirai' objects).
 
 ## Details
 
-If using dispatcher, this function forces a synchronization point at
-dispatcher, whereby the `everywhere()` call must have been evaluated on
-all daemons prior to subsequent mirai evaluations taking place.
+If using dispatcher, this function forces a synchronization point: the
+`everywhere()` call must complete on all daemons before subsequent mirai
+evaluations proceed.
 
 Calling `everywhere()` does not affect the RNG stream for mirai calls
 when using a reproducible `seed` value at
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md). This
-allows the seed associated for each mirai call to be the same,
-regardless of the number of daemons actually used to evaluate the code.
-Note that this means the code evaluated in an `everywhere()` call is
-itself non-reproducible if it should involve random numbers.
+allows the seed associated with each mirai call to be the same,
+regardless of the number of daemons used. However, code evaluated in an
+`everywhere()` call is itself non-reproducible if it involves random
+numbers.
 
 ## Evaluation
 
@@ -75,10 +75,10 @@ functions. Functions from a package should use namespaced calls such as
 [`mirai::mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), or
 else the package should be loaded beforehand as part of `.expr`.
 
-For evaluation to occur *as if* in your global environment, supply
-objects to `...` rather than `.args`, e.g. for non-local variables or
-helper functions required by other functions, as scoping rules may
-otherwise prevent them from being found.
+Supply objects to `...` rather than `.args` for evaluation to occur *as
+if* in your global environment. This is needed for non-local variables
+or helper functions required by other functions, which scoping rules may
+otherwise prevent from being found.
 
 ## Examples
 

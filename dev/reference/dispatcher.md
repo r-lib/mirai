@@ -33,8 +33,6 @@ Invisibly, an integer exit code: 0L for normal termination.
 
 ## Details
 
-The network topology is such that a dispatcher acts as a gateway between
-the host and daemons, ensuring that tasks received from the host are
-dispatched on a FIFO basis for processing. Tasks are queued at the
-dispatcher to ensure tasks are only sent to daemons that can begin
-immediate execution of the task.
+Dispatcher acts as a gateway between the host and daemons, dispatching
+tasks on a FIFO basis. Tasks are queued until a daemon is available for
+immediate execution.
