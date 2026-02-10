@@ -4,19 +4,20 @@
 
 *moving already*  
   
-[![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)  
-  
 Minimalist Async Evaluation Framework for R  
   
 
-→ Run R code in parallel while keeping your session free
+→ Event-driven core with microsecond round-trips
 
-→ Scale seamlessly from your laptop to cloud servers or HPC clusters
+→ Hub architecture — scale dynamically from laptop to HPC and cloud
 
-→ Automate actions as soon as tasks complete
+→ Production-ready distributed tracing, custom serialization, and Shiny
+integration
 
   
+  
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)  
 
 ### Installation
 
@@ -60,70 +61,49 @@ mp[.flat]
 daemons(0)
 ```
 
+See the [quick reference](https://mirai.r-lib.org/articles/mirai.html)
+for a full introduction.
+
 ### Architecture
 
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) sends tasks
 to daemons for parallel execution.
 
-A *compute profile* is a pool of connected daemons. Multiple profiles
-can coexist, directing tasks to different resources.
+A *compute profile* is a set of connected daemons. Multiple profiles can
+coexist, directing tasks to different resources.
 
 *Hub architecture*: host listens at a URL, daemons connect to it — add
 or remove daemons at any time. Launch locally or remotely via different
 methods, and mix freely:
 
-``` R
-                            ┌ Compute Profile ┐
-  launch_local() ···········│▸ Daemon ──┐     │
-                            │           │     │
-  ssh_config() ·············│▸ Daemon ──┼─────┼──▸ Host
-                            │           │     │    daemons(url = host_url())
-  cluster_config() ·········│▸ Daemon ──┤     │
-                            │           │     │
-  http_config() ············│▸ Daemon ──┘     │
-                            └─────────────────┘
-                            ┌ Compute Profile ┐
-                            │  Daemon ──┐     │
-                            │           ├─────┼──▸ Host
-                            │  Daemon ──┘     │    daemons(2)
-                            └─────────────────┘
-```
+![Hub architecture diagram showing compute profiles with daemons
+connecting to host](reference/figures/architecture.svg)
 
 ### Design Philosophy
 
-**⚡ Dynamic Architecture** — scale on demand
+> **Dynamic Architecture** — *scale on demand*
+>
+> - Host listens, daemons connect — true dynamic scaling
+> - Optimal load balancing via efficient FIFO scheduling
+> - Event-driven promises with zero-latency completion
 
-- Hub architecture — host listens, daemons connect — enables true
-  dynamic scaling
-- Optimal load balancing through efficient FIFO dispatcher scheduling
-- Event-driven promises complete with zero latency (and no polling
-  overhead)
+> **Modern Foundation** — *built for speed*
+>
+> - NNG via nanonext — thousands of processes at scale
+> - Round-trip times in microseconds, not milliseconds
+> - IPC, TCP, and zero-config TLS certificates
 
-**⚙️ Modern Foundation** — built for speed
+> **Production First** — *reliable by design*
+>
+> - Explicit dependencies prevent hidden-state surprises
+> - Cross-language serialization (torch, Arrow, Polars)
+> - OpenTelemetry for distributed process observability
 
-- Built on [NNG](https://nng.nanomsg.org/) via
-  [nanonext](https://nanonext.r-lib.org/), scales reliably to millions
-  of tasks / thousands of processes
-- High performance, with round-trip times measured in microseconds, not
-  milliseconds
-- Native support for IPC, TCP, and zero-config TLS with automatic
-  certificate generation
-
-**🏭 Production First** — reliable by design
-
-- Clear evaluation model with explicit dependencies prevents surprises
-  from hidden state
-- Serialization support for cross-language data formats (torch tensors,
-  Arrow tables)
-- OpenTelemetry integration for observability across distributed
-  processes
-
-**🌐 Deploy Everywhere** — laptop to cluster
-
-- Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm,
-  SGE, PBS, LSF)
-- Modular compute profiles direct tasks to the most suitable resources
-- Combine local, remote, and HPC resources in a single compute profile
+> **Deploy Everywhere** — *laptop to cluster*
+>
+> - Local, SSH, or HPC (Slurm, SGE, PBS, LSF)
+> - Compute profiles direct tasks to best-fit resources
+> - Mix local, remote, and HPC in a single profile
 
 ### Powers the R Ecosystem
 
@@ -132,8 +112,8 @@ computing in the R ecosystem.
 
 [![R
 parallel](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/articles/v04-parallel.html)
-  The first official alternative communications backend for R, the
-‘MIRAI’ parallel cluster, a feature request by R-Core.
+  The first official alternative communications backend for R, a
+parallel cluster type.
 
 [![purrr](https://purrr.tidyverse.org/logo.png)](https://purrr.tidyverse.org)
   Powers parallel map for purrr, a core tidyverse package.
@@ -156,13 +136,11 @@ processes.
 format.
 
 [![Polars](https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg)](https://mirai.r-lib.org/articles/v03-serialization.html)
-  R Polars leverages mirai’s serialization registration mechanism for
-transparent use of Polars objects.
+  Transparent use of Polars objects across parallel processes.
 
 [![targets](https://github.com/ropensci/targets/raw/main/man/figures/logo.png)](https://docs.ropensci.org/targets/)
-  Targets uses crew as its default high-performance computing backend.
-Crew is a distributed worker launcher extending mirai to different
-computing platforms.
+  Powers targets pipelines via crew, a distributed worker launcher built
+on mirai.
 
 ### Acknowledgements
 
@@ -191,10 +169,9 @@ discussions.
 
 ### Links
 
-- [mirai](https://mirai.r-lib.org/)
-- [nanonext](https://nanonext.r-lib.org/)
-- [CRAN HPC Task
-  View](https://cran.r-project.org/view=HighPerformanceComputing)
+[mirai](https://mirai.r-lib.org/) \|
+[nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
+View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 –
 
