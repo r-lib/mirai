@@ -95,7 +95,7 @@ mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [1]  0.001644678 -1.187782046 -0.297140635
 #> 
 #> [[2]]
-#> [1] -0.7211057 -0.8825230 -0.9686437
+#> [1]  0.02582566  0.96725416 -0.87824600
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {
@@ -205,7 +205,7 @@ launch_local()
 or
 
 ``` r
-launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config()
+launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config() / http_config()
 ```
 
 For flexible scaling up and down, specify one of these arguments to

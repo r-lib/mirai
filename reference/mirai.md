@@ -15,42 +15,38 @@ mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 
 - .expr:
 
-  an expression to evaluate asynchronously (of arbitrary length, wrapped
-  in { } where necessary), **or else** a pre-constructed language
-  object.
+  (expression) code to evaluate asynchronously, or a language object.
+  Wrap multi-line expressions in
+  [`{}`](https://rdrr.io/r/base/Paren.html).
 
 - ...:
 
-  (optional) **either** named arguments (name = value pairs) specifying
-  objects referenced, but not defined, in `.expr`, **or** an environment
-  containing such objects. See 'evaluation' section below.
+  (named arguments \| environment) objects required by `.expr`, assigned
+  to the daemon's global environment. See 'evaluation' section below.
 
 - .args:
 
-  (optional) **either** a named list specifying objects referenced, but
-  not defined, in `.expr`, **or** an environment containing such
-  objects. These objects will remain local to the evaluation environment
-  as opposed to those supplied in `...` above - see 'evaluation' section
+  (named list \| environment) objects required by .expr, kept local to
+  the evaluation environment (unlike `...`). See 'evaluation' section
   below.
 
 - .timeout:
 
-  integer value in milliseconds, or NULL for no timeout. A mirai will
-  resolve to an 'errorValue' 5 (timed out) if evaluation exceeds this
-  limit.
+  (integer) timeout in milliseconds. The mirai resolves to an
+  'errorValue' 5 (timed out) if evaluation exceeds this limit. `NULL`
+  (default) for no timeout.
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 ## Value
 
 A 'mirai' object.
 
 ## Details
-
-This function will return a 'mirai' object immediately.
 
 The value of a mirai may be accessed at any time at `$data`, and if yet
 to resolve, an 'unresolved' logical NA will be returned instead. Each
@@ -84,10 +80,10 @@ functions. Functions from a package should use namespaced calls such as
 `mirai::mirai()`, or else the package should be loaded beforehand as
 part of `.expr`.
 
-For evaluation to occur *as if* in your global environment, supply
-objects to `...` rather than `.args`, e.g. for non-local variables or
-helper functions required by other functions, as scoping rules may
-otherwise prevent them from being found.
+Supply objects to `...` rather than `.args` for evaluation to occur *as
+if* in your global environment. This is needed for non-local variables
+or helper functions required by other functions, which scoping rules may
+otherwise prevent from being found.
 
 ## Timeouts
 
@@ -95,11 +91,10 @@ Specifying the `.timeout` argument ensures that the mirai always
 resolves. When using dispatcher, the mirai will be cancelled after it
 times out (as if
 [`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md) had
-been called). As in that case, there is no guarantee that any
-cancellation will be successful, if the code cannot be interrupted for
-instance. When not using dispatcher, the mirai task will continue to
-completion in the daemon process, even if it times out in the host
-process.
+been called). However, cancellation is not guaranteed – for example,
+compiled code may not be interruptible. When not using dispatcher, the
+mirai task continues to completion in the daemon process, even if it
+times out in the host process.
 
 ## Errors
 
@@ -158,7 +153,7 @@ n <- 10L
 file <- tempfile()
 cat("r <- rnorm(n)", file = file)
 m <- mirai({source(file); r}, file = file, n = n)
-call_mirai(m)$data
+call_mirai(m)$datado
 unlink(file)
 
 # use source(local = TRUE) when passing in local variables via '.args'

@@ -1,6 +1,7 @@
 # Make mirai Promise
 
-Creates a 'promise' from a 'mirai'.
+Creates a 'promise' from a 'mirai'. S3 method for
+[`promises::as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html).
 
 ## Usage
 
@@ -13,7 +14,7 @@ as.promise(x)
 
 - x:
 
-  an object of class 'mirai'.
+  (mirai) object to convert to promise.
 
 ## Value
 
@@ -21,14 +22,10 @@ A 'promise' object.
 
 ## Details
 
-This function is an S3 method for the generic
-[`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-for class 'mirai'.
+Allows a 'mirai' to be used with the promise pipe `%...>%`, scheduling a
+function to run upon resolution.
 
 Requires the promises package.
-
-Allows a 'mirai' to be used with the promise pipe `%...>%`, which
-schedules a function to run upon resolution of the 'mirai'.
 
 ## Examples
 

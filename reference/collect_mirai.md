@@ -1,7 +1,7 @@
 # mirai (Collect Value)
 
-Waits for the 'mirai' to resolve if still in progress, and returns its
-value directly. It is a more efficient version of and equivalent to
+Waits for the 'mirai' to resolve if still in progress (blocking but
+interruptible) and returns its value directly. Equivalent to
 `call_mirai(x)$data`.
 
 ## Usage
@@ -14,14 +14,12 @@ collect_mirai(x, options = NULL)
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  (mirai \| list) a 'mirai' object or list of 'mirai' objects.
 
 - options:
 
-  (if `x` is a list of mirai) a character vector comprising any
-  combination of collection options for
-  [`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md), such
-  as `".flat"` or `c(".progress", ".stop")`.
+  (character) collection options for list input, e.g. `".flat"` or
+  `c(".progress", ".stop")`. See Options section.
 
 ## Value
 
@@ -30,18 +28,15 @@ An object (the return value of the 'mirai'), or a list of such objects
 
 ## Details
 
-This function will wait for the asynchronous operation(s) to complete if
-still in progress, blocking but interruptible.
-
 `x[]` is an equivalent way to wait for and return the value of a mirai
 `x`.
 
 ## Options
 
-As an alternative to a character vector, a list where the names are the
-collection options is also accepted. The value for `.progress` is passed
-to the cli progress bar - if a character value as the name, and if a
-list as named parameters to
+A named list may also be supplied instead of a character vector, where
+the names are the collection options. The value for `.progress` is
+passed to the cli progress bar: a character value sets the bar name, and
+a list is passed as named parameters to
 [`cli::cli_progress_bar`](https://cli.r-lib.org/reference/cli_progress_bar.html).
 Examples: `c(.stop = TRUE, .progress = "bar name")` or
 `list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`

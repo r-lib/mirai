@@ -14,17 +14,17 @@ local_daemons(.compute, frame = parent.frame())
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 - expr:
 
-  an expression to evaluate.
+  (expression) to evaluate using the compute profile.
 
 - frame:
 
-  the frame (environment) to which the daemons compute profile is
-  scoped.
+  (environment) scope for the compute profile setting.
 
 ## Value
 
@@ -43,22 +43,18 @@ daemons(1, dispatcher = FALSE, .compute = "cpu")
 daemons(1, dispatcher = FALSE, .compute = "gpu")
 
 with_daemons("cpu", {
-  s1 <- status()
   m1 <- mirai(Sys.getpid())
 })
 
 with_daemons("gpu", {
-  s2 <- status()
   m2 <- mirai(Sys.getpid())
   m3 <- mirai(Sys.getpid(), .compute = "cpu")
   local_daemons("cpu")
   m4 <- mirai(Sys.getpid())
 })
 
-s1$daemons
 m1[]
 
-s2$daemons
 m2[] # different to m1
 
 m3[] # same as m1

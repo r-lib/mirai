@@ -67,17 +67,17 @@
 
 
 <dl><dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
+<dd><p>(character) name of the compute profile. Each profile has its
+own independent set of daemons. <code>NULL</code> (default) uses the 'default'
+profile.</p></dd>
 
 
 <dt id="arg-expr">expr<a class="anchor" aria-label="anchor" href="#arg-expr"></a></dt>
-<dd><p>an expression to evaluate.</p></dd>
+<dd><p>(expression) to evaluate using the compute profile.</p></dd>
 
 
 <dt id="arg-frame">frame<a class="anchor" aria-label="anchor" href="#arg-frame"></a></dt>
-<dd><p>the frame (environment) to which the daemons compute profile is
-scoped.</p></dd>
+<dd><p>(environment) scope for the compute profile setting.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -97,22 +97,18 @@ For <strong>local_daemons</strong>: invisible NULL.</p>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, dispatcher <span class="op">=</span> <span class="cn">FALSE</span>, .compute <span class="op">=</span> <span class="st">"gpu"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">with_daemons</span><span class="op">(</span><span class="st">"cpu"</span>, <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="status.html">status</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">with_daemons</span><span class="op">(</span><span class="st">"gpu"</span>, <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="status.html">status</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span>, .compute <span class="op">=</span> <span class="st">"cpu"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">local_daemons</span><span class="op">(</span><span class="st">"cpu"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">m4</span> <span class="op">&lt;-</span> <span class="fu"><a href="mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getpid.html" class="external-link">Sys.getpid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">s1</span><span class="op">$</span><span class="va">daemons</span></span></span>
 <span class="r-in"><span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">s2</span><span class="op">$</span><span class="va">daemons</span></span></span>
 <span class="r-in"><span><span class="va">m2</span><span class="op">[</span><span class="op">]</span> <span class="co"># different to m1</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m3</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span></span>

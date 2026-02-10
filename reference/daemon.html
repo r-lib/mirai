@@ -90,77 +90,64 @@ unless deploying manually on remote resources.</p>
 
 
 <dl><dt id="arg-url">url<a class="anchor" aria-label="anchor" href="#arg-url"></a></dt>
-<dd><p>the character host or dispatcher URL to dial into, including the
-port to connect to, e.g. 'tcp://hostname:5555' or
-'tls+tcp://10.75.32.70:5555'.</p></dd>
+<dd><p>(character) host or dispatcher URL to dial into, e.g.
+'tcp://hostname:5555' or 'tls+tcp://10.75.32.70:5555'.</p></dd>
 
 
 <dt id="arg-dispatcher">dispatcher<a class="anchor" aria-label="anchor" href="#arg-dispatcher"></a></dt>
-<dd><p>logical value, which should be set to TRUE if using
-dispatcher and FALSE otherwise.</p></dd>
+<dd><p>(logical) whether dialing into dispatcher or directly to
+host.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>reserved, but not currently used.</p></dd>
+<dd><p>reserved for future use.</p></dd>
 
 
 <dt id="arg-asyncdial">asyncdial<a class="anchor" aria-label="anchor" href="#arg-asyncdial"></a></dt>
-<dd><p>whether to perform dials asynchronously. The default FALSE
-will error if a connection is not immediately possible (for instance if
-<code><a href="daemons.html">daemons()</a></code> has yet to be called on the host, or the specified port is not
-open etc.). Specifying TRUE continues retrying (indefinitely) if not
-immediately successful, which is more resilient but can mask potential
-connection issues.</p></dd>
+<dd><p>(logical) whether to dial asynchronously. <code>FALSE</code> errors if
+connection fails immediately. <code>TRUE</code> retries indefinitely (more resilient
+but can mask connection issues).</p></dd>
 
 
 <dt id="arg-autoexit">autoexit<a class="anchor" aria-label="anchor" href="#arg-autoexit"></a></dt>
-<dd><p>logical value, whether the daemon should exit automatically
-when its socket connection ends. By default, the process ends immediately
-when the host process ends. Supply <code>NA</code> to have a daemon complete any tasks
-in progress before exiting (see 'Persistence' section below).</p></dd>
+<dd><p>(logical) whether to exit when the socket connection ends.
+<code>TRUE</code> exits immediately, <code>NA</code> completes current task first, <code>FALSE</code>
+persists indefinitely. See Persistence section.</p></dd>
 
 
 <dt id="arg-cleanup">cleanup<a class="anchor" aria-label="anchor" href="#arg-cleanup"></a></dt>
-<dd><p>logical value, whether to perform cleanup of the global
-environment and restore attached packages and options to an initial state
-after each evaluation.</p></dd>
+<dd><p>(logical) whether to restore global environment, packages, and
+options to initial state after each evaluation.</p></dd>
 
 
 <dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
-<dd><p>logical value, to output generated stdout / stderr if TRUE, or
-else discard if FALSE. Specify as TRUE in the <code>...</code> argument to <code><a href="daemons.html">daemons()</a></code>
-or <code><a href="launch_local.html">launch_local()</a></code> to provide redirection of output to the host process
-(applicable only for local daemons).</p></dd>
+<dd><p>(logical) whether to output stdout/stderr. For local daemons
+via <code><a href="daemons.html">daemons()</a></code> or <code><a href="launch_local.html">launch_local()</a></code>, redirects output to host process.</p></dd>
 
 
 <dt id="arg-idletime">idletime<a class="anchor" aria-label="anchor" href="#arg-idletime"></a></dt>
-<dd><p>integer milliseconds maximum time to wait for a task (idle
-time) before exiting.</p></dd>
+<dd><p>(integer) milliseconds to wait idle before exiting.</p></dd>
 
 
 <dt id="arg-walltime">walltime<a class="anchor" aria-label="anchor" href="#arg-walltime"></a></dt>
-<dd><p>integer milliseconds soft walltime (time limit) i.e. the
-minimum amount of real time elapsed before exiting.</p></dd>
+<dd><p>(integer) milliseconds of real time before exiting (soft
+limit).</p></dd>
 
 
 <dt id="arg-maxtasks">maxtasks<a class="anchor" aria-label="anchor" href="#arg-maxtasks"></a></dt>
-<dd><p>integer maximum number of tasks to execute (task limit)
-before exiting.</p></dd>
+<dd><p>(integer) maximum tasks to execute before exiting.</p></dd>
 
 
 <dt id="arg-tlscert">tlscert<a class="anchor" aria-label="anchor" href="#arg-tlscert"></a></dt>
-<dd><p>required for secure TLS connections over 'tls+tcp://'.
-<strong>Either</strong> the character path to a file containing X.509 certificate(s) in
-PEM format, comprising the certificate authority certificate chain starting
-with the TLS certificate and ending with the CA certificate, <strong>or</strong> a
-length 2 character vector comprising (i) the certificate authority
-certificate chain and (ii) the empty string <code>""</code>.</p></dd>
+<dd><p>(character) for secure TLS connections. Either a file path to
+PEM-encoded certificate authority certificate chain (starting with the TLS
+certificate and ending with the CA certificate), or a length-2 vector of
+(certificate chain, empty string <code>""</code>).</p></dd>
 
 
 <dt id="arg-rs">rs<a class="anchor" aria-label="anchor" href="#arg-rs"></a></dt>
-<dd><p>the initial value of .Random.seed. This is set automatically using
-L'Ecuyer-CMRG RNG streams generated by the host process if applicable, and
-should not be independently supplied.</p></dd>
+<dd><p>(integer vector) initial <code>.Random.seed</code> value. Set automatically by
+host process; do not supply manually.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -171,10 +158,9 @@ positive value if a self-imposed limit was reached: 1L (idletime), 2L
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The network topology is such that daemons dial into the host or dispatcher,
-which listens at the <code>url</code> address. In this way, network resources may be
-added or removed dynamically and the host or dispatcher automatically
-distributes tasks to all available daemons.</p>
+    <p>Daemons dial into the host or dispatcher, which listens at <code>url</code>. This
+allows network resources to be added or removed dynamically, with the host
+or dispatcher automatically distributing tasks to all connected daemons.</p>
     </div>
     <div class="section level2">
     <h2 id="persistence">Persistence<a class="anchor" aria-label="anchor" href="#persistence"></a></h2>

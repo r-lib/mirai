@@ -21,21 +21,17 @@ local_url(tcp = FALSE, port = 0)
 
 - tls:
 
-  logical value whether to use TLS. If TRUE, the scheme used will be
-  'tls+tcp://'.
+  (logical) whether to use TLS (scheme 'tls+tcp://').
 
 - port:
 
-  numeric port to use. `0` is a wildcard value that automatically
-  assigns a free ephemeral port. For `host_url`, this port should be
-  open to connections from the network addresses the daemons are
-  connecting from. For `local_url`, is only taken into account if
-  `tcp = TRUE`.
+  (integer) port number. `0` assigns a free ephemeral port. For
+  `host_url()`, must be open to daemon connections. For `local_url()`,
+  only used when `tcp = TRUE`.
 
 - tcp:
 
-  logical value whether to use a TCP connection. This must be TRUE for
-  use with SSH tunnelling.
+  (logical) whether to use TCP. Required for SSH tunnelling.
 
 ## Value
 
@@ -62,16 +58,16 @@ and named pipes on Windows.
 ``` r
 host_url()
 #>                 eth0              docker0 
-#> "tcp://10.1.0.243:0" "tcp://172.17.0.1:0" 
+#>  "tcp://10.1.0.41:0" "tcp://172.17.0.1:0" 
 host_url(tls = TRUE)
 #>                     eth0                  docker0 
-#> "tls+tcp://10.1.0.243:0" "tls+tcp://172.17.0.1:0" 
+#>  "tls+tcp://10.1.0.41:0" "tls+tcp://172.17.0.1:0" 
 host_url(tls = TRUE, port = 5555)
 #>                        eth0                     docker0 
-#> "tls+tcp://10.1.0.243:5555" "tls+tcp://172.17.0.1:5555" 
+#>  "tls+tcp://10.1.0.41:5555" "tls+tcp://172.17.0.1:5555" 
 
 local_url()
-#> [1] "abstract://93c172d6595e91a5f7df5d7a"
+#> [1] "abstract://3367ce662a98964ba39545dc"
 local_url(tcp = TRUE)
 #> [1] "tcp://127.0.0.1:0"
 local_url(tcp = TRUE, port = 5555)

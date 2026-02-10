@@ -13,7 +13,7 @@ stop_mirai(x)
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  (mirai \| list) a 'mirai' object or list of 'mirai' objects.
 
 ## Value
 
@@ -27,16 +27,14 @@ as those returned by
 
 ## Details
 
-Using dispatcher allows cancellation of 'mirai'. In the case that the
-'mirai' is awaiting execution, it is discarded from the queue and never
-evaluated. In the case it is already in execution, an interrupt will be
-sent.
+Cancellation requires dispatcher. If the 'mirai' is awaiting execution,
+it is discarded from the queue and never evaluated. If already
+executing, an interrupt is sent.
 
-A successful cancellation request does not guarantee successful
-cancellation: the task, or a portion of it, may have already completed
-before the interrupt is received. Even then, compiled code is not always
-interruptible. This should be noted, particularly if the code carries
-out side effects during execution, such as writing to files, etc.
+A cancellation request does not guarantee the task stops: it may have
+already completed before the interrupt is received, and compiled code is
+not always interruptible. Take care if the code performs side effects
+such as writing to files.
 
 ## Examples
 

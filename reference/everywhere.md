@@ -1,7 +1,7 @@
 # Evaluate Everywhere
 
 Evaluate an expression 'everywhere' on all connected daemons for the
-specified compute profile - this must be set prior to calling this
+specified compute profile. Daemons must be set prior to calling this
 function. Performs operations across daemons such as loading packages or
 exporting common data. Resultant changes to the global environment,
 loaded packages and options are persisted regardless of a daemon's
@@ -17,35 +17,32 @@ everywhere(.expr, ..., .args = list(), .min = 1L, .compute = NULL)
 
 - .expr:
 
-  an expression to evaluate asynchronously (of arbitrary length, wrapped
-  in { } where necessary), **or else** a pre-constructed language
-  object.
+  (expression) code to evaluate asynchronously, or a language object.
+  Wrap multi-line expressions in
+  [`{}`](https://rdrr.io/r/base/Paren.html).
 
 - ...:
 
-  (optional) **either** named arguments (name = value pairs) specifying
-  objects referenced, but not defined, in `.expr`, **or** an environment
-  containing such objects. See 'evaluation' section below.
+  (named arguments \| environment) objects required by `.expr`, assigned
+  to the daemon's global environment. See 'evaluation' section below.
 
 - .args:
 
-  (optional) **either** a named list specifying objects referenced, but
-  not defined, in `.expr`, **or** an environment containing such
-  objects. These objects will remain local to the evaluation environment
-  as opposed to those supplied in `...` above - see 'evaluation' section
+  (named list \| environment) objects required by .expr, kept local to
+  the evaluation environment (unlike `...`). See 'evaluation' section
   below.
 
 - .min:
 
-  (only applicable when using dispatcher) integer minimum number of
-  daemons on which to evaluate the expression. A synchronization point
-  is created, which can be useful for remote daemons, as these may take
-  some time to connect.
+  (integer) minimum daemons to evaluate on (dispatcher only). Creates a
+  synchronization point, useful for remote daemons that take time to
+  connect.
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 ## Value
 
@@ -53,17 +50,16 @@ A 'mirai_map' (list of 'mirai' objects).
 
 ## Details
 
-If using dispatcher, this function forces a synchronization point at
-dispatcher, whereby the `everywhere()` call must have been evaluated on
-all daemons prior to subsequent mirai evaluations taking place.
+If using dispatcher, this function forces a synchronization point: the
+`everywhere()` call must complete on all daemons before subsequent mirai
+evaluations proceed.
 
 Calling `everywhere()` does not affect the RNG stream for mirai calls
 when using a reproducible `seed` value at
 [`daemons()`](https://mirai.r-lib.org/reference/daemons.md). This allows
-the seed associated for each mirai call to be the same, regardless of
-the number of daemons actually used to evaluate the code. Note that this
-means the code evaluated in an `everywhere()` call is itself
-non-reproducible if it should involve random numbers.
+the seed associated with each mirai call to be the same, regardless of
+the number of daemons used. However, code evaluated in an `everywhere()`
+call is itself non-reproducible if it involves random numbers.
 
 ## Evaluation
 
@@ -78,10 +74,10 @@ functions. Functions from a package should use namespaced calls such as
 [`mirai::mirai()`](https://mirai.r-lib.org/reference/mirai.md), or else
 the package should be loaded beforehand as part of `.expr`.
 
-For evaluation to occur *as if* in your global environment, supply
-objects to `...` rather than `.args`, e.g. for non-local variables or
-helper functions required by other functions, as scoping rules may
-otherwise prevent them from being found.
+Supply objects to `...` rather than `.args` for evaluation to occur *as
+if* in your global environment. This is needed for non-local variables
+or helper functions required by other functions, which scoping rules may
+otherwise prevent from being found.
 
 ## Examples
 

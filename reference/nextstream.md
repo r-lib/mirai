@@ -23,20 +23,19 @@ nextcode(xc)
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 - x:
 
-  character value of item to retrieve. One of `"n"` (number of
-  dispatcher daemons), `"dispatcher"` (the URL dispatcher uses to
-  connect to host) `"url"` (the URL to connect to dispatcher from
-  daemons) or `"tls"` (the stored client TLS configuration for use by
-  daemons).
+  (character) item to retrieve: `"n"` (daemon count), `"dispatcher"`
+  (dispatcher-to-host URL), `"url"` (daemon connection URL), or `"tls"`
+  (client TLS configuration).
 
 - xc:
 
-  integer return value of
+  (integer) return value from
   [`daemon()`](https://mirai.r-lib.org/reference/daemon.md).
 
 ## Value
@@ -56,25 +55,23 @@ These functions are exported for use by packages extending mirai with
 alternative launchers of
 [`daemon()`](https://mirai.r-lib.org/reference/daemon.md) processes.
 
-For `nextstream`: This function should be called for its return value
-when required. The function also has the side effect of automatically
-advancing the stream stored within the compute profile. This ensures
-that the next recursive stream is returned when the function is called
-again.
+For `nextstream`: Calling this function advances the stream stored
+within the compute profile. This ensures that the next recursive stream
+is returned on subsequent calls.
 
 ## Examples
 
 ``` r
 daemons(sync = TRUE)
 nextstream()
-#> [1]       10407   792815129 -1884879098 -1960710705   286126532
-#> [6]  1328909813 -1274208718
+#> [1]       10407   466761875   751420600  -515383463  -331456698
+#> [6] -1206986481   -34040828
 nextstream()
-#> [1]       10407 -1925600861  -765594404 -1351620210 -1371409380
-#> [6]   302119711 -1829637341
+#> [1]       10407 -1171813903 -1636859713   -45560966  1701905993
+#> [6]  -739104734  -843469383
 
 nextget("url")
-#> [1] "abstract://4253b4f73fd8b0ca7c95aa6f"
+#> [1] "abstract://f8a708cae998682335472fde"
 
 daemons(0)
 

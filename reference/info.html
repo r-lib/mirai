@@ -65,8 +65,9 @@
 
 
 <dl><dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
+<dd><p>(character) name of the compute profile. Each profile has its
+own independent set of daemons. <code>NULL</code> (default) uses the 'default'
+profile.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -83,10 +84,6 @@ be set up.</p>
 <li><p>Completed: mirai tasks that have been completed or cancelled.</p></li>
 </ul><p>For non-dispatcher daemons: only 'connections' will be available and the
 other values will be <code>NA</code>.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="status.html">status()</a></code> for more verbose status information.</p></div>
     </div>
 
     <div class="section level2">

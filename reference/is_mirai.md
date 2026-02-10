@@ -14,7 +14,7 @@ is_mirai_map(x)
 
 - x:
 
-  an object.
+  (object) to test.
 
 ## Value
 

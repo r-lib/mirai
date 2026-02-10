@@ -12,8 +12,9 @@ info(.compute = NULL)
 
 - .compute:
 
-  character value for the compute profile to use (each has its own
-  independent set of daemons), or NULL to use the 'default' profile.
+  (character) name of the compute profile. Each profile has its own
+  independent set of daemons. `NULL` (default) uses the 'default'
+  profile.
 
 ## Value
 
@@ -36,11 +37,6 @@ The returned statistics are:
 
 For non-dispatcher daemons: only 'connections' will be available and the
 other values will be `NA`.
-
-## See also
-
-[`status()`](https://mirai.r-lib.org/reference/status.md) for more
-verbose status information.
 
 ## Examples
 

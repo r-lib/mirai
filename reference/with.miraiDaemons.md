@@ -16,15 +16,16 @@ with(data, expr, ...)
 
 - data:
 
-  a call to [`daemons()`](https://mirai.r-lib.org/reference/daemons.md).
+  (miraiDaemons) return value from
+  [`daemons()`](https://mirai.r-lib.org/reference/daemons.md).
 
 - expr:
 
-  an expression to evaluate.
+  (expression) to evaluate with daemons active.
 
 - ...:
 
-  not used.
+  unused.
 
 ## Value
 
@@ -48,6 +49,6 @@ with(
   }
 )
 
-status()
+Sys.getpid()
 }
 ```

@@ -68,7 +68,7 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a 'mirai' object, or list of 'mirai' objects.</p></dd>
+<dd><p>(mirai | list) a 'mirai' object or list of 'mirai' objects.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -81,14 +81,13 @@ those returned by <code><a href="mirai_map.html">mirai_map()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Using dispatcher allows cancellation of 'mirai'. In the case that the 'mirai'
-is awaiting execution, it is discarded from the queue and never evaluated. In
-the case it is already in execution, an interrupt will be sent.</p>
-<p>A successful cancellation request does not guarantee successful cancellation:
-the task, or a portion of it, may have already completed before the interrupt
-is received. Even then, compiled code is not always interruptible. This
-should be noted, particularly if the code carries out side effects during
-execution, such as writing to files, etc.</p>
+    <p>Cancellation requires dispatcher. If the 'mirai' is awaiting execution, it
+is discarded from the queue and never evaluated. If already executing, an
+interrupt is sent.</p>
+<p>A cancellation request does not guarantee the task stops: it may have already
+completed before the interrupt is received, and compiled code is not always
+interruptible. Take care if the code performs side effects such as writing to
+files.</p>
     </div>
 
     <div class="section level2">

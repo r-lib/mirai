@@ -78,19 +78,19 @@ for the specified compute profile and advances it to the next stream.</p>
 
 
 <dl><dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
+<dd><p>(character) name of the compute profile. Each profile has its
+own independent set of daemons. <code>NULL</code> (default) uses the 'default'
+profile.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>character value of item to retrieve. One of <code>"n"</code> (number of
-dispatcher daemons), <code>"dispatcher"</code> (the URL dispatcher uses to connect to
-host) <code>"url"</code> (the URL to connect to dispatcher from daemons) or <code>"tls"</code>
-(the stored client TLS configuration for use by daemons).</p></dd>
+<dd><p>(character) item to retrieve: <code>"n"</code> (daemon count), <code>"dispatcher"</code>
+(dispatcher-to-host URL), <code>"url"</code> (daemon connection URL), or <code>"tls"</code>
+(client TLS configuration).</p></dd>
 
 
 <dt id="arg-xc">xc<a class="anchor" aria-label="anchor" href="#arg-xc"></a></dt>
-<dd><p>integer return value of <code><a href="daemon.html">daemon()</a></code>.</p></dd>
+<dd><p>(integer) return value from <code><a href="daemon.html">daemon()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -106,24 +106,23 @@ been created.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>These functions are exported for use by packages extending <span class="pkg">mirai</span> with
 alternative launchers of <code><a href="daemon.html">daemon()</a></code> processes.</p>
-<p>For <code>nextstream</code>: This function should be called for its return value
-when required. The function also has the side effect of automatically
-advancing the stream stored within the compute profile. This ensures that the
-next recursive stream is returned when the function is called again.</p>
+<p>For <code>nextstream</code>: Calling this function advances the stream stored within
+the compute profile. This ensures that the next recursive stream is returned
+on subsequent calls.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407   792815129 -1884879098 -1960710705   286126532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  1328909813 -1274208718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407   466761875   751420600  -515383463  -331456698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] -1206986481   -34040828</span>
 <span class="r-in"><span><span class="fu">nextstream</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407 -1925600861  -765594404 -1351620210 -1371409380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6]   302119711 -1829637341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]       10407 -1171813903 -1636859713   -45560966  1701905993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6]  -739104734  -843469383</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">nextget</span><span class="op">(</span><span class="st">"url"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://4253b4f73fd8b0ca7c95aa6f"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://f8a708cae998682335472fde"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

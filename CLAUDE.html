@@ -55,85 +55,97 @@
 <p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a></h2>
-<p>mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. It’s built on nanonext and NNG (Nanomsg-Next-Generation), implementing a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process.</p>
-</div>
-<div class="section level2">
-<h2 id="key-architecture">Key Architecture<a class="anchor" aria-label="anchor" href="#key-architecture"></a></h2>
-<div class="section level3">
-<h3 id="core-components">Core Components<a class="anchor" aria-label="anchor" href="#core-components"></a></h3>
-<ul><li>
-<strong>mirai()</strong>: Creates an asynchronous evaluation that returns immediately with a ‘mirai’ object</li>
-<li>
-<strong>daemons()</strong>: Sets up persistent background daemon processes to receive mirai requests</li>
-<li>
-<strong>daemon()</strong>: The daemon instance that runs in background processes to execute tasks</li>
-<li>
-<strong>dispatcher()</strong>: Optional scheduler process that ensures optimal FIFO scheduling and enables features like cancellation and custom serialization</li>
-<li>
-<strong>mirai_map()</strong>: Asynchronous parallel map over lists/vectors with progress bars and early stopping</li>
-<li>
-<strong>everywhere()</strong>: Evaluates expressions on all connected daemons (for loading packages/exporting data)</li>
-</ul></div>
-<div class="section level3">
-<h3 id="message-passing-topology">Message-Passing Topology<a class="anchor" aria-label="anchor" href="#message-passing-topology"></a></h3>
-<p>The network topology has daemons <strong>dial into</strong> the host/dispatcher (not vice versa). The host/dispatcher listens at a URL, allowing dynamic addition/removal of compute resources. This inverted topology design enables: - Local daemons via IPC (Unix sockets on Linux/macOS, named pipes on Windows) - Remote daemons via TCP/TLS (including automatic zero-config TLS certificate generation) - Distributed computing across networks - True dynamic scaling</p>
-</div>
-<div class="section level3">
-<h3 id="dispatcher-vs-direct-connection">Dispatcher vs. Direct Connection<a class="anchor" aria-label="anchor" href="#dispatcher-vs-direct-connection"></a></h3>
-<p><strong>With Dispatcher (default)</strong>: <code>dispatcher = TRUE</code> - Optimal FIFO scheduling - tasks queued and sent to next available daemon - Enables mirai cancellation via <code><a href="reference/stop_mirai.html">stop_mirai()</a></code> - Enables timeout cancellation (not just timeout detection) - Required for custom serialization configurations - Slight additional overhead</p>
-<p><strong>Direct Connection</strong>: <code>dispatcher = FALSE</code> - Round-robin distribution - tasks sent directly to daemons - Lower overhead, more resource-efficient - Best for similar-length tasks or when concurrent tasks &lt; available daemons - No cancellation or custom serialization support</p>
-</div>
-<div class="section level3">
-<h3 id="evaluation-model">Evaluation Model<a class="anchor" aria-label="anchor" href="#evaluation-model"></a></h3>
-<p>Expressions evaluate in a <strong>clean environment</strong> (not global), containing only objects supplied via <code>.args</code>. Objects passed through <code>...</code> are assigned to the global environment of the daemon process. This clean-room approach requires explicit passing of all dependencies to prevent surprises from hidden state.</p>
-</div>
-<div class="section level3">
-<h3 id="compute-profiles">Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a></h3>
-<p>Multiple named compute profiles can coexist, each with its own daemons configuration. Use the <code>.compute</code> parameter in functions like <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/daemons.html">daemons()</a></code>, <code><a href="reference/launch_local.html">launch_local()</a></code>, etc. to specify which profile to use. Default profile is “default”.</p>
-</div>
-<div class="section level3">
-<h3 id="random-number-generation">Random Number Generation<a class="anchor" aria-label="anchor" href="#random-number-generation"></a></h3>
-<p>Uses L’Ecuyer-CMRG RNG streams for statistical independence across parallel processes, following base R’s parallel package conventions.</p>
-<ul><li>
-<strong>Default (<code>seed = NULL</code>)</strong>: New stream per daemon (statistically sound, non-reproducible across runs)</li>
-<li>
-<strong>Reproducible (<code>seed = integer</code>)</strong>: New stream per mirai call (deterministic, reproducible results)</li>
-</ul></div>
+<p>mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext (&gt;= 1.8.0). Requires R &gt;= 3.6.</p>
 </div>
 <div class="section level2">
 <h2 id="development-commands">Development Commands<a class="anchor" aria-label="anchor" href="#development-commands"></a></h2>
 <div class="section level3">
 <h3 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a></h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run all tests (uses custom minitest framework)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"tests/tests.R"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Tests are in tests/tests.R - a single file using minitest, not testthat</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Run all tests (single file, custom minitest framework — not testthat)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"tests/tests.R"</span><span class="op">)</span></span></code></pre></div>
+<p>Set <code>NOT_CRAN=true</code> environment variable to run extended tests that require network connectivity.</p>
 </div>
 <div class="section level3">
 <h3 id="building-and-checking">Building and Checking<a class="anchor" aria-label="anchor" href="#building-and-checking"></a></h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Build package</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">R</span> CMD build .</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Check package (as done in CI)</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Check package (matches CI)</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-manual</span> <span class="at">--compact-vignettes</span><span class="op">=</span>gs+qpdf mirai_<span class="pp">*</span>.tar.gz</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate documentation (from R)</span></span>
+<code class="sourceCode R"><span><span class="co"># Generate documentation from roxygen2 comments</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="code-formatting">Code Formatting<a class="anchor" aria-label="anchor" href="#code-formatting"></a></h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Format R code using Air (defined in air.toml)</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Line width: 100, indent: 2 spaces</span></span></code></pre></div>
+<p>Uses <a href="https://posit-dev.github.io/air/" class="external-link">Air</a> formatter configured in <code>air.toml</code>: - Line width: 100, indent: 2 spaces, <code>persistent-line-breaks = false</code> - <strong>tests/ directory is excluded</strong> from Air formatting</p>
 </div>
 <div class="section level3">
-<h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Build README from README.Rmd</span></span>
-<span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"README.Rmd"</span><span class="op">)</span></span>
+<h3 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a></h3>
+<p>Vignettes are pre-compiled because they require daemon connections. Source files live in <code>dev/vignettes/_*.Rmd</code> and compile to <code>vignettes/*.Rmd</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Pre-compile all vignettes (uses knitr::knit, not litedown)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"dev/vignettes/precompile.R"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Build vignettes (uses litedown, not knitr)</span></span>
-<span><span class="co"># Vignettes are in dev/vignettes/*.Rmd and pre-compiled to vignettes/*.Rmd</span></span></code></pre></div>
+<span><span class="co"># Build README</span></span>
+<span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"README.Rmd"</span><span class="op">)</span></span></code></pre></div>
+<p>The package uses <strong>litedown</strong> (not knitr) as VignetteBuilder for final rendering.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="key-architecture">Key Architecture<a class="anchor" aria-label="anchor" href="#key-architecture"></a></h2>
+<div class="section level3">
+<h3 id="core-components">Core Components<a class="anchor" aria-label="anchor" href="#core-components"></a></h3>
+<ul><li>
+<strong>mirai()</strong>: Creates an async evaluation, returns immediately with a ‘mirai’ object</li>
+<li>
+<strong>daemons()</strong>: Sets up persistent background daemon processes</li>
+<li>
+<strong>daemon()</strong>: The daemon instance running in background processes</li>
+<li>
+<strong>dispatcher()</strong>: FIFO scheduler (reimplemented in C in nanonext 1.8.0+ for ~50% less overhead)</li>
+<li>
+<strong>mirai_map()</strong>: Async parallel map with progress bars and early stopping</li>
+<li>
+<strong>everywhere()</strong>: Evaluates expressions on all connected daemons</li>
+</ul></div>
+<div class="section level3">
+<h3 id="message-passing-topology">Message-Passing Topology<a class="anchor" aria-label="anchor" href="#message-passing-topology"></a></h3>
+<p>Daemons <strong>dial into</strong> the host/dispatcher (not vice versa). The host/dispatcher listens at a URL, enabling dynamic addition/removal of compute resources. Supports IPC (platform-dependent), TCP, and TLS transports.</p>
+</div>
+<div class="section level3">
+<h3 id="dispatcher-vs-direct-connection">Dispatcher vs. Direct Connection<a class="anchor" aria-label="anchor" href="#dispatcher-vs-direct-connection"></a></h3>
+<ul><li>
+<strong>With Dispatcher</strong> (<code>dispatcher = TRUE</code>, default): FIFO scheduling, cancellation via <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, custom serialization support</li>
+<li>
+<strong>Direct Connection</strong> (<code>dispatcher = FALSE</code>): Round-robin distribution, lower overhead, no cancellation/serialization support</li>
+</ul></div>
+<div class="section level3">
+<h3 id="evaluation-model">Evaluation Model<a class="anchor" aria-label="anchor" href="#evaluation-model"></a></h3>
+<p>Expressions evaluate in a <strong>clean environment</strong> (not global), containing only objects supplied via <code>.args</code>. Objects passed through <code>...</code> are assigned to the daemon’s global environment. All dependencies must be passed explicitly.</p>
+</div>
+<div class="section level3">
+<h3 id="compute-profiles">Compute Profiles<a class="anchor" aria-label="anchor" href="#compute-profiles"></a></h3>
+<p>Multiple named profiles can coexist via the <code>.compute</code> parameter. Default profile is “default”.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="internal-state-management">Internal State Management<a class="anchor" aria-label="anchor" href="#internal-state-management"></a></h2>
+<p>Understanding these package-level environments in <code>mirai-package.R</code> is essential for working on the codebase:</p>
+<ul><li>
+<strong><code>.</code></strong>: Stores the current compute profile name (default: <code>"default"</code>) under key <code>"cp"</code>
+</li>
+<li>
+<strong><code>..</code></strong>: Stores compute profile configurations (daemon URLs, connections, etc.)</li>
+<li>
+<strong><code>.opts</code></strong>: Collection options for <code><a href="reference/mirai_map.html">mirai_map()</a></code> (<code>.flat</code>, <code>.progress</code>, <code>.stop</code>)</li>
+<li>
+<strong><code>._</code></strong>: Error message templates (created with <code>hash = TRUE</code> for fast lookup)</li>
+</ul><div class="section level3">
+<h3 id="platform-specific-initialization">Platform-Specific Initialization<a class="anchor" aria-label="anchor" href="#platform-specific-initialization"></a></h3>
+<p><code>.onLoad</code> sets platform-dependent defaults: - <strong>Linux</strong>: <code>abstract://</code> URL scheme (abstract Unix domain sockets) - <strong>macOS/POSIX</strong>: <code>ipc:///tmp/</code> URL scheme (Unix domain sockets) - <strong>Windows</strong>: <code>ipc://</code> URL scheme (named pipes)</p>
+<p>Also caches the Rscript path in <code>.command</code> and checks for cli package availability.</p>
 </div>
 </div>
 <div class="section level2">
@@ -141,122 +153,52 @@
 <div class="section level3">
 <h3 id="r-directory-structure">R/ Directory Structure<a class="anchor" aria-label="anchor" href="#r-directory-structure"></a></h3>
 <ul><li>
-<strong>mirai.R</strong>: Core mirai() function, unresolved(), call_mirai(), stop_mirai(), everywhere(), race_mirai()</li>
+<strong>mirai-package.R</strong>: Package docs, <code>.onLoad</code>, global state (<code>.</code>, <code>..</code>, <code>.opts</code>, <code>._</code>), constants</li>
 <li>
-<strong>daemons.R</strong>: Setup functions for daemon infrastructure including daemons(), remote configurations, compute profiles, with_daemons(), local_daemons()</li>
+<strong>mirai.R</strong>: Core <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/unresolved.html">unresolved()</a></code>, <code><a href="reference/call_mirai.html">call_mirai()</a></code>, <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, <code><a href="reference/everywhere.html">everywhere()</a></code>, <code><a href="reference/race_mirai.html">race_mirai()</a></code>
+</li>
 <li>
-<strong>daemon.R</strong>: The daemon instance implementation that runs in background processes</li>
+<strong>daemons.R</strong>: <code><a href="reference/daemons.html">daemons()</a></code>, remote configs, compute profiles, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
+</li>
 <li>
-<strong>dispatcher.R</strong>: Dispatcher process for optimal FIFO scheduling</li>
+<strong>daemon.R</strong>: Daemon instance implementation</li>
 <li>
-<strong>map.R</strong>: mirai_map() for parallel map operations with collection options (.flat, .progress, .stop)</li>
+<strong>dispatcher.R</strong>: Dispatcher process (thin wrapper — core logic now in C via nanonext)</li>
 <li>
-<strong>launchers.R</strong>: launch_local() and launch_remote() for deploying daemons; remote_config(), ssh_config(), cluster_config()</li>
+<strong>map.R</strong>: <code><a href="reference/mirai_map.html">mirai_map()</a></code> with collection options</li>
 <li>
-<strong>parallel.R</strong>: Integration with R’s parallel package via make_cluster() - the first official alternative communications backend for R</li>
+<strong>launchers.R</strong>: <code><a href="reference/launch_local.html">launch_local()</a></code>, <code><a href="reference/launch_local.html">launch_remote()</a></code>, <code><a href="reference/remote_config.html">remote_config()</a></code>, <code><a href="reference/ssh_config.html">ssh_config()</a></code>, <code><a href="reference/cluster_config.html">cluster_config()</a></code>, <code><a href="reference/http_config.html">http_config()</a></code>
+</li>
 <li>
-<strong>promises.R</strong>: Integration with the promises package for async workflows and Shiny ExtendedTask support</li>
+<strong>parallel.R</strong>: <code><a href="reference/make_cluster.html">make_cluster()</a></code> — official alternative communications backend for R’s parallel package</li>
 <li>
-<strong>next.R</strong>: Developer interface utilities (nextstream(), nextget()) for packages extending mirai</li>
+<strong>promises.R</strong>: Promises integration for async workflows and Shiny ExtendedTask</li>
 <li>
-<strong>otel.R</strong>: OpenTelemetry integration for distributed tracing</li>
-</ul></div>
-<div class="section level3">
-<h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a></h3>
-<ul><li>
-<strong>nanonext</strong>: Core dependency providing NNG bindings for IPC/TCP/TLS communication</li>
+<strong>next.R</strong>: Developer interface (<code><a href="reference/nextstream.html">nextstream()</a></code>, <code><a href="reference/nextstream.html">nextget()</a></code>) for packages extending mirai</li>
 <li>
-<strong>cli</strong> (suggested): For progress bars in mirai_map</li>
-<li>
-<strong>promises</strong> (enhanced): For async promise integration</li>
-<li>
-<strong>parallel</strong> (enhanced): For MIRAI cluster type</li>
-<li>
-<strong>otel</strong>, <strong>otelsdk</strong> (suggested): For OpenTelemetry integration</li>
+<strong>otel.R</strong>: OpenTelemetry distributed tracing integration</li>
 </ul></div>
 </div>
 <div class="section level2">
 <h2 id="testing-framework">Testing Framework<a class="anchor" aria-label="anchor" href="#testing-framework"></a></h2>
-<p>This package uses <strong>minitest</strong>, a minimal custom testing framework defined at the top of tests/tests.R. It provides: - <code>test_true()</code>, <code>test_false()</code>, <code>test_null()</code>, <code>test_notnull()</code>, <code>test_zero()</code> - <code>test_type()</code>, <code>test_class()</code>, <code>test_equal()</code>, <code>test_identical()</code> - <code>test_error()</code> for expecting errors with optional message matching - <code>test_print()</code> for verifying printability</p>
-<p>Tests run sequentially in a single file rather than using testthat’s directory structure.</p>
+<p>Uses <strong>minitest</strong>, a minimal custom framework defined at the top of <code>tests/tests.R</code>: - <code>test_true()</code>, <code>test_false()</code>, <code>test_null()</code>, <code>test_notnull()</code>, <code>test_zero()</code> - <code>test_type()</code>, <code>test_class()</code>, <code>test_equal()</code>, <code>test_identical()</code> - <code>test_error()</code> for expecting errors with optional message matching - <code>test_print()</code> for verifying printability</p>
+<p>All tests run sequentially in a single file. Extended tests (daemon connectivity, dispatcher) are gated behind <code>NOT_CRAN=true</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="serialization-system">Serialization System<a class="anchor" aria-label="anchor" href="#serialization-system"></a></h2>
-<p>mirai supports custom serialization for non-exportable reference objects (torch tensors, Arrow tables, Polars objects). This is configured via: - <code><a href="reference/serial_config.html">serial_config()</a></code> for per-daemon configuration (requires dispatcher) - <code><a href="reference/register_serial.html">register_serial()</a></code> for global registration - Serialization functions are applied during message passing between host and daemons - Enables cross-language data formats and zero-copy transfers</p>
-</div>
-<div class="section level2">
-<h2 id="opentelemetry-integration">OpenTelemetry Integration<a class="anchor" aria-label="anchor" href="#opentelemetry-integration"></a></h2>
-<p>Optional distributed tracing support via the otel package. When enabled, mirai creates spans for: - “mirai” spans (client-side) - “daemon eval” spans (server-side) - “mirai_map” spans - Links between spans preserve distributed context across processes</p>
+<h2 id="error-handling">Error Handling<a class="anchor" aria-label="anchor" href="#error-handling"></a></h2>
+<p>Custom error classes with structured information: - <strong>miraiError</strong>: Wraps errors from daemon evaluation, preserves <code>$stack.trace</code> and <code>$condition.class</code> - <strong>miraiInterrupt</strong>: Represents task cancellation - Both support <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage()</a></code> and <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionCall()</a></code> methods</p>
 </div>
 <div class="section level2">
 <h2 id="cicd">CI/CD<a class="anchor" aria-label="anchor" href="#cicd"></a></h2>
-<p>GitHub Actions workflows in .github/workflows/: - <strong>R-CMD-check.yaml</strong>: Comprehensive checks across multiple R versions (oldrel-1, release, devel) and platforms (Ubuntu, macOS, Windows) - <strong>test-coverage.yaml</strong>: Code coverage via codecov - <strong>pkgdown.yaml</strong>: Documentation site generation - <strong>shiny-coreci.yaml</strong>: Shiny core CI integration - <strong>rhub.yaml</strong>: Additional platform testing</p>
-</div>
-<div class="section level2">
-<h2 id="remote-daemon-deployment">Remote Daemon Deployment<a class="anchor" aria-label="anchor" href="#remote-daemon-deployment"></a></h2>
-<div class="section level3">
-<h3 id="ssh-direct-connection">SSH Direct Connection<a class="anchor" aria-label="anchor" href="#ssh-direct-connection"></a></h3>
-<ul><li>Requires SSH key-based authentication</li>
-<li>Host port must be open to inbound connections from remotes</li>
-<li>Daemons dial back to host URL directly</li>
-<li>Use <code>ssh_config(remotes, tunnel = FALSE)</code>
-</li>
-</ul></div>
-<div class="section level3">
-<h3 id="ssh-tunnelling">SSH Tunnelling<a class="anchor" aria-label="anchor" href="#ssh-tunnelling"></a></h3>
-<ul><li>Use when firewall blocks inbound connections to host</li>
-<li>Creates reverse SSH tunnel: remote port -&gt; host port</li>
-<li>Host URL must be <code>tcp://127.0.0.1:port</code> (use <code>local_url(tcp = TRUE)</code>)</li>
-<li>Daemons dial into their own localhost, traffic tunnels through SSH</li>
-<li>Use <code>ssh_config(remotes, tunnel = TRUE)</code>
-</li>
-</ul></div>
-<div class="section level3">
-<h3 id="hpc-cluster-managers">HPC Cluster Managers<a class="anchor" aria-label="anchor" href="#hpc-cluster-managers"></a></h3>
-<p>Supported via <code><a href="reference/cluster_config.html">cluster_config()</a></code>: - <strong>Slurm</strong>: sbatch (batch), srun (interactive) - <strong>SGE</strong>: qsub - <strong>Torque/PBS</strong>: qsub - <strong>LSF</strong>: bsub</p>
-<p>Configuration includes job options (memory, output files, etc.) and optional module loading commands.</p>
-</div>
-<div class="section level3">
-<h3 id="manual-deployment">Manual Deployment<a class="anchor" aria-label="anchor" href="#manual-deployment"></a></h3>
-<p>Use <code><a href="reference/remote_config.html">remote_config()</a></code> with empty arguments to generate shell commands for manual copy/paste to remote machines.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="helper-functions">Helper Functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
-<div class="section level3">
-<h3 id="url-constructors">URL Constructors<a class="anchor" aria-label="anchor" href="#url-constructors"></a></h3>
-<ul><li>
-<code>host_url(tls, port)</code>: Constructs host URL based on detected IP address</li>
-<li>
-<code>local_url(tcp, port)</code>: Generates IPC URL or localhost TCP URL</li>
-</ul></div>
-<div class="section level3">
-<h3 id="scope-management">Scope Management<a class="anchor" aria-label="anchor" href="#scope-management"></a></h3>
-<ul><li>
-<code>with_daemons(.compute, expr)</code>: Temporarily use a specific compute profile</li>
-<li>
-<code>local_daemons(.compute, frame)</code>: Set profile for current scope</li>
-</ul></div>
-<div class="section level3">
-<h3 id="status-and-monitoring">Status and Monitoring<a class="anchor" aria-label="anchor" href="#status-and-monitoring"></a></h3>
-<ul><li>
-<code>status(.compute)</code>: Detailed status (connections, URL, mirai counts)</li>
-<li>
-<code>info(.compute)</code>: Concise statistics vector</li>
-<li>
-<code>daemons_set(.compute)</code>: Check if daemons exist</li>
-<li>
-<code>require_daemons(.compute)</code>: Error if daemons not set</li>
-</ul></div>
+<p>GitHub Actions in <code>.github/workflows/</code>: - <strong>R-CMD-check.yaml</strong>: 8 OS/R-version combinations (Ubuntu ARM devel, Ubuntu release/oldrel, macOS release/oldrel, Windows release/oldrel) - <strong>test-coverage.yaml</strong>: Coverage via covr, uploaded to codecov - <strong>pkgdown.yaml</strong>: Documentation site with tidytemplate - <strong>shiny-coreci.yaml</strong>: Shiny integration tests (manual trigger) - <strong>pr-commands.yaml</strong>: PR comment commands <code>/document</code> (roxygen2) and <code>/style</code> (styler)</p>
 </div>
 <div class="section level2">
 <h2 id="package-conventions">Package Conventions<a class="anchor" aria-label="anchor" href="#package-conventions"></a></h2>
-<ul><li>Uses roxygen2 for documentation with markdown support</li>
-<li>NAMESPACE is auto-generated via roxygen2</li>
-<li>Version follows R package conventions: major.minor.patch.dev (e.g., 2.5.2.9000 for development)</li>
-<li>MIT license</li>
-<li>Part of the r-lib GitHub organization</li>
-<li>Maintained by Posit Software, PBC</li>
+<ul><li>roxygen2 with markdown support; NAMESPACE is auto-generated</li>
+<li>Version: major.minor.patch.dev (e.g., 2.5.3.9000 for development)</li>
+<li>MIT license, r-lib GitHub organization, maintained by Posit Software, PBC</li>
+<li>
+<code>CLAUDE.md</code> and <code>.claude/</code> are excluded from package builds (via <code>.Rbuildignore</code>)</li>
 </ul></div>
 </div>
 

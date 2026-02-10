@@ -71,34 +71,32 @@ with a 'mirai', which will resolve to the evaluated result once complete.</p>
 
 
 <dl><dt id="arg--expr">.expr<a class="anchor" aria-label="anchor" href="#arg--expr"></a></dt>
-<dd><p>an expression to evaluate asynchronously (of arbitrary length,
-wrapped in { } where necessary), <strong>or else</strong> a pre-constructed language
-object.</p></dd>
+<dd><p>(expression) code to evaluate asynchronously, or a language
+object. Wrap multi-line expressions in <code><a href="https://rdrr.io/r/base/Paren.html" class="external-link">{}</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>(optional) <strong>either</strong> named arguments (name = value pairs)
-specifying objects referenced, but not defined, in <code>.expr</code>, <strong>or</strong> an
-environment containing such objects. See 'evaluation' section below.</p></dd>
+<dd><p>(named arguments | environment) objects required by <code>.expr</code>,
+assigned to the daemon's global environment. See 'evaluation' section
+below.</p></dd>
 
 
 <dt id="arg--args">.args<a class="anchor" aria-label="anchor" href="#arg--args"></a></dt>
-<dd><p>(optional) <strong>either</strong> a named list specifying objects
-referenced, but not defined, in <code>.expr</code>, <strong>or</strong> an environment containing
-such objects. These objects will remain local to the evaluation environment
-as opposed to those supplied in <code>...</code> above - see 'evaluation' section
+<dd><p>(named list | environment) objects required by .expr, kept local
+to the evaluation environment (unlike <code>...</code>). See 'evaluation' section
 below.</p></dd>
 
 
 <dt id="arg--timeout">.timeout<a class="anchor" aria-label="anchor" href="#arg--timeout"></a></dt>
-<dd><p>integer value in milliseconds, or NULL for no timeout. A
-mirai will resolve to an 'errorValue' 5 (timed out) if evaluation exceeds
-this limit.</p></dd>
+<dd><p>(integer) timeout in milliseconds. The mirai resolves to an
+'errorValue' 5 (timed out) if evaluation exceeds this limit. <code>NULL</code>
+(default) for no timeout.</p></dd>
 
 
 <dt id="arg--compute">.compute<a class="anchor" aria-label="anchor" href="#arg--compute"></a></dt>
-<dd><p>character value for the compute profile to use (each has its
-own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
+<dd><p>(character) name of the compute profile. Each profile has its
+own independent set of daemons. <code>NULL</code> (default) uses the 'default'
+profile.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -107,8 +105,7 @@ own independent set of daemons), or NULL to use the 'default' profile.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function will return a 'mirai' object immediately.</p>
-<p>The value of a mirai may be accessed at any time at <code>$data</code>, and if yet
+    <p>The value of a mirai may be accessed at any time at <code>$data</code>, and if yet
 to resolve, an 'unresolved' logical NA will be returned instead. Each mirai
 has an attribute <code>id</code>, which is a monotonically increasing integer identifier
 in each session.</p>
@@ -134,10 +131,10 @@ supplied through <code>...</code> and/or <code>.args</code>, including self-defi
 Functions from a package should use namespaced calls such as
 <code>mirai::mirai()</code>, or else the package should be loaded beforehand as part of
 <code>.expr</code>.</p>
-<p>For evaluation to occur <em>as if</em> in your global environment, supply objects to
-<code>...</code> rather than <code>.args</code>, e.g. for non-local variables or helper functions
-required by other functions, as scoping rules may otherwise prevent them from
-being found.</p>
+<p>Supply objects to <code>...</code> rather than <code>.args</code> for evaluation to occur <em>as if</em>
+in your global environment. This is needed for non-local variables or helper
+functions required by other functions, which scoping rules may otherwise
+prevent from being found.</p>
     </div>
     <div class="section level2">
     <h2 id="timeouts">Timeouts<a class="anchor" aria-label="anchor" href="#timeouts"></a></h2>
@@ -146,10 +143,10 @@ being found.</p>
 
 <p>Specifying the <code>.timeout</code> argument ensures that the mirai always resolves.
 When using dispatcher, the mirai will be cancelled after it times out (as if
-<code><a href="stop_mirai.html">stop_mirai()</a></code> had been called). As in that case, there is no guarantee that
-any cancellation will be successful, if the code cannot be interrupted for
-instance. When not using dispatcher, the mirai task will continue to
-completion in the daemon process, even if it times out in the host process.</p>
+<code><a href="stop_mirai.html">stop_mirai()</a></code> had been called). However, cancellation is not guaranteed –
+for example, compiled code may not be interruptible. When not using
+dispatcher, the mirai task continues to completion in the daemon process,
+even if it times out in the host process.</p>
     </div>
     <div class="section level2">
     <h2 id="errors">Errors<a class="anchor" aria-label="anchor" href="#errors"></a></h2>
@@ -207,7 +204,7 @@ interrupts, and timeouts.</p>
 <span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"r &lt;- rnorm(n)"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">mirai</span><span class="op">(</span><span class="op">{</span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>; <span class="va">r</span><span class="op">}</span>, file <span class="op">=</span> <span class="va">file</span>, n <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">datado</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use source(local = TRUE) when passing in local variables via '.args'</span></span></span>

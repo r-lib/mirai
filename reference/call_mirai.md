@@ -1,7 +1,8 @@
 # mirai (Call Value)
 
-Waits for the 'mirai' to resolve if still in progress, stores the value
-at `$data`, and returns the 'mirai' object.
+Waits for the 'mirai' to resolve if still in progress (blocking but
+user-interruptible), stores the value at `$data`, and returns the
+'mirai' object.
 
 ## Usage
 
@@ -13,7 +14,7 @@ call_mirai(x)
 
 - x:
 
-  a 'mirai' object, or list of 'mirai' objects.
+  (mirai \| list) a 'mirai' object or list of 'mirai' objects.
 
 ## Value
 
@@ -25,9 +26,6 @@ stored at `$data`.
 Accepts a list of 'mirai' objects, such as those returned by
 [`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md), as well
 as individual 'mirai'.
-
-Waits for the asynchronous operation(s) to complete if still in
-progress, blocking but user-interruptible.
 
 `x[]` may also be used to wait for and return the value of a mirai `x`,
 and is the equivalent of `call_mirai(x)$data`.

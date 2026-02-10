@@ -165,7 +165,7 @@ subsequent runs. This can be assumed to include
 <span><span class="co">#&gt; [1]  0.001644678 -1.187782046 -0.297140635</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] -0.7211057 -0.8825230 -0.9686437</span></span>
+<span><span class="co">#&gt; [1]  0.02582566  0.96725416 -0.87824600</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -265,7 +265,7 @@ connections.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_local</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>or</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span><span class="op">)</span> <span class="co"># or cluster_config()</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span><span class="op">)</span> <span class="co"># or cluster_config() / http_config()</span></span></code></pre></div>
 <p>For flexible scaling up and down, specify one of these arguments to
 <code>...</code> in <code><a href="../reference/launch_local.html">launch_local()</a></code> or
 <code><a href="../reference/launch_local.html">launch_remote()</a></code>. Supply these to the initial
