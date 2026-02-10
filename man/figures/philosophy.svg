@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 530" fill="none">
+  <defs>
+    <style>
+      text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Noto Sans, Helvetica, Arial, sans-serif;
+      }
+      .card { fill: #ffffff; stroke: #d1d9e0; stroke-width: 1; }
+      .title { font-size: 18px; fill: #1f2328; font-weight: 600; }
+      .subtitle { font-size: 14px; fill: #656d76; font-weight: 400; }
+      .bullet { font-size: 14px; fill: #32383f; }
+      .accent-amber { fill: #bf8700; }
+      .accent-blue { fill: #0969da; }
+      .accent-green { fill: #1a7f37; }
+      .accent-purple { fill: #8250df; }
+
+      @media (prefers-color-scheme: dark) {
+        .card { fill: #161b22; stroke: #30363d; }
+        .title { fill: #e6edf3; }
+        .subtitle { fill: #8b949e; }
+        .bullet { fill: #c9d1d9; }
+        .accent-amber { fill: #d29922; }
+        .accent-blue { fill: #58a6ff; }
+        .accent-green { fill: #3fb950; }
+        .accent-purple { fill: #bc8cff; }
+      }
+    </style>
+  </defs>
+
+  <!-- ======== Card 1: Dynamic Architecture ======== -->
+  <rect class="card" x="0" y="0" width="700" height="120" rx="6" />
+  <circle class="accent-amber" cx="20" cy="24" r="6" />
+  <text class="title" x="36" y="30">Dynamic Architecture</text>
+  <text class="subtitle" x="36" y="48">scale on demand</text>
+  <text class="bullet" x="20" y="70">&#8226; Host listens, daemons connect &#8212; true dynamic scaling</text>
+  <text class="bullet" x="20" y="90">&#8226; Optimal load balancing via efficient FIFO scheduling</text>
+  <text class="bullet" x="20" y="110">&#8226; Event-driven promises with zero-latency completion</text>
+
+  <!-- ======== Card 2: Modern Foundation ======== -->
+  <rect class="card" x="0" y="135" width="700" height="120" rx="6" />
+  <circle class="accent-blue" cx="20" cy="159" r="6" />
+  <text class="title" x="36" y="165">Modern Foundation</text>
+  <text class="subtitle" x="36" y="183">built for speed</text>
+  <text class="bullet" x="20" y="205">&#8226; NNG via nanonext &#8212; thousands of processes at scale</text>
+  <text class="bullet" x="20" y="225">&#8226; Round-trip times in microseconds, not milliseconds</text>
+  <text class="bullet" x="20" y="245">&#8226; IPC, TCP, and zero-config TLS certificates</text>
+
+  <!-- ======== Card 3: Production First ======== -->
+  <rect class="card" x="0" y="270" width="700" height="120" rx="6" />
+  <circle class="accent-green" cx="20" cy="294" r="6" />
+  <text class="title" x="36" y="300">Production First</text>
+  <text class="subtitle" x="36" y="318">reliable by design</text>
+  <text class="bullet" x="20" y="340">&#8226; Explicit dependencies prevent hidden-state surprises</text>
+  <text class="bullet" x="20" y="360">&#8226; Cross-language serialization (torch, Arrow, Polars)</text>
+  <text class="bullet" x="20" y="380">&#8226; OpenTelemetry for distributed process observability</text>
+
+  <!-- ======== Card 4: Deploy Everywhere ======== -->
+  <rect class="card" x="0" y="405" width="700" height="120" rx="6" />
+  <circle class="accent-purple" cx="20" cy="429" r="6" />
+  <text class="title" x="36" y="435">Deploy Everywhere</text>
+  <text class="subtitle" x="36" y="453">laptop to cluster</text>
+  <text class="bullet" x="20" y="475">&#8226; Local, SSH, or HPC (Slurm, SGE, PBS, LSF)</text>
+  <text class="bullet" x="20" y="495">&#8226; Compute profiles direct tasks to best-fit resources</text>
+  <text class="bullet" x="20" y="515">&#8226; Mix local, remote, and HPC in a single profile</text>
+
+</svg>

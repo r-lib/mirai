@@ -16,16 +16,18 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 
 ### ミライ
 
-*moving already* <br /><br /> [![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
-<br /><br /> Minimalist Async Evaluation Framework for R <br /><br />
+*moving already* <br /><br /> Minimalist Async Evaluation Framework for
+R <br /><br />
 
 → Event-driven core with microsecond round-trips
 
 → Hub architecture — scale dynamically from laptop to HPC and cloud
 
-→ OpenTelemetry tracing, promises for Shiny, and custom serialization
+→ Production-ready distributed tracing, custom serialization, and Shiny
+integration
 
+<br /><br /> [![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <br />
 
 ### Installation
@@ -69,95 +71,27 @@ mp[.flat]
 daemons(0)
 ```
 
+See the [quick reference](https://mirai.r-lib.org/articles/mirai.html)
+for a full introduction.
+
 ### Architecture
 
 `mirai()` sends tasks to daemons for parallel execution.
 
-A *compute profile* is a pool of connected daemons. Multiple profiles
-can coexist, directing tasks to different resources.
+A *compute profile* is a set of connected daemons. Multiple profiles can
+coexist, directing tasks to different resources.
 
 *Hub architecture*: host listens at a URL, daemons connect to it — add
 or remove daemons at any time. Launch locally or remotely via different
 methods, and mix freely:
 
-                                ┌ Compute Profile ┐
-      launch_local() ···········│▸ Daemon ──┐     │
-                                │           │     │
-      ssh_config() ·············│▸ Daemon ──┼─────┼──▸ Host
-                                │           │     │    daemons(url = host_url())
-      cluster_config() ·········│▸ Daemon ──┤     │
-                                │           │     │
-      http_config() ············│▸ Daemon ──┘     │
-                                └─────────────────┘
-                                ┌ Compute Profile ┐
-                                │  Daemon ──┐     │
-                                │           ├─────┼──▸ Host
-                                │  Daemon ──┘     │    daemons(2)
-                                └─────────────────┘
+<img src="man/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="100%" />
 
 ### Design Philosophy
 
-<details>
+mirai is designed around four principles:
 
-<summary>
-
-<strong>⚡ Dynamic Architecture</strong> — scale on demand
-</summary>
-
-- Hub architecture — host listens, daemons connect — enables true
-  dynamic scaling
-- Optimal load balancing through efficient FIFO dispatcher scheduling
-- Event-driven promises complete with zero latency (and no polling
-  overhead)
-
-</details>
-
-<details>
-
-<summary>
-
-<strong>⚙️ Modern Foundation</strong> — built for speed
-</summary>
-
-- Built on [NNG](https://nng.nanomsg.org/) via
-  [nanonext](https://nanonext.r-lib.org/), scales reliably to millions
-  of tasks / thousands of processes
-- High performance, with round-trip times measured in microseconds, not
-  milliseconds
-- Native support for IPC, TCP, and zero-config TLS with automatic
-  certificate generation
-
-</details>
-
-<details>
-
-<summary>
-
-<strong>🏭 Production First</strong> — reliable by design
-</summary>
-
-- Clear evaluation model with explicit dependencies prevents surprises
-  from hidden state
-- Serialization support for cross-language data formats (torch tensors,
-  Arrow tables)
-- OpenTelemetry integration for observability across distributed
-  processes
-
-</details>
-
-<details>
-
-<summary>
-
-<strong>🌐 Deploy Everywhere</strong> — laptop to cluster
-</summary>
-
-- Local, network / cloud (via SSH, SSH tunnelling) or HPC (via Slurm,
-  SGE, PBS, LSF)
-- Modular compute profiles direct tasks to the most suitable resources
-- Combine local, remote, and HPC resources in a single compute profile
-
-</details>
+<img src="man/figures/philosophy.svg" alt="Design philosophy: Dynamic Architecture, Modern Foundation, Production First, Deploy Everywhere" width="100%" />
 
 ### Powers the R Ecosystem
 
@@ -165,8 +99,8 @@ mirai serves as a foundation for asynchronous, parallel and distributed
 computing in the R ecosystem.
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
-  The first official alternative communications backend for R, the
-‘MIRAI’ parallel cluster, a feature request by R-Core.
+  The first official alternative communications backend for R, a
+parallel cluster type.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
   Powers parallel map for purrr, a core tidyverse package.
@@ -189,13 +123,11 @@ processes.
 format.
 
 [<img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
-  R Polars leverages mirai’s serialization registration mechanism for
-transparent use of Polars objects.
+  Transparent use of Polars objects across parallel processes.
 
 [<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/)
-  Targets uses crew as its default high-performance computing backend.
-Crew is a distributed worker launcher extending mirai to different
-computing platforms.
+  Powers targets pipelines via crew, a distributed worker launcher built
+on mirai.
 
 ### Acknowledgements
 
@@ -224,10 +156,9 @@ discussions.
 
 ### Links
 
-- [mirai](https://mirai.r-lib.org/)
-- [nanonext](https://nanonext.r-lib.org/)
-- [CRAN HPC Task
-  View](https://cran.r-project.org/view=HighPerformanceComputing)
+[mirai](https://mirai.r-lib.org/) \|
+[nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
+View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 –
 
