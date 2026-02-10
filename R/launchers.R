@@ -99,8 +99,8 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
     res <- lapply(seq_len(n), function(i) {
       cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
       cmd <- substr(cmd, 2L, nchar(cmd) - 1L)
-      cmd <- secretbase::jsonenc(cmd)
-      cmd <- substr(cmd, 2L, nchar(cmd) - 1L)
+      cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
+      cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
       ncurl(url = api_url, method = method, headers = headers, data = sprintf(data, cmd))
     })
     return(invisible(res))
