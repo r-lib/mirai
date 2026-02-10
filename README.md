@@ -89,9 +89,29 @@ methods, and mix freely:
 
 ### Design Philosophy
 
-mirai is designed around four principles:
+> **Dynamic Architecture** — *scale on demand*
+>
+> - Host listens, daemons connect — true dynamic scaling
+> - Optimal load balancing via efficient FIFO scheduling
+> - Event-driven promises with zero-latency completion
 
-<img src="man/figures/philosophy.svg" alt="Design philosophy: Dynamic Architecture, Modern Foundation, Production First, Deploy Everywhere" width="100%" />
+> **Modern Foundation** — *built for speed*
+>
+> - NNG via nanonext — thousands of processes at scale
+> - Round-trip times in microseconds, not milliseconds
+> - IPC, TCP, and zero-config TLS certificates
+
+> **Production First** — *reliable by design*
+>
+> - Explicit dependencies prevent hidden-state surprises
+> - Cross-language serialization (torch, Arrow, Polars)
+> - OpenTelemetry for distributed process observability
+
+> **Deploy Everywhere** — *laptop to cluster*
+>
+> - Local, SSH, or HPC (Slurm, SGE, PBS, LSF)
+> - Compute profiles direct tasks to best-fit resources
+> - Mix local, remote, and HPC in a single profile
 
 ### Powers the R Ecosystem
 
