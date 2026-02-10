@@ -6,13 +6,13 @@
 \title{mirai: Minimalist Async Evaluation Framework for R}
 \description{
 \emph{moving already} \cr \cr
-Designed for simplicity, a 'mirai' evaluates an R expression asynchronously,
-locally or distributed over the network. Built on 'nanonext' and 'NNG' for
-modern networking and concurrency, scales efficiently to millions of tasks
-over thousands of parallel processes. Provides optimal scheduling over fast
-'IPC', TCP, and TLS connections, integrating with SSH or cluster managers.
-Implements event-driven promises for reactive programming, and supports
-custom serialization for cross-language data types.
+Evaluates R expressions asynchronously and in parallel, locally or
+distributed across networks. An official parallel cluster type for R. Built
+on 'nanonext' and 'NNG' (Nanomsg Next Generation), its non-polling,
+event-driven architecture scales from a laptop to thousands of processes
+across HPC clusters and cloud platforms. Features FIFO scheduling with task
+cancellation, promises for reactive programming, 'OpenTelemetry' distributed
+tracing, and custom serialization for cross-language data types.
 }
 \section{Notes}{
 
