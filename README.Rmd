@@ -57,24 +57,29 @@ install.packages("mirai")
 ```{r}
 #| label: exec
 library(mirai)
+
+# Set up 5 background processes
 daemons(5)
 
+# Send work -- non-blocking, returns immediately
 m <- mirai({
   Sys.sleep(1)
   100 + 42
 })
+m
 
+# Map work across daemons in parallel
 mp <- mirai_map(1:9, \(x) {
   Sys.sleep(1)
   x^2
 })
-
-m
-m[]
-
 mp
+
+# Collect results when ready
+m[]
 mp[.flat]
 
+# Shut down
 daemons(0)
 ```
 
