@@ -60,7 +60,9 @@ For **launch_local**: Integer number of daemons launched.
 
 For **launch_remote**: A character vector of daemon launch commands,
 classed as 'miraiLaunchCmd'. The printed output may be copy / pasted
-directly to the remote machine.
+directly to the remote machine. For the
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+launcher, a list of server response data, returned invisibly.
 
 ## Details
 
