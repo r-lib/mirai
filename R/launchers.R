@@ -101,7 +101,13 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
       cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
       cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
       cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
-      ncurl(url = api_url, method = method, headers = headers, data = sprintf(data, cmd))
+      ncurl(
+        url = api_url,
+        method = method,
+        headers = headers,
+        data = sprintf(data, cmd),
+        timeout = .limit_short
+      )
     })
     return(invisible(res))
   }
@@ -548,7 +554,11 @@ posit_workbench_get <- function(what, rscript = NULL) {
       url <- Sys.getenv("RS_SERVER_ADDRESS")
       cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
       nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
-      envs <- ncurl(file.path(url, "api", "get_compute_envs"), headers = c(Cookie = cookie))
+      envs <- ncurl(
+        file.path(url, "api", "get_compute_envs"),
+        headers = c(Cookie = cookie),
+        timeout = .limit_short
+      )
       envs[["status"]] == 200L || stop(._[["posit_api"]])
       cluster <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]][[1L]]
       lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", .libPaths()), collapse = ","))
