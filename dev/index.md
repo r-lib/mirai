@@ -110,10 +110,10 @@ connecting to host](reference/figures/architecture.svg)
 > - Compute profiles direct tasks to best-fit resources
 > - Mix local, remote, and HPC in a single profile
 
-### Powers the R Ecosystem
+### Async Foundation for the Modern R Stack
 
-mirai serves as a foundation for asynchronous, parallel and distributed
-computing in the R ecosystem.
+mirai has become the convergence point for asynchronous and parallel
+computing across the R ecosystem.
 
 [![R
 parallel](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/articles/v04-parallel.html)
@@ -121,13 +121,17 @@ parallel](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/art
 parallel cluster type.
 
 [![purrr](https://purrr.tidyverse.org/logo.png)](https://purrr.tidyverse.org)
-  Powers parallel map for purrr, a core tidyverse package.
+  Powers parallel map for purrr, the tidyverse’s functional programming
+toolkit.
 
 [![Shiny](https://github.com/rstudio/shiny/raw/main/man/figures/logo.png)](https://mirai.r-lib.org/articles/v02-promises.html)
-  Primary async backend for Shiny with full ExtendedTask support.
+  Primary async backend for Shiny, with full ExtendedTask support.
 
 [![plumber2](https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg)](https://mirai.r-lib.org/articles/v02-promises.html)
   Built-in async evaluator enabling the `@async` tag in plumber2.
+
+[![ragnar](https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png)](https://ragnar.tidyverse.org/)
+  Parallel processing backend for ragnar, a RAG framework for R.
 
 [![tidymodels](https://www.tidymodels.org/images/tidymodels.png)](https://tune.tidymodels.org/)
   Core parallel processing infrastructure provider for tidymodels.
@@ -141,7 +145,8 @@ processes.
 format.
 
 [![Polars](https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg)](https://mirai.r-lib.org/articles/v03-serialization.html)
-  Transparent use of Polars objects across parallel processes.
+ Native handling of Polars objects across parallel processes via
+serialization hooks.
 
 [![targets](https://github.com/ropensci/targets/raw/main/man/figures/logo.png)](https://docs.ropensci.org/targets/)
   Powers targets pipelines via crew, a distributed worker launcher built
