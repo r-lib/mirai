@@ -118,23 +118,27 @@ methods, and mix freely:
 > - Compute profiles direct tasks to best-fit resources
 > - Mix local, remote, and HPC in a single profile
 
-### Powers the R Ecosystem
+### Async Foundation for the Modern R Stack
 
-mirai serves as a foundation for asynchronous, parallel and distributed
-computing in the R ecosystem.
+mirai has become the convergence point for asynchronous and parallel
+computing across the R ecosystem.
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
   The first official alternative communications backend for R, a
 parallel cluster type.
 
 [<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
-  Powers parallel map for purrr, a core tidyverse package.
+  Powers parallel map for purrr, the tidyverse’s functional programming
+toolkit.
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
-  Primary async backend for Shiny with full ExtendedTask support.
+  Primary async backend for Shiny, with full ExtendedTask support.
 
 [<img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   Built-in async evaluator enabling the `@async` tag in plumber2.
+
+[<img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46" />](https://ragnar.tidyverse.org/)
+  Parallel processing backend for ragnar, a RAG framework for R.
 
 [<img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" />](https://tune.tidymodels.org/)
   Core parallel processing infrastructure provider for tidymodels.
@@ -148,7 +152,8 @@ processes.
 format.
 
 [<img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
-  Transparent use of Polars objects across parallel processes.
+ Native handling of Polars objects across parallel processes via
+serialization hooks.
 
 [<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/)
   Powers targets pipelines via crew, a distributed worker launcher built
