@@ -70,7 +70,8 @@ launch_local <- function(n = 1L, ..., .compute = NULL) {
 #'
 #' @return For **launch_remote**: A character vector of daemon launch commands,
 #'   classed as 'miraiLaunchCmd'. The printed output may be copy / pasted
-#'   directly to the remote machine.
+#'   directly to the remote machine. For the [http_config()] launcher, a list
+#'   of server response data, returned invisibly.
 #'
 #' @rdname launch_local
 #' @export

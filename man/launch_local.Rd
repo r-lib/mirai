@@ -31,7 +31,8 @@ For \strong{launch_local}: Integer number of daemons launched.
 
 For \strong{launch_remote}: A character vector of daemon launch commands,
 classed as 'miraiLaunchCmd'. The printed output may be copy / pasted
-directly to the remote machine.
+directly to the remote machine. For the \code{\link[=http_config]{http_config()}} launcher, a list
+of server response data, returned invisibly.
 }
 \description{
 \code{launch_local()} launches daemons on the local machine as background R

@@ -550,6 +550,8 @@ This lazy evaluation ensures that dynamic values such as session cookies, API to
 
 ##### Default: Posit Workbench
 
+> Requires Posit Workbench 2026.01 or later, which supports authenticating the launcher using the session cookie.
+
 By default, `http_config()` auto-configures for Posit Workbench.
 The defaults for `url`, `cookie`, and `data` are functions (not function calls) that read Workbench environment information:
 
@@ -595,6 +597,18 @@ daemons(
 
 Here, `token` is a function so the API key environment variable is read each time daemons are launched.
 The remaining arguments are plain character values used as-is.
+
+##### Troubleshooting
+
+`launch_remote()` with an `http_config()` configuration returns a list of server response data (invisibly).
+Capture and inspect these to diagnose launch failures:
+```{r}
+#| label: httptrblsht
+#| eval: false
+daemons(url = host_url())
+res <- launch_remote(remote = http_config())
+```
+Each element of `res` is the response for a single daemon launch request.
 
 #### Generic Remote Configuration
 
