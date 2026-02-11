@@ -1,23 +1,3 @@
-# mirai (development version)
-
-#### New Features
-
-* Adds `http_config()` for launching remote daemons via HTTP APIs. By default, it automatically configures for Posit Workbench using environment variables, but can be customized for other platforms.
-
-#### Breaking Changes
-
-* `race_mirai()` now returns the integer index of the first resolved 'mirai' instead of the entire list.
-  Returns immediately if any mirai is already resolved, and returns `0L` for empty lists.
-  This enables efficient removal from the list via `remaining <- remaining[-idx]`.
-
-#### Updates
-
-* The `dispatcher()` loop has been re-implemented entirely in C code in nanonext, and now has roughly half the previous overhead (#527).
-* Fixes an issue in `daemons()` where supplying a non-character value to `url` causes local daemons to be launched instead of throwing an error (#549).
-* Fixes a bug whereby repeated mirai cancellation could sometimes cause a daemon to exit prematurely (#546).
-* A `miraiError` gains `conditionCall` and `conditionMessage` methods (@jan-swissre, #529)
-* Requires nanonext >= 1.8.0.
-
 # mirai 2.5.3
 
 #### Updates
