@@ -4,9 +4,9 @@
   
 Evaluates R expressions asynchronously and in parallel, locally or
 distributed across networks. An official parallel cluster type for R.
-Built on 'nanonext' and 'NNG' (Nanomsg Next Generation), its
-non-polling, event-driven architecture scales from a laptop to thousands
-of processes across HPC clusters and cloud platforms. Features FIFO
+Built on 'nanonext' and 'NNG', its non-polling, event-driven
+architecture scales from a laptop to thousands of processes across
+high-performance computing clusters and cloud platforms. Features FIFO
 scheduling with task cancellation, promises for reactive programming,
 'OpenTelemetry' distributed tracing, and custom serialization for
 cross-language data types.
