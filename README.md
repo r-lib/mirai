@@ -114,9 +114,9 @@ methods, and mix freely:
 
 > **Deploy Everywhere** — *laptop to cluster*
 >
-> - Local, SSH, or HPC (Slurm, SGE, PBS, LSF)
+> - Local machine, SSH remote, HPC cluster, or cloud platform
 > - Compute profiles direct tasks to best-fit resources
-> - Mix local, remote, and HPC in a single profile
+> - Combine resources from any deployment type in a single profile
 
 ### Async Foundation for the Modern R Stack
 
