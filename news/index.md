@@ -1,5 +1,42 @@
 # Changelog
 
+## mirai 2.6.0
+
+##### New Features
+
+- Adds
+  [`http_config()`](https://mirai.r-lib.org/reference/http_config.md)
+  for launching remote daemons via HTTP APIs. By default, it
+  automatically configures for Posit Workbench using environment
+  variables, but can be customized for other platforms.
+
+##### Breaking Changes
+
+- [`race_mirai()`](https://mirai.r-lib.org/reference/race_mirai.md) now
+  returns the integer index of the first resolved ‘mirai’ instead of the
+  entire list. Returns immediately if any mirai is already resolved, and
+  returns `0L` for empty lists. This enables efficient removal from the
+  list via `remaining <- remaining[-idx]`.
+
+##### Updates
+
+- The [`dispatcher()`](https://mirai.r-lib.org/reference/dispatcher.md)
+  loop has been re-implemented entirely in C code in nanonext, and now
+  has roughly half the previous overhead
+  ([\#527](https://github.com/r-lib/mirai/issues/527)).
+- Fixes an issue in
+  [`daemons()`](https://mirai.r-lib.org/reference/daemons.md) where
+  supplying a non-character value to `url` causes local daemons to be
+  launched instead of throwing an error
+  ([\#549](https://github.com/r-lib/mirai/issues/549)).
+- Fixes a bug whereby repeated mirai cancellation could sometimes cause
+  a daemon to exit prematurely
+  ([\#546](https://github.com/r-lib/mirai/issues/546)).
+- A `miraiError` gains `conditionCall` and `conditionMessage` methods
+  ([@jan-swissre](https://github.com/jan-swissre),
+  [\#529](https://github.com/r-lib/mirai/issues/529))
+- Requires nanonext \>= 1.8.0.
+
 ## mirai 2.5.3
 
 CRAN release: 2025-12-01

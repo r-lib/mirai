@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Minimalist Async Evaluation Framework for R">
-<meta name="description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG (Nanomsg Next Generation), its non-polling, event-driven architecture scales from a laptop to thousands of processes across HPC clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
-<meta property="og:description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG (Nanomsg Next Generation), its non-polling, event-driven architecture scales from a laptop to thousands of processes across HPC clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
+<meta name="description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
+<meta property="og:description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
 <meta property="og:image" content="https://mirai.r-lib.org/logo.png">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,24 +176,25 @@
 <blockquote>
 <p><strong>Deploy Everywhere</strong> — <em>laptop to cluster</em></p>
 <ul>
-<li>Local, SSH, or HPC (Slurm, SGE, PBS, LSF)</li>
+<li>Local machine, SSH remote, HPC cluster, or cloud platform</li>
 <li>Compute profiles direct tasks to best-fit resources</li>
-<li>Mix local, remote, and HPC in a single profile</li>
+<li>Combine resources from any deployment type in a single profile</li>
 </ul>
 </blockquote>
 </div>
 <div class="section level3">
-<h3 id="powers-the-r-ecosystem">Powers the R Ecosystem<a class="anchor" aria-label="anchor" href="#powers-the-r-ecosystem"></a>
+<h3 id="async-foundation-for-the-modern-r-stack">Async Foundation for the Modern R Stack<a class="anchor" aria-label="anchor" href="#async-foundation-for-the-modern-r-stack"></a>
 </h3>
-<p>mirai serves as a foundation for asynchronous, parallel and distributed computing in the R ecosystem.</p>
+<p>mirai has become the convergence point for asynchronous and parallel computing across the R ecosystem.</p>
 <p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   The first official alternative communications backend for R, a parallel cluster type.</p>
-<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for purrr, a core tidyverse package.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny with full ExtendedTask support.</p>
+<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for purrr, the tidyverse’s functional programming toolkit.</p>
+<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny, with full ExtendedTask support.</p>
 <p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46"></a>   Built-in async evaluator enabling the <code>@async</code> tag in plumber2.</p>
+<p><a href="https://ragnar.tidyverse.org/" class="external-link"><img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46"></a>   Parallel processing backend for ragnar, a RAG framework for R.</p>
 <p><a href="https://tune.tidymodels.org/" class="external-link"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46"></a>   Core parallel processing infrastructure provider for tidymodels.</p>
 <p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Seamless use of torch tensors, models and optimizers across parallel processes.</p>
 <p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Query databases over ADBC connections natively in the Arrow data format.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46"></a>   Transparent use of Polars objects across parallel processes.</p>
+<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46"></a>  Native handling of Polars objects across parallel processes via serialization hooks.</p>
 <p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Powers targets pipelines via crew, a distributed worker launcher built on mirai.</p>
 </div>
 <div class="section level3">

@@ -17,7 +17,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>URL Constructors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/docs/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>host_url.Rd</code></div>
     </div>
 
@@ -117,16 +117,16 @@ Windows.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 eth0              docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tcp://10.1.0.18:0" "tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.231:0" "tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     eth0                  docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.0.18:0" "tls+tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.231:0" "tls+tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        eth0                     docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "tls+tcp://10.1.0.18:5555" "tls+tcp://172.17.0.1:5555" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.231:5555" "tls+tcp://172.17.0.1:5555" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://8818de0f462e5238213328d8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://259658feb0cc4e41cb3c0f6c"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tcp://127.0.0.1:0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
