@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.5.3.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.6.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/blog/2025/09/mirai-2-5-0/">mirai 2.5.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2026/02/mirai-2-6-0/">mirai 2.6.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2025/09/mirai-2-5-0/">mirai 2.5.0</a></li>
     <li><a class="external-link dropdown-item" href="https://shikokuchuo.net/posts/27-mirai-240/">mirai 2.4.0</a></li>
     <li><a class="external-link dropdown-item" href="https://shikokuchuo.net/posts/26-mirai-230/">mirai 2.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -52,17 +53,20 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.6.0" id="mirai-260">mirai 2.6.0<a class="anchor" aria-label="anchor" href="#mirai-260"></a></h2>
 <div class="section level5">
-<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<h5 id="new-features-2-6-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-2-6-0"></a></h5>
 <ul><li>Adds <code><a href="../reference/http_config.html">http_config()</a></code> for launching remote daemons via HTTP APIs. By default, it automatically configures for Posit Workbench using environment variables, but can be customized for other platforms.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="breaking-changes-development-version">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h5>
+<h5 id="breaking-changes-2-6-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-2-6-0"></a></h5>
 <ul><li>
 <code><a href="../reference/race_mirai.html">race_mirai()</a></code> now returns the integer index of the first resolved ‘mirai’ instead of the entire list. Returns immediately if any mirai is already resolved, and returns <code>0L</code> for empty lists. This enables efficient removal from the list via <code>remaining &lt;- remaining[-idx]</code>.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
+<h5 id="updates-2-6-0">Updates<a class="anchor" aria-label="anchor" href="#updates-2-6-0"></a></h5>
 <ul><li>The <code><a href="../reference/dispatcher.html">dispatcher()</a></code> loop has been re-implemented entirely in C code in nanonext, and now has roughly half the previous overhead (<a href="https://github.com/r-lib/mirai/issues/527" class="external-link">#527</a>).</li>
 <li>Fixes an issue in <code><a href="../reference/daemons.html">daemons()</a></code> where supplying a non-character value to <code>url</code> causes local daemons to be launched instead of throwing an error (<a href="https://github.com/r-lib/mirai/issues/549" class="external-link">#549</a>).</li>
 <li>Fixes a bug whereby repeated mirai cancellation could sometimes cause a daemon to exit prematurely (<a href="https://github.com/r-lib/mirai/issues/546" class="external-link">#546</a>).</li>

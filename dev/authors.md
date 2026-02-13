@@ -19,12 +19,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/mirai/blob/main/DESCRIPTION)
 
 Gao C (2026). *mirai: Minimalist Async Evaluation Framework for R*. R
-package version 2.5.3.9000, <https://mirai.r-lib.org>.
+package version 2.6.0.9000, <https://mirai.r-lib.org>.
 
     @Manual{,
       title = {mirai: Minimalist Async Evaluation Framework for R},
       author = {Charlie Gao},
       year = {2026},
-      note = {R package version 2.5.3.9000},
+      note = {R package version 2.6.0.9000},
       url = {https://mirai.r-lib.org},
     }

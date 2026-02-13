@@ -2,6 +2,8 @@
 
 ## mirai (development version)
 
+## mirai 2.6.0
+
 ##### New Features
 
 - Adds
