@@ -16,7 +16,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-lib/mirai/blob/v2.6.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-lib/mirai/blob/release/DESCRIPTION)
 
 Gao C (2026). *mirai: Minimalist Async Evaluation Framework for R*. R
 package version 2.6.0, <https://mirai.r-lib.org>.

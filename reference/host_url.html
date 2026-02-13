@@ -40,7 +40,8 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://www.tidyverse.org/blog/2025/09/mirai-2-5-0/">mirai 2.5.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2026/02/mirai-2-6-0/">mirai 2.6.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://tidyverse.org/blog/2025/09/mirai-2-5-0/">mirai 2.5.0</a></li>
     <li><a class="external-link dropdown-item" href="https://shikokuchuo.net/posts/27-mirai-240/">mirai 2.4.0</a></li>
     <li><a class="external-link dropdown-item" href="https://shikokuchuo.net/posts/26-mirai-230/">mirai 2.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -57,7 +58,7 @@ daemons()."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>URL Constructors</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.6.0/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>host_url.Rd</code></div>
     </div>
 
@@ -117,16 +118,16 @@ Windows.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 eth0              docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.126:0" "tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tcp://10.1.0.127:0" "tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     eth0                  docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.126:0" "tls+tcp://172.17.0.1:0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.127:0" "tls+tcp://172.17.0.1:0" </span>
 <span class="r-in"><span><span class="fu">host_url</span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        eth0                     docker0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.126:5555" "tls+tcp://172.17.0.1:5555" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "tls+tcp://10.1.0.127:5555" "tls+tcp://172.17.0.1:5555" </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://7e8ee4800d2a70a624c0d1e4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "abstract://65abcab03a9501eb536afdd7"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tcp://127.0.0.1:0"</span>
 <span class="r-in"><span><span class="fu">local_url</span><span class="op">(</span>tcp <span class="op">=</span> <span class="cn">TRUE</span>, port <span class="op">=</span> <span class="fl">5555</span><span class="op">)</span></span></span>
