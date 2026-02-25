@@ -96,7 +96,11 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
     cookie <- if (is.function(remote[["cookie"]])) remote[["cookie"]]() else remote[["cookie"]]
     token <- if (is.function(remote[["token"]])) remote[["token"]]() else remote[["token"]]
     data <- if (is.function(remote[["data"]])) remote[["data"]]() else remote[["data"]]
-    headers <- c(Authorization = sprintf("Bearer %s", token), Cookie = cookie)
+    headers <- c(
+      Authorization = sprintf("Bearer %s", token),
+      Cookie = cookie,
+      `X-RS-Session-Server-RPC-Cookie` = cookie
+    )
     res <- lapply(seq_len(n), function(i) {
       cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
       cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
@@ -556,7 +560,7 @@ posit_workbench_get <- function(what, rscript = NULL) {
       nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
       envs <- ncurl(
         file.path(url, "api", "get_compute_envs"),
-        headers = c(Cookie = cookie),
+        headers = c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie),
         timeout = .limit_short
       )
       envs[["status"]] == 200L || stop(._[["posit_api"]])
