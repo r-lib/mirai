@@ -27,6 +27,7 @@ Imports:
     nanonext (>= 1.8.0)
 Suggests: 
     cli,
+    later,
     litedown,
     otel,
     otelsdk,
