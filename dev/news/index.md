@@ -4,6 +4,8 @@
 
 ## mirai 2.6.0
 
+CRAN release: 2026-02-13
+
 ##### New Features
 
 - Adds
