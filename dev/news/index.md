@@ -2,6 +2,16 @@
 
 ## mirai (development version)
 
+##### Updates
+
+- Fixes
+  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+  defaults failing to authenticate for certain types of Posit Workbench
+  installation (thanks [@jjjermiah](https://github.com/jjjermiah),
+  [\#563](https://github.com/r-lib/mirai/issues/563) and
+  [@jeffvroom](https://github.com/jeffvroom),
+  [\#564](https://github.com/r-lib/mirai/issues/564)).
+
 ## mirai 2.6.0
 
 CRAN release: 2026-02-13
