@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* Fixes `http_config()` defaults failing to authenticate for certain types of Posit Workbench installation (thanks @jjjermiah, #563 and @jeffvroom, #564).
+
 # mirai 2.6.0
 
 #### New Features

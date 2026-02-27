@@ -93,9 +93,9 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   if (is.character(remote[["type"]]) && remote[["type"]] == "http") {
     api_url <- if (is.function(remote[["url"]])) remote[["url"]]() else remote[["url"]]
     method <- remote[["method"]]
-    cookie <- if (is.function(remote[["cookie"]])) remote[["cookie"]]() else remote[["cookie"]]
-    token <- if (is.function(remote[["token"]])) remote[["token"]]() else remote[["token"]]
     data <- if (is.function(remote[["data"]])) remote[["data"]]() else remote[["data"]]
+    token <- if (is.function(remote[["token"]])) remote[["token"]]() else remote[["token"]]
+    cookie <- if (is.function(remote[["cookie"]])) remote[["cookie"]]() else remote[["cookie"]]
     headers <- c(
       Authorization = sprintf("Bearer %s", token),
       Cookie = cookie,
@@ -551,7 +551,11 @@ posit_workbench_data <- function(rscript = "Rscript") posit_workbench_get("data"
 posit_workbench_get <- function(what, rscript = NULL) {
   switch(
     what,
-    cookie = Sys.getenv("RS_SESSION_RPC_COOKIE"),
+    cookie = if (is.null(.[["pwb_cookie"]])) {
+      Sys.getenv("RS_SESSION_RPC_COOKIE")
+    } else {
+      .[["pwb_cookie"]]
+    },
     url = file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job"),
     data = {
       requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
@@ -563,7 +567,11 @@ posit_workbench_get <- function(what, rscript = NULL) {
         headers = c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie),
         timeout = .limit_short
       )
-      envs[["status"]] == 200L || stop(._[["posit_api"]])
+      if (envs[["status"]] != 200L) {
+        envs <- posit_workbench_fetch("api/get_compute_envs")
+        envs[["status"]] == 200L || stop(._[["posit_api"]])
+        .$pwb_cookie <- envs[["cookie"]]
+      }
       cluster <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]][[1L]]
       lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", .libPaths()), collapse = ","))
       job <- list(
@@ -578,4 +586,32 @@ posit_workbench_get <- function(what, rscript = NULL) {
       secretbase::jsonenc(json)
     }
   )
+}
+
+posit_workbench_fetch <- function(endpoint) {
+  nzchar(Sys.getenv("RS_SERVER_ADDRESS")) || stop(._[["posit_api"]])
+  rs <- as.environment("tools:rstudio")
+  cookie <- NULL
+  srv <- http_server(
+    url = "http://127.0.0.1:0",
+    handlers = handler("/", function(req) {
+      cookie <<- req[["headers"]][["cookie"]]
+      list(status = 200L, body = "mirai <> Posit Workbench")
+    })
+  )
+  on.exit(srv$close())
+  srv$start()
+  rs[[".rs.api.viewer"]](srv$url)
+  timeout <- mclock() + .limit_short
+  while (is.null(cookie) && mclock() < timeout) {
+    later::run_now(1L)
+  }
+  is.null(cookie) && stop(._[["posit_api"]])
+  rs[[".rs.api.executeCommand"]]("activateConsole")
+  res <- ncurl(
+    url = file.path(Sys.getenv("RS_SERVER_ADDRESS"), endpoint),
+    headers = c(Cookie = cookie),
+    timeout = .limit_short
+  )
+  list(status = res[["status"]], cookie = cookie, data = res[["data"]])
 }

@@ -576,5 +576,55 @@ requireNamespace("secretbase", quietly = TRUE) && {
   test_type("character", mirai:::posit_workbench_cookie())
   nzchar(mirai:::posit_workbench_cookie()) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
+nzchar(Sys.getenv("RS_SERVER_ADDRESS")) || test_error(mirai:::posit_workbench_fetch("api/test"), "Posit Workbench")
+requireNamespace("later", quietly = TRUE) && {
+  old_server <- Sys.getenv("RS_SERVER_ADDRESS")
+  Sys.setenv(RS_SERVER_ADDRESS = "http://127.0.0.1")
+  mock_rs <- new.env(parent = emptyenv())
+  mock_rs[[".rs.api.viewer"]] <- function(url) {
+    nanonext::ncurl_aio(url, headers = c(cookie = "mock_browser_cookie"), timeout = 5000L)
+  }
+  mock_rs[[".rs.api.executeCommand"]] <- function(...) invisible()
+  attach(mock_rs, name = "tools:rstudio")
+  ns <- parent.env(getNamespace("mirai"))
+  original_ncurl <- ns[["ncurl"]]
+  unlockBinding("ncurl", ns)
+  ns[["ncurl"]] <- function(url, ...) list(status = 200L, data = "mock_api_response")
+  result <- mirai:::posit_workbench_fetch("api/get_compute_envs")
+  test_equal(result[["status"]], 200L)
+  test_equal(result[["cookie"]], "mock_browser_cookie")
+  test_equal(result[["data"]], "mock_api_response")
+  dot <- mirai:::.
+  old_pwb <- dot[["pwb_cookie"]]
+  old_cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  Sys.setenv(RS_SESSION_RPC_COOKIE = "env_cookie")
+  test_equal(mirai:::posit_workbench_cookie(), "env_cookie")
+  call_count <- 0L
+  ns[["ncurl"]] <- function(url, ...) {
+    call_count <<- call_count + 1L
+    if (call_count == 1L)
+      list(status = 503L, data = NULL)
+    else
+      list(
+        status = 200L,
+        data = secretbase::jsonenc(list(
+          result = list(clusters = list(list(
+            name = "cluster1", type = "Kubernetes", defaultImage = "image:latest",
+            resourceProfiles = list(list(name = "default"))
+          )))
+        ))
+      )
+  }
+  result <- mirai:::posit_workbench_data()
+  test_type("character", result)
+  test_equal(dot[["pwb_cookie"]], "mock_browser_cookie")
+  test_equal(mirai:::posit_workbench_cookie(), "mock_browser_cookie")
+  dot[["pwb_cookie"]] <- old_pwb
+  if (nzchar(old_cookie)) Sys.setenv(RS_SESSION_RPC_COOKIE = old_cookie) else Sys.unsetenv("RS_SESSION_RPC_COOKIE")
+  ns[["ncurl"]] <- original_ncurl
+  lockBinding("ncurl", ns)
+  detach("tools:rstudio")
+  if (nzchar(old_server)) Sys.setenv(RS_SERVER_ADDRESS = old_server) else Sys.unsetenv("RS_SERVER_ADDRESS")
+}
 test_false(daemons(0))
 Sys.sleep(1L)
