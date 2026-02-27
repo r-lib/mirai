@@ -555,7 +555,7 @@ m <- mirai({
               )
             )
           },
-          msg = req$HEADERS$msg
+          msg = req$HTTP_MSG
         ) %...>% (function(x) {
           res$status <- x$status
           res$body <- x$body
