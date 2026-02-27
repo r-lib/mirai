@@ -577,7 +577,6 @@ requireNamespace("secretbase", quietly = TRUE) && {
   nzchar(mirai:::posit_workbench_cookie()) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
 nzchar(Sys.getenv("RS_SERVER_ADDRESS")) || test_error(mirai:::posit_workbench_fetch("api/test"), "Posit Workbench")
-# posit_workbench_fetch mock test
 requireNamespace("later", quietly = TRUE) && {
   old_server <- Sys.getenv("RS_SERVER_ADDRESS")
   Sys.setenv(RS_SERVER_ADDRESS = "http://127.0.0.1")
@@ -595,6 +594,33 @@ requireNamespace("later", quietly = TRUE) && {
   test_equal(result[["status"]], 200L)
   test_equal(result[["cookie"]], "mock_browser_cookie")
   test_equal(result[["data"]], "mock_api_response")
+  dot <- mirai:::.
+  old_pwb <- dot[["pwb_cookie"]]
+  old_cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+  Sys.setenv(RS_SESSION_RPC_COOKIE = "env_cookie")
+  test_equal(mirai:::posit_workbench_cookie(), "env_cookie")
+  call_count <- 0L
+  ns[["ncurl"]] <- function(url, ...) {
+    call_count <<- call_count + 1L
+    if (call_count == 1L)
+      list(status = 503L, data = NULL)
+    else
+      list(
+        status = 200L,
+        data = secretbase::jsonenc(list(
+          result = list(clusters = list(list(
+            name = "cluster1", type = "Kubernetes", defaultImage = "image:latest",
+            resourceProfiles = list(list(name = "default"))
+          )))
+        ))
+      )
+  }
+  result <- mirai:::posit_workbench_data()
+  test_type("character", result)
+  test_equal(dot[["pwb_cookie"]], "mock_browser_cookie")
+  test_equal(mirai:::posit_workbench_cookie(), "mock_browser_cookie")
+  dot[["pwb_cookie"]] <- old_pwb
+  if (nzchar(old_cookie)) Sys.setenv(RS_SESSION_RPC_COOKIE = old_cookie) else Sys.unsetenv("RS_SESSION_RPC_COOKIE")
   ns[["ncurl"]] <- original_ncurl
   lockBinding("ncurl", ns)
   detach("tools:rstudio")
