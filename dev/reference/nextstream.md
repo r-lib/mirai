@@ -72,7 +72,7 @@ nextstream()
 #> [6]  -739104734  -843469383
 
 nextget("url")
-#> [1] "abstract://afd4676a3571de92b4e31ff9"
+#> [1] "abstract://8ca58fb09fced00be68f7c27"
 
 daemons(0)
 
