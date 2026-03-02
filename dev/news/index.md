@@ -13,7 +13,10 @@
   installation (thanks [@jjjermiah](https://github.com/jjjermiah),
   [\#563](https://github.com/r-lib/mirai/issues/563) and
   [@jeffvroom](https://github.com/jeffvroom),
-  [\#564](https://github.com/r-lib/mirai/issues/564)).
+  [\#564](https://github.com/r-lib/mirai/issues/564)). Uses the
+  RStudio/Positron viewer pane as a fallback authentication method -
+  this workaround will no longer be required in Posit Workbench 2026.04
+  and later.
 
 ## mirai 2.6.0
 
