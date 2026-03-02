@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.6.1
+
+CRAN release: 2026-03-02
+
 ##### Updates
 
 - Takes reproducible parallel RNG by specifying the `seed` argument to
