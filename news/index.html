@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,9 +48,17 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.6.1" id="mirai-261">mirai 2.6.1<a class="anchor" aria-label="anchor" href="#mirai-261"></a></h2><p class="text-muted">CRAN release: 2026-03-02</p>
+<div class="section level5">
+<h5 id="updates-2-6-1">Updates<a class="anchor" aria-label="anchor" href="#updates-2-6-1"></a></h5>
+<ul><li>Takes reproducible parallel RNG by specifying the <code>seed</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> - introduced in mirai 2.4.1 - out of ‘experimental’ status.</li>
+<li>Fixes <code><a href="../reference/http_config.html">http_config()</a></code> defaults failing to authenticate for certain types of Posit Workbench installation (thanks <a href="https://github.com/jjjermiah" class="external-link">@jjjermiah</a>, <a href="https://github.com/r-lib/mirai/issues/563" class="external-link">#563</a> and <a href="https://github.com/jeffvroom" class="external-link">@jeffvroom</a>, <a href="https://github.com/r-lib/mirai/issues/564" class="external-link">#564</a>). Uses the RStudio/Positron viewer pane as a fallback authentication method - this workaround will no longer be required in Posit Workbench 2026.04 and later.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.6.0" id="mirai-260">mirai 2.6.0<a class="anchor" aria-label="anchor" href="#mirai-260"></a></h2><p class="text-muted">CRAN release: 2026-02-13</p>
 <div class="section level5">

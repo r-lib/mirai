@@ -1,5 +1,25 @@
 # Changelog
 
+## mirai 2.6.1
+
+CRAN release: 2026-03-02
+
+##### Updates
+
+- Takes reproducible parallel RNG by specifying the `seed` argument to
+  [`daemons()`](https://mirai.r-lib.org/reference/daemons.md) -
+  introduced in mirai 2.4.1 - out of ‘experimental’ status.
+- Fixes
+  [`http_config()`](https://mirai.r-lib.org/reference/http_config.md)
+  defaults failing to authenticate for certain types of Posit Workbench
+  installation (thanks [@jjjermiah](https://github.com/jjjermiah),
+  [\#563](https://github.com/r-lib/mirai/issues/563) and
+  [@jeffvroom](https://github.com/jeffvroom),
+  [\#564](https://github.com/r-lib/mirai/issues/564)). Uses the
+  RStudio/Positron viewer pane as a fallback authentication method -
+  this workaround will no longer be required in Posit Workbench 2026.04
+  and later.
+
 ## mirai 2.6.0
 
 CRAN release: 2026-02-13
