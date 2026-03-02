@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Takes reproducible parallel RNG by specifying the `seed` argument to `daemons()` - introduced in mirai 2.4.1 - out of 'experimental' status.
 * Fixes `http_config()` defaults failing to authenticate for certain types of Posit Workbench installation (thanks @jjjermiah, #563 and @jeffvroom, #564).
 
 # mirai 2.6.0

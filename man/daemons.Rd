@@ -43,8 +43,8 @@ process for testing and debugging. When \code{TRUE}, other arguments except
 \item{seed}{(integer) for reproducible random number generation. \code{NULL}
 (default) initializes L'Ecuyer-CMRG RNG streams per daemon (statistically
 sound, non-reproducible). An integer value instead initializes a stream per
-mirai (experimental), allowing reproducible results independent of which
-daemon evaluates it.}
+mirai, allowing reproducible results independent of which daemon evaluates
+it.}
 
 \item{serial}{(configuration) for custom serialization of reference objects
 (e.g. Arrow Tables, torch tensors), created by \code{\link[=serial_config]{serial_config()}}. Requires

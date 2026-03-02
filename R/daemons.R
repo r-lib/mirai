@@ -44,8 +44,8 @@
 #' @param seed (integer) for reproducible random number generation. `NULL`
 #'   (default) initializes L'Ecuyer-CMRG RNG streams per daemon (statistically
 #'   sound, non-reproducible). An integer value instead initializes a stream per
-#'   mirai (experimental), allowing reproducible results independent of which
-#'   daemon evaluates it.
+#'   mirai, allowing reproducible results independent of which daemon evaluates
+#'   it.
 #' @param serial (configuration) for custom serialization of reference objects
 #'   (e.g. Arrow Tables, torch tensors), created by [serial_config()]. Requires
 #'   dispatcher. `NULL` applies any configurations from [register_serial()].
