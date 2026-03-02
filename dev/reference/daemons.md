@@ -71,8 +71,8 @@ daemons(
   (integer) for reproducible random number generation. `NULL` (default)
   initializes L'Ecuyer-CMRG RNG streams per daemon (statistically sound,
   non-reproducible). An integer value instead initializes a stream per
-  mirai (experimental), allowing reproducible results independent of
-  which daemon evaluates it.
+  mirai, allowing reproducible results independent of which daemon
+  evaluates it.
 
 - serial:
 
@@ -292,7 +292,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6687
+#> [1] 6730
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -301,5 +301,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6687
+#> [1] 6730
 ```
