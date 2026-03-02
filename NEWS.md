@@ -4,6 +4,7 @@
 
 * Takes reproducible parallel RNG by specifying the `seed` argument to `daemons()` - introduced in mirai 2.4.1 - out of 'experimental' status.
 * Fixes `http_config()` defaults failing to authenticate for certain types of Posit Workbench installation (thanks @jjjermiah, #563 and @jeffvroom, #564).
+  Uses the RStudio/Positron viewer pane as a fallback authentication method - this workaround will no longer be required in Posit Workbench 2026.04 and later.
 
 # mirai 2.6.0
 
