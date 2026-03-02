@@ -237,79 +237,48 @@ daemons <- function(
     remote <- serial <- tls <- pass <- NULL
   }
 
-  if (length(url)) {
-    is.character(url) || stop(sprintf(._[["character_url"]], typeof(url)))
-    res <- if (is.null(envir)) {
-      url <- url[1L]
-      envir <- init_envir_stream(seed)
-      dots <- parse_dots(envir, ...)
-      cfg <- configure_tls(url, tls, pass, envir)
-      if (dispatcher) {
-        launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
-      } else {
-        create_sock(envir, url, cfg[[2L]])
-      }
-      create_profile(envir, .compute, 1L, dots, sync)
-      if (length(remote)) {
-        withCallingHandlers(
-          launch_remote(n = n, remote = remote, .compute = .compute),
-          error = function(cnd) daemons(0, .compute = .compute)
-        )
-      }
-      url
-    }
-  } else {
+  if (is.null(url)) {
     signal <- is.null(n)
     if (signal) {
       n <- 0L
     }
     is.numeric(n) || stop(._[["numeric_n"]])
     n <- as.integer(n)
-
-    n == 0L &&
-      {
-        is.null(envir) && return(invisible(FALSE))
-
-        if (signal) {
-          send_signal(envir)
-        }
-        reap(envir[["sock"]])
-        otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
-        ..[[.compute]] <- NULL -> envir
-        msleep(.sleep_daemons)
-        return(invisible(FALSE))
-      }
-    res <- if (is.null(envir)) {
-      n > 0L || stop(._[["n_zero"]])
-      dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
-      envir <- init_envir_stream(seed)
-      dots <- parse_dots(envir, ...)
-      if (dispatcher) {
-        launch_dispatcher(n, dots, envir, serial)
-      } else {
-        launch_daemons(seq_len(n), dots, envir)
-      }
-      create_profile(envir, .compute, n, dots, sync)
+    if (n == 0L) {
+      reset_daemons(.compute, envir)
+      return(invisible(FALSE))
+    }
+    n > 0L || stop(._[["n_zero"]])
+    dynGet(".mirai_within_map", ifnotfound = FALSE) && stop(._[["within_map"]])
+    reset_daemons(.compute, envir)
+    envir <- init_envir_stream(seed)
+    dots <- parse_dots(envir, ...)
+    if (dispatcher) {
+      launch_dispatcher(n, dots, envir, serial)
+    } else {
+      launch_daemons(seq_len(n), dots, envir)
+    }
+    create_profile(envir, .compute, n, dots, sync)
+  } else {
+    is.character(url) || stop(sprintf(._[["character_url"]], typeof(url)))
+    reset_daemons(.compute, envir)
+    url <- url[1L]
+    envir <- init_envir_stream(seed)
+    dots <- parse_dots(envir, ...)
+    cfg <- configure_tls(url, tls, pass, envir)
+    if (dispatcher) {
+      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
+    } else {
+      create_sock(envir, url, cfg[[2L]])
+    }
+    create_profile(envir, .compute, 1L, dots, sync)
+    if (length(remote)) {
+      withCallingHandlers(
+        launch_remote(n = n, remote = remote, .compute = .compute),
+        error = function(cnd) daemons(0, .compute = .compute)
+      )
     }
   }
-
-  is.null(res) &&
-    return({
-      daemons(0L, .compute = .compute)
-      daemons(
-        n = n,
-        url = url,
-        remote = remote,
-        dispatcher = dispatcher,
-        ...,
-        sync = sync,
-        seed = seed,
-        serial = serial,
-        tls = tls,
-        pass = pass,
-        .compute = .compute
-      )
-    })
 
   `[[<-`(envir, "otel_span", otel_span("daemons set", envir))
 
@@ -617,6 +586,17 @@ create_profile <- function(envir, .compute, n, dots, sync) {
   `[[<-`(envir, "sync", sync)
   `[[<-`(envir, "compute", .compute)
   `[[<-`(.., .compute, envir)
+}
+
+reset_daemons <- function(.compute, envir, signal = FALSE) {
+  is.null(envir) && return()
+  if (signal) {
+    send_signal(envir)
+  }
+  reap(envir[["sock"]])
+  otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
+  `[[<-`(.., .compute, NULL)
+  msleep(.sleep_daemons)
 }
 
 init_envir_stream <- function(seed) {
