@@ -245,7 +245,7 @@ daemons <- function(
     is.numeric(n) || stop(._[["numeric_n"]])
     n <- as.integer(n)
     if (n == 0L) {
-      reset_daemons(.compute, envir)
+      reset_daemons(.compute, envir, signal)
       return(invisible(FALSE))
     }
     n > 0L || stop(._[["n_zero"]])
