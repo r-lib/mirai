@@ -91,91 +91,44 @@ launch_remote <- function(n = 1L, remote = remote_config(), ..., .compute = NULL
   tls <- envir[["tls"]]
 
   if (is.character(remote[["type"]]) && remote[["type"]] == "http") {
-    api_url <- if (is.function(remote[["url"]])) remote[["url"]]() else remote[["url"]]
-    method <- remote[["method"]]
-    data <- if (is.function(remote[["data"]])) remote[["data"]]() else remote[["data"]]
-    token <- if (is.function(remote[["token"]])) remote[["token"]]() else remote[["token"]]
-    cookie <- if (is.function(remote[["cookie"]])) remote[["cookie"]]() else remote[["cookie"]]
-    headers <- c(
-      Authorization = sprintf("Bearer %s", token),
-      Cookie = cookie,
-      `X-RS-Session-Server-RPC-Cookie` = cookie
-    )
-    res <- lapply(seq_len(n), function(i) {
-      cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
-      cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
-      cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
-      ncurl(
-        url = api_url,
-        method = method,
-        headers = headers,
-        data = sprintf(data, cmd),
-        timeout = .limit_short
-      )
-    })
+    res <- launch_remote_http(n, remote, url, write_args, dots, envir, tls)
     return(invisible(res))
   }
 
   command <- remote[["command"]]
   rscript <- remote[["rscript"]]
   quote <- remote[["quote"]]
+  args <- if (length(command)) remote[["args"]]
 
-  if (length(command)) {
-    args <- remote[["args"]]
-
-    if (is.list(args)) {
-      tunnel <- remote[["tunnel"]]
-
-      if (tunnel) {
-        purl <- parse_url(url)
-        purl[["hostname"]] == "127.0.0.1" || stop(._[["localhost"]])
-        prefix <- sprintf("-R %s:127.0.0.1:%s", purl[["port"]], purl[["port"]])
-        for (i in seq_along(args)) {
-          args[[i]][1L] <- sprintf("%s %s", prefix, args[[i]][1L])
-        }
-      }
-
-      if (length(args) == 1L) {
-        args <- args[[1L]]
-      } else if (n == 1L || n == length(args)) {
-        cmds <- sprintf(
-          "%s -e %s",
-          rscript,
-          lapply(seq_along(args), function(i) {
-            shQuote(write_args(url, dots, maybe_next_stream(envir), tls))
-          })
-        )
-
-        for (i in seq_along(args)) {
-          system2(
-            command,
-            args = `[<-`(args[[i]], find_dot(args[[i]]), if (quote) shQuote(cmds[i]) else cmds[i]),
-            wait = FALSE
-          )
-        }
-
-        return(`class<-`(cmds, "miraiLaunchCmd"))
-      } else {
-        stop(._[["arglen"]])
-      }
+  if (is.list(args)) {
+    if (remote[["tunnel"]]) {
+      args <- apply_ssh_tunnel(args, url)
+    }
+    if (length(args) == 1L) {
+      args <- args[[1L]]
+    } else {
+      n == 1L || n == length(args) || stop(._[["arglen"]])
     }
   }
 
   cmds <- sprintf(
     "%s -e %s",
     rscript,
-    lapply(seq_len(n), function(i) shQuote(write_args(url, dots, maybe_next_stream(envir), tls)))
+    lapply(seq_len(if (is.list(args)) length(args) else n), function(i) {
+      shQuote(write_args(url, dots, maybe_next_stream(envir), tls))
+    })
   )
 
   if (length(command)) {
-    for (cmd in cmds) {
+    for (i in seq_along(cmds)) {
+      arg <- if (is.list(args)) args[[i]] else args
       system2(
         command,
         args = if (is.null(quote)) {
-          arg <- `[<-`(args, find_dot(args), cmd)
+          arg <- `[<-`(arg, find_dot(arg), cmds[i])
           c("-c", shQuote(sprintf("%s%s%s", arg[1L], arg[2L], arg[3L])))
         } else {
-          `[<-`(args, find_dot(args), if (quote) shQuote(cmd) else cmd)
+          `[<-`(arg, find_dot(arg), if (quote) shQuote(cmds[i]) else cmds[i])
         },
         wait = FALSE
       )
@@ -535,6 +488,43 @@ print.miraiLaunchCmd <- function(x, ...) {
 }
 
 # internals --------------------------------------------------------------------
+
+resolve_field <- function(x) if (is.function(x)) x() else x
+
+launch_remote_http <- function(n, remote, url, write_args, dots, envir, tls) {
+  api_url <- resolve_field(remote[["url"]])
+  method <- remote[["method"]]
+  data <- resolve_field(remote[["data"]])
+  token <- resolve_field(remote[["token"]])
+  cookie <- resolve_field(remote[["cookie"]])
+  headers <- c(
+    Authorization = sprintf("Bearer %s", token),
+    Cookie = cookie,
+    `X-RS-Session-Server-RPC-Cookie` = cookie
+  )
+  lapply(seq_len(n), function(i) {
+    cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
+    cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
+    cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
+    ncurl(
+      url = api_url,
+      method = method,
+      headers = headers,
+      data = sprintf(data, cmd),
+      timeout = .limit_short
+    )
+  })
+}
+
+apply_ssh_tunnel <- function(args, url) {
+  purl <- parse_url(url)
+  purl[["hostname"]] == "127.0.0.1" || stop(._[["localhost"]])
+  prefix <- sprintf("-R %s:127.0.0.1:%s", purl[["port"]], purl[["port"]])
+  for (i in seq_along(args)) {
+    args[[i]][1L] <- sprintf("%s %s", prefix, args[[i]][1L])
+  }
+  args
+}
 
 find_dot <- function(args) {
   sel <- args == "."
