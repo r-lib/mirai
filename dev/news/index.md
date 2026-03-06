@@ -2,6 +2,15 @@
 
 ## mirai (development version)
 
+##### Updates
+
+- Fixes
+  [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
+  with
+  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+  failing for TLS connections, where newlines in the PEM certificate
+  produced invalid JSON in the request payload.
+
 ## mirai 2.6.1
 
 CRAN release: 2026-03-02
