@@ -506,6 +506,7 @@ launch_remote_http <- function(n, remote, url, write_args, dots, envir, tls) {
     cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
     cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
     cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
+    cmd <- gsub("\n", "\\n", cmd, fixed = TRUE)
     ncurl(
       url = api_url,
       method = method,

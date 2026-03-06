@@ -334,7 +334,7 @@ connection && NOT_CRAN && {
 connection && NOT_CRAN && {
   Sys.sleep(0.5)
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
-  test_true(daemons(url = host_url(), pass = "test", serial = cfg))
+  test_true(daemons(url = host_url(tls = TRUE), pass = "test", serial = cfg))
   if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
   test_type("list", launch_remote(2L, remote = http_config(url = "http://127.0.0.1:0", data = '{"cmd":"%s"}')))
   test_equal(launch_local(1L), 1L)
