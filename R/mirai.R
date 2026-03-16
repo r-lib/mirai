@@ -452,7 +452,7 @@ collect_mirai <- function(x, options = NULL) {
     options <- names(options)
   }
   dots <- mget(options, envir = .opts)
-  mmap(x, dots)
+  mmap(x, dots, envir = parent.frame())
 }
 
 #' mirai (Stop)

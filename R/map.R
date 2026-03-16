@@ -214,7 +214,7 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   missing(..1) && return(collect_aio_(x))
 
   dots <- eval(`[[<-`(substitute(alist(...)), 1L, quote(list)), envir = .opts)
-  mmap(x, dots)
+  mmap(x, dots, envir = parent.frame())
 }
 
 #' @export
@@ -265,11 +265,12 @@ print.mirai_map <- function(x, ...) {
 .progress <- compiler::compile(quote(
   if (cli_enabled) {
     if (i == 0L) {
+      envir <<- new.env(parent = envir)
       options <- .[["progress"]]
       if (is.list(options)) {
         do.call(
           cli::cli_progress_bar,
-          c(list(total = xlen, auto_terminate = TRUE, .envir = .), options)
+          c(list(total = xlen, auto_terminate = TRUE, .envir = envir), options)
         )
       } else {
         cli::cli_progress_bar(
@@ -277,12 +278,12 @@ print.mirai_map <- function(x, ...) {
           type = NULL,
           total = xlen,
           auto_terminate = TRUE,
-          .envir = .
+          .envir = envir
         )
       }
       `[[<-`(., "progress", NULL)
     } else {
-      cli::cli_progress_update(.envir = .)
+      cli::cli_progress_update(.envir = envir)
     }
   } else {
     cat(sprintf("\r[ %d / %d %s", i, xlen, if (i < xlen) ".... ]" else "done ]\n"), file = stderr())
@@ -296,7 +297,7 @@ print.mirai_map <- function(x, ...) {
 
 # internals --------------------------------------------------------------------
 
-mmap <- function(x, dots) {
+mmap <- function(x, dots, envir = parent.frame()) {
   expr <- if (length(dots) > 1L) do.call(expression, dots) else dots[[1L]]
   xlen <- length(x)
   i <- 0L
