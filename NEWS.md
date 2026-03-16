@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Fixes `mirai_map()` progress bar customization issues (thanks @mcol, #519).
 * Fixes `launch_remote()` with `http_config()` failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.
 
 # mirai 2.6.1
