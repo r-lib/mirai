@@ -5,6 +5,11 @@
 ##### Updates
 
 - Fixes
+  [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
+  progress bar customization issues (thanks
+  [@mcol](https://github.com/mcol),
+  [\#519](https://github.com/r-lib/mirai/issues/519)).
+- Fixes
   [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
   with
   [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)

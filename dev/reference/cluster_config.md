@@ -63,7 +63,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                                                 
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.5.3/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -87,7 +87,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                        
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.5.3/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -111,7 +111,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                          
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.5.3/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -135,7 +135,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                          
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.5.3/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
