@@ -15,6 +15,7 @@ daemons(
   serial = NULL,
   tls = NULL,
   pass = NULL,
+  limit = NULL,
   .compute = NULL
 )
 }
@@ -57,6 +58,11 @@ private key). \code{NULL} auto-generates single-use credentials.}
 
 \item{pass}{(function) returning the password for an encrypted \code{tls} private
 key. Use a function rather than a direct value for security.}
+
+\item{limit}{(integer) maximum number of tasks (queued plus executing) at
+dispatcher. New tasks block until existing ones complete, providing
+backpressure to control memory usage. \code{NULL} (default) allows unlimited
+queuing. Requires dispatcher.}
 
 \item{.compute}{(character) name of the compute profile. Each profile has its
 own independent set of daemons. \code{NULL} (default) uses the 'default'

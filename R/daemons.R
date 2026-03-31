@@ -55,6 +55,10 @@
 #'   private key). `NULL` auto-generates single-use credentials.
 #' @param pass (function) returning the password for an encrypted `tls` private
 #'   key. Use a function rather than a direct value for security.
+#' @param limit (integer) maximum number of tasks (queued plus executing) at
+#'   dispatcher. New tasks block until existing ones complete, providing
+#'   backpressure to control memory usage. `NULL` (default) allows unlimited
+#'   queuing. Requires dispatcher.
 #'
 #' @return Invisibly, logical `TRUE` when creating daemons and `FALSE` when
 #'   resetting.
@@ -224,6 +228,7 @@ daemons <- function(
   serial = NULL,
   tls = NULL,
   pass = NULL,
+  limit = NULL,
   .compute = NULL
 ) {
   if (is.null(.compute)) {
@@ -254,7 +259,7 @@ daemons <- function(
     envir <- init_envir_stream(seed)
     dots <- parse_dots(envir, ...)
     if (dispatcher) {
-      launch_dispatcher(n, dots, envir, serial)
+      launch_dispatcher(n, dots, envir, serial, limit = limit)
     } else {
       launch_daemons(seq_len(n), dots, envir)
     }
@@ -267,7 +272,7 @@ daemons <- function(
     dots <- parse_dots(envir, ...)
     cfg <- configure_tls(url, tls, pass, envir)
     if (dispatcher) {
-      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
+      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, limit = limit)
     } else {
       create_sock(envir, url, cfg[[2L]])
     }
@@ -594,6 +599,7 @@ reset_daemons <- function(.compute, envir, signal = FALSE) {
     send_signal(envir)
   }
   reap(envir[["sock"]])
+  if (!is.null(envir[["disp"]])) .dispatcher_stop(envir[["disp"]])
   otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
   `[[<-`(.., .compute, NULL)
   msleep(.sleep_daemons)
@@ -652,9 +658,7 @@ args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
   sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls))
 }
 
-args_dispatcher <- function(urld, url, n) {
-  sprintf(".libPaths(\"%s\");mirai::dispatcher(\"%s\",url=\"%s\",n=%d)", libp(), urld, url, n)
-}
+inproc_url <- function() sprintf("inproc://%s", random(12L))
 
 launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
 
@@ -670,46 +674,43 @@ sync_with <- function(cv, message_key, sync = 0L) {
   }
 }
 
-launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL) {
-  cv <- cv()
-  urld <- local_url()
-  sock <- req_socket(urld)
-  pipe_notify(sock, cv, add = TRUE)
+launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
+                              limit = NULL) {
   local <- is.numeric(url)
   n <- if (local) url else 0L
-  if (local) {
-    url <- local_url()
+  if (local) url <- local_url()
+
+  if (is.null(serial)) serial <- .[["serial"]]
+
+  tls_cfg <- NULL
+  if (!local && length(tls)) {
+    tls_cfg <- tls_config(server = tls, pass = pass)
   }
-  system2(
-    .command,
-    args = c("--default-packages=NULL", "--vanilla", "-e", shQuote(args_dispatcher(urld, url, n))),
-    wait = FALSE
+
+  urld <- inproc_url()
+  sock <- req_socket(urld)
+
+  cv <- cv()
+
+  disp <- .dispatcher_start(
+    url, .connReset, serial, envir[["stream"]], urld,
+    limit, cv, tls_cfg
   )
-  if (is.null(serial)) {
-    serial <- .[["serial"]]
-  }
-  if (is.list(serial)) {
-    `opt<-`(sock, "serial", serial)
-  }
+
+  if (!local) url <- attr(disp, "url")
+  if (is.list(serial)) `opt<-`(sock, "serial", serial)
+
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", urld)
-  data <- list(Sys.getenv("R_DEFAULT_PACKAGES"), tls, pass, serial, envir[["stream"]])
+  `[[<-`(envir, "url", url)
+  `[[<-`(envir, "disp", disp)
 
-  sync_with(cv, "sync_dispatcher")
-
-  pipe_notify(sock, NULL, add = TRUE)
-  send(sock, data, mode = 1L, block = TRUE)
   if (local) {
     launch_args <- args_daemon_disp(url, dots)
-    for (i in seq_len(n)) {
-      launch_daemon(launch_args)
-    }
+    for (i in seq_len(n)) launch_daemon(launch_args)
+    .dispatcher_wait_n(disp, n)
   }
-  raio <- recv_aio(sock, mode = 2L, cv = cv)
-  sync_with(cv, "sync_dispatcher")
-
-  `[[<-`(envir, "url", collect_aio(raio))
 }
 
 launch_daemons <- function(seq, dots, envir) {

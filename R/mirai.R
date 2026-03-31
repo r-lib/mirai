@@ -179,6 +179,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
+  disp <- envir[["disp"]]
+  if (!is.null(disp)) .limit_gate(disp)
+
   req <- request(
     .context(envir[["sock"]]),
     data,
@@ -188,6 +191,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     cv = envir[["cv"]],
     id = envir[["dispatcher"]]
   )
+
+  if (!inherits(req, "mirai") && !is.null(disp)) .limit_release(disp)
+
   otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
   envir[["sync"]] && evaluate_sync(envir)
   invisible(req)
