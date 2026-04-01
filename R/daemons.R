@@ -599,7 +599,9 @@ reset_daemons <- function(.compute, envir, signal = FALSE) {
     send_signal(envir)
   }
   reap(envir[["sock"]])
-  if (!is.null(envir[["disp"]])) .dispatcher_stop(envir[["disp"]])
+  if (!is.null(envir[["disp"]])) {
+    .dispatcher_stop(envir[["disp"]])
+  }
   otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
   `[[<-`(.., .compute, NULL)
   msleep(.sleep_daemons)
@@ -674,13 +676,16 @@ sync_with <- function(cv, message_key, sync = 0L) {
   }
 }
 
-launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
-                              limit = NULL) {
+launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, limit = NULL) {
   local <- is.numeric(url)
   n <- if (local) url else 0L
-  if (local) url <- local_url()
+  if (local) {
+    url <- local_url()
+  }
 
-  if (is.null(serial)) serial <- .[["serial"]]
+  if (is.null(serial)) {
+    serial <- .[["serial"]]
+  }
 
   tls_cfg <- NULL
   if (!local && length(tls)) {
@@ -692,13 +697,14 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
 
   cv <- cv()
 
-  disp <- .dispatcher_start(
-    url, .connReset, serial, envir[["stream"]], urld,
-    limit, cv, tls_cfg
-  )
+  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], limit, cv)
 
-  if (!local) url <- attr(disp, "url")
-  if (is.list(serial)) `opt<-`(sock, "serial", serial)
+  if (!local) {
+    url <- attr(disp, "url")
+  }
+  if (is.list(serial)) {
+    `opt<-`(sock, "serial", serial)
+  }
 
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
@@ -708,8 +714,10 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
 
   if (local) {
     launch_args <- args_daemon_disp(url, dots)
-    for (i in seq_len(n)) launch_daemon(launch_args)
-    .dispatcher_wait_n(disp, n)
+    for (i in seq_len(n)) {
+      launch_daemon(launch_args)
+    }
+    .dispatcher_wait(disp, n)
   }
 }
 
