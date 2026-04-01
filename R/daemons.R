@@ -398,11 +398,10 @@ status <- function(.compute = NULL) {
 info <- function(.compute = NULL) {
   envir <- compute_env(.compute)
   is.null(envir) && return()
-  if (is.null(envir[["dispatcher"]])) {
-    res <- c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
+  res <- if (is.null(envir[["dispatcher"]])) {
+    c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
   } else {
-    res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
-    is.object(res) && return()
+    .dispatcher_info(envir[["disp"]])
   }
   `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
@@ -664,11 +663,6 @@ inproc_url <- function() sprintf("inproc://%s", random(12L))
 
 launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
 
-query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
-  r <- send(sock, command, mode = send_mode, block = block)
-  r && return(r)
-  recv(sock, mode = recv_mode, block = block)
-}
 
 sync_with <- function(cv, message_key, sync = 0L) {
   while (!until(cv, .limit_long)) {
@@ -748,7 +742,7 @@ send_signal <- function(envir) {
   signals <- if (is.null(envir[["dispatcher"]])) {
     stat(envir[["sock"]], "pipes")
   } else {
-    query_dispatcher(envir[["sock"]], c(0L, 0L))[1L]
+    .dispatcher_info(envir[["disp"]])[1L]
   }
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
@@ -757,8 +751,7 @@ send_signal <- function(envir) {
 }
 
 dispatcher_status <- function(envir) {
-  status <- query_dispatcher(envir[["sock"]], c(0L, 0L))
-  is.object(status) && return(status)
+  status <- .dispatcher_info(envir[["disp"]])
   list(
     connections = status[1L],
     daemons = envir[["url"]],
