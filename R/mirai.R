@@ -179,7 +179,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
-  disp <- envir[["disp"]]
+  disp <- envir[["dispatcher"]]
   if (!is.null(disp)) .limit_gate(disp)
 
   req <- request(

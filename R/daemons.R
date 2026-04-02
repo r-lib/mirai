@@ -401,7 +401,7 @@ info <- function(.compute = NULL) {
   res <- if (is.null(envir[["dispatcher"]])) {
     c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
   } else {
-    .dispatcher_info(envir[["disp"]])
+    .dispatcher_info(envir[["dispatcher"]])
   }
   `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
@@ -598,8 +598,8 @@ reset_daemons <- function(.compute, envir, signal = FALSE) {
     send_signal(envir)
   }
   reap(envir[["sock"]])
-  if (!is.null(envir[["disp"]])) {
-    .dispatcher_stop(envir[["disp"]])
+  if (!is.null(envir[["dispatcher"]])) {
+    .dispatcher_stop(envir[["dispatcher"]])
   }
   otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
   `[[<-`(.., .compute, NULL)
@@ -702,9 +702,8 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
 
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
-  `[[<-`(envir, "dispatcher", urld)
+  `[[<-`(envir, "dispatcher", disp)
   `[[<-`(envir, "url", url)
-  `[[<-`(envir, "disp", disp)
 
   if (local) {
     launch_args <- args_daemon_disp(url, dots)
@@ -742,7 +741,7 @@ send_signal <- function(envir) {
   signals <- if (is.null(envir[["dispatcher"]])) {
     stat(envir[["sock"]], "pipes")
   } else {
-    .dispatcher_info(envir[["disp"]])[1L]
+    .dispatcher_info(envir[["dispatcher"]])[1L]
   }
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
@@ -751,7 +750,7 @@ send_signal <- function(envir) {
 }
 
 dispatcher_status <- function(envir) {
-  status <- .dispatcher_info(envir[["disp"]])
+  status <- .dispatcher_info(envir[["dispatcher"]])
   list(
     connections = status[1L],
     daemons = envir[["url"]],
