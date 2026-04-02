@@ -180,7 +180,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
   disp <- envir[["dispatcher"]]
-  if (!is.null(disp)) .limit_gate(disp)
+  is.null(disp) || .limit_gate(disp)
 
   req <- request(
     .context(envir[["sock"]]),
@@ -189,7 +189,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    id = envir[["dispatcher"]]
+    id = disp
   )
 
   otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
