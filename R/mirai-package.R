@@ -31,7 +31,7 @@
 #' `vignette("mirai", package = "mirai")`
 #'
 #' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
-#'   .context cv cv_reset cv_signal cv_value dial .dispatcher .dispatcher_info
+#'   .context cv cv_reset cv_signal cv_value dial .dispatcher_info
 #'   .dispatcher_start .dispatcher_stop .dispatcher_wait handler http_server
 #'   ip_addr is_error_value .keep .limit_gate listen .mark mclock monitor msleep
 #'   ncurl nng_error opt opt<- parse_url pipe_id pipe_notify race_aio random

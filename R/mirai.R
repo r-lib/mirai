@@ -713,5 +713,4 @@ mk_mirai_error <- function(cnd) {
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 
-.connReset <- serialize(`class<-`(19L, c("errorValue", "try-error")), NULL)
 .snapshot <- expression(on.exit(mirai:::snapshot(), add = TRUE))
