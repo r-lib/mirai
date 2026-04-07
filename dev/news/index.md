@@ -15,6 +15,7 @@
   [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
   failing for TLS connections, where newlines in the PEM certificate
   produced invalid JSON in the request payload.
+- Requires nanonext \>= \[1.8.2.9000\].
 
 ## mirai 2.6.1
 

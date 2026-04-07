@@ -71,7 +71,7 @@ tryCatch(http_config(), error = identity)
 #> $url
 #> function () 
 #> posit_workbench_get("url")
-#> <bytecode: 0x55ddd90d0bc0>
+#> <bytecode: 0x55bdadeb1740>
 #> <environment: namespace:mirai>
 #> 
 #> $method
@@ -80,7 +80,7 @@ tryCatch(http_config(), error = identity)
 #> $cookie
 #> function () 
 #> posit_workbench_get("cookie")
-#> <bytecode: 0x55ddd90d4328>
+#> <bytecode: 0x55bdadeb4ea8>
 #> <environment: namespace:mirai>
 #> 
 #> $token
@@ -89,7 +89,7 @@ tryCatch(http_config(), error = identity)
 #> $data
 #> function (rscript = "Rscript") 
 #> posit_workbench_get("data", rscript)
-#> <bytecode: 0x55ddd90d3c28>
+#> <bytecode: 0x55bdadeb47a8>
 #> <environment: namespace:mirai>
 #> 
 
@@ -113,12 +113,12 @@ http_config(
 #> $cookie
 #> function () 
 #> Sys.getenv("MY_SESSION_COOKIE")
-#> <environment: 0x55ddd90c6088>
+#> <environment: 0x55bdadea8b60>
 #> 
 #> $token
 #> function () 
 #> Sys.getenv("MY_API_KEY")
-#> <environment: 0x55ddd90c6088>
+#> <environment: 0x55bdadea8b60>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"
