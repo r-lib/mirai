@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext (>= 1.8.0). Requires R >= 3.6.
+mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext. Requires R >= 3.6.
 
 ## Development Commands
 
@@ -59,9 +59,11 @@ The package uses **litedown** (not knitr) as VignetteBuilder for final rendering
 - **mirai()**: Creates an async evaluation, returns immediately with a 'mirai' object
 - **daemons()**: Sets up persistent background daemon processes
 - **daemon()**: The daemon instance running in background processes
-- **dispatcher()**: FIFO scheduler (reimplemented in C in nanonext 1.8.0+ for ~50% less overhead)
+- **Dispatcher**: FIFO scheduler implemented in C within nanonext (managed via nanonext's `.dispatcher_start`/`.dispatcher_stop`/`.dispatcher_info`)
 - **mirai_map()**: Async parallel map with progress bars and early stopping
 - **everywhere()**: Evaluates expressions on all connected daemons
+- **collect_mirai()/call_mirai()**: Block until results are available
+- **status()**: Query daemon/dispatcher status
 
 ### Message-Passing Topology
 
@@ -104,9 +106,8 @@ Also caches the Rscript path in `.command` and checks for cli package availabili
 
 - **mirai-package.R**: Package docs, `.onLoad`, global state (`.`, `..`, `.opts`, `._`), constants
 - **mirai.R**: Core `mirai()`, `unresolved()`, `call_mirai()`, `stop_mirai()`, `everywhere()`, `race_mirai()`
-- **daemons.R**: `daemons()`, remote configs, compute profiles, `with_daemons()`, `local_daemons()`
+- **daemons.R**: `daemons()`, dispatcher launch (`launch_dispatcher()`), compute profiles, `with_daemons()`, `local_daemons()`
 - **daemon.R**: Daemon instance implementation
-- **dispatcher.R**: Dispatcher process (thin wrapper — core logic now in C via nanonext)
 - **map.R**: `mirai_map()` with collection options
 - **launchers.R**: `launch_local()`, `launch_remote()`, `remote_config()`, `ssh_config()`, `cluster_config()`, `http_config()`
 - **parallel.R**: `make_cluster()` — official alternative communications backend for R's parallel package
@@ -134,9 +135,10 @@ Custom error classes with structured information:
 ## CI/CD
 
 GitHub Actions in `.github/workflows/`:
-- **R-CMD-check.yaml**: 8 OS/R-version combinations (Ubuntu ARM devel, Ubuntu release/oldrel, macOS release/oldrel, Windows release/oldrel)
+- **R-CMD-check.yaml**: 8 OS/R-version combinations (Ubuntu ARM devel, Ubuntu/macOS/Windows release+oldrel variants)
 - **test-coverage.yaml**: Coverage via covr, uploaded to codecov
 - **pkgdown.yaml**: Documentation site with tidytemplate
+- **rhub.yaml**: R-Hub checks
 - **shiny-coreci.yaml**: Shiny integration tests (manual trigger)
 - **pr-commands.yaml**: PR comment commands `/document` (roxygen2) and `/style` (styler)
 
