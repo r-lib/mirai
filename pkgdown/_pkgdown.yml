@@ -25,7 +25,6 @@ reference:
   - daemons
   - launch_local
   - launch_remote
-  - dispatcher
   - daemon
 
 - title: Remote Configuration
