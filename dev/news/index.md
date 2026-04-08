@@ -4,6 +4,7 @@
 
 ##### Updates
 
+- Fixes transfer of large data (\> ~2GB) on MacOS and Windows.
 - Fixes
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   progress bar customization issues (thanks
