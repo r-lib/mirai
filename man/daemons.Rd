@@ -12,10 +12,10 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
+  capacity = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
-  limit = NULL,
   .compute = NULL
 )
 }
@@ -47,6 +47,11 @@ sound, non-reproducible). An integer value instead initializes a stream per
 mirai, allowing reproducible results independent of which daemon evaluates
 it.}
 
+\item{capacity}{(integer) maximum number of tasks (queued plus executing) at
+dispatcher. New tasks block until existing ones complete, providing
+backpressure to control memory usage. \code{NULL} (default) allows unlimited
+queuing. Requires dispatcher.}
+
 \item{serial}{(configuration) for custom serialization of reference objects
 (e.g. Arrow Tables, torch tensors), created by \code{\link[=serial_config]{serial_config()}}. Requires
 dispatcher. \code{NULL} applies any configurations from \code{\link[=register_serial]{register_serial()}}.}
@@ -58,11 +63,6 @@ private key). \code{NULL} auto-generates single-use credentials.}
 
 \item{pass}{(function) returning the password for an encrypted \code{tls} private
 key. Use a function rather than a direct value for security.}
-
-\item{limit}{(integer) maximum number of tasks (queued plus executing) at
-dispatcher. New tasks block until existing ones complete, providing
-backpressure to control memory usage. \code{NULL} (default) allows unlimited
-queuing. Requires dispatcher.}
 
 \item{.compute}{(character) name of the compute profile. Each profile has its
 own independent set of daemons. \code{NULL} (default) uses the 'default'

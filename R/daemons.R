@@ -46,6 +46,10 @@
 #'   sound, non-reproducible). An integer value instead initializes a stream per
 #'   mirai, allowing reproducible results independent of which daemon evaluates
 #'   it.
+#' @param capacity (integer) maximum number of tasks (queued plus executing) at
+#'   dispatcher. New tasks block until existing ones complete, providing
+#'   backpressure to control memory usage. `NULL` (default) allows unlimited
+#'   queuing. Requires dispatcher.
 #' @param serial (configuration) for custom serialization of reference objects
 #'   (e.g. Arrow Tables, torch tensors), created by [serial_config()]. Requires
 #'   dispatcher. `NULL` applies any configurations from [register_serial()].
@@ -55,10 +59,6 @@
 #'   private key). `NULL` auto-generates single-use credentials.
 #' @param pass (function) returning the password for an encrypted `tls` private
 #'   key. Use a function rather than a direct value for security.
-#' @param limit (integer) maximum number of tasks (queued plus executing) at
-#'   dispatcher. New tasks block until existing ones complete, providing
-#'   backpressure to control memory usage. `NULL` (default) allows unlimited
-#'   queuing. Requires dispatcher.
 #'
 #' @return Invisibly, logical `TRUE` when creating daemons and `FALSE` when
 #'   resetting.
@@ -225,10 +225,10 @@ daemons <- function(
   ...,
   sync = FALSE,
   seed = NULL,
+  capacity = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
-  limit = NULL,
   .compute = NULL
 ) {
   if (is.null(.compute)) {
@@ -259,7 +259,7 @@ daemons <- function(
     envir <- init_envir_stream(seed)
     dots <- parse_dots(envir, ...)
     if (dispatcher) {
-      launch_dispatcher(n, dots, envir, serial, limit = limit)
+      launch_dispatcher(n, dots, envir, serial, capacity = capacity)
     } else {
       launch_daemons(seq_len(n), dots, envir)
     }
@@ -272,7 +272,7 @@ daemons <- function(
     dots <- parse_dots(envir, ...)
     cfg <- configure_tls(url, tls, pass, envir)
     if (dispatcher) {
-      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, limit = limit)
+      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, capacity = capacity)
     } else {
       create_sock(envir, url, cfg[[2L]])
     }
@@ -670,7 +670,7 @@ sync_with <- function(cv, message_key, sync = 0L) {
   }
 }
 
-launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, limit = NULL) {
+launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, capacity = NULL) {
   local <- is.numeric(url)
   n <- if (local) url else 0L
   if (local) {
@@ -691,7 +691,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
 
   cv <- cv()
 
-  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], limit, cv)
+  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], capacity, cv)
 
   if (!local) {
     url <- attr(disp, "url")
