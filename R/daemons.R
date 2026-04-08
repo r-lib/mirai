@@ -76,11 +76,12 @@
 #'
 #' @section Dispatcher:
 #'
-#' By default `dispatcher = TRUE` uses a dedicated background thread to connect
-#' to daemons on behalf of the host, queue tasks, and ensure optimal FIFO
-#' scheduling. Dispatcher also enables (i) mirai cancellation using
-#' [stop_mirai()] or a `.timeout` argument to [mirai()], and (ii) custom
-#' serialization configurations.
+#' By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
+#' tasks and sending to daemons as they become available. The `capacity`
+#' argument controls the maximum number of tasks at the dispatcher, providing
+#' backpressure to prevent excessive memory usage. Dispatcher also enables
+#' (i) mirai cancellation using [stop_mirai()] or a `.timeout` argument to
+#' [mirai()], and (ii) custom serialization configurations.
 #'
 #' With `dispatcher = FALSE`, daemons connect directly to the host and tasks
 #' are distributed round-robin, with tasks queued at each daemon. Optimal

@@ -113,11 +113,12 @@ connecting back to the host process, either directly or via dispatcher.
 \section{Dispatcher}{
 
 
-By default \code{dispatcher = TRUE} uses a dedicated background thread to connect
-to daemons on behalf of the host, queue tasks, and ensure optimal FIFO
-scheduling. Dispatcher also enables (i) mirai cancellation using
-\code{\link[=stop_mirai]{stop_mirai()}} or a \code{.timeout} argument to \code{\link[=mirai]{mirai()}}, and (ii) custom
-serialization configurations.
+By default \code{dispatcher = TRUE} enables optimal FIFO scheduling, queuing
+tasks and sending to daemons as they become available. The \code{capacity}
+argument controls the maximum number of tasks at the dispatcher, providing
+backpressure to prevent excessive memory usage. Dispatcher also enables
+(i) mirai cancellation using \code{\link[=stop_mirai]{stop_mirai()}} or a \code{.timeout} argument to
+\code{\link[=mirai]{mirai()}}, and (ii) custom serialization configurations.
 
 With \code{dispatcher = FALSE}, daemons connect directly to the host and tasks
 are distributed round-robin, with tasks queued at each daemon. Optimal
