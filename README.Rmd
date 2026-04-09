@@ -159,9 +159,11 @@ mirai has become the convergence point for asynchronous and parallel computing a
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) | 
-[nanonext](https://nanonext.r-lib.org/) | 
+[mirai](https://mirai.r-lib.org/) |
+[nanonext](https://nanonext.r-lib.org/) |
 [CRAN HPC Task View](https://cran.r-project.org/view=HighPerformanceComputing)
+
+AI coding agents: the `r-lib` agent skill from the [`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills) plugin provides mirai-specific guidance.
 
 --
 

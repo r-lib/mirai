@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Skill
+
+The mirai skill at `.claude/skills/mirai/SKILL.md` (symlinked from `dev/skills/mirai/`) provides LLM-optimized guidance for writing correct mirai code. It is also distributed via the `r-lib` skill in the [`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills) plugin for end users.
+
 ## Overview
 
 mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext. Requires R >= 3.6.

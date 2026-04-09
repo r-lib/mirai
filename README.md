@@ -190,6 +190,10 @@ discussions.
 [nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
 View](https://cran.r-project.org/view=HighPerformanceComputing)
 
+AI coding agents: the `r-lib` agent skill from the
+[`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills)
+plugin provides mirai-specific guidance.
+
 –
 
 Please note that this project is released with a [Contributor Code of
