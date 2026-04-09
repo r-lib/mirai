@@ -203,9 +203,10 @@ Consider cores reserved for other purposes.
 
 #### With Dispatcher (default)
 
-The default `dispatcher = TRUE` creates a background dispatcher process that manages daemon connections.
-Tasks dispatch efficiently in FIFO order, queueing at the dispatcher and sending to daemons as they become available.
-The event-driven approach consumes no resources while waiting and stays synchronized with events.
+The default `dispatcher = TRUE` enables optimal FIFO scheduling.
+Tasks queue at the dispatcher and send to daemons as they become available.
+The `capacity` argument controls the maximum number of tasks at the dispatcher; new tasks block until existing ones complete, providing backpressure to prevent excessive memory usage.
+It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument to `mirai()`.
 
 `info()` provides current statistics as an integer vector:
 
@@ -399,7 +400,6 @@ Reset all connections:
 daemons(0)
 ```
 Closing connections exits all daemons.
-With dispatcher, this exits the dispatcher first, then all connected daemons.
 
 #### Launching Remote Daemons
 

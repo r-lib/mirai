@@ -1,10 +1,17 @@
 # mirai (development version)
 
+#### New Features
+
+* Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581). 
+* Adds `capacity` argument to `daemons()` to set the maximum number of tasks at the dispatcher.
+  New tasks block until existing ones complete, providing backpressure to prevent unbounded memory growth (thanks @t-kalinowski, #454).
+
 #### Updates
 
-* Fixes transfer of large data (> ~2GB) on MacOS and Windows.
+* Fixes transfer of large data (> ~2GB) on MacOS and Windows (#579).
 * Fixes `mirai_map()` progress bar customization issues (thanks @mcol, #519).
 * Fixes `launch_remote()` with `http_config()` failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.
+* Improved performance and reduced memory consumption through optimizations in the underlying nanonext/NNG transport layer.
 * Requires nanonext >= [1.8.2.9000].
 
 # mirai 2.6.1

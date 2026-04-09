@@ -179,6 +179,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
+  disp <- envir[["dispatcher"]]
+  is.null(disp) || .limit_gate(disp)
+
   req <- request(
     .context(envir[["sock"]]),
     data,
@@ -186,8 +189,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
     recv_mode = 1L,
     timeout = .timeout,
     cv = envir[["cv"]],
-    id = envir[["dispatcher"]]
+    id = disp
   )
+
   otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
   envir[["sync"]] && evaluate_sync(envir)
   invisible(req)
@@ -709,5 +713,4 @@ mk_mirai_error <- function(cnd) {
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 
-.connReset <- serialize(`class<-`(19L, c("errorValue", "try-error")), NULL)
 .snapshot <- expression(on.exit(mirai:::snapshot(), add = TRUE))

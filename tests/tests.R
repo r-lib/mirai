@@ -290,7 +290,7 @@ connection && NOT_CRAN && {
   suppressMessages(test_true(daemons(n = 2, "ws://:0")))
   restore_binding(ns, ".limit_long_secs", original_lls)
   restore_binding(ns, ".limit_long", original_ll)
-  test_type("character", nextget("dispatcher"))
+  test_type("externalptr", nextget("dispatcher"))
   test_equal(length(nextget("url")), 1L)
   Sys.sleep(1L)
   status <- status()

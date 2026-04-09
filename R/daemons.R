@@ -46,6 +46,10 @@
 #'   sound, non-reproducible). An integer value instead initializes a stream per
 #'   mirai, allowing reproducible results independent of which daemon evaluates
 #'   it.
+#' @param capacity (integer) maximum number of tasks (queued plus executing) at
+#'   dispatcher. New tasks block until existing ones complete, providing
+#'   backpressure to control memory usage. `NULL` (default) allows unlimited
+#'   queuing. Requires dispatcher.
 #' @param serial (configuration) for custom serialization of reference objects
 #'   (e.g. Arrow Tables, torch tensors), created by [serial_config()]. Requires
 #'   dispatcher. `NULL` applies any configurations from [register_serial()].
@@ -72,11 +76,12 @@
 #'
 #' @section Dispatcher:
 #'
-#' By default `dispatcher = TRUE` launches a background process running
-#' [dispatcher()]. Dispatcher connects to daemons on behalf of the host, queues
-#' tasks, and ensures optimal FIFO scheduling. Dispatcher also enables (i) mirai
-#' cancellation using [stop_mirai()] or when using a `.timeout` argument to
-#' [mirai()], and (ii) the use of custom serialization configurations.
+#' By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
+#' tasks and sending to daemons as they become available. The `capacity`
+#' argument controls the maximum number of tasks at the dispatcher, providing
+#' backpressure to prevent excessive memory usage. Dispatcher also enables
+#' (i) mirai cancellation using [stop_mirai()] or a `.timeout` argument to
+#' [mirai()], and (ii) custom serialization configurations.
 #'
 #' With `dispatcher = FALSE`, daemons connect directly to the host and tasks
 #' are distributed round-robin, with tasks queued at each daemon. Optimal
@@ -221,6 +226,7 @@ daemons <- function(
   ...,
   sync = FALSE,
   seed = NULL,
+  capacity = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -254,7 +260,7 @@ daemons <- function(
     envir <- init_envir_stream(seed)
     dots <- parse_dots(envir, ...)
     if (dispatcher) {
-      launch_dispatcher(n, dots, envir, serial)
+      launch_dispatcher(n, dots, envir, serial, capacity = capacity)
     } else {
       launch_daemons(seq_len(n), dots, envir)
     }
@@ -267,7 +273,7 @@ daemons <- function(
     dots <- parse_dots(envir, ...)
     cfg <- configure_tls(url, tls, pass, envir)
     if (dispatcher) {
-      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass)
+      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, capacity = capacity)
     } else {
       create_sock(envir, url, cfg[[2L]])
     }
@@ -393,11 +399,10 @@ status <- function(.compute = NULL) {
 info <- function(.compute = NULL) {
   envir <- compute_env(.compute)
   is.null(envir) && return()
-  if (is.null(envir[["dispatcher"]])) {
-    res <- c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
+  res <- if (is.null(envir[["dispatcher"]])) {
+    c(as.integer(stat(envir[["sock"]], "pipes")), NA, NA, NA, NA)
   } else {
-    res <- query_dispatcher(envir[["sock"]], c(0L, 0L))
-    is.object(res) && return()
+    .dispatcher_info(envir[["dispatcher"]])
   }
   `names<-`(res, c("connections", "cumulative", "awaiting", "executing", "completed"))
 }
@@ -594,6 +599,9 @@ reset_daemons <- function(.compute, envir, signal = FALSE) {
     send_signal(envir)
   }
   reap(envir[["sock"]])
+  if (!is.null(envir[["dispatcher"]])) {
+    .dispatcher_stop(envir[["dispatcher"]])
+  }
   otel_span("daemons reset", envir, links = list(envir[["otel_span"]]))
   `[[<-`(.., .compute, NULL)
   msleep(.sleep_daemons)
@@ -652,17 +660,10 @@ args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
   sprintf("mirai::daemon(\"%s\"%s%s)", url, dots, parse_tls(tls))
 }
 
-args_dispatcher <- function(urld, url, n) {
-  sprintf(".libPaths(\"%s\");mirai::dispatcher(\"%s\",url=\"%s\",n=%d)", libp(), urld, url, n)
-}
+inproc_url <- function() sprintf("inproc://%s", random(12L))
 
 launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
 
-query_dispatcher <- function(sock, command, send_mode = 2L, recv_mode = 5L, block = .limit_short) {
-  r <- send(sock, command, mode = send_mode, block = block)
-  r && return(r)
-  recv(sock, mode = recv_mode, block = block)
-}
 
 sync_with <- function(cv, message_key, sync = 0L) {
   while (!until(cv, .limit_long)) {
@@ -670,46 +671,48 @@ sync_with <- function(cv, message_key, sync = 0L) {
   }
 }
 
-launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL) {
-  cv <- cv()
-  urld <- local_url()
-  sock <- req_socket(urld)
-  pipe_notify(sock, cv, add = TRUE)
+launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, capacity = NULL) {
   local <- is.numeric(url)
   n <- if (local) url else 0L
   if (local) {
     url <- local_url()
   }
-  system2(
-    .command,
-    args = c("--default-packages=NULL", "--vanilla", "-e", shQuote(args_dispatcher(urld, url, n))),
-    wait = FALSE
-  )
+
   if (is.null(serial)) {
     serial <- .[["serial"]]
+  }
+
+  tls_cfg <- NULL
+  if (!local && length(tls)) {
+    tls_cfg <- tls_config(server = tls, pass = pass)
+  }
+
+  urld <- inproc_url()
+  sock <- req_socket(urld)
+
+  cv <- cv()
+
+  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], capacity, cv)
+
+  if (!local) {
+    url <- attr(disp, "url")
   }
   if (is.list(serial)) {
     `opt<-`(sock, "serial", serial)
   }
+
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
-  `[[<-`(envir, "dispatcher", urld)
-  data <- list(Sys.getenv("R_DEFAULT_PACKAGES"), tls, pass, serial, envir[["stream"]])
+  `[[<-`(envir, "dispatcher", disp)
+  `[[<-`(envir, "url", url)
 
-  sync_with(cv, "sync_dispatcher")
-
-  pipe_notify(sock, NULL, add = TRUE)
-  send(sock, data, mode = 1L, block = TRUE)
   if (local) {
     launch_args <- args_daemon_disp(url, dots)
     for (i in seq_len(n)) {
       launch_daemon(launch_args)
     }
+    .dispatcher_wait(disp, n)
   }
-  raio <- recv_aio(sock, mode = 2L, cv = cv)
-  sync_with(cv, "sync_dispatcher")
-
-  `[[<-`(envir, "url", collect_aio(raio))
 }
 
 launch_daemons <- function(seq, dots, envir) {
@@ -739,7 +742,7 @@ send_signal <- function(envir) {
   signals <- if (is.null(envir[["dispatcher"]])) {
     stat(envir[["sock"]], "pipes")
   } else {
-    query_dispatcher(envir[["sock"]], c(0L, 0L))[1L]
+    .dispatcher_info(envir[["dispatcher"]])[1L]
   }
   for (i in seq_len(signals)) {
     send(envir[["sock"]], ._scm_., mode = 2L)
@@ -748,8 +751,7 @@ send_signal <- function(envir) {
 }
 
 dispatcher_status <- function(envir) {
-  status <- query_dispatcher(envir[["sock"]], c(0L, 0L))
-  is.object(status) && return(status)
+  status <- .dispatcher_info(envir[["dispatcher"]])
   list(
     connections = status[1L],
     daemons = envir[["url"]],

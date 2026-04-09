@@ -12,6 +12,7 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
+  capacity = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -45,6 +46,11 @@ process for testing and debugging. When \code{TRUE}, other arguments except
 sound, non-reproducible). An integer value instead initializes a stream per
 mirai, allowing reproducible results independent of which daemon evaluates
 it.}
+
+\item{capacity}{(integer) maximum number of tasks (queued plus executing) at
+dispatcher. New tasks block until existing ones complete, providing
+backpressure to control memory usage. \code{NULL} (default) allows unlimited
+queuing. Requires dispatcher.}
 
 \item{serial}{(configuration) for custom serialization of reference objects
 (e.g. Arrow Tables, torch tensors), created by \code{\link[=serial_config]{serial_config()}}. Requires
@@ -107,11 +113,12 @@ connecting back to the host process, either directly or via dispatcher.
 \section{Dispatcher}{
 
 
-By default \code{dispatcher = TRUE} launches a background process running
-\code{\link[=dispatcher]{dispatcher()}}. Dispatcher connects to daemons on behalf of the host, queues
-tasks, and ensures optimal FIFO scheduling. Dispatcher also enables (i) mirai
-cancellation using \code{\link[=stop_mirai]{stop_mirai()}} or when using a \code{.timeout} argument to
-\code{\link[=mirai]{mirai()}}, and (ii) the use of custom serialization configurations.
+By default \code{dispatcher = TRUE} enables optimal FIFO scheduling, queuing
+tasks and sending to daemons as they become available. The \code{capacity}
+argument controls the maximum number of tasks at the dispatcher, providing
+backpressure to prevent excessive memory usage. Dispatcher also enables
+(i) mirai cancellation using \code{\link[=stop_mirai]{stop_mirai()}} or a \code{.timeout} argument to
+\code{\link[=mirai]{mirai()}}, and (ii) custom serialization configurations.
 
 With \code{dispatcher = FALSE}, daemons connect directly to the host and tasks
 are distributed round-robin, with tasks queued at each daemon. Optimal
