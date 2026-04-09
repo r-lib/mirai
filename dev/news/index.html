@@ -54,10 +54,16 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
+<h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
+<ul><li>Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (<a href="https://github.com/r-lib/mirai/issues/581" class="external-link">#581</a>).</li>
+<li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> to set the maximum number of tasks at the dispatcher. New tasks block until existing ones complete, providing backpressure to prevent unbounded memory growth (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
+</ul></div>
+<div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Fixes transfer of large data (&gt; ~2GB) on MacOS and Windows.</li>
+<ul><li>Fixes transfer of large data (&gt; ~2GB) on MacOS and Windows (<a href="https://github.com/r-lib/mirai/issues/579" class="external-link">#579</a>).</li>
 <li>Fixes <code><a href="../reference/mirai_map.html">mirai_map()</a></code> progress bar customization issues (thanks <a href="https://github.com/mcol" class="external-link">@mcol</a>, <a href="https://github.com/r-lib/mirai/issues/519" class="external-link">#519</a>).</li>
 <li>Fixes <code><a href="../reference/launch_local.html">launch_remote()</a></code> with <code><a href="../reference/http_config.html">http_config()</a></code> failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.</li>
+<li>Improved performance and reduced memory consumption through optimizations in the underlying nanonext/NNG transport layer.</li>
 <li>Requires nanonext &gt;= [1.8.2.9000].</li>
 </ul></div>
 </div>
@@ -82,7 +88,7 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-2-6-0">Updates<a class="anchor" aria-label="anchor" href="#updates-2-6-0"></a></h5>
-<ul><li>The <code><a href="../reference/dispatcher.html">dispatcher()</a></code> loop has been re-implemented entirely in C code in nanonext, and now has roughly half the previous overhead (<a href="https://github.com/r-lib/mirai/issues/527" class="external-link">#527</a>).</li>
+<ul><li>The <code>dispatcher()</code> loop has been re-implemented entirely in C code in nanonext, and now has roughly half the previous overhead (<a href="https://github.com/r-lib/mirai/issues/527" class="external-link">#527</a>).</li>
 <li>Fixes an issue in <code><a href="../reference/daemons.html">daemons()</a></code> where supplying a non-character value to <code>url</code> causes local daemons to be launched instead of throwing an error (<a href="https://github.com/r-lib/mirai/issues/549" class="external-link">#549</a>).</li>
 <li>Fixes a bug whereby repeated mirai cancellation could sometimes cause a daemon to exit prematurely (<a href="https://github.com/r-lib/mirai/issues/546" class="external-link">#546</a>).</li>
 <li>A <code>miraiError</code> gains <code>conditionCall</code> and <code>conditionMessage</code> methods (<a href="https://github.com/jan-swissre" class="external-link">@jan-swissre</a>, <a href="https://github.com/r-lib/mirai/issues/529" class="external-link">#529</a>)</li>
@@ -202,7 +208,7 @@
 <li>When using dispatcher, no longer has the potential to fail if sending large data (<a href="https://github.com/r-lib/mirai/issues/326" class="external-link">#326</a>).</li>
 </ul></li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (no user-facing impact).</li>
+<code>dispatcher()</code> function signature simplified with <code>rs</code>, <code>tls</code> and <code>pass</code> arguments removed (no user-facing impact).</li>
 <li>Fixes a bug where using non-dispatcher daemons, an <code>unresolvedValue</code> could be returned as the fulfilled value of a promise in extremely rare cases (thanks <a href="https://github.com/James-G-Hill" class="external-link">@James-G-Hill</a> and <a href="https://github.com/olivier7121" class="external-link">@olivier7121</a>, <a href="https://github.com/r-lib/mirai/issues/243" class="external-link">#243</a> and <a href="https://github.com/r-lib/mirai/issues/317" class="external-link">#317</a>).</li>
 <li>Fixes a regression in mirai 2.4.0 where the L’Ecuyer-CMRG seed was not being passed correctly for remote daemons (<a href="https://github.com/r-lib/mirai/issues/333" class="external-link">#333</a>).</li>
 <li>Requires nanonext &gt;= 1.6.2.</li>
@@ -441,7 +447,7 @@
 <li>Collection options now work even if mirai is not on the search path e.g. <code>mirai::mirai_map(1:4, Sys.sleep)[.progress]</code>.</li>
 </ul></li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> drops argument ‘asyncdial’ as it is rarely useful to set this here.</li>
+<code>dispatcher()</code> drops argument ‘asyncdial’ as it is rarely useful to set this here.</li>
 <li>
 <code><a href="../reference/everywhere.html">everywhere()</a></code> now errors if the specified compute profile is not yet set up, rather than fail silently.</li>
 <li>
@@ -480,7 +486,7 @@
 <ul><li>
 <code>serialization()</code> function signature and return value slightly modified for clarity. Successful registration / cancellation messages are no longer printed to the console.</li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> argument ‘retry’ now defaults to FALSE for consistency with non-dispatcher behaviour.</li>
+<code>dispatcher()</code> argument ‘retry’ now defaults to FALSE for consistency with non-dispatcher behaviour.</li>
 <li>
 <code><a href="../reference/remote_config.html">remote_config()</a></code> gains argument ‘quote’ to control whether or not to quote the daemon launch command, and now works with Slurm (thanks <a href="https://github.com/michaelmayer2" class="external-link">@michaelmayer2</a> <a href="https://github.com/r-lib/mirai/issues/119" class="external-link">#119</a>).</li>
 <li>Ephemeral daemons now exit as soon as permissible, eliminating the 2s linger period.</li>
@@ -503,7 +509,7 @@
 <li>Improved mirai print method indicates whether a mirai has resolved.</li>
 <li>Calling <code><a href="../reference/daemons.html">daemons()</a></code> with new settings when the compute profile is already set now implicitly resets daemons before applying the new settings instead of silently doing nothing.</li>
 <li>Argument ‘resilience’ retired at <code><a href="../reference/daemons.html">daemons()</a></code> as automatic re-tries are no longer performed for non-dispatcher daemons.</li>
-<li>New argument ‘retry’ at <code><a href="../reference/dispatcher.html">dispatcher()</a></code> governs whether to auto-retry in the dispatcher case.</li>
+<li>New argument ‘retry’ at <code>dispatcher()</code> governs whether to auto-retry in the dispatcher case.</li>
 <li>Fixes promises method for potential crashes when launching improbably short-lived mirai.</li>
 <li>Fixes bug that could cause a hang or crash when launching additional non-dispatcher daemons.</li>
 <li>Requires <code>nanonext</code> &gt;= 1.1.0.</li>
@@ -618,7 +624,7 @@
 <li>
 <code>daemons(NULL)</code> implemented as a variant of <code>daemons(0)</code> which also sends exit signals to connected persistent daemons.</li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> argument ‘lock’ removed as this is now applied in all cases to prevent more than one daemon dialling into a dispatcher URL at any one time.</li>
+<code>dispatcher()</code> argument ‘lock’ removed as this is now applied in all cases to prevent more than one daemon dialling into a dispatcher URL at any one time.</li>
 <li>
 <code><a href="../reference/daemon.html">daemon()</a></code> argument ‘cleanup’ simplified to a logical argument, with more granular control offered by the existing integer bitmask (thanks <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a> <a href="https://github.com/r-lib/mirai/issues/79" class="external-link">#79</a>).</li>
 <li>Daemons connecting over TLS now perform synchronous dials by default (as documented).</li>
@@ -657,10 +663,10 @@
 <code><a href="../reference/daemon.html">daemon()</a></code> argument ‘exitlinger’ retired as daemons now synchronise with the host/dispatcher and exit as soon as possible (although a default ‘exitlinger’ period still applies to ephemeral daemons).</li>
 <li>Optimises scheduling at dispatcher: tasks are no longer assigned to a daemon if it is exiting due to specified time/task-outs.</li>
 <li>An ‘errorValue’ 19 ‘Connection reset’ is now returned for a ‘mirai’ if the connection to either dispatcher or an ephemeral daemon drops, for example if they have crashed, rather than remaining unresolved.</li>
-<li>Invalid type of ‘…’ arguments specified to <code><a href="../reference/daemons.html">daemons()</a></code> or <code><a href="../reference/dispatcher.html">dispatcher()</a></code> now raise an error early rather than attempting to launch daemons that fail.</li>
+<li>Invalid type of ‘…’ arguments specified to <code><a href="../reference/daemons.html">daemons()</a></code> or <code>dispatcher()</code> now raise an error early rather than attempting to launch daemons that fail.</li>
 <li>Eliminates a potential crash in the host process after querying <code><a href="../reference/status.html">status()</a></code> if there is no longer a connection to dispatcher.</li>
 <li>Reverts the trailing line break added to the end of a ‘miraiError’ character string.</li>
-<li>Moves the ‘…’ argument to <code><a href="../reference/daemons.html">daemons()</a></code>, <code><a href="../reference/dispatcher.html">dispatcher()</a></code> and <code><a href="../reference/daemon.html">daemon()</a></code> to clearly delineate core vs peripheral options.</li>
+<li>Moves the ‘…’ argument to <code><a href="../reference/daemons.html">daemons()</a></code>, <code>dispatcher()</code> and <code><a href="../reference/daemon.html">daemon()</a></code> to clearly delineate core vs peripheral options.</li>
 <li>Deprecates the Deferred Evaluation Pipe <code>%&gt;&gt;%</code> in favour of a recommendation to use package <code>mirai.promises</code> for performing side effects upon ‘mirai’ resolution.</li>
 <li>Deprecated use of alias <code>server()</code> for <code><a href="../reference/daemon.html">daemon()</a></code> is retired.</li>
 <li>Adds a ‘reference’ vignette, incorporating most of the information from the readme.</li>
@@ -672,7 +678,7 @@
 <ul><li>
 <code><a href="../reference/daemons.html">daemons()</a></code> gains the new argument ‘seed’ to set a random seed for generating these streams.</li>
 <li>
-<code><a href="../reference/daemon.html">daemon()</a></code> and <code><a href="../reference/dispatcher.html">dispatcher()</a></code> gain the argument ‘rs’ which takes a L’Ecuyer-CMRG random seed.</li>
+<code><a href="../reference/daemon.html">daemon()</a></code> and <code>dispatcher()</code> gain the argument ‘rs’ which takes a L’Ecuyer-CMRG random seed.</li>
 </ul></li>
 <li>New developer functions <code><a href="../reference/nextstream.html">nextstream()</a></code> and <code><a href="../reference/nextstream.html">nextget()</a></code>, opening interfaces for packages which extend <code>mirai</code>.</li>
 <li>Dispatcher enhancements and fixes:
@@ -691,7 +697,7 @@
 </ul></li>
 <li>Improves shell quoting of daemon launch commands, making it easier to deploy manually via <code><a href="../reference/launch_local.html">launch_remote()</a></code>.</li>
 <li>
-<code><a href="../reference/daemons.html">daemons()</a></code> and <code><a href="../reference/dispatcher.html">dispatcher()</a></code> gain the argument ‘pass’ to support password-protected private keys when supplying TLS credentials (thanks <a href="https://github.com/wlandau" class="external-link">@wlandau</a> <a href="https://github.com/r-lib/mirai/issues/76" class="external-link">#76</a>).</li>
+<code><a href="../reference/daemons.html">daemons()</a></code> and <code>dispatcher()</code> gain the argument ‘pass’ to support password-protected private keys when supplying TLS credentials (thanks <a href="https://github.com/wlandau" class="external-link">@wlandau</a> <a href="https://github.com/r-lib/mirai/issues/76" class="external-link">#76</a>).</li>
 <li>Cryptographic errors when using dispatcher with TLS are now reported to the user (thanks <a href="https://github.com/wlandau" class="external-link">@wlandau</a> <a href="https://github.com/r-lib/mirai/issues/76" class="external-link">#76</a>).</li>
 <li>Passing a filename to the ‘tls’ argument of <code><a href="../reference/daemons.html">daemons()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code> or <code><a href="../reference/launch_local.html">launch_remote()</a></code> now works correctly as documented.</li>
 <li>Extends and clarifies documentation surrounding use of certificate authority signed TLS certificates.</li>
@@ -742,7 +748,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.7" id="mirai-087">mirai 0.8.7<a class="anchor" aria-label="anchor" href="#mirai-087"></a></h2><p class="text-muted">CRAN release: 2023-05-11</p>
 <ul><li>
-<code>server()</code> and <code><a href="../reference/dispatcher.html">dispatcher()</a></code> argument ‘asyncdial’ is now FALSE by default, causing these functions to exit if a connection is not immediately available. This means that for distributed computing purposes, <code><a href="../reference/daemons.html">daemons()</a></code> should be called before <code>server()</code> is launched on remote resources, or else <code>server(asyncdial = TRUE)</code> allows servers to wait for a connection.</li>
+<code>server()</code> and <code>dispatcher()</code> argument ‘asyncdial’ is now FALSE by default, causing these functions to exit if a connection is not immediately available. This means that for distributed computing purposes, <code><a href="../reference/daemons.html">daemons()</a></code> should be called before <code>server()</code> is launched on remote resources, or else <code>server(asyncdial = TRUE)</code> allows servers to wait for a connection.</li>
 <li>
 <code>launch_server()</code> now parses the passed URL for correctness before attempting to launch a server, producing an error if not valid.</li>
 </ul></div>
@@ -767,7 +773,7 @@
 <li>objects specified via ‘…’ now take precedence over ‘.args’ if the same named object appears.</li>
 </ul></li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> gains the following arguments:
+<code>dispatcher()</code> gains the following arguments:
 <ul><li>
 <code>token</code> for appending a unique token to each URL the dispatcher listens at.</li>
 <li>
@@ -786,7 +792,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.2" id="mirai-082">mirai 0.8.2<a class="anchor" aria-label="anchor" href="#mirai-082"></a></h2><p class="text-muted">CRAN release: 2023-04-03</p>
 <ul><li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> re-implemented using an innovative non-polling design. Efficient process consumes zero processor usage when idle and features significantly higher throughput and lower latency.
+<code>dispatcher()</code> re-implemented using an innovative non-polling design. Efficient process consumes zero processor usage when idle and features significantly higher throughput and lower latency.
 <ul><li>Arguments ‘pollfreqh’ and ‘pollfreql’ removed as no longer applicable.</li>
 </ul></li>
 <li>Server and dispatcher processes exit automatically if the connection with the client is dropped. This significantly reduces the likelihood of orphaned processes.</li>
@@ -815,7 +821,7 @@
 <li>Calling with no arguments now provides an improved view of the current number of connections / daemons (URL, online and busy status, tasks assigned and completed, instance), replacing the previous <code>daemons("view")</code> functionality.</li>
 </ul></li>
 <li>
-<code><a href="../reference/dispatcher.html">dispatcher()</a></code> is implemented as a new function for the dispatcher.</li>
+<code>dispatcher()</code> is implemented as a new function for the dispatcher.</li>
 <li>
 <code>server()</code> gains the following arguments:
 <ul><li>

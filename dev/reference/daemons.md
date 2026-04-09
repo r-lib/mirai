@@ -19,6 +19,7 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
+  capacity = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -73,6 +74,13 @@ daemons(
   non-reproducible). An integer value instead initializes a stream per
   mirai, allowing reproducible results independent of which daemon
   evaluates it.
+
+- capacity:
+
+  (integer) maximum number of tasks (queued plus executing) at
+  dispatcher. New tasks block until existing ones complete, providing
+  backpressure to control memory usage. `NULL` (default) allows
+  unlimited queuing. Requires dispatcher.
 
 - serial:
 
@@ -143,15 +151,15 @@ host process, either directly or via dispatcher.
 
 ## Dispatcher
 
-By default `dispatcher = TRUE` launches a background process running
-[`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md).
-Dispatcher connects to daemons on behalf of the host, queues tasks, and
-ensures optimal FIFO scheduling. Dispatcher also enables (i) mirai
-cancellation using
+By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
+tasks and sending to daemons as they become available. The `capacity`
+argument controls the maximum number of tasks at the dispatcher,
+providing backpressure to prevent excessive memory usage. Dispatcher
+also enables (i) mirai cancellation using
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
-when using a `.timeout` argument to
+a `.timeout` argument to
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), and (ii)
-the use of custom serialization configurations.
+custom serialization configurations.
 
 With `dispatcher = FALSE`, daemons connect directly to the host and
 tasks are distributed round-robin, with tasks queued at each daemon.
@@ -292,7 +300,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 7301
+#> [1] 9416
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -301,5 +309,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 7301
+#> [1] 9416
 ```

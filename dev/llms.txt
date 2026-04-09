@@ -217,8 +217,6 @@ in this project you agree to abide by its terms.
 - [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
   [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md)
   : Launch Daemons
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  : Dispatcher
 - [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) : Daemon
   Instance
 

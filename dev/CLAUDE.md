@@ -9,8 +9,7 @@ mirai is a minimalist async evaluation framework for R that provides
 asynchronous, parallel and distributed computing. Built on nanonext and
 NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm
 where daemons (persistent background processes) execute tasks sent by
-the host process. Only runtime dependency: nanonext (\>= 1.8.0).
-Requires R \>= 3.6.
+the host process. Only runtime dependency: nanonext. Requires R \>= 3.6.
 
 ## Development Commands
 
@@ -71,11 +70,14 @@ rendering.
   ‘mirai’ object
 - **daemons()**: Sets up persistent background daemon processes
 - **daemon()**: The daemon instance running in background processes
-- **dispatcher()**: FIFO scheduler (reimplemented in C in nanonext
-  1.8.0+ for ~50% less overhead)
+- **Dispatcher**: FIFO scheduler implemented in C within nanonext
+  (managed via nanonext’s
+  `.dispatcher_start`/`.dispatcher_stop`/`.dispatcher_info`)
 - **mirai_map()**: Async parallel map with progress bars and early
   stopping
 - **everywhere()**: Evaluates expressions on all connected daemons
+- **collect_mirai()/call_mirai()**: Block until results are available
+- **status()**: Query daemon/dispatcher status
 
 ### Message-Passing Topology
 
@@ -145,12 +147,10 @@ availability.
   [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
 - **daemons.R**:
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md),
-  remote configs, compute profiles,
+  dispatcher launch (`launch_dispatcher()`), compute profiles,
   [`with_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md),
   [`local_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md)
 - **daemon.R**: Daemon instance implementation
-- **dispatcher.R**: Dispatcher process (thin wrapper — core logic now in
-  C via nanonext)
 - **map.R**:
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   with collection options
@@ -196,12 +196,12 @@ Both support
 ## CI/CD
 
 GitHub Actions in `.github/workflows/`: - **R-CMD-check.yaml**: 8
-OS/R-version combinations (Ubuntu ARM devel, Ubuntu release/oldrel,
-macOS release/oldrel, Windows release/oldrel) - **test-coverage.yaml**:
-Coverage via covr, uploaded to codecov - **pkgdown.yaml**: Documentation
-site with tidytemplate - **shiny-coreci.yaml**: Shiny integration tests
-(manual trigger) - **pr-commands.yaml**: PR comment commands `/document`
-(roxygen2) and `/style` (styler)
+OS/R-version combinations (Ubuntu ARM devel, Ubuntu/macOS/Windows
+release+oldrel variants) - **test-coverage.yaml**: Coverage via covr,
+uploaded to codecov - **pkgdown.yaml**: Documentation site with
+tidytemplate - **rhub.yaml**: R-Hub checks - **shiny-coreci.yaml**:
+Shiny integration tests (manual trigger) - **pr-commands.yaml**: PR
+comment commands `/document` (roxygen2) and `/style` (styler)
 
 ## Package Conventions
 

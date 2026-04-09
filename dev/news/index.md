@@ -2,9 +2,23 @@
 
 ## mirai (development version)
 
+##### New Features
+
+- Dispatcher reimplemented as a thread for lower overhead, removing the
+  separate dispatcher process
+  ([\#581](https://github.com/r-lib/mirai/issues/581)).
+- Adds `capacity` argument to
+  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) to set
+  the maximum number of tasks at the dispatcher. New tasks block until
+  existing ones complete, providing backpressure to prevent unbounded
+  memory growth (thanks
+  [@t-kalinowski](https://github.com/t-kalinowski),
+  [\#454](https://github.com/r-lib/mirai/issues/454)).
+
 ##### Updates
 
-- Fixes transfer of large data (\> ~2GB) on MacOS and Windows.
+- Fixes transfer of large data (\> ~2GB) on MacOS and Windows
+  ([\#579](https://github.com/r-lib/mirai/issues/579)).
 - Fixes
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   progress bar customization issues (thanks
@@ -16,6 +30,8 @@
   [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
   failing for TLS connections, where newlines in the PEM certificate
   produced invalid JSON in the request payload.
+- Improved performance and reduced memory consumption through
+  optimizations in the underlying nanonext/NNG transport layer.
 - Requires nanonext \>= \[1.8.2.9000\].
 
 ## mirai 2.6.1
@@ -60,10 +76,8 @@ CRAN release: 2026-02-13
 
 ##### Updates
 
-- The
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  loop has been re-implemented entirely in C code in nanonext, and now
-  has roughly half the previous overhead
+- The `dispatcher()` loop has been re-implemented entirely in C code in
+  nanonext, and now has roughly half the previous overhead
   ([\#527](https://github.com/r-lib/mirai/issues/527)).
 - Fixes an issue in
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) where
@@ -305,9 +319,8 @@ CRAN release: 2025-07-15
   - When using dispatcher, no longer has the potential to fail if
     sending large data
     ([\#326](https://github.com/r-lib/mirai/issues/326)).
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  function signature simplified with `rs`, `tls` and `pass` arguments
-  removed (no user-facing impact).
+- `dispatcher()` function signature simplified with `rs`, `tls` and
+  `pass` arguments removed (no user-facing impact).
 - Fixes a bug where using non-dispatcher daemons, an `unresolvedValue`
   could be returned as the fulfilled value of a promise in extremely
   rare cases (thanks [@James-G-Hill](https://github.com/James-G-Hill)
@@ -689,8 +702,8 @@ CRAN release: 2024-10-09
     `x[.stop, .progress]`.
   - Collection options now work even if mirai is not on the search path
     e.g. `mirai::mirai_map(1:4, Sys.sleep)[.progress]`.
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  drops argument ‘asyncdial’ as it is rarely useful to set this here.
+- `dispatcher()` drops argument ‘asyncdial’ as it is rarely useful to
+  set this here.
 - [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
   now errors if the specified compute profile is not yet set up, rather
   than fail silently.
@@ -762,9 +775,8 @@ CRAN release: 2024-07-01
 - `serialization()` function signature and return value slightly
   modified for clarity. Successful registration / cancellation messages
   are no longer printed to the console.
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  argument ‘retry’ now defaults to FALSE for consistency with
-  non-dispatcher behaviour.
+- `dispatcher()` argument ‘retry’ now defaults to FALSE for consistency
+  with non-dispatcher behaviour.
 - [`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md)
   gains argument ‘quote’ to control whether or not to quote the daemon
   launch command, and now works with Slurm (thanks
@@ -811,9 +823,8 @@ CRAN release: 2024-06-06
 - Argument ‘resilience’ retired at
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) as
   automatic re-tries are no longer performed for non-dispatcher daemons.
-- New argument ‘retry’ at
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  governs whether to auto-retry in the dispatcher case.
+- New argument ‘retry’ at `dispatcher()` governs whether to auto-retry
+  in the dispatcher case.
 - Fixes promises method for potential crashes when launching improbably
   short-lived mirai.
 - Fixes bug that could cause a hang or crash when launching additional
@@ -1026,9 +1037,9 @@ CRAN release: 2023-11-04
   [\#81](https://github.com/r-lib/mirai/issues/81)).
 - `daemons(NULL)` implemented as a variant of `daemons(0)` which also
   sends exit signals to connected persistent daemons.
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  argument ‘lock’ removed as this is now applied in all cases to prevent
-  more than one daemon dialling into a dispatcher URL at any one time.
+- `dispatcher()` argument ‘lock’ removed as this is now applied in all
+  cases to prevent more than one daemon dialling into a dispatcher URL
+  at any one time.
 - [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) argument
   ‘cleanup’ simplified to a logical argument, with more granular control
   offered by the existing integer bitmask (thanks
@@ -1096,9 +1107,8 @@ CRAN release: 2023-10-06
   example if they have crashed, rather than remaining unresolved.
 - Invalid type of ‘…’ arguments specified to
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) or
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  now raise an error early rather than attempting to launch daemons that
-  fail.
+  `dispatcher()` now raise an error early rather than attempting to
+  launch daemons that fail.
 - Eliminates a potential crash in the host process after querying
   [`status()`](https://mirai.r-lib.org/dev/reference/status.md) if there
   is no longer a connection to dispatcher.
@@ -1106,8 +1116,8 @@ CRAN release: 2023-10-06
   character string.
 - Moves the ‘…’ argument to
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md),
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  and [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) to
+  `dispatcher()` and
+  [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) to
   clearly delineate core vs peripheral options.
 - Deprecates the Deferred Evaluation Pipe `%>>%` in favour of a
   recommendation to use package `mirai.promises` for performing side
@@ -1131,8 +1141,8 @@ CRAN release: 2023-09-16
     gains the new argument ‘seed’ to set a random seed for generating
     these streams.
   - [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md) and
-    [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-    gain the argument ‘rs’ which takes a L’Ecuyer-CMRG random seed.
+    `dispatcher()` gain the argument ‘rs’ which takes a L’Ecuyer-CMRG
+    random seed.
 - New developer functions
   [`nextstream()`](https://mirai.r-lib.org/dev/reference/nextstream.md)
   and
@@ -1167,9 +1177,8 @@ CRAN release: 2023-09-16
   deploy manually via
   [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md).
 - [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) and
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  gain the argument ‘pass’ to support password-protected private keys
-  when supplying TLS credentials (thanks
+  `dispatcher()` gain the argument ‘pass’ to support password-protected
+  private keys when supplying TLS credentials (thanks
   [@wlandau](https://github.com/wlandau)
   [\#76](https://github.com/r-lib/mirai/issues/76)).
 - Cryptographic errors when using dispatcher with TLS are now reported
@@ -1262,11 +1271,10 @@ CRAN release: 2023-06-24
 
 CRAN release: 2023-05-11
 
-- `server()` and
-  [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  argument ‘asyncdial’ is now FALSE by default, causing these functions
-  to exit if a connection is not immediately available. This means that
-  for distributed computing purposes,
+- `server()` and `dispatcher()` argument ‘asyncdial’ is now FALSE by
+  default, causing these functions to exit if a connection is not
+  immediately available. This means that for distributed computing
+  purposes,
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) should
   be called before `server()` is launched on remote resources, or else
   `server(asyncdial = TRUE)` allows servers to wait for a connection.
@@ -1301,8 +1309,7 @@ CRAN release: 2023-04-17
     well as the existing ‘…’.
   - objects specified via ‘…’ now take precedence over ‘.args’ if the
     same named object appears.
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  gains the following arguments:
+- `dispatcher()` gains the following arguments:
   - `token` for appending a unique token to each URL the dispatcher
     listens at.
   - `lock` for locking sockets to prevent more than one server
@@ -1325,9 +1332,8 @@ CRAN release: 2023-04-17
 
 CRAN release: 2023-04-03
 
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  re-implemented using an innovative non-polling design. Efficient
-  process consumes zero processor usage when idle and features
+- `dispatcher()` re-implemented using an innovative non-polling design.
+  Efficient process consumes zero processor usage when idle and features
   significantly higher throughput and lower latency.
   - Arguments ‘pollfreqh’ and ‘pollfreql’ removed as no longer
     applicable.
@@ -1377,8 +1383,7 @@ CRAN release: 2023-03-15
     current number of connections / daemons (URL, online and busy
     status, tasks assigned and completed, instance), replacing the
     previous `daemons("view")` functionality.
-- [`dispatcher()`](https://mirai.r-lib.org/dev/reference/dispatcher.md)
-  is implemented as a new function for the dispatcher.
+- `dispatcher()` is implemented as a new function for the dispatcher.
 - `server()` gains the following arguments:
   - `asyncdial` to specify how the server dials into the client.
   - `maxtasks` for specifying a maximum number of tasks before exiting.

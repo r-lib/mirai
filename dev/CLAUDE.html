@@ -56,7 +56,7 @@
 <p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a></h2>
-<p>mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext (&gt;= 1.8.0). Requires R &gt;= 3.6.</p>
+<p>mirai is a minimalist async evaluation framework for R that provides asynchronous, parallel and distributed computing. Built on nanonext and NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm where daemons (persistent background processes) execute tasks sent by the host process. Only runtime dependency: nanonext. Requires R &gt;= 3.6.</p>
 </div>
 <div class="section level2">
 <h2 id="development-commands">Development Commands<a class="anchor" aria-label="anchor" href="#development-commands"></a></h2>
@@ -105,11 +105,15 @@
 <li>
 <strong>daemon()</strong>: The daemon instance running in background processes</li>
 <li>
-<strong>dispatcher()</strong>: FIFO scheduler (reimplemented in C in nanonext 1.8.0+ for ~50% less overhead)</li>
+<strong>Dispatcher</strong>: FIFO scheduler implemented in C within nanonext (managed via nanonext’s <code>.dispatcher_start</code>/<code>.dispatcher_stop</code>/<code>.dispatcher_info</code>)</li>
 <li>
 <strong>mirai_map()</strong>: Async parallel map with progress bars and early stopping</li>
 <li>
 <strong>everywhere()</strong>: Evaluates expressions on all connected daemons</li>
+<li>
+<strong>collect_mirai()/call_mirai()</strong>: Block until results are available</li>
+<li>
+<strong>status()</strong>: Query daemon/dispatcher status</li>
 </ul></div>
 <div class="section level3">
 <h3 id="message-passing-topology">Message-Passing Topology<a class="anchor" aria-label="anchor" href="#message-passing-topology"></a></h3>
@@ -159,12 +163,10 @@
 <strong>mirai.R</strong>: Core <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/unresolved.html">unresolved()</a></code>, <code><a href="reference/call_mirai.html">call_mirai()</a></code>, <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, <code><a href="reference/everywhere.html">everywhere()</a></code>, <code><a href="reference/race_mirai.html">race_mirai()</a></code>
 </li>
 <li>
-<strong>daemons.R</strong>: <code><a href="reference/daemons.html">daemons()</a></code>, remote configs, compute profiles, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
+<strong>daemons.R</strong>: <code><a href="reference/daemons.html">daemons()</a></code>, dispatcher launch (<code>launch_dispatcher()</code>), compute profiles, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
 </li>
 <li>
 <strong>daemon.R</strong>: Daemon instance implementation</li>
-<li>
-<strong>dispatcher.R</strong>: Dispatcher process (thin wrapper — core logic now in C via nanonext)</li>
 <li>
 <strong>map.R</strong>: <code><a href="reference/mirai_map.html">mirai_map()</a></code> with collection options</li>
 <li>
@@ -191,7 +193,7 @@
 </div>
 <div class="section level2">
 <h2 id="cicd">CI/CD<a class="anchor" aria-label="anchor" href="#cicd"></a></h2>
-<p>GitHub Actions in <code>.github/workflows/</code>: - <strong>R-CMD-check.yaml</strong>: 8 OS/R-version combinations (Ubuntu ARM devel, Ubuntu release/oldrel, macOS release/oldrel, Windows release/oldrel) - <strong>test-coverage.yaml</strong>: Coverage via covr, uploaded to codecov - <strong>pkgdown.yaml</strong>: Documentation site with tidytemplate - <strong>shiny-coreci.yaml</strong>: Shiny integration tests (manual trigger) - <strong>pr-commands.yaml</strong>: PR comment commands <code>/document</code> (roxygen2) and <code>/style</code> (styler)</p>
+<p>GitHub Actions in <code>.github/workflows/</code>: - <strong>R-CMD-check.yaml</strong>: 8 OS/R-version combinations (Ubuntu ARM devel, Ubuntu/macOS/Windows release+oldrel variants) - <strong>test-coverage.yaml</strong>: Coverage via covr, uploaded to codecov - <strong>pkgdown.yaml</strong>: Documentation site with tidytemplate - <strong>rhub.yaml</strong>: R-Hub checks - <strong>shiny-coreci.yaml</strong>: Shiny integration tests (manual trigger) - <strong>pr-commands.yaml</strong>: PR comment commands <code>/document</code> (roxygen2) and <code>/style</code> (styler)</p>
 </div>
 <div class="section level2">
 <h2 id="package-conventions">Package Conventions<a class="anchor" aria-label="anchor" href="#package-conventions"></a></h2>
