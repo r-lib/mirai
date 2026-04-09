@@ -3,9 +3,9 @@
 ### Agent Skill
 
 AI coding agents: the `r-lib` agent skill from the
-[`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills)
-plugin provides mirai-specific guidance for writing correct async,
-parallel, and distributed code.
+[`posit-dev-skills`](https://github.com/posit-dev/skills) plugin
+provides mirai-specific guidance for writing correct async, parallel,
+and distributed code.
 
 ### 1. Developer Interfaces
 
