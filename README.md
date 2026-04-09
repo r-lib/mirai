@@ -191,7 +191,7 @@ discussions.
 View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 AI coding agents: the `r-lib` agent skill from the
-[`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills)
+[`posit-dev-skills`](https://github.com/posit-dev/skills)
 plugin provides mirai-specific guidance.
 
 –
