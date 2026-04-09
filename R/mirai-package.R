@@ -96,7 +96,6 @@ cli_enabled <- FALSE
     posit_api = "can only be used from Posit Workbench",
     secretbase = "the secretbase package is required, try: `install.packages('secretbase')`",
     sync_daemons = "mirai: initial sync with daemon(s) [%d secs elapsed]",
-    sync_dispatcher = "mirai: initial sync with dispatcher [%d secs elapsed]",
     synchronous = "daemons cannot be launched for synchronous compute profiles",
     within_map = "cannot create local daemons from within mirai map"
   ),

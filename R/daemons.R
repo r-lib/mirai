@@ -644,8 +644,6 @@ parse_tls <- function(tls) {
   )
 }
 
-libp <- function(lp = .libPaths()) lp[file.exists(file.path(lp, "mirai"))][1L]
-
 args_daemon_direct <- function(url, dots, rs, tls = NULL) {
   sprintf(
     "mirai::daemon(\"%s\",dispatcher=FALSE%s%s,rs=c(%s))",
@@ -663,13 +661,6 @@ args_daemon_disp <- function(url, dots, rs = NULL, tls = NULL) {
 inproc_url <- function() sprintf("inproc://%s", random(12L))
 
 launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
-
-
-sync_with <- function(cv, message_key, sync = 0L) {
-  while (!until(cv, .limit_long)) {
-    message(sprintf(._[[message_key]], sync <- sync + .limit_long_secs))
-  }
-}
 
 launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, capacity = NULL) {
   local <- is.numeric(url)
@@ -726,8 +717,11 @@ launch_daemons <- function(seq, dots, envir) {
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", urld)
+  elapsed <- 0L
   for (i in seq) {
-    sync_with(cv, "sync_daemons")
+    while (!until(cv, .limit_long)) {
+      message(sprintf(._[["sync_daemons"]], elapsed <- elapsed + .limit_long_secs))
+    }
   }
   pipe_notify(sock, NULL, add = TRUE)
 }
