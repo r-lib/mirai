@@ -5,6 +5,7 @@
 /docs/
 /revdep/
 /.claude/*
+!/.claude/CLAUDE.md
 !/.claude/skills/
 /.quarto/
 **/*.quarto_ipynb
