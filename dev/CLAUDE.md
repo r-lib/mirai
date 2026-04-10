@@ -8,8 +8,8 @@ with code in this repository.
 The mirai skill at `.claude/skills/mirai/SKILL.md` (symlinked from
 `dev/skills/mirai/`) provides LLM-optimized guidance for writing correct
 mirai code. It is also distributed via the `r-lib` skill in the
-[`posit-dev-skills`](https://github.com/posit-dev/posit-dev-skills)
-plugin for end users.
+[`posit-dev-skills`](https://github.com/posit-dev/skills) plugin for end
+users.
 
 ## Overview
 
