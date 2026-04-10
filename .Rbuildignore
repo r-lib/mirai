@@ -13,5 +13,5 @@
 ^\.vscode$
 ^cran-comments\.md$
 ^\.claude$
-^AGENTS\.md$
+^CLAUDE\.md$
 ^\.git-blame-ignore-revs$
