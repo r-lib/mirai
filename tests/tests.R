@@ -481,6 +481,20 @@ connection && NOT_CRAN && {
   test_false(daemons_set("gpu"))
   test_identical(m, n)
 }
+# dispatcher L'Ecuyer-CMRG C implementation tests
+connection && NOT_CRAN && {
+  oseed <- globalenv()[[".Random.seed"]]
+  RNGkind("L'Ecuyer-CMRG")
+  set.seed(1546L)
+  ref <- vector("list", 5L)
+  ref[[1L]] <- globalenv()[[".Random.seed"]]
+  for (i in 2:5) ref[[i]] <- parallel::nextRNGStream(ref[[i - 1L]])
+  `[[<-`(globalenv(), ".Random.seed", oseed)
+  test_true(daemons(4, seed = 1546L))
+  ds <- everywhere(globalenv()[[".Random.seed"]])[]
+  for (i in seq_len(4L)) test_identical(ds[[i]][2:7], ref[[i + 1L]][2:7])
+  test_false(daemons(0))
+}
 # OTel tests
 connection && requireNamespace("otelsdk", quietly = TRUE) && NOT_CRAN && {
   record <- mirai:::with_otel_record({
