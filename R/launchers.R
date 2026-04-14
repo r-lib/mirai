@@ -198,7 +198,9 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #' option of SSH tunnelling.
 #'
 #' @param remotes (character) URL(s) to SSH into using scheme 'ssh://', e.g.
-#'   'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22.
+#'   'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22. Optionally
+#'   include a username if it differs on the remote system, e.g.
+#'   'ssh://user@10.75.32.90'.
 #' @param tunnel (logical) whether to use SSH tunnelling. Requires `url`
 #'   hostname '127.0.0.1' (use [local_url()] with `tcp = TRUE`). See SSH
 #'   Tunnelling section.
@@ -242,8 +244,8 @@ remote_config <- function(command = NULL, args = c("", "."), rscript = "Rscript"
 #'   types of remote configuration.
 #'
 #' @examples
-#' # direct SSH example
-#' ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), timeout = 5)
+#' # direct SSH example (with username)
+#' ssh_config(c("ssh://user@10.75.32.90:222", "ssh://nodename"), timeout = 5)
 #'
 #' # SSH tunnelling example
 #' ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), tunnel = TRUE)
@@ -276,7 +278,13 @@ ssh_config <- function(
   rscript = "Rscript"
 ) {
   premotes <- lapply(remotes, parse_url)
-  hostnames <- lapply(premotes, .subset2, "hostname")
+  hostnames <- lapply(premotes, function(p) {
+    if (nzchar(p[["userinfo"]])) {
+      sprintf("%s@%s", p[["userinfo"]], p[["hostname"]])
+    } else {
+      p[["hostname"]]
+    }
+  })
   ports <- lapply(premotes, .subset2, "port")
 
   ssh_args <- sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports)

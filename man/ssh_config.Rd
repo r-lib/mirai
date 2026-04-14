@@ -14,7 +14,9 @@ ssh_config(
 }
 \arguments{
 \item{remotes}{(character) URL(s) to SSH into using scheme 'ssh://', e.g.
-'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22.}
+'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22. Optionally
+include a username if it differs on the remote system, e.g.
+'ssh://user@10.75.32.90'.}
 
 \item{tunnel}{(logical) whether to use SSH tunnelling. Requires \code{url}
 hostname '127.0.0.1' (use \code{\link[=local_url]{local_url()}} with \code{tcp = TRUE}). See SSH
@@ -73,8 +75,8 @@ local network or in the cloud.
 }
 
 \examples{
-# direct SSH example
-ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), timeout = 5)
+# direct SSH example (with username)
+ssh_config(c("ssh://user@10.75.32.90:222", "ssh://nodename"), timeout = 5)
 
 # SSH tunnelling example
 ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), tunnel = TRUE)
