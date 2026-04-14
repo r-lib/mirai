@@ -76,7 +76,9 @@ option of SSH tunnelling.</p>
 
 <dl><dt id="arg-remotes">remotes<a class="anchor" aria-label="anchor" href="#arg-remotes"></a></dt>
 <dd><p>(character) URL(s) to SSH into using scheme 'ssh://', e.g.
-'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22.</p></dd>
+'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22. Optionally
+include a username if it differs on the remote system, e.g.
+'ssh://user@10.75.32.90'.</p></dd>
 
 
 <dt id="arg-tunnel">tunnel<a class="anchor" aria-label="anchor" href="#arg-tunnel"></a></dt>
@@ -146,14 +148,14 @@ types of remote configuration.</p></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># direct SSH example</span></span></span>
-<span class="r-in"><span><span class="fu">ssh_config</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://10.75.32.90:222"</span>, <span class="st">"ssh://nodename"</span><span class="op">)</span>, timeout <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># direct SSH example (with username)</span></span></span>
+<span class="r-in"><span><span class="fu">ssh_config</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ssh://user@10.75.32.90:222"</span>, <span class="st">"ssh://nodename"</span><span class="op">)</span>, timeout <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $command</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ssh"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args[[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-o ConnectTimeout=5 -fTp 222" "10.75.32.90"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-o ConnectTimeout=5 -fTp 222" "user@10.75.32.90"            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "."                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $args[[2]]</span>

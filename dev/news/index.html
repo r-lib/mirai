@@ -60,7 +60,8 @@
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Fixes transfer of large data (&gt; ~2GB) on MacOS and Windows (<a href="https://github.com/r-lib/mirai/issues/579" class="external-link">#579</a>).</li>
+<ul><li>Fixes <code><a href="../reference/ssh_config.html">ssh_config()</a></code> dropping the username from SSH URLs e.g. <code>ssh://user@host</code> (<a href="https://github.com/r-lib/mirai/issues/583" class="external-link">#583</a>).</li>
+<li>Fixes transfer of large data (&gt; ~2GB) on MacOS and Windows (<a href="https://github.com/r-lib/mirai/issues/579" class="external-link">#579</a>).</li>
 <li>Fixes <code><a href="../reference/mirai_map.html">mirai_map()</a></code> progress bar customization issues (thanks <a href="https://github.com/mcol" class="external-link">@mcol</a>, <a href="https://github.com/r-lib/mirai/issues/519" class="external-link">#519</a>).</li>
 <li>Fixes <code><a href="../reference/launch_local.html">launch_remote()</a></code> with <code><a href="../reference/http_config.html">http_config()</a></code> failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.</li>
 <li>Improved performance and reduced memory consumption through optimizations in the underlying nanonext/NNG transport layer.</li>

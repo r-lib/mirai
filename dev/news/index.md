@@ -17,6 +17,10 @@
 
 ##### Updates
 
+- Fixes
+  [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
+  dropping the username from SSH URLs e.g. `ssh://user@host`
+  ([\#583](https://github.com/r-lib/mirai/issues/583)).
 - Fixes transfer of large data (\> ~2GB) on MacOS and Windows
   ([\#579](https://github.com/r-lib/mirai/issues/579)).
 - Fixes

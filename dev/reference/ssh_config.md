@@ -21,6 +21,8 @@ ssh_config(
 
   (character) URL(s) to SSH into using scheme 'ssh://', e.g.
   'ssh://10.75.32.90:22' or 'ssh://nodename'. Port defaults to 22.
+  Optionally include a username if it differs on the remote system, e.g.
+  'ssh://user@10.75.32.90'.
 
 - tunnel:
 
@@ -95,14 +97,14 @@ for other types of remote configuration.
 ## Examples
 
 ``` r
-# direct SSH example
-ssh_config(c("ssh://10.75.32.90:222", "ssh://nodename"), timeout = 5)
+# direct SSH example (with username)
+ssh_config(c("ssh://user@10.75.32.90:222", "ssh://nodename"), timeout = 5)
 #> $command
 #> [1] "ssh"
 #> 
 #> $args
 #> $args[[1]]
-#> [1] "-o ConnectTimeout=5 -fTp 222" "10.75.32.90"                 
+#> [1] "-o ConnectTimeout=5 -fTp 222" "user@10.75.32.90"            
 #> [3] "."                           
 #> 
 #> $args[[2]]
