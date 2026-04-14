@@ -276,7 +276,13 @@ ssh_config <- function(
   rscript = "Rscript"
 ) {
   premotes <- lapply(remotes, parse_url)
-  hostnames <- lapply(premotes, .subset2, "hostname")
+  hostnames <- lapply(premotes, function(p) {
+    if (nzchar(p[["userinfo"]])) {
+      sprintf("%s@%s", p[["userinfo"]], p[["hostname"]])
+    } else {
+      p[["hostname"]]
+    }
+  })
   ports <- lapply(premotes, .subset2, "port")
 
   ssh_args <- sprintf("-o ConnectTimeout=%s -fTp %s", as.character(timeout), ports)
