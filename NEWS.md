@@ -8,6 +8,7 @@
 
 #### Updates
 
+* Fixes `ssh_config()` dropping the username from SSH URLs e.g. `ssh://user@host` (#583).
 * Fixes transfer of large data (> ~2GB) on MacOS and Windows (#579).
 * Fixes `mirai_map()` progress bar customization issues (thanks @mcol, #519).
 * Fixes `launch_remote()` with `http_config()` failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.
