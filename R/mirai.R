@@ -706,9 +706,6 @@ mk_mirai_error <- function(cnd) {
   }
   idx <- max(which(as.logical(lapply(sc, `==`, eval_call))))
   sc <- sc[(length(sc) - 1L):(idx + 1L)]
-  if (sc[[1L]][[1L]] == ".handleSimpleError") {
-    sc <- sc[-1L]
-  }
   cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
