@@ -728,7 +728,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", disp)
-  `[[<-`(envir, "capacity", is.null(capacity))
+  `[[<-`(envir, "unbounded", is.null(capacity))
   `[[<-`(envir, "url", url)
 
   if (local) {
