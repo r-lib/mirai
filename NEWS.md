@@ -3,8 +3,8 @@
 #### New Features
 
 * Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581). 
-* Adds `capacity` argument to `daemons()` to set the maximum number of tasks at the dispatcher.
-  New tasks block until existing ones complete, providing backpressure to prevent unbounded memory growth (thanks @t-kalinowski, #454).
+* Adds `capacity` argument to `daemons()` setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for queued task payloads at dispatcher, providing memory-based backpressure to prevent host OOM. Opt-in — `NULL` (default) is unbounded (thanks @t-kalinowski, #454).
+* Adds `dispatcher_capacity()` to query current and peak queued bytes (in MB) against the `capacity` budget.
 
 #### Updates
 

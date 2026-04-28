@@ -180,7 +180,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
   is.null(envir) && return(ephemeral_daemon(data, .timeout))
 
   disp <- envir[["dispatcher"]]
-  is.null(disp) || .limit_gate(disp)
+  is.null(disp) || envir[["capacity"]] || .dispatcher_gate(disp)
 
   req <- request(
     .context(envir[["sock"]]),
