@@ -56,7 +56,8 @@
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (<a href="https://github.com/r-lib/mirai/issues/581" class="external-link">#581</a>).</li>
-<li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> to set the maximum number of tasks at the dispatcher. New tasks block until existing ones complete, providing backpressure to prevent unbounded memory growth (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
+<li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for queued task payloads at dispatcher, providing memory-based backpressure to prevent host OOM. Opt-in — <code>NULL</code> (default) is unbounded (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
+<li>Adds <code><a href="../reference/dispatcher_capacity.html">dispatcher_capacity()</a></code> to query current and peak queued bytes (in MB) against the <code>capacity</code> budget.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>

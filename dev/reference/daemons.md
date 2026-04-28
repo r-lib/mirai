@@ -77,10 +77,11 @@ daemons(
 
 - capacity:
 
-  (integer) maximum number of tasks (queued plus executing) at
-  dispatcher. New tasks block until existing ones complete, providing
-  backpressure to control memory usage. `NULL` (default) allows
-  unlimited queuing. Requires dispatcher.
+  (numeric) memory budget in MB (metric, 1 MB = 1,000,000 bytes) for
+  queued task payloads at dispatcher. New tasks block until queued bytes
+  drop below this threshold, providing memory-based backpressure to
+  prevent host OOM. `NULL` (default) is unbounded. Degenerate values (0,
+  non-finite, negative) are treated as unbounded. Requires dispatcher.
 
 - serial:
 
@@ -153,9 +154,12 @@ host process, either directly or via dispatcher.
 
 By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
 tasks and sending to daemons as they become available. The `capacity`
-argument controls the maximum number of tasks at the dispatcher,
-providing backpressure to prevent excessive memory usage. Dispatcher
-also enables (i) mirai cancellation using
+argument caps the approximate total memory (MB, metric — 1 MB =
+1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
+until existing ones are dispatched, providing memory-based backpressure
+to prevent host OOM. Current usage is surfaced via
+[`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md).
+Dispatcher also enables (i) mirai cancellation using
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 a `.timeout` argument to
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), and (ii)
@@ -300,7 +304,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 8735
+#> [1] 8707
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -309,5 +313,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 8735
+#> [1] 8707
 ```

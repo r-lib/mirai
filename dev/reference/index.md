@@ -47,6 +47,8 @@
 
 - [`info()`](https://mirai.r-lib.org/dev/reference/info.md) :
   Information Statistics
+- [`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
+  : Dispatcher Capacity
 - [`daemons_set()`](https://mirai.r-lib.org/dev/reference/daemons_set.md)
   : Query if Daemons are Set
 - [`require_daemons()`](https://mirai.r-lib.org/dev/reference/require_daemons.md)

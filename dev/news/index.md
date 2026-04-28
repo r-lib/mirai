@@ -8,12 +8,16 @@
   separate dispatcher process
   ([\#581](https://github.com/r-lib/mirai/issues/581)).
 - Adds `capacity` argument to
-  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) to set
-  the maximum number of tasks at the dispatcher. New tasks block until
-  existing ones complete, providing backpressure to prevent unbounded
-  memory growth (thanks
-  [@t-kalinowski](https://github.com/t-kalinowski),
+  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
+  setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for
+  queued task payloads at dispatcher, providing memory-based
+  backpressure to prevent host OOM. Opt-in — `NULL` (default) is
+  unbounded (thanks [@t-kalinowski](https://github.com/t-kalinowski),
   [\#454](https://github.com/r-lib/mirai/issues/454)).
+- Adds
+  [`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
+  to query current and peak queued bytes (in MB) against the `capacity`
+  budget.
 
 ##### Updates
 
