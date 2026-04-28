@@ -205,7 +205,9 @@ Consider cores reserved for other purposes.
 
 The default `dispatcher = TRUE` enables optimal FIFO scheduling.
 Tasks queue at the dispatcher and send to daemons as they become available.
-The `capacity` argument controls the maximum number of tasks at the dispatcher; new tasks block until existing ones complete, providing backpressure to prevent excessive memory usage.
+The `capacity` argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher.
+New tasks block until existing ones are dispatched, providing memory-based backpressure to prevent host OOM.
+Current usage is surfaced via the `dispatcher_capacity()` accessor (returns MB, matching the `capacity` unit).
 It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument to `mirai()`.
 
 `info()` provides current statistics as an integer vector:

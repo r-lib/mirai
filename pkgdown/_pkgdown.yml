@@ -39,6 +39,7 @@ reference:
 - title: Compute Profiles
   contents:
   - info
+  - dispatcher_capacity
   - daemons_set
   - require_daemons
   - with_daemons

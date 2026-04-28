@@ -46,10 +46,12 @@
 #'   sound, non-reproducible). An integer value instead initializes a stream per
 #'   mirai, allowing reproducible results independent of which daemon evaluates
 #'   it.
-#' @param capacity (integer) maximum number of tasks (queued plus executing) at
-#'   dispatcher. New tasks block until existing ones complete, providing
-#'   backpressure to control memory usage. `NULL` (default) allows unlimited
-#'   queuing. Requires dispatcher.
+#' @param capacity (numeric) memory budget in MB (metric, 1 MB = 1,000,000
+#'   bytes) for queued task payloads at dispatcher. New tasks block until
+#'   queued bytes drop below this threshold, providing memory-based
+#'   backpressure to prevent host OOM. `NULL` (default) is unbounded.
+#'   Degenerate values (0, non-finite, negative) are treated as unbounded.
+#'   Requires dispatcher.
 #' @param serial (configuration) for custom serialization of reference objects
 #'   (e.g. Arrow Tables, torch tensors), created by [serial_config()]. Requires
 #'   dispatcher. `NULL` applies any configurations from [register_serial()].
@@ -78,10 +80,13 @@
 #'
 #' By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
 #' tasks and sending to daemons as they become available. The `capacity`
-#' argument controls the maximum number of tasks at the dispatcher, providing
-#' backpressure to prevent excessive memory usage. Dispatcher also enables
-#' (i) mirai cancellation using [stop_mirai()] or a `.timeout` argument to
-#' [mirai()], and (ii) custom serialization configurations.
+#' argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000
+#' bytes) of queued task payloads at dispatcher. New tasks block until existing
+#' ones are dispatched, providing memory-based backpressure to prevent host
+#' OOM. Current usage is surfaced via [dispatcher_capacity()].
+#' Dispatcher also enables (i) mirai cancellation using [stop_mirai()] or a
+#' `.timeout` argument to [mirai()], and (ii) custom serialization
+#' configurations.
 #'
 #' With `dispatcher = FALSE`, daemons connect directly to the host and tasks
 #' are distributed round-robin, with tasks queued at each daemon. Optimal
@@ -366,6 +371,34 @@ status <- function(.compute = NULL) {
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
   is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
+}
+
+#' Dispatcher Capacity
+#'
+#' Retrieve the approximate current and peak memory used by queued task
+#' payloads at dispatcher, in MB (metric, 1 MB = 1,000,000 bytes), to monitor
+#' queue pressure against the `capacity` budget set in [daemons()].
+#'
+#' @inheritParams mirai
+#'
+#' @return Named numeric vector of length 3: **used** (current) and **peak**
+#'   (high-watermark) usage, and **capacity** (the budget set in [daemons()],
+#'   `NA_real_` if unset/unbounded), all in MB. `NULL` if the compute profile
+#'   is not using dispatcher.
+#'
+#' @examplesIf interactive()
+#' daemons(1, capacity = 100)
+#' m <- mirai(Sys.sleep(0.5))
+#' dispatcher_capacity()
+#' m[]
+#' daemons(0)
+#'
+#' @export
+#'
+dispatcher_capacity <- function(.compute = NULL) {
+  envir <- compute_env(.compute)
+  (is.null(envir) || is.null(envir[["dispatcher"]])) && return()
+  .dispatcher_capacity(envir[["dispatcher"]])
 }
 
 #' Information Statistics
@@ -695,6 +728,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", disp)
+  `[[<-`(envir, "capacity", is.null(capacity))
   `[[<-`(envir, "url", url)
 
   if (local) {

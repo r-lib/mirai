@@ -359,6 +359,79 @@ connection && NOT_CRAN && {
   }
   test_false(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
 }
+# capacity tests
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  # dispatcher_capacity() returns NULL when no profile / no dispatcher
+  test_null(dispatcher_capacity())
+  test_true(daemons(1, dispatcher = FALSE))
+  test_null(dispatcher_capacity())
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # Unlimited: capacity = NULL → used/peak zero, capacity reported as NA
+  test_true(daemons(1, capacity = NULL))
+  Sys.sleep(0.5)
+  qs <- dispatcher_capacity()
+  test_type("double", qs)
+  test_equal(length(qs), 3L)
+  test_zero(qs[["used"]])
+  test_zero(qs[["peak"]])
+  test_identical(qs[["capacity"]], NA_real_)
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # Degenerate inputs treated as unbounded (C normalizes to limit_bytes = 0)
+  for (cap in list(0, -1, NA_real_, Inf)) {
+    test_true(daemons(1, capacity = cap))
+    Sys.sleep(0.2)
+    test_equal(collect_mirai(mirai(1L + 1L)), 2L)
+    test_identical(dispatcher_capacity()[["capacity"]], NA_real_)
+    test_false(daemons(0L))
+    Sys.sleep(0.2)
+  }
+  # Queue accumulates when no daemon connected, drains when daemon arrives.
+  test_true(daemons(url = local_url(), capacity = 1))
+  Sys.sleep(0.3)
+  m1 <- mirai(Sys.sleep(0.2))
+  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  qs_full <- dispatcher_capacity()
+  test_true(qs_full[["used"]] > 0)
+  test_true(qs_full[["peak"]] >= qs_full[["used"]])
+  test_equal(qs_full[["capacity"]], 1)
+  # Spawn daemon — queue drains; peak survives as high-watermark
+  launch_local(1L)
+  test_null(call_mirai(m1)$data)
+  Sys.sleep(0.2)
+  qs_after <- dispatcher_capacity()
+  test_zero(qs_after[["used"]])
+  test_true(qs_after[["peak"]] >= qs_full[["peak"]])
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # Cancel removes queued bytes
+  test_true(daemons(url = local_url(), capacity = 1))
+  Sys.sleep(0.3)
+  m <- mirai(Sys.sleep(0.2))
+  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  test_true(stop_mirai(m))
+  Sys.sleep(0.1)
+  test_zero(dispatcher_capacity()[["used"]])
+  Sys.sleep(0.3)
+  test_false(daemons(0L))
+  # Producer blocks until queue drains below capacity
+  test_true(daemons(1, capacity = 0.01))
+  Sys.sleep(0.3)
+  big <- runif(2000L)
+  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
+  m2 <- mirai(NULL, .args = list(big = big))
+  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  t0 <- Sys.time()
+  m3 <- mirai(NULL, .args = list(big = big))
+  test_true(as.numeric(Sys.time() - t0, units = "secs") > 0.05)
+  test_null(call_mirai(m1)$data)
+  test_null(call_mirai(m2)$data)
+  test_null(call_mirai(m3)$data)
+  Sys.sleep(0.3)
+  test_false(daemons(0L))
+}
 # promises tests
 connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
   run_now <- getNamespace("later")[["run_now"]]
