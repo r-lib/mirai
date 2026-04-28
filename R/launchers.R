@@ -541,6 +541,139 @@ find_dot <- function(args) {
   sel
 }
 
+#' Workbench Job Launcher Configuration
+#'
+#' Creates a custom launch configuration for Posit Workbench with control over
+#' cluster selection, resource profiles, and resource allocation. Returns a
+#' function suitable for use as the `data` argument of [http_config()].
+#'
+#' Either supply `resource_profile` to use a named profile, or specify custom
+#' `cpus` and `memory`. If `resource_profile` is set, `cpus` and `memory` are
+#' ignored.
+#'
+#' @param rscript (character) Rscript executable path.
+#' @param job_name (character) base name for launched jobs (a timestamp and
+#'   random suffix are appended automatically).
+#' @param cluster (character or NULL) name of the cluster to use. `NULL`
+#'   (default) uses the first available cluster.
+#' @param resource_profile (character or NULL) named resource profile (e.g.
+#'   `"rstudio"`). `NULL` (default) uses custom resource values instead.
+#' @param cpus (integer) number of CPUs for custom resources (ignored if
+#'   `resource_profile` is set).
+#' @param memory (integer) memory in MB for custom resources (ignored if
+#'   `resource_profile` is set).
+#'
+#' @return A function suitable for the `data` argument of [http_config()].
+#'
+#' @seealso [http_config()] for the configuration that accepts this as its
+#'   `data` argument.
+#'
+#' @examples
+#' # Use a named resource profile on a specific cluster:
+#' http_config(
+#'   data = workbench_launcher(
+#'     resource_profile = "rstudio",
+#'     cluster = "Kubernetes"
+#'   )
+#' )
+#'
+#' # Specify custom resources (4 CPUs, 8 GB memory):
+#' http_config(
+#'   data = workbench_launcher(
+#'     job_name = "my_analysis",
+#'     cpus = 4,
+#'     memory = 8192
+#'   )
+#' )
+#'
+#' \dontrun{
+#' # Launch 2 daemons using default settings:
+#' daemons(
+#'   n = 2,
+#'   url = host_url(),
+#'   remote = http_config(
+#'     data = workbench_launcher(
+#'       resource_profile = "rstudio",
+#'       cluster = "Kubernetes"
+#'     )
+#'   )
+#' )
+#' }
+#'
+#' @export
+#'
+workbench_launcher <- function(
+  rscript = "Rscript",
+  job_name = "mirai_job",
+  cluster = NULL,
+  resource_profile = NULL,
+  cpus = 1,
+  memory = 512
+) {
+  function() {
+    requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
+    url <- Sys.getenv("RS_SERVER_ADDRESS")
+    cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
+    nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
+
+    envs <- ncurl(
+      file.path(url, "api", "get_compute_envs"),
+      headers = c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie),
+      timeout = .limit_short
+    )
+    if (envs[["status"]] != 200L) {
+      envs <- posit_workbench_fetch("api/get_compute_envs")
+      envs[["status"]] == 200L || stop(._[["posit_api"]])
+      .$pwb_cookie <- envs[["cookie"]]
+    }
+    clusters <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]]
+
+    if (!is.null(cluster)) {
+      cluster_names <- vapply(clusters, `[[`, character(1), "name")
+      cluster %in% cluster_names || stop(
+        sprintf("cluster '%s' not found. Available: %s", cluster, paste(cluster_names, collapse = ", "))
+      )
+      cluster_obj <- clusters[[which(cluster_names == cluster)]]
+    } else {
+      cluster_obj <- clusters[[1L]]
+    }
+
+    if (!is.null(resource_profile)) {
+      available_profiles <- cluster_obj[["resourceProfiles"]]
+      !is.null(available_profiles) && length(available_profiles) > 0L || stop(
+        sprintf("no resource profiles available in cluster '%s'", cluster_obj[["name"]])
+      )
+      profile_names <- vapply(available_profiles, `[[`, character(1), "name")
+      resource_profile %in% profile_names || stop(
+        sprintf(
+          "resource profile '%s' not found. Available: %s",
+          resource_profile, paste(profile_names, collapse = ", ")
+        )
+      )
+    }
+
+    lp <- sprintf(
+      ".libPaths(c(%s))",
+      paste(sprintf("\"%s\"", .libPaths()), collapse = ",")
+    )
+
+    job <- list(
+      cluster = cluster_obj[["name"]],
+      container = list(image = cluster_obj[["defaultImage"]]),
+      name = paste0(job_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), "_", sample.int(9999L, 1L)),
+      exe = rscript,
+      args = c("-e", sprintf("{%s;%%s}", lp))
+    )
+    if (!is.null(resource_profile)) {
+      job[["resourceProfile"]] <- resource_profile
+    } else {
+      job[["resources"]] <- list(cpus = cpus, memory = memory)
+    }
+
+    secretbase::jsonenc(list(method = "launch_job", kwparams = list(job = job)))
+  }
+}
+
 posit_workbench_cookie <- function() posit_workbench_get("cookie")
 
 posit_workbench_url <- function() posit_workbench_get("url")
