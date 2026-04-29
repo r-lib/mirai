@@ -9,10 +9,10 @@
   ([\#581](https://github.com/r-lib/mirai/issues/581)).
 - Adds `capacity` argument to
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
-  setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for
-  queued task payloads at dispatcher, providing memory-based
-  backpressure to prevent host OOM. Opt-in — `NULL` (default) is
-  unbounded (thanks [@t-kalinowski](https://github.com/t-kalinowski),
+  setting a memory budget (MB, metric) for queued task payloads at
+  dispatcher, providing memory-based backpressure. This is opt-in and
+  `NULL` (default) is unbounded (thanks
+  [@t-kalinowski](https://github.com/t-kalinowski),
   [\#454](https://github.com/r-lib/mirai/issues/454)).
 - Adds
   [`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
@@ -21,6 +21,12 @@
 
 ##### Updates
 
+- [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
+  accepts `...` forwarded to `data` when it is a function. This allows
+  specifying custom resources as additional arguments, which are
+  documented for Posit Workbench (thanks
+  [@michaelmayer2](https://github.com/michaelmayer2),
+  [\#592](https://github.com/r-lib/mirai/issues/592)).
 - Fixes
   [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
   dropping the username from SSH URLs e.g. `ssh://user@host`

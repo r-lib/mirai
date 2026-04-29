@@ -56,12 +56,14 @@
 <div class="section level5">
 <h5 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h5>
 <ul><li>Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (<a href="https://github.com/r-lib/mirai/issues/581" class="external-link">#581</a>).</li>
-<li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for queued task payloads at dispatcher, providing memory-based backpressure to prevent host OOM. Opt-in — <code>NULL</code> (default) is unbounded (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
+<li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure. This is opt-in and <code>NULL</code> (default) is unbounded (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
 <li>Adds <code><a href="../reference/dispatcher_capacity.html">dispatcher_capacity()</a></code> to query current and peak queued bytes (in MB) against the <code>capacity</code> budget.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Fixes <code><a href="../reference/ssh_config.html">ssh_config()</a></code> dropping the username from SSH URLs e.g. <code>ssh://user@host</code> (<a href="https://github.com/r-lib/mirai/issues/583" class="external-link">#583</a>).</li>
+<ul><li>
+<code><a href="../reference/http_config.html">http_config()</a></code> accepts <code>...</code> forwarded to <code>data</code> when it is a function. This allows specifying custom resources as additional arguments, which are documented for Posit Workbench (thanks <a href="https://github.com/michaelmayer2" class="external-link">@michaelmayer2</a>, <a href="https://github.com/r-lib/mirai/issues/592" class="external-link">#592</a>).</li>
+<li>Fixes <code><a href="../reference/ssh_config.html">ssh_config()</a></code> dropping the username from SSH URLs e.g. <code>ssh://user@host</code> (<a href="https://github.com/r-lib/mirai/issues/583" class="external-link">#583</a>).</li>
 <li>Fixes transfer of large data (&gt; ~2GB) on MacOS and Windows (<a href="https://github.com/r-lib/mirai/issues/579" class="external-link">#579</a>).</li>
 <li>Fixes <code><a href="../reference/mirai_map.html">mirai_map()</a></code> progress bar customization issues (thanks <a href="https://github.com/mcol" class="external-link">@mcol</a>, <a href="https://github.com/r-lib/mirai/issues/519" class="external-link">#519</a>).</li>
 <li>Fixes <code><a href="../reference/launch_local.html">launch_remote()</a></code> with <code><a href="../reference/http_config.html">http_config()</a></code> failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.</li>

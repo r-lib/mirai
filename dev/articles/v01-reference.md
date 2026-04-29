@@ -702,6 +702,35 @@ Launch daemons in Posit Workbench:
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
 
+The default Workbench launch may be customised by supplying additional
+options to
+[`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md),
+which are forwarded to the `data` builder. Select a named cluster and
+resource profile:
+
+``` r
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = http_config(cluster = "Kubernetes", resource_profile = "rstudio")
+)
+```
+
+Or specify custom resources in place of a named profile (4 CPUs, 8 GB
+memory):
+
+``` r
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = http_config(cluster = "Kubernetes", cpus = 4, memory = 8192)
+)
+```
+
+The full list of accepted options (`rscript`, `job_name`, `cluster`,
+`resource_profile`, `cpus`, `memory`) is documented at
+[`?http_config`](https://mirai.r-lib.org/dev/reference/http_config.md).
+
 ##### Custom HTTP APIs
 
 For custom HTTP APIs, provide URL, authentication, and request body. The
