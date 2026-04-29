@@ -435,6 +435,90 @@ connection && NOT_CRAN && {
   Sys.sleep(0.3)
   test_false(daemons(0L))
 }
+# try_mirai non-blocking submission tests
+connection && NOT_CRAN && {
+  Sys.sleep(0.5)
+  # try_mirai returns mirai when dispatcher = FALSE (no gate to consult)
+  test_true(daemons(1, dispatcher = FALSE))
+  Sys.sleep(0.3)
+  m_nd <- try_mirai(1L + 1L)
+  test_class("mirai", m_nd)
+  test_equal(collect_mirai(m_nd), 2L)
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # try_mirai returns mirai when capacity unset
+  test_true(daemons(1))
+  Sys.sleep(0.3)
+  m_unb <- try_mirai(2L + 2L)
+  test_class("mirai", m_unb)
+  test_equal(collect_mirai(m_unb), 4L)
+  # mixed mirai() and try_mirai() interleaved
+  m_a <- mirai(3L + 4L)
+  m_b <- try_mirai(5L + 6L)
+  test_class("mirai", m_a)
+  test_class("mirai", m_b)
+  test_equal(collect_mirai(m_a), 7L)
+  test_equal(collect_mirai(m_b), 11L)
+  # symbol-resolution branch via try_mirai
+  qexpr <- quote(7L * 8L)
+  m_sym <- try_mirai(qexpr)
+  test_class("mirai", m_sym)
+  test_equal(collect_mirai(m_sym), 56L)
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # Capacity gate: try_mirai is non-blocking
+  test_true(daemons(1, capacity = 0.01))
+  Sys.sleep(0.3)
+  big <- runif(2000L)
+  # try_mirai returns mirai when capacity set but queue has room
+  m_room <- try_mirai(NULL, .args = list(big = big))
+  test_class("mirai", m_room)
+  test_null(call_mirai(m_room)$data)
+  Sys.sleep(0.2)
+  # Saturate the queue: m1 occupies daemon, m2 sits queued at dispatcher
+  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
+  m2 <- mirai(NULL, .args = list(big = big))
+  test_class("mirai", m2)
+  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  # try_mirai returns NULL under saturation, with no wall-clock blocking
+  t0 <- Sys.time()
+  m_rej <- try_mirai(NULL, .args = list(big = big))
+  elapsed <- as.numeric(Sys.time() - t0, units = "secs")
+  test_null(m_rej)
+  test_true(elapsed < 0.05)
+  # Queue depth unchanged across rejection (m2 still queued)
+  test_true(info()[["awaiting"]] >= 1L)
+  # 100 repeated rejections complete well under blocking-submit threshold
+  t0 <- Sys.time()
+  for (i in seq_len(100L)) test_null(try_mirai(NULL, .args = list(big = big)))
+  test_true(as.numeric(Sys.time() - t0, units = "secs") < 1)
+  # stop_mirai on rejected NULL is a silent no-op (returns FALSE)
+  test_false(stop_mirai(NULL))
+  # Drain
+  test_null(call_mirai(m1)$data)
+  test_null(call_mirai(m2)$data)
+  Sys.sleep(0.2)
+  # try_mirai succeeds again after queue drains
+  m_ok <- try_mirai(1L + 1L)
+  test_class("mirai", m_ok)
+  test_equal(collect_mirai(m_ok), 2L)
+  test_false(daemons(0L))
+  Sys.sleep(0.3)
+  # No RNG advance on rejection
+  test_true(daemons(1, capacity = 0.01, seed = 42L))
+  Sys.sleep(0.3)
+  big <- runif(2000L)
+  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
+  m2 <- mirai(NULL, .args = list(big = big))
+  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  stream_before <- nextget("stream")
+  for (i in seq_len(5L)) test_null(try_mirai(NULL, .args = list(big = big)))
+  test_identical(nextget("stream"), stream_before)
+  test_null(call_mirai(m1)$data)
+  test_null(call_mirai(m2)$data)
+  Sys.sleep(0.2)
+  test_false(daemons(0L))
+}
 # promises tests
 connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
   run_now <- getNamespace("later")[["run_now"]]
