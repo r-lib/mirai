@@ -9,6 +9,8 @@ once complete.
 
 ``` r
 mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
+
+try_mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 ```
 
 ## Arguments
@@ -46,6 +48,11 @@ mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 
 A 'mirai' object.
 
+For `mirai()`: a 'mirai' object.
+
+For `try_mirai()`: a 'mirai' object, or `NULL` (invisibly) if the
+dispatcher's `capacity` budget is exhausted at the time of submission.
+
 ## Details
 
 The value of a mirai may be accessed at any time at `$data`, and if yet
@@ -66,6 +73,18 @@ Specify `.compute` to send the mirai using a specific compute profile
 (if previously created by
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)),
 otherwise leave as `"default"`.
+
+`try_mirai()` is a non-blocking variant of `mirai()` for use in
+event-loop contexts (Shiny, promises) where the host R thread cannot
+afford to wait for the dispatcher's `capacity` budget to drain. It
+returns `NULL` (invisibly) immediately if the queue is at capacity at
+the time of submission, instead of blocking. Where there is no gate to
+consult (no dispatcher, or `capacity` unset), it always returns a
+'mirai' — the contract is "don't block on queue pressure", not "fail
+when the queue is empty".
+
+Pair with a backpressure policy of your choice — drop, retry, signal
+upstream — by checking for `NULL`.
 
 ## Evaluation
 
@@ -169,5 +188,16 @@ expr <- quote(a + b + 2)
 args <- list(a = 2, b = 3)
 m <- mirai(.expr = expr, .args = args)
 collect_mirai(m)
+}
+if (FALSE) { # interactive()
+# non-blocking submission - caller handles backpressure
+daemons(1, capacity = 1)
+m <- try_mirai(1 + 1)
+if (is.null(m)) {
+  # queue at capacity - drop, retry, signal upstream, etc.
+} else {
+  m[]
+}
+daemons(0)
 }
 ```

@@ -64,7 +64,9 @@ with a 'mirai', which will resolve to the evaluated result once complete.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mirai</span><span class="op">(</span><span class="va">.expr</span>, <span class="va">...</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="cn">NULL</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mirai</span><span class="op">(</span><span class="va">.expr</span>, <span class="va">...</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="cn">NULL</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">try_mirai</span><span class="op">(</span><span class="va">.expr</span>, <span class="va">...</span>, .args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="cn">NULL</span>, .compute <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,6 +105,9 @@ profile.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A 'mirai' object.</p>
+<p>For <code>mirai()</code>: a 'mirai' object.</p>
+<p>For <code>try_mirai()</code>: a 'mirai' object, or <code>NULL</code> (invisibly) if the
+dispatcher's <code>capacity</code> budget is exhausted at the time of submission.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -117,6 +122,16 @@ statements such as <code>while</code> or <code>if</code>.</p>
 returned 'mirai'. This will block until the result is returned.</p>
 <p>Specify <code>.compute</code> to send the mirai using a specific compute profile (if
 previously created by <code><a href="daemons.html">daemons()</a></code>), otherwise leave as <code>"default"</code>.</p>
+<p><code>try_mirai()</code> is a non-blocking variant of <code>mirai()</code> for use in event-loop
+contexts (Shiny, promises) where the host R thread cannot afford to wait
+for the dispatcher's <code>capacity</code> budget to drain. It returns <code>NULL</code>
+(invisibly) immediately if the queue is at capacity at the time of
+submission, instead of blocking. Where there is no gate to consult (no
+dispatcher, or <code>capacity</code> unset), it always returns a 'mirai' — the
+contract is "don't block on queue pressure", not "fail when the queue is
+empty".</p>
+<p>Pair with a backpressure policy of your choice — drop, retry, signal
+upstream — by checking for <code>NULL</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="evaluation">Evaluation<a class="anchor" aria-label="anchor" href="#evaluation"></a></h2>
@@ -221,6 +236,17 @@ interrupts, and timeouts.</p>
 <span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">2</span>, b <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">mirai</span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># interactive()</span></span></span>
+<span class="r-in"><span><span class="co"># non-blocking submission - caller handles backpressure</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, capacity <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">try_mirai</span><span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># queue at capacity - drop, retry, signal upstream, etc.</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">m</span><span class="op">[</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

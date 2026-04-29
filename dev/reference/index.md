@@ -2,8 +2,9 @@
 
 ## Async Evaluation
 
-- [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) : mirai
-  (Evaluate Async)
+- [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md)
+  [`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) :
+  mirai (Evaluate Async)
 - [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md) :
   mirai Map
 - [`call_mirai()`](https://mirai.r-lib.org/dev/reference/call_mirai.md)

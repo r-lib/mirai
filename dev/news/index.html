@@ -58,6 +58,7 @@
 <ul><li>Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (<a href="https://github.com/r-lib/mirai/issues/581" class="external-link">#581</a>).</li>
 <li>Adds <code>capacity</code> argument to <code><a href="../reference/daemons.html">daemons()</a></code> setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure. This is opt-in and <code>NULL</code> (default) is unbounded (thanks <a href="https://github.com/t-kalinowski" class="external-link">@t-kalinowski</a>, <a href="https://github.com/r-lib/mirai/issues/454" class="external-link">#454</a>).</li>
 <li>Adds <code><a href="../reference/dispatcher_capacity.html">dispatcher_capacity()</a></code> to query current and peak queued bytes (in MB) against the <code>capacity</code> budget.</li>
+<li>Adds <code><a href="../reference/mirai.html">try_mirai()</a></code>, a non-blocking variant of <code><a href="../reference/mirai.html">mirai()</a></code> that returns <code>NULL</code> immediately if the dispatcher’s <code>capacity</code> budget is exhausted, instead of blocking. Useful in event-loop contexts (Shiny, promises) where blocking the host R thread is unacceptable.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>

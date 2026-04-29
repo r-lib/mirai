@@ -18,6 +18,12 @@
   [`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
   to query current and peak queued bytes (in MB) against the `capacity`
   budget.
+- Adds [`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md),
+  a non-blocking variant of
+  [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) that
+  returns `NULL` immediately if the dispatcher’s `capacity` budget is
+  exhausted, instead of blocking. Useful in event-loop contexts (Shiny,
+  promises) where blocking the host R thread is unacceptable.
 
 ##### Updates
 
