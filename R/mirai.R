@@ -139,62 +139,65 @@
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   missing(.expr) && stop(._[["missing_expression"]])
   envir <- compute_env(.compute)
-
   expr <- substitute(.expr)
-  globals <- list(...)
-  length(globals) &&
-    {
-      gn <- names(globals)
-      if (is.null(gn)) {
-        is.environment(globals[[1L]]) || stop(._[["named_dots"]])
-        globals <- as.list.environment(globals[[1L]], all.names = TRUE)
-        globals[[".Random.seed"]] <- NULL
-      }
-      all(nzchar(gn)) || stop(._[["named_dots"]])
-    }
-  ctx_spn <- otel_mirai_span(envir)
-  if (length(envir[["seed"]])) {
-    globals[[".Random.seed"]] <- next_stream(envir)
-  }
-  data <- list(
-    ._expr_. = if (
-      is.symbol(expr) && exists(as.character(expr), envir = parent.frame()) && is.language(.expr)
-    ) {
-      .expr
-    } else {
-      expr
-    },
-    ._globals_. = globals,
-    ._otel_. = ctx_spn[[1L]]
-  )
+  v <- validate_dispatch(list(...), .args)
 
-  if (length(.args)) {
-    if (is.environment(.args)) {
-      .args <- as.list.environment(.args, all.names = TRUE)
-    } else {
-      length(names(.args)) && all(nzchar(names(.args))) || stop(._[["named_args"]])
-    }
-    data <- c(.args, data)
+  if (!is.null(envir)) {
+    disp <- envir[["dispatcher"]]
+    is.null(disp) || envir[["unbounded"]] || .dispatcher_gate(disp)
   }
 
-  is.null(envir) && return(ephemeral_daemon(data, .timeout))
+  do_mirai(expr, .expr, v[[1L]], v[[2L]], .timeout, envir, parent.frame())
+}
 
-  disp <- envir[["dispatcher"]]
-  is.null(disp) || envir[["unbounded"]] || .dispatcher_gate(disp)
+#' @rdname mirai
+#'
+#' @details
+#'
+#' [try_mirai()] is a non-blocking variant of [mirai()] for use in event-loop
+#' contexts (Shiny, promises) where the host R thread cannot afford to wait
+#' for the dispatcher's `capacity` budget to drain. It returns `NULL`
+#' (invisibly) immediately if the queue is at capacity at the time of
+#' submission, instead of blocking. Where there is no gate to consult (no
+#' dispatcher, or `capacity` unset), it always returns a 'mirai' — the
+#' contract is "don't block on queue pressure", not "fail when the queue is
+#' empty".
+#'
+#' Pair with a backpressure policy of your choice — drop, retry, signal
+#' upstream — by checking for `NULL`.
+#'
+#' @return For [mirai()]: a 'mirai' object.
+#'
+#'   For [try_mirai()]: a 'mirai' object, or `NULL` (invisibly) if the
+#'   dispatcher's `capacity` budget is exhausted at the time of submission.
+#'
+#' @examplesIf interactive()
+#' # non-blocking submission - caller handles backpressure
+#' daemons(1, capacity = 1)
+#' m <- try_mirai(1 + 1)
+#' if (is.null(m)) {
+#'   # queue at capacity - drop, retry, signal upstream, etc.
+#' } else {
+#'   m[]
+#' }
+#' daemons(0)
+#'
+#' @export
+#'
+try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
+  missing(.expr) && stop(._[["missing_expression"]])
+  envir <- compute_env(.compute)
+  expr <- substitute(.expr)
+  v <- validate_dispatch(list(...), .args)
 
-  req <- request(
-    .context(envir[["sock"]]),
-    data,
-    send_mode = 1L,
-    recv_mode = 1L,
-    timeout = .timeout,
-    cv = envir[["cv"]],
-    id = disp
-  )
+  if (!is.null(envir)) {
+    disp <- envir[["dispatcher"]]
+    if (!is.null(disp) && !envir[["unbounded"]] && !.dispatcher_try_gate(disp)) {
+      return(invisible())
+    }
+  }
 
-  otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
-  envir[["sync"]] && evaluate_sync(envir)
-  invisible(req)
+  do_mirai(expr, .expr, v[[1L]], v[[2L]], .timeout, envir, parent.frame())
 }
 
 #' Evaluate Everywhere
@@ -654,6 +657,73 @@ conditionCall.miraiError <- function(c) attr(c, "call")
 conditionMessage.miraiError <- function(c) attr(c, "message")
 
 # internals --------------------------------------------------------------------
+
+# Prelude validation shared by mirai() and try_mirai(). `where` is a lazy
+# default: never forced on the success path, so it costs only an unforced
+# promise. On the error branch it resolves to the call object of the user-
+# facing front-end, preserving `Error in mirai(...) :` / `Error in try_mirai(...) :`
+# headers.
+validate_dispatch <- function(globals, args, where = sys.call(-1L)) {
+  if (length(globals)) {
+    gn <- names(globals)
+    if (is.null(gn)) {
+      is.environment(globals[[1L]]) ||
+        stop(simpleError(._[["named_dots"]], call = where))
+      globals <- as.list.environment(globals[[1L]], all.names = TRUE)
+      globals[[".Random.seed"]] <- NULL
+    } else if (!all(nzchar(gn))) {
+      stop(simpleError(._[["named_dots"]], call = where))
+    }
+  }
+  if (length(args)) {
+    if (is.environment(args)) {
+      args <- as.list.environment(args, all.names = TRUE)
+    } else if (!length(names(args)) || !all(nzchar(names(args)))) {
+      stop(simpleError(._[["named_args"]], call = where))
+    }
+  }
+  list(globals, args)
+}
+
+# Shared submission body. Caller has already passed the gate and validated
+# globals / .args via validate_dispatch().
+do_mirai <- function(expr, .expr, globals, .args, .timeout, envir, parent) {
+  ctx_spn <- otel_mirai_span(envir)
+  if (length(envir[["seed"]])) {
+    globals[[".Random.seed"]] <- next_stream(envir)
+  }
+  data <- list(
+    ._expr_. = if (
+      is.symbol(expr) && exists(as.character(expr), envir = parent) && is.language(.expr)
+    ) {
+      .expr
+    } else {
+      expr
+    },
+    ._globals_. = globals,
+    ._otel_. = ctx_spn[[1L]]
+  )
+
+  if (length(.args)) {
+    data <- c(.args, data)
+  }
+
+  is.null(envir) && return(ephemeral_daemon(data, .timeout))
+
+  req <- request(
+    .context(envir[["sock"]]),
+    data,
+    send_mode = 1L,
+    recv_mode = 1L,
+    timeout = .timeout,
+    cv = envir[["cv"]],
+    id = envir[["dispatcher"]]
+  )
+
+  otel_set_span_id(ctx_spn[[2L]], attr(req, "id"))
+  envir[["sync"]] && evaluate_sync(envir)
+  invisible(req)
+}
 
 ephemeral_daemon <- function(data, timeout) {
   url <- local_url()

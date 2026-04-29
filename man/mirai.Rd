@@ -2,9 +2,12 @@
 % Please edit documentation in R/mirai.R
 \name{mirai}
 \alias{mirai}
+\alias{try_mirai}
 \title{mirai (Evaluate Async)}
 \usage{
 mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
+
+try_mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 }
 \arguments{
 \item{.expr}{(expression) code to evaluate asynchronously, or a language
@@ -28,6 +31,11 @@ profile.}
 }
 \value{
 A 'mirai' object.
+
+For \code{\link[=mirai]{mirai()}}: a 'mirai' object.
+
+For \code{\link[=try_mirai]{try_mirai()}}: a 'mirai' object, or \code{NULL} (invisibly) if the
+dispatcher's \code{capacity} budget is exhausted at the time of submission.
 }
 \description{
 Evaluate an expression asynchronously in a new background R process or
@@ -49,6 +57,18 @@ returned 'mirai'. This will block until the result is returned.
 
 Specify \code{.compute} to send the mirai using a specific compute profile (if
 previously created by \code{\link[=daemons]{daemons()}}), otherwise leave as \code{"default"}.
+
+\code{\link[=try_mirai]{try_mirai()}} is a non-blocking variant of \code{\link[=mirai]{mirai()}} for use in event-loop
+contexts (Shiny, promises) where the host R thread cannot afford to wait
+for the dispatcher's \code{capacity} budget to drain. It returns \code{NULL}
+(invisibly) immediately if the queue is at capacity at the time of
+submission, instead of blocking. Where there is no gate to consult (no
+dispatcher, or \code{capacity} unset), it always returns a 'mirai' — the
+contract is "don't block on queue pressure", not "fail when the queue is
+empty".
+
+Pair with a backpressure policy of your choice — drop, retry, signal
+upstream — by checking for \code{NULL}.
 }
 \section{Evaluation}{
 
@@ -152,5 +172,16 @@ expr <- quote(a + b + 2)
 args <- list(a = 2, b = 3)
 m <- mirai(.expr = expr, .args = args)
 collect_mirai(m)
+\dontshow{\}) # examplesIf}
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+# non-blocking submission - caller handles backpressure
+daemons(1, capacity = 1)
+m <- try_mirai(1 + 1)
+if (is.null(m)) {
+  # queue at capacity - drop, retry, signal upstream, etc.
+} else {
+  m[]
+}
+daemons(0)
 \dontshow{\}) # examplesIf}
 }
