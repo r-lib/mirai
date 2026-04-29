@@ -9,7 +9,8 @@ http_config(
   method = "POST",
   cookie = posit_workbench_cookie,
   token = NULL,
-  data = posit_workbench_data
+  data = posit_workbench_data,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,10 @@ authentication.}
 the daemon launch command. May be a function returning the data value.
 Should include a placeholder \code{"\%s"} where the \code{mirai::daemon()} call
 will be inserted at launch time.}
+
+\item{...}{additional arguments passed to \code{data} when it is a function.
+See the Posit Workbench Options section for those accepted by the
+default value of \code{data}.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument
@@ -40,6 +45,26 @@ Generates a remote configuration for launching daemons via HTTP API. By
 default, automatically configures for Posit Workbench using environment
 variables.
 }
+\section{Posit Workbench Options}{
+
+
+When using the default value of \code{data}, the following arguments may be
+supplied via \code{...} to customise the launched job:
+\itemize{
+\item \code{rscript} (character) Rscript executable path. Default \code{"Rscript"}.
+\item \code{job_name} (character) base name for launched jobs. Default
+\code{"mirai_daemon"}.
+\item \code{cluster} (character) name of the cluster to use. Default uses the first
+available cluster.
+\item \code{resource_profile} (character) named resource profile (e.g. \code{"rstudio"}).
+Default uses the first profile available on the chosen cluster.
+\item \code{cpus} (integer) number of CPUs for custom resource allocation. Specify
+together with or instead of \code{memory} to override \code{resource_profile}.
+\item \code{memory} (integer) memory in MB for custom resource allocation. Specify
+together with or instead of \code{cpus} to override \code{resource_profile}.
+}
+}
+
 \examples{
 tryCatch(http_config(), error = identity)
 
@@ -55,6 +80,20 @@ http_config(
 \dontrun{
 # Launch 2 daemons using http config default (for Posit Workbench):
 daemons(n = 2, url = host_url(), remote = http_config())
+
+# Customise the default Posit Workbench launch (named cluster and profile):
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = http_config(cluster = "Kubernetes", resource_profile = "rstudio")
+)
+
+# Or specify custom resources (4 CPUs, 8 GB memory):
+daemons(
+  n = 2,
+  url = host_url(),
+  remote = http_config(cluster = "Kubernetes", cpus = 4, memory = 8192)
+)
 }
 
 }

@@ -3,11 +3,14 @@
 #### New Features
 
 * Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581). 
-* Adds `capacity` argument to `daemons()` setting a memory budget (MB, metric — 1 MB = 1,000,000 bytes) for queued task payloads at dispatcher, providing memory-based backpressure to prevent host OOM. Opt-in — `NULL` (default) is unbounded (thanks @t-kalinowski, #454).
+* Adds `capacity` argument to `daemons()` setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure.
+  This is opt-in and `NULL` (default) is unbounded (thanks @t-kalinowski, #454).
 * Adds `dispatcher_capacity()` to query current and peak queued bytes (in MB) against the `capacity` budget.
 
 #### Updates
 
+* `http_config()` accepts `...` forwarded to `data` when it is a function.
+  This allows specifying custom resources as additional arguments, which are documented for Posit Workbench (thanks @michaelmayer2, #592).
 * Fixes `ssh_config()` dropping the username from SSH URLs e.g. `ssh://user@host` (#583).
 * Fixes transfer of large data (> ~2GB) on MacOS and Windows (#579).
 * Fixes `mirai_map()` progress bar customization issues (thanks @mcol, #519).
