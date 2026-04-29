@@ -33,6 +33,7 @@ reference:
   - ssh_config
   - cluster_config
   - http_config
+  - workbench_launcher
   - host_url
   - local_url
 
