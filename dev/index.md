@@ -22,6 +22,7 @@ DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 ### Installation
 
 ``` r
+
 install.packages("mirai")
 ```
 
@@ -35,6 +36,7 @@ R expression asynchronously in a parallel process.
 tasks.
 
 ``` r
+
 library(mirai)
 
 # Set up 5 background processes

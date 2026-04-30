@@ -24,6 +24,7 @@ the host process. Only runtime dependency: nanonext. Requires R \>= 3.6.
 ### Testing
 
 ``` r
+
 # Run all tests (single file, custom minitest framework — not testthat)
 source("tests/tests.R")
 ```
@@ -42,6 +43,7 @@ R CMD check --no-manual --compact-vignettes=gs+qpdf mirai_*.tar.gz
 ```
 
 ``` r
+
 # Generate documentation from roxygen2 comments
 devtools::document()
 ```
@@ -60,6 +62,7 @@ Source files live in `dev/vignettes/_*.Rmd` and compile to
 `vignettes/*.Rmd`:
 
 ``` r
+
 # Pre-compile all vignettes (uses knitr::knit, not litedown)
 source("dev/vignettes/precompile.R")
 

@@ -9,6 +9,7 @@ in mirai operations.
 Using [`arrow`](https://arrow.apache.org/docs/r/) as an example:
 
 ``` r
+
 library(mirai)
 library(arrow, warn.conflicts = FALSE)
 daemons(1)
@@ -32,6 +33,7 @@ Pass this configuration to the ‘serial’ argument of
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md):
 
 ``` r
+
 cfg <- serial_config(
   "ArrowTabular",
   arrow::write_to_raw,
@@ -70,6 +72,7 @@ This example combines Arrow with
 library (requires polars \>= 1.0.0):
 
 ``` r
+
 daemons(
   n = 1,
   serial = serial_config(
@@ -118,6 +121,7 @@ computations.
     to load `torch` on all daemons
 
 ``` r
+
 library(mirai)
 library(torch)
 
@@ -138,6 +142,7 @@ This creates a convolutional neural network with `torch::nn_module()`,
 specifies parameters, then initializes them in a parallel process:
 
 ``` r
+
 model <- nn_module(
   initialize = function(in_size, out_size) {
     self$conv1 <- nn_conv2d(in_size, out_size, 5)
@@ -167,6 +172,7 @@ m[]
 The returned model contains many tensor elements:
 
 ``` r
+
 m$data$parameters$conv1.weight
 #> torch_tensor
 #> (1,1,.,.) = 
@@ -207,6 +213,7 @@ Pass model parameters to an optimizer, also initialized in a parallel
 process:
 
 ``` r
+
 optim <- mirai(optim_rmsprop(params = params), params = m$data$parameters)
 
 optim[]
@@ -251,6 +258,7 @@ The class is ‘nanoarrow_array_stream’ since `nanoarrow` backs all DBI
 `db*Arrow()` queries:
 
 ``` r
+
 library(mirai)
 
 cfg <- serial_config(
@@ -273,6 +281,7 @@ Use [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) to write
 or query the database in Arrow format:
 
 ``` r
+
 m <- mirai(dbWriteTableArrow(con, "iris", iris))
 m[]
 #> [1] TRUE
@@ -300,6 +309,7 @@ Tight integration with R’s ‘refhook’ system allows returning complex
 nested objects with multiple Arrow queries:
 
 ``` r
+
 m <- mirai({
   a <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Length" < 4.6')
   b <- dbGetQueryArrow(con, 'SELECT * FROM iris WHERE "Sepal.Width" < 2.6')
@@ -353,6 +363,7 @@ Use
 cleanly tear down databases before resetting daemons:
 
 ``` r
+
 everywhere(dbDisconnect(con))
 daemons(0)
 ```
@@ -378,6 +389,7 @@ Shiny ExtendedTask performs queries via
 session-specific compute profile:
 
 ``` r
+
 library(mirai)
 library(secretbase)
 library(shiny)

@@ -25,6 +25,7 @@ Use clusters with any `parallel` package function
 [`parLapplyLB()`](https://rdrr.io/r/parallel/clusterApply.html), etc.):
 
 ``` r
+
 library(parallel)
 library(mirai)
 
@@ -52,6 +53,7 @@ Call [`status()`](https://mirai.r-lib.org/dev/reference/status.md) on a
 ‘miraiCluster’ to query connected nodes:
 
 ``` r
+
 status(cl)
 #> $connections
 #> [1] 6
@@ -65,6 +67,7 @@ Specifying ‘url’ without ‘remote’ prints shell commands for manual node
 deployment:
 
 ``` r
+
 cl <- make_cluster(n = 2, url = host_url())
 #> Shell commands for deployment on nodes:
 #> 
@@ -85,6 +88,7 @@ with [`foreach`](https://cran.r-project.org/package=foreach).
 Parallel `foreach()` examples:
 
 ``` r
+
 library(doParallel)
 library(foreach)
 

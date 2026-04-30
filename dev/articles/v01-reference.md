@@ -34,6 +34,7 @@ Expressions must be self-contained:
 This example mimics an expensive calculation:
 
 ``` r
+
 library(mirai)
 
 m <- mirai(
@@ -87,6 +88,7 @@ and ‘.args’ accepts a named list of arguments. The following is
 equivalent:
 
 ``` r
+
 expr <- quote({Sys.sleep(time); rnorm(5L, mean)})
 args <- list(time = 2L, mean = 4)
 
@@ -101,6 +103,7 @@ conveniently provides all objects from the calling environment (like `x`
 and `file`):
 
 ``` r
+
 write.csv.async <- function(x, file) {
   mirai(write.csv(x, file), .args = environment())
 }
@@ -147,6 +150,7 @@ Use
 to test for errors:
 
 ``` r
+
 m1 <- mirai(stop("occurred with a custom message", call. = FALSE))
 m1[]
 #> 'miraiError' chr Error: occurred with a custom message
@@ -165,6 +169,7 @@ Error objects include `$stack.trace` for full stack traces and
 `$condition.class` for original condition classes:
 
 ``` r
+
 f <- function(x) if (x > 0) stop("positive")
 
 m3 <- mirai({f(-1); f(1)}, f = f)
@@ -186,6 +191,7 @@ Original error condition elements and
 metadata are preserved:
 
 ``` r
+
 f <- function(x) if (x > 0) stop("positive")
 
 m4 <- mirai(rlang::abort("aborted", meta_uid = "UID001"))
@@ -201,6 +207,7 @@ User interrupts resolve to class ‘miraiInterrupt’ and ‘errorValue’. Use
 to test for interrupts:
 
 ``` r
+
 m4 <- mirai(rlang::interrupt()) # simulates a user interrupt
 is_mirai_interrupt(m4[])
 #> [1] TRUE
@@ -210,6 +217,7 @@ Timeouts (via ‘.timeout’) resolve to ‘errorValue’ of 5L, guarding
 against hanging processes:
 
 ``` r
+
 m5 <- mirai(nanonext::msleep(1000), .timeout = 500)
 m5[]
 #> 'errorValue' int 5 | Timed out
@@ -237,6 +245,7 @@ Daemons are persistent background processes that receive
 Specify the number of daemons to launch:
 
 ``` r
+
 daemons(6)
 ```
 
@@ -268,6 +277,7 @@ current statistics as an integer vector:
 - `completed`: tasks completed or cancelled
 
 ``` r
+
 info()
 #> connections  cumulative    awaiting   executing   completed 
 #>           6           6           0           0           0
@@ -277,6 +287,7 @@ Set daemons to zero to reset. This reverts to creating a new background
 process per request.
 
 ``` r
+
 daemons(0)
 ```
 
@@ -285,6 +296,7 @@ daemons(0)
 With `dispatcher = FALSE`, daemons connect directly to the host process:
 
 ``` r
+
 daemons(6, dispatcher = FALSE)
 ```
 
@@ -299,6 +311,7 @@ concurrent tasks don’t exceed available daemons.
 Info now shows 6 connections:
 
 ``` r
+
 info()
 #> connections  cumulative    awaiting   executing   completed 
 #>           6          NA          NA          NA          NA
@@ -311,6 +324,7 @@ evaluates expressions on all daemons and persists state regardless of
 cleanup settings:
 
 ``` r
+
 everywhere(library(DBI))
 ```
 
@@ -318,12 +332,14 @@ This keeps the [`DBI`](https://dbi.r-dbi.org/) package loaded. You can
 also set up common resources like database connections:
 
 ``` r
+
 everywhere(con <<- dbConnect(RSQLite::SQLite(), file), file = tempfile())
 ```
 
 Super-assignment makes ‘con’ available globally in all daemons:
 
 ``` r
+
 mirai(exists("con"))[]
 #> [1] TRUE
 ```
@@ -331,6 +347,7 @@ mirai(exists("con"))[]
 Disconnect everywhere:
 
 ``` r
+
 everywhere(dbDisconnect(con))
 ```
 
@@ -339,6 +356,7 @@ everywhere(dbDisconnect(con))
 > `evalq(envir = globalenv())`. Example with `box::use()`:
 
 ``` r
+
 everywhere(
   evalq(
     box::use(dplyr[select], mirai[...]),
@@ -363,6 +381,7 @@ performs asynchronous parallel mapping over lists or vectors.
 Returns immediately. Collect results with `x[]`:
 
 ``` r
+
 with(daemons(3, seed = 1234L), mirai_map(1:3, rnorm, .args = list(mean = 20, sd = 2))[])
 #> [[1]]
 #> [1] 19.86409
@@ -378,6 +397,7 @@ Use `.args` for constant arguments to `.f`, and `...` for objects
 referenced in `.f`:
 
 ``` r
+
 daemons(4, seed = 2345L)
 fn <- function(x, range) runif(x, x, x + range)
 ml <- mirai_map(c(a = 1, b = 2, c = 3), \(x) fn(x, x * 2), fn = fn)
@@ -402,6 +422,7 @@ ml[]
   failure
 
 ``` r
+
 mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
 #> Error in `mirai_map()`:
 #> ℹ In index: 2.
@@ -419,6 +440,7 @@ Dataframes and matrices map over **rows**. `.f` must accept as many
 arguments as there are columns:
 
 ``` r
+
 fruit <- c("melon", "grapes", "coconut")
 df <- data.frame(i = seq_along(fruit), fruit = fruit)
 
@@ -429,6 +451,7 @@ mirai_map(df, sprintf, .args = list(fmt = "%d. %s"))[.flat]
 Matrices also map over rows:
 
 ``` r
+
 mat <- matrix(1:4, nrow = 2L, dimnames = list(c("a", "b"), c("y", "z")))
 mirai_map(mat, function(x = 10, y = 0, z = 0) x + y + z)[.flat]
 #>  a  b 
@@ -448,6 +471,7 @@ For nested mapping, don’t launch local daemons from within
 Instead:
 
 ``` r
+
 daemons(url = local_url())
 launch_local(n)
 ```
@@ -478,6 +502,7 @@ without a port uses ‘0’, which automatically assigns a free ephemeral
 port:
 
 ``` r
+
 daemons(url = host_url())
 ```
 
@@ -486,6 +511,7 @@ Query
 for the assigned port:
 
 ``` r
+
 launch_remote()
 #> [1]
 #> Rscript -e 'mirai::daemon("tcp://192.168.6.35:52588")'
@@ -496,6 +522,7 @@ Dynamically scale the number of daemons up or down as needed.
 Reset all connections:
 
 ``` r
+
 daemons(0)
 ```
 
@@ -536,6 +563,7 @@ TLS is recommended for additional security.
 Launch 4 daemons on 10.75.32.90 (SSH port 22 is default):
 
 ``` r
+
 daemons(
   n = 4,
   url = host_url(tls = TRUE, port = 5555),
@@ -546,6 +574,7 @@ daemons(
 Launch one daemon on each machine using custom SSH port 222:
 
 ``` r
+
 daemons(
   n = 1,
   url = host_url(tls = TRUE, port = 5555),
@@ -576,6 +605,7 @@ machines.
 Launch 2 daemons on 10.75.32.90 with tunnelling:
 
 ``` r
+
 daemons(
   n = 2,
   url = local_url(tcp = TRUE),
@@ -631,12 +661,14 @@ For many daemons, use job arrays instead of individual jobs.
 Instead of:
 
 ``` r
+
 daemons(n = 100, url = host_url(), remote = cluster_config())
 ```
 
 rather use:
 
 ``` r
+
 daemons(
   n = 1,
   url = host_url(),
@@ -678,6 +710,7 @@ and `data` are functions (not function calls) that read Workbench
 environment information:
 
 ``` r
+
 http_config(
   url = posit_workbench_url,     # reads server address at launch time
   method = "POST",
@@ -699,6 +732,7 @@ obtained fresh.
 Launch daemons in Posit Workbench:
 
 ``` r
+
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
 
@@ -709,6 +743,7 @@ which are forwarded to the `data` builder. Select a named cluster and
 resource profile:
 
 ``` r
+
 daemons(
   n = 2,
   url = host_url(),
@@ -720,6 +755,7 @@ Or specify custom resources in place of a named profile (4 CPUs, 8 GB
 memory):
 
 ``` r
+
 daemons(
   n = 2,
   url = host_url(),
@@ -738,6 +774,7 @@ For custom HTTP APIs, provide URL, authentication, and request body. The
 launch command is inserted at launch time:
 
 ``` r
+
 daemons(
   n = 2,
   url = host_url(),
@@ -763,6 +800,7 @@ configuration returns a list of server response data (invisibly).
 Capture and inspect these to diagnose launch failures:
 
 ``` r
+
 daemons(url = host_url())
 res <- launch_remote(remote = http_config())
 ```
@@ -784,6 +822,7 @@ is easier for HPC, but
 offers flexibility. Slurm example:
 
 ``` r
+
 daemons(
   n = 2,
   url = host_url(),
@@ -803,6 +842,7 @@ Call
 without ‘remote’ to get shell commands for manual deployment:
 
 ``` r
+
 daemons(url = host_url())
 launch_remote()
 #> [1]
@@ -819,6 +859,7 @@ TLS secures communications between host and remote daemons.
 Use `tls+tcp://` scheme or `host_url(tls = TRUE)`:
 
 ``` r
+
 daemons(url = host_url(tls = TRUE))
 ```
 
@@ -830,6 +871,7 @@ Self-signed certificates are included in
 commands:
 
 ``` r
+
 launch_remote(1)
 #> [1]
 #> Rscript -e 'mirai::daemon("tls+tcp://192.168.6.35:52598",tlscert=c("-----BEGIN CERTIFICATE-----
@@ -867,6 +909,7 @@ launch_remote(1)
 ```
 
 ``` r
+
 daemons(0)
 ```
 
@@ -962,6 +1005,7 @@ with a profile name sets the default for all functions within that
 scope:
 
 ``` r
+
 daemons(1, .compute = "cpu")
 daemons(1, .compute = "gpu")
 
@@ -999,6 +1043,7 @@ within the scope use the daemons’ compute profile.
 Designed for running Shiny apps with specific daemon counts:
 
 ``` r
+
 with(daemons(4), shiny::runApp(app))
 # Or:
 with(daemons(4, .compute = "shiny"), shiny::runApp(app))
@@ -1049,6 +1094,7 @@ affects behavior with `sync = TRUE`.
 Example usage:
 
 ``` r
+
 # run everything in sync:
 daemons(sync = TRUE)
 mp <- mirai_map(1:2, \(x) Sys.getpid())

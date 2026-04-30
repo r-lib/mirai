@@ -58,6 +58,7 @@ packages.
         haven’t set daemons:
 
         ``` r
+
         with(if (!daemons_set()) daemons(sync = TRUE), {
           mirai_map(...)
         })

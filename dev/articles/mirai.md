@@ -36,6 +36,7 @@ detailed introduction.
 ### Create and Access Results
 
 ``` r
+
 library(mirai)
 
 # Create a mirai (returns immediately)
@@ -60,6 +61,7 @@ call_mirai(m)              # Wait and return mirai object
 ### Passing Data
 
 ``` r
+
 # Via ... (assigned to daemon global env)
 m <- mirai(func(x), func = my_func, x = data)
 
@@ -77,6 +79,7 @@ write_async <- function(x, file) {
 ### Basic Setup
 
 ``` r
+
 # Set 4 local daemons (with dispatcher - default)
 daemons(4)
 
@@ -93,6 +96,7 @@ info()
 ### Daemon Configuration
 
 ``` r
+
 daemons(
   n = 4,
   dispatcher = TRUE,          # Use dispatcher for optimal FIFO scheduling
@@ -107,6 +111,7 @@ daemons(
 ### Synchronous Mode (Testing/Debugging)
 
 ``` r
+
 daemons(sync = TRUE)          # Run in current process
 m <- mirai(Sys.getpid())
 daemons(0)
@@ -117,6 +122,7 @@ daemons(0)
 ### Setup Host to Accept Remote Connections
 
 ``` r
+
 # Listen at host URL with TLS
 daemons(
   url = host_url(tls = TRUE),
@@ -131,6 +137,7 @@ launch_remote(2, remote = ssh_config("ssh://10.75.32.90"))
 ### URL Constructors
 
 ``` r
+
 host_url()                    # Auto-detect IP, tcp://x.x.x.x:0
 host_url(tls = TRUE)          # TLS connection
 host_url(tls = TRUE, port = 5555)  # Specific port
@@ -143,6 +150,7 @@ local_url(tcp = TRUE, port = 5555) # tcp://127.0.0.1:5555
 ### SSH Configuration
 
 ``` r
+
 ssh_config(
   remotes = c("ssh://node1:22", "ssh://node2:22"),
   tunnel = FALSE,             # Direct connection
@@ -169,6 +177,7 @@ ssh_config(
 ### Setup
 
 ``` r
+
 # Host uses localhost URL
 daemons(
   n = 4,
@@ -196,6 +205,7 @@ daemons(
 ### General Pattern
 
 ``` r
+
 daemons(
   n = 4,
   url = host_url(),
@@ -214,16 +224,17 @@ daemons(
 
 ### Scheduler-Specific Directives
 
-| Scheduler      | Command  | Job Name                  | Memory            | CPUs                |
-|----------------|----------|---------------------------|-------------------|---------------------|
-| **Slurm**      | `sbatch` | `#SBATCH --job-name=NAME` | `--mem=16G`       | `--cpus-per-task=1` |
-| **SGE**        | `qsub`   | `#$ -N NAME`              | `-l mem_free=16G` | `-pe smp 1`         |
-| **Torque/PBS** | `qsub`   | `#PBS -N NAME`            | `-l mem=16gb`     | `-l nodes=1:ppn=1`  |
-| **LSF**        | `bsub`   | `#BSUB -J NAME`           | `-M 16000`        | `-n 1`              |
+| Scheduler | Command | Job Name | Memory | CPUs |
+|----|----|----|----|----|
+| **Slurm** | `sbatch` | `#SBATCH --job-name=NAME` | `--mem=16G` | `--cpus-per-task=1` |
+| **SGE** | `qsub` | `#$ -N NAME` | `-l mem_free=16G` | `-pe smp 1` |
+| **Torque/PBS** | `qsub` | `#PBS -N NAME` | `-l mem=16gb` | `-l nodes=1:ppn=1` |
+| **LSF** | `bsub` | `#BSUB -J NAME` | `-M 16000` | `-n 1` |
 
 ## 6. HTTP Launcher
 
 ``` r
+
 # Posit Workbench (auto-configures from environment variables)
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
@@ -237,6 +248,7 @@ parameters (`url`, `method`, `cookie`, `token`, `data`) for custom APIs.
 ### Generate Launch Commands
 
 ``` r
+
 # Set daemons to listen
 daemons(url = host_url(tls = TRUE))
 
@@ -256,6 +268,7 @@ print(cmds)
 ### Multiple Independent Profiles
 
 ``` r
+
 # Create CPU profile
 daemons(4, .compute = "cpu")
 
@@ -273,6 +286,7 @@ daemons(0, .compute = "cpu")
 ### Scoped Profiles
 
 ``` r
+
 # Temporarily use profile
 with_daemons("gpu", {
   model <- mirai(train_model())
@@ -288,6 +302,7 @@ m <- mirai(task())  # Uses "cpu" profile
 ### Temporary Daemons
 
 ``` r
+
 with(daemons(4), {
   m1 <- mirai(task1())
   m2 <- mirai(task2())
@@ -299,6 +314,7 @@ with(daemons(4), {
 ### Mixed Local/Remote Resources
 
 ``` r
+
 daemons(url = host_url())
 launch_local(2)             # 2 local daemons
 launch_remote(4, ssh_config("ssh://remote"))  # 4 remote
@@ -307,6 +323,7 @@ launch_remote(4, ssh_config("ssh://remote"))  # 4 remote
 ### Dynamic Scaling
 
 ``` r
+
 daemons(url = host_url())   # Start listening
 launch_local(2)   # Add 2 daemons
 # Later...
@@ -319,6 +336,7 @@ launch_local(2, idletime = 60000)
 ### Basic Usage
 
 ``` r
+
 daemons(4)
 
 # Simple map
@@ -342,6 +360,7 @@ results <- mirai_map(
 ### Collection Options
 
 ``` r
+
 # Flatten to vector
 results <- mirai_map(1:10, rnorm, .args = list(n = 1))[.flat]
 
@@ -358,6 +377,7 @@ results <- mirai_map(1:100, task)[.stop, .progress]
 ### Multiple Map (over DataFrame/Matrix)
 
 ``` r
+
 # Map over dataframe rows
 df <- data.frame(x = 1:10, y = 11:20)
 mirai_map(df, function(x, y) x + y)[.flat]
@@ -370,6 +390,7 @@ mirai_map(mat, function(x, y) x * y)[]
 ## 11. Error Handling
 
 ``` r
+
 m <- mirai(stop("error"))
 m[]
 
@@ -387,6 +408,7 @@ m$data$message              # Error message
 ## 12. Monitoring
 
 ``` r
+
 info()                      # Connection and task statistics
 
 daemons_set()               # Check if daemons exist
@@ -398,6 +420,7 @@ require_daemons()           # Error if not set
 ### Timeouts
 
 ``` r
+
 # Per-mirai timeout (requires dispatcher for auto-cancellation)
 m <- mirai(Sys.sleep(10), .timeout = 1000)  # 1 second
 m[]  # Returns errorValue 5 (timed out)
@@ -406,6 +429,7 @@ m[]  # Returns errorValue 5 (timed out)
 ### Cancellation
 
 ``` r
+
 # Cancel mirai (requires dispatcher)
 m <- mirai(Sys.sleep(100))
 stop_mirai(m)  # Attempts cancellation
@@ -415,6 +439,7 @@ m$data         # errorValue 20 (canceled)
 ### Evaluation Everywhere
 
 ``` r
+
 # Load package on all daemons
 everywhere(library(data.table))
 
@@ -428,6 +453,7 @@ everywhere({}, db_conn = my_conn, api_key = key)
 ### Random Seeds (Reproducible)
 
 ``` r
+
 # Statistically-sound but non-reproducible (default)
 daemons(4, seed = NULL)
 
@@ -438,6 +464,7 @@ daemons(4, seed = 123)
 ### Custom Serialization
 
 ``` r
+
 # For torch tensors, Arrow tables, Polars objects
 daemons(
   4,
@@ -456,6 +483,7 @@ daemons(4)  # Auto-applies registered configs
 ### TLS Configuration
 
 ``` r
+
 # Auto TLS (zero-config certificates)
 daemons(url = host_url(tls = TRUE))
 
@@ -508,6 +536,7 @@ daemons(
 ## 16. Common Gotchas
 
 ``` r
+
 # Expression Evaluation
 # Namespace functions OR library() inside expression
 mirai(pkg::func(x), x = data)
