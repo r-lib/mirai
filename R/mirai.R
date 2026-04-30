@@ -137,10 +137,9 @@
 #' @export
 #'
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
-  missing(.expr) && stop(._[["missing_expression"]])
+  v <- validate_dispatch(missing(.expr), list(...), .args)
   envir <- compute_env(.compute)
   expr <- substitute(.expr)
-  v <- validate_dispatch(list(...), .args)
 
   if (!is.null(envir)) {
     disp <- envir[["dispatcher"]]
@@ -185,10 +184,9 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #' @export
 #'
 try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
-  missing(.expr) && stop(._[["missing_expression"]])
+  v <- validate_dispatch(missing(.expr), list(...), .args)
   envir <- compute_env(.compute)
   expr <- substitute(.expr)
-  v <- validate_dispatch(list(...), .args)
 
   if (!is.null(envir)) {
     disp <- envir[["dispatcher"]]
@@ -663,12 +661,12 @@ conditionMessage.miraiError <- function(c) attr(c, "message")
 # promise. On the error branch it resolves to the call object of the user-
 # facing front-end, preserving `Error in mirai(...) :` / `Error in try_mirai(...) :`
 # headers.
-validate_dispatch <- function(globals, args, where = sys.call(-1L)) {
+validate_dispatch <- function(missing_expr, globals, args, where = sys.call(-1L)) {
+  missing_expr && stop(simpleError(._[["missing_expression"]], call = where))
   if (length(globals)) {
     gn <- names(globals)
     if (is.null(gn)) {
-      is.environment(globals[[1L]]) ||
-        stop(simpleError(._[["named_dots"]], call = where))
+      is.environment(globals[[1L]]) || stop(simpleError(._[["named_dots"]], call = where))
       globals <- as.list.environment(globals[[1L]], all.names = TRUE)
       globals[[".Random.seed"]] <- NULL
     } else if (!all(nzchar(gn))) {
@@ -685,8 +683,6 @@ validate_dispatch <- function(globals, args, where = sys.call(-1L)) {
   list(globals, args)
 }
 
-# Shared submission body. Caller has already passed the gate and validated
-# globals / .args via validate_dispatch().
 do_mirai <- function(expr, .expr, globals, .args, .timeout, envir, parent) {
   ctx_spn <- otel_mirai_span(envir)
   if (length(envir[["seed"]])) {
