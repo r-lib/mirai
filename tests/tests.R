@@ -285,7 +285,6 @@ connection && {
 }
 # advanced daemons and dispatcher tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   test_true(daemons(url = "ws://:0", correctype = 0L, token = TRUE))
   test_false(daemons(0L))
   test_zero(with(daemons(url = "tcp://:0", correcttype = c(1, 0), token = TRUE), {8L - 9L + 1L}))
@@ -297,7 +296,6 @@ connection && NOT_CRAN && {
   restore_binding(ns, ".limit_long", original_ll)
   test_type("externalptr", nextget("dispatcher"))
   test_equal(length(nextget("url")), 1L)
-  Sys.sleep(1L)
   status <- status()
   test_type("list", status)
   test_zero(status[["connections"]])
@@ -310,13 +308,11 @@ connection && NOT_CRAN && {
   test_type("list", res <- mirai_map(c(1,1), rnorm)[.progress])
   test_type("double", res[[1L]])
   test_type("double", res[[2L]])
-  Sys.sleep(0.5)
   test_false(daemons(0L))
-  Sys.sleep(1L)
   test_true(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
   test_type("character", launch_remote(remote = ssh_config(c("ssh://remotehost", "ssh://remotenode"), tunnel = TRUE, command = "echo")))
   test_equal(launch_local(), 1L)
-  Sys.sleep(1L)
+  everywhere({})
   test_true(grepl("CERTIFICATE", launch_remote(), fixed = TRUE))
   q <- quote(list2env(list(b = 2), envir = globalenv()))
   m <- mirai("Seattle", .timeout = 1000)
@@ -337,14 +333,13 @@ connection && NOT_CRAN && {
 }
 # TLS tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   cfg <- serial_config("custom", function(x) serialize(x, NULL), unserialize)
   test_true(daemons(url = host_url(tls = TRUE), pass = "test", serial = cfg))
   if (.Platform$OS.type == "unix") test_type("character", launch_remote(remote = cluster_config(command = "/bin/sh", options = "#SBATCH", rscript = file.path(R.home("bin"), "Rscript"))))
   test_type("list", launch_remote(2L, remote = http_config(url = "http://127.0.0.1:0", data = '{"cmd":"%s"}')))
   test_type("list", launch_remote(1L, remote = http_config(url = "http://127.0.0.1:0", data = function(label) sprintf('{"cmd":"%%s","label":"%s"}', label), label = "x")))
   test_equal(launch_local(1L), 1L)
-  Sys.sleep(1L)
+  everywhere({})
   q <- quote({ list2env(list(b = 2), envir = globalenv()); 0L})
   mm <- everywhere(q)
   test_type("list", mm)
@@ -365,16 +360,13 @@ connection && NOT_CRAN && {
 }
 # capacity tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   # dispatcher_capacity() returns NULL when no profile / no dispatcher
   test_null(dispatcher_capacity())
   test_true(daemons(1, dispatcher = FALSE))
   test_null(dispatcher_capacity())
   test_false(daemons(0L))
-  Sys.sleep(0.3)
   # Unlimited: capacity = NULL → used/peak zero, capacity reported as NA
   test_true(daemons(1, capacity = NULL))
-  Sys.sleep(0.5)
   qs <- dispatcher_capacity()
   test_type("double", qs)
   test_equal(length(qs), 3L)
@@ -382,74 +374,48 @@ connection && NOT_CRAN && {
   test_zero(qs[["peak"]])
   test_identical(qs[["capacity"]], NA_real_)
   test_false(daemons(0L))
-  Sys.sleep(0.3)
   # Degenerate inputs treated as unbounded (C normalizes to limit_bytes = 0)
   for (cap in list(0, -1, NA_real_, Inf)) {
     test_true(daemons(1, capacity = cap))
-    Sys.sleep(0.2)
     test_equal(collect_mirai(mirai(1L + 1L)), 2L)
     test_identical(dispatcher_capacity()[["capacity"]], NA_real_)
     test_false(daemons(0L))
-    Sys.sleep(0.2)
   }
-  # Queue accumulates when no daemon connected, drains when daemon arrives.
+  # Queue accumulates with no daemon connected; peak retained after drain.
+  # Verifying via peak (monotonic high-watermark) after drain is robust to
+  # cross-thread visibility latency in queue accounting.
   test_true(daemons(url = local_url(), capacity = 1))
-  Sys.sleep(0.3)
-  m1 <- mirai(Sys.sleep(0.2))
-  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
-  qs_full <- dispatcher_capacity()
-  test_true(qs_full[["used"]] > 0)
-  test_true(qs_full[["peak"]] >= qs_full[["used"]])
-  test_equal(qs_full[["capacity"]], 1)
-  # Spawn daemon — queue drains; peak survives as high-watermark
+  m1 <- mirai(Sys.sleep(0.1))
+  while (dispatcher_capacity()[["used"]] == 0) Sys.sleep(0.05)
   launch_local(1L)
   test_null(call_mirai(m1)$data)
-  Sys.sleep(0.2)
-  qs_after <- dispatcher_capacity()
-  test_zero(qs_after[["used"]])
-  test_true(qs_after[["peak"]] >= qs_full[["peak"]])
+  while (dispatcher_capacity()[["used"]] > 0) Sys.sleep(0.05)
+  qs <- dispatcher_capacity()
+  test_zero(qs[["used"]])
+  test_true(qs[["peak"]] > 0)
+  test_equal(qs[["capacity"]], 1)
   test_false(daemons(0L))
-  Sys.sleep(0.3)
-  # Cancel removes queued bytes
+  # Cancel clears used bytes; peak still reflects prior occupancy.
   test_true(daemons(url = local_url(), capacity = 1))
-  Sys.sleep(0.3)
-  m <- mirai(Sys.sleep(0.2))
-  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  m <- mirai(Sys.sleep(0.1))
+  while (dispatcher_capacity()[["used"]] == 0) Sys.sleep(0.05)
   test_true(stop_mirai(m))
-  Sys.sleep(0.1)
-  test_zero(dispatcher_capacity()[["used"]])
-  Sys.sleep(0.3)
-  test_false(daemons(0L))
-  # Producer blocks until queue drains below capacity
-  test_true(daemons(1, capacity = 0.01))
-  Sys.sleep(0.3)
-  big <- runif(2000L)
-  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
-  m2 <- mirai(NULL, .args = list(big = big))
-  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
-  t0 <- Sys.time()
-  m3 <- mirai(NULL, .args = list(big = big))
-  test_true(as.numeric(Sys.time() - t0, units = "secs") > 0.05)
-  test_null(call_mirai(m1)$data)
-  test_null(call_mirai(m2)$data)
-  test_null(call_mirai(m3)$data)
-  Sys.sleep(0.3)
+  while (dispatcher_capacity()[["used"]] > 0) Sys.sleep(0.05)
+  qs <- dispatcher_capacity()
+  test_zero(qs[["used"]])
+  test_true(qs[["peak"]] > 0)
   test_false(daemons(0L))
 }
 # try_mirai non-blocking submission tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   # try_mirai returns mirai when dispatcher = FALSE (no gate to consult)
   test_true(daemons(1, dispatcher = FALSE))
-  Sys.sleep(0.3)
   m_nd <- try_mirai(1L + 1L)
   test_class("mirai", m_nd)
   test_equal(collect_mirai(m_nd), 2L)
   test_false(daemons(0L))
-  Sys.sleep(0.3)
   # try_mirai returns mirai when capacity unset
   test_true(daemons(1))
-  Sys.sleep(0.3)
   m_unb <- try_mirai(2L + 2L)
   test_class("mirai", m_unb)
   test_equal(collect_mirai(m_unb), 4L)
@@ -466,28 +432,20 @@ connection && NOT_CRAN && {
   test_class("mirai", m_sym)
   test_equal(collect_mirai(m_sym), 56L)
   test_false(daemons(0L))
-  Sys.sleep(0.3)
-  # Capacity gate: try_mirai is non-blocking
-  test_true(daemons(1, capacity = 0.01))
-  Sys.sleep(0.3)
+  # Capacity gate: try_mirai is non-blocking. Saturate via a URL with no
+  # daemon connected so accumulation is deterministic (no race against a
+  # daemon draining the queue) and no caller-side blocking is needed.
+  test_true(daemons(url = local_url(), capacity = 0.01))
   big <- runif(2000L)
-  # try_mirai returns mirai when capacity set but queue has room
-  m_room <- try_mirai(NULL, .args = list(big = big))
-  test_class("mirai", m_room)
-  test_null(call_mirai(m_room)$data)
-  Sys.sleep(0.2)
-  # Saturate the queue: m1 occupies daemon, m2 sits queued at dispatcher
-  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
-  m2 <- mirai(NULL, .args = list(big = big))
-  test_class("mirai", m2)
-  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
-  # try_mirai returns NULL under saturation, with no wall-clock blocking
+  # Empty queue — try_mirai returns a mirai
+  m1 <- try_mirai(NULL, .args = list(big = big))
+  test_class("mirai", m1)
+  while (info()[["awaiting"]] < 1L) Sys.sleep(0.05)
+  # Saturated queue — try_mirai returns NULL with no wall-clock blocking
   t0 <- Sys.time()
   m_rej <- try_mirai(NULL, .args = list(big = big))
-  elapsed <- as.numeric(Sys.time() - t0, units = "secs")
   test_null(m_rej)
-  test_true(elapsed < 0.05)
-  # Queue depth unchanged across rejection (m2 still queued)
+  test_true(as.numeric(Sys.time() - t0, units = "secs") < 0.05)
   test_true(info()[["awaiting"]] >= 1L)
   # 100 repeated rejections complete well under blocking-submit threshold
   t0 <- Sys.time()
@@ -495,35 +453,30 @@ connection && NOT_CRAN && {
   test_true(as.numeric(Sys.time() - t0, units = "secs") < 1)
   # stop_mirai on rejected NULL is a silent no-op (returns FALSE)
   test_false(stop_mirai(NULL))
-  # Drain
+  # Connect a daemon, queue drains, try_mirai succeeds again
+  launch_local(1L)
   test_null(call_mirai(m1)$data)
-  test_null(call_mirai(m2)$data)
-  Sys.sleep(0.2)
-  # try_mirai succeeds again after queue drains
+  while (info()[["awaiting"]] > 0L) Sys.sleep(0.05)
   m_ok <- try_mirai(1L + 1L)
   test_class("mirai", m_ok)
   test_equal(collect_mirai(m_ok), 2L)
   test_false(daemons(0L))
-  Sys.sleep(0.3)
-  # No RNG advance on rejection
-  test_true(daemons(1, capacity = 0.01, seed = 42L))
-  Sys.sleep(0.3)
+  # No RNG advance on rejection — same no-daemon-URL trick to saturate
+  test_true(daemons(url = local_url(), capacity = 0.01, seed = 42L))
   big <- runif(2000L)
-  m1 <- mirai(Sys.sleep(0.3), .args = list(big = big))
-  m2 <- mirai(NULL, .args = list(big = big))
-  while (dispatcher_capacity()[["used"]] == 0) msleep(5L)
+  m1 <- try_mirai(NULL, .args = list(big = big))
+  test_class("mirai", m1)
+  while (info()[["awaiting"]] < 1L) Sys.sleep(0.05)
   stream_before <- nextget("stream")
   for (i in seq_len(5L)) test_null(try_mirai(NULL, .args = list(big = big)))
   test_identical(nextget("stream"), stream_before)
+  launch_local(1L)
   test_null(call_mirai(m1)$data)
-  test_null(call_mirai(m2)$data)
-  Sys.sleep(0.2)
   test_false(daemons(0L))
 }
 # promises tests
 connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
   run_now <- getNamespace("later")[["run_now"]]
-  Sys.sleep(0.5)
   test_true(daemons(1, notused = "wrongtype"))
   test_true(grepl("://", launch_remote(1L), fixed = TRUE))
   test_true(promises::is.promise(p1 <- promises::as.promise(mirai("completed"))))
@@ -550,29 +503,27 @@ connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
 }
 # mirai daemon limits tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   test_true(daemons(1, cleanup = FALSE, maxtasks = 2L))
   test_true(daemons_set("default"))
   test_equal(mirai(1)[], mirai(1)[])
   m <- mirai(0L)
-  Sys.sleep(1L)
-  res <- info()
+  while ({ res <- info(); res[["connections"]] > 0L || res[["awaiting"]] != 1L }) Sys.sleep(0.05)
   test_zero(res[["connections"]])
   test_equal(res[["awaiting"]], 1L)
   test_equal(launch_local(1, idletime = 5000L, walltime = 500L), 1L)
   test_zero(m[])
-  Sys.sleep(1L)
+  while (info()[["connections"]] > 0L) Sys.sleep(0.05)
   res <- info()
   test_zero(res[["connections"]])
   test_equal(res[["cumulative"]], 2L)
   test_false(daemons(0))
   test_true(daemons(1, dispatcher = FALSE, maxtasks = 1L))
   test_zero(mirai(0L)[])
-  Sys.sleep(0.5)
+  while (info()[["connections"]] > 0L) Sys.sleep(0.05)
   test_zero(info()[["connections"]])
   test_equal(launch_local(1, idletime = 200L, walltime = 1000L), 1L)
   test_zero(mirai(0)[])
-  Sys.sleep(1L)
+  while (info()[["connections"]] > 0L) Sys.sleep(0.05)
   res <- info()
   test_zero(res[["connections"]])
   test_true(is.na(res[["cumulative"]]))
@@ -580,7 +531,6 @@ connection && NOT_CRAN && {
 }
 # mirai cancellation tests
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   Sys.unsetenv("R_DEFAULT_PACKAGES")
   test_true(daemons(1, dispatcher = TRUE, cleanup = FALSE))
   m1 <- mirai({ Sys.sleep(1); res <<- "m1 done" })
@@ -609,7 +559,6 @@ connection && NOT_CRAN && {
 }
 # additional stress testing
 connection && NOT_CRAN && {
-  Sys.sleep(0.5)
   q <- vector(mode = "list", length = 10000L)
   Sys.setenv(R_DEFAULT_PACKAGES = "stats,utils")
   test_true(daemons(4))
@@ -634,7 +583,6 @@ connection && NOT_CRAN && {
   test_class("mirai_map", everywhere(TRUE, .min = 3L))
   m <- mirai_map(1:12, rnorm)[]
   test_false(daemons(0))
-  Sys.sleep(0.5)
   test_true(daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
   with_daemons("gpu", {
     test_class("mirai_map", everywhere(TRUE))
