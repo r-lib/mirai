@@ -36,7 +36,10 @@
 #'   own independent set of daemons. `NULL` (default) uses the 'default'
 #'   profile.
 #'
-#' @return A 'mirai' object.
+#' @return For [mirai()]: a 'mirai' object.
+#'
+#'   For [try_mirai()]: a 'mirai' object, or `NULL` (invisibly) if the
+#'   dispatcher's `capacity` budget is exhausted at the time of submission.
 #'
 #' @section Evaluation:
 #'
@@ -151,24 +154,20 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 
 #' @rdname mirai
 #'
-#' @details
+#' @section Capacity:
 #'
-#' [try_mirai()] is a non-blocking variant of [mirai()] for use in event-loop
-#' contexts (Shiny, promises) where the host R thread cannot afford to wait
-#' for the dispatcher's `capacity` budget to drain. It returns `NULL`
-#' (invisibly) immediately if the queue is at capacity at the time of
-#' submission, instead of blocking. Where there is no gate to consult (no
-#' dispatcher, or `capacity` unset), it always returns a 'mirai' — the
-#' contract is "don't block on queue pressure", not "fail when the queue is
-#' empty".
+#' The `capacity` argument to [daemons()] caps the queued task payload at
+#' dispatcher (in MB), preventing host out-of-memory. [mirai()] blocks the
+#' calling R thread on submission until queued bytes drop below this budget.
 #'
-#' Pair with a backpressure policy of your choice — drop, retry, signal
-#' upstream — by checking for `NULL`.
+#' [try_mirai()] is a non-blocking variant for event-loop contexts (Shiny,
+#' promises) where the host R thread cannot afford to wait. It returns `NULL`
+#' (invisibly) immediately if the queue is at capacity, instead of blocking.
+#' With no dispatcher, or `capacity` unset, [try_mirai()] always returns a
+#' 'mirai' — the contract is "don't block on queue pressure". Check for a `NULL`
+#' return value and handle accordingly — drop, retry, or signal upstream.
 #'
-#' @return For [mirai()]: a 'mirai' object.
-#'
-#'   For [try_mirai()]: a 'mirai' object, or `NULL` (invisibly) if the
-#'   dispatcher's `capacity` budget is exhausted at the time of submission.
+#' Use [capacity()] to inspect current and peak queue usage.
 #'
 #' @examplesIf interactive()
 #' # non-blocking submission - caller handles backpressure
