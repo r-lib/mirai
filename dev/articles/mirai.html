@@ -150,7 +150,10 @@ progress bars, early stopping, flatmap</li>
 <span><span class="co"># Access result (blocks until ready)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span>                        <span class="co"># Wait and return value</span></span>
 <span><span class="fu"><a href="../reference/collect_mirai.html">collect_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>           <span class="co"># Wait and return value</span></span>
-<span><span class="fu"><a href="../reference/call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>              <span class="co"># Wait and return mirai object</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/call_mirai.html">call_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>              <span class="co"># Wait and return mirai object</span></span>
+<span></span>
+<span><span class="co"># Non-blocking variant (returns NULL if dispatcher capacity exhausted)</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">try_mirai</a></span><span class="op">(</span><span class="fu">task</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="passing-data">Passing Data<a class="anchor" aria-label="anchor" href="#passing-data"></a>
@@ -194,6 +197,7 @@ progress bars, early stopping, flatmap</li>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  dispatcher <span class="op">=</span> <span class="cn">TRUE</span>,          <span class="co"># Use dispatcher for optimal FIFO scheduling</span></span>
+<span>  capacity <span class="op">=</span> <span class="cn">NULL</span>,            <span class="co"># Memory budget (MB) for queued tasks; NULL = unbounded</span></span>
 <span>  cleanup <span class="op">=</span> <span class="cn">TRUE</span>,             <span class="co"># Clean env between tasks</span></span>
 <span>  output <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># Capture stdout/stderr</span></span>
 <span>  maxtasks <span class="op">=</span> <span class="cn">Inf</span>,             <span class="co"># Task limit per daemon</span></span>
@@ -544,6 +548,7 @@ progress bars, early stopping, flatmap</li>
 </h2>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/info.html">info</a></span><span class="op">(</span><span class="op">)</span>                      <span class="co"># Connection and task statistics</span></span>
+<span><span class="fu"><a href="../reference/capacity.html">capacity</a></span><span class="op">(</span><span class="op">)</span>                  <span class="co"># Queue memory: used / peak / capacity (MB)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons_set.html">daemons_set</a></span><span class="op">(</span><span class="op">)</span>               <span class="co"># Check if daemons exist</span></span>
 <span><span class="fu"><a href="../reference/require_daemons.html">require_daemons</a></span><span class="op">(</span><span class="op">)</span>           <span class="co"># Error if not set</span></span></code></pre></div>
@@ -708,6 +713,7 @@ progress bars, early stopping, flatmap</li>
 <span><span class="co"># Dispatcher Required For</span></span>
 <span><span class="fu"><a href="../reference/stop_mirai.html">stop_mirai</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>                           <span class="co"># Cancellation</span></span>
 <span><span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu">task</span><span class="op">(</span><span class="op">)</span>, .timeout <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>          <span class="co"># Timeout cancellation</span></span>
+<span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, capacity <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>              <span class="co"># Memory backpressure (queue budget in MB)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span>, serial <span class="op">=</span> <span class="fu"><a href="../reference/serial_config.html">serial_config</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span> <span class="co"># Custom serialization</span></span>
 <span></span>
 <span><span class="co"># SSH Tunnelling</span></span>

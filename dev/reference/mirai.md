@@ -46,8 +46,6 @@ try_mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 
 ## Value
 
-A 'mirai' object.
-
 For `mirai()`: a 'mirai' object.
 
 For `try_mirai()`: a 'mirai' object, or `NULL` (invisibly) if the
@@ -73,18 +71,6 @@ Specify `.compute` to send the mirai using a specific compute profile
 (if previously created by
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)),
 otherwise leave as `"default"`.
-
-`try_mirai()` is a non-blocking variant of `mirai()` for use in
-event-loop contexts (Shiny, promises) where the host R thread cannot
-afford to wait for the dispatcher's `capacity` budget to drain. It
-returns `NULL` (invisibly) immediately if the queue is at capacity at
-the time of submission, instead of blocking. Where there is no gate to
-consult (no dispatcher, or `capacity` unset), it always returns a
-'mirai' — the contract is "don't block on queue pressure", not "fail
-when the queue is empty".
-
-Pair with a backpressure policy of your choice — drop, retry, signal
-upstream — by checking for `NULL`.
 
 ## Evaluation
 
@@ -131,6 +117,25 @@ If a daemon crashes or terminates unexpectedly during evaluation, an
 [`is_error_value()`](https://mirai.r-lib.org/dev/reference/is_mirai_error.md)
 tests for all error conditions including 'mirai' errors, interrupts, and
 timeouts.
+
+## Capacity
+
+The `capacity` argument to
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) caps the
+queued task payload at dispatcher (in MB), preventing host
+out-of-memory. `mirai()` blocks the calling R thread on submission until
+queued bytes drop below this budget.
+
+`try_mirai()` is a non-blocking variant for event-loop contexts (Shiny,
+promises) where the host R thread cannot afford to wait. It returns
+`NULL` (invisibly) immediately if the queue is at capacity, instead of
+blocking. With no dispatcher, or `capacity` unset, `try_mirai()` always
+returns a 'mirai' — the contract is "don't block on queue pressure".
+Check for a `NULL` return value and handle accordingly — drop, retry, or
+signal upstream.
+
+Use [`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md) to
+inspect current and peak queue usage.
 
 ## Examples
 

@@ -104,8 +104,7 @@ profile.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A 'mirai' object.</p>
-<p>For <code>mirai()</code>: a 'mirai' object.</p>
+    <p>For <code>mirai()</code>: a 'mirai' object.</p>
 <p>For <code>try_mirai()</code>: a 'mirai' object, or <code>NULL</code> (invisibly) if the
 dispatcher's <code>capacity</code> budget is exhausted at the time of submission.</p>
     </div>
@@ -122,16 +121,6 @@ statements such as <code>while</code> or <code>if</code>.</p>
 returned 'mirai'. This will block until the result is returned.</p>
 <p>Specify <code>.compute</code> to send the mirai using a specific compute profile (if
 previously created by <code><a href="daemons.html">daemons()</a></code>), otherwise leave as <code>"default"</code>.</p>
-<p><code>try_mirai()</code> is a non-blocking variant of <code>mirai()</code> for use in event-loop
-contexts (Shiny, promises) where the host R thread cannot afford to wait
-for the dispatcher's <code>capacity</code> budget to drain. It returns <code>NULL</code>
-(invisibly) immediately if the queue is at capacity at the time of
-submission, instead of blocking. Where there is no gate to consult (no
-dispatcher, or <code>capacity</code> unset), it always returns a 'mirai' — the
-contract is "don't block on queue pressure", not "fail when the queue is
-empty".</p>
-<p>Pair with a backpressure policy of your choice — drop, retry, signal
-upstream — by checking for <code>NULL</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="evaluation">Evaluation<a class="anchor" aria-label="anchor" href="#evaluation"></a></h2>
@@ -179,6 +168,22 @@ at <code>$condition.class</code>.</p>
 'errorValue' 19 (Connection reset) is returned.</p>
 <p><code><a href="is_mirai_error.html">is_error_value()</a></code> tests for all error conditions including 'mirai' errors,
 interrupts, and timeouts.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="capacity">Capacity<a class="anchor" aria-label="anchor" href="#capacity"></a></h2>
+
+
+
+<p>The <code>capacity</code> argument to <code><a href="daemons.html">daemons()</a></code> caps the queued task payload at
+dispatcher (in MB), preventing host out-of-memory. <code>mirai()</code> blocks the
+calling R thread on submission until queued bytes drop below this budget.</p>
+<p><code>try_mirai()</code> is a non-blocking variant for event-loop contexts (Shiny,
+promises) where the host R thread cannot afford to wait. It returns <code>NULL</code>
+(invisibly) immediately if the queue is at capacity, instead of blocking.
+With no dispatcher, or <code>capacity</code> unset, <code>try_mirai()</code> always returns a
+'mirai' — the contract is "don't block on queue pressure". Check for a <code>NULL</code>
+return value and handle accordingly — drop, retry, or signal upstream.</p>
+<p>Use <code><a href="capacity.html">capacity()</a></code> to inspect current and peak queue usage.</p>
     </div>
 
     <div class="section level2">
