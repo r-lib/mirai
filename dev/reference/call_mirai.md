@@ -60,7 +60,10 @@ timeouts.
 
 ## See also
 
-[`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
+[`collect_mirai()`](https://mirai.r-lib.org/dev/reference/collect_mirai.md)
+to return the value directly rather than the 'mirai' object.
+[`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md) to
+wait for the first of many.
 
 ## Examples
 

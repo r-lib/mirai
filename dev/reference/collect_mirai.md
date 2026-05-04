@@ -69,6 +69,12 @@ If a daemon crashes or terminates unexpectedly during evaluation, an
 tests for all error conditions including 'mirai' errors, interrupts, and
 timeouts.
 
+## See also
+
+[`call_mirai()`](https://mirai.r-lib.org/dev/reference/call_mirai.md) to
+return the 'mirai' object (with the value at `$data`) rather than the
+value directly.
+
 ## Examples
 
 ``` r
