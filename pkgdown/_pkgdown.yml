@@ -39,7 +39,7 @@ reference:
 - title: Compute Profiles
   contents:
   - info
-  - capacity
+  - status
   - daemons_set
   - require_daemons
   - with_daemons

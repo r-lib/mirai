@@ -21,13 +21,25 @@ vector comprising: \strong{awaiting} - number of tasks queued for execution at
 dispatcher, \strong{executing} - number of tasks sent to a daemon for
 execution, and \strong{completed} - number of tasks for which the result has
 been received (either completed or cancelled).
+\item \strong{memory} (present only if using dispatcher) - a named numeric
+vector in MB (metric, 1 MB = 1,000,000 bytes) comprising: \strong{used} -
+current and \strong{peak} - high-watermark queued task payloads at dispatcher,
+and \strong{capacity} - the budget set as the \code{memory} argument to \code{\link[=daemons]{daemons()}}
+(\code{NA_real_} if unset/unbounded).
 }
 }
 \description{
 Retrieve status information for the specified compute profile, comprising
-current connections and daemons status.
+current connections, daemons status, and (when using dispatcher) queue depth
+and memory pressure.
+}
+\examples{
+status()
+daemons(sync = TRUE)
+status()
+daemons(0)
+
 }
 \seealso{
 \code{\link[=info]{info()}} for more succinct information statistics.
 }
-\keyword{internal}

@@ -46,12 +46,10 @@
 #'   sound, non-reproducible). An integer value instead initializes a stream per
 #'   mirai, allowing reproducible results independent of which daemon evaluates
 #'   it.
-#' @param capacity (numeric) memory budget in MB (metric, 1 MB = 1,000,000
-#'   bytes) for queued task payloads at dispatcher. New tasks block until
-#'   queued bytes drop below this threshold, providing memory-based
-#'   backpressure to prevent host OOM. `NULL` (default) is unbounded.
-#'   Degenerate values (0, non-finite, negative) are treated as unbounded.
-#'   Requires dispatcher.
+#' @param memory (numeric) memory budget in MB (metric) for queued task
+#'   payloads at dispatcher. New tasks block until queued bytes drop below this
+#'   threshold, providing memory-based backpressure to prevent host OOM. `NULL`
+#'   (default) is unbounded. Requires dispatcher.
 #' @param serial (configuration) for custom serialization of reference objects
 #'   (e.g. Arrow Tables, torch tensors), created by [serial_config()]. Requires
 #'   dispatcher. `NULL` applies any configurations from [register_serial()].
@@ -79,11 +77,11 @@
 #' @section Dispatcher:
 #'
 #' By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
-#' tasks and sending to daemons as they become available. The `capacity`
+#' tasks and sending to daemons as they become available. The `memory`
 #' argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000
 #' bytes) of queued task payloads at dispatcher. New tasks block until existing
 #' ones are dispatched, providing memory-based backpressure to prevent host
-#' OOM. Current usage is surfaced via [capacity()].
+#' OOM. Current usage is surfaced under the `memory` field of [status()].
 #' Dispatcher also enables (i) mirai cancellation using [stop_mirai()] or a
 #' `.timeout` argument to [mirai()], and (ii) custom serialization
 #' configurations.
@@ -231,7 +229,7 @@ daemons <- function(
   ...,
   sync = FALSE,
   seed = NULL,
-  capacity = NULL,
+  memory = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -265,7 +263,7 @@ daemons <- function(
     envir <- init_envir_stream(seed)
     dots <- parse_dots(envir, ...)
     if (dispatcher) {
-      launch_dispatcher(n, dots, envir, serial, capacity = capacity)
+      launch_dispatcher(n, dots, envir, serial, memory = memory)
     } else {
       launch_daemons(seq_len(n), dots, envir)
     }
@@ -278,7 +276,7 @@ daemons <- function(
     dots <- parse_dots(envir, ...)
     cfg <- configure_tls(url, tls, pass, envir)
     if (dispatcher) {
-      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, capacity = capacity)
+      launch_dispatcher(url, dots, envir, serial, tls = cfg[[1L]], pass = pass, memory = memory)
     } else {
       create_sock(envir, url, cfg[[2L]])
     }
@@ -343,7 +341,8 @@ with.miraiDaemons <- function(data, expr, ...) {
 #' Status Information
 #'
 #' Retrieve status information for the specified compute profile, comprising
-#' current connections and daemons status.
+#' current connections, daemons status, and (when using dispatcher) queue depth
+#' and memory pressure.
 #'
 #' @param .compute (character | miraiCluster) compute profile name, or `NULL`
 #'   for 'default'. Also accepts a 'miraiCluster'.
@@ -358,11 +357,21 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'     dispatcher, **executing** - number of tasks sent to a daemon for
 #'     execution, and **completed** - number of tasks for which the result has
 #'     been received (either completed or cancelled).
+#'     \item **memory** (present only if using dispatcher) - a named numeric
+#'     vector in MB (metric, 1 MB = 1,000,000 bytes) comprising: **used** -
+#'     current and **peak** - high-watermark queued task payloads at dispatcher,
+#'     and **capacity** - the budget set as the `memory` argument to [daemons()]
+#'     (`NA_real_` if unset/unbounded).
 #'   }
 #'
 #' @seealso [info()] for more succinct information statistics.
 #'
-#' @keywords internal
+#' @examples
+#' status()
+#' daemons(sync = TRUE)
+#' status()
+#' daemons(0)
+#'
 #' @export
 #'
 status <- function(.compute = NULL) {
@@ -371,34 +380,6 @@ status <- function(.compute = NULL) {
   is.null(envir) && return(list(connections = 0L, daemons = 0L))
   is.null(envir[["dispatcher"]]) || return(dispatcher_status(envir))
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
-}
-
-#' Capacity
-#'
-#' Retrieve the approximate current and peak memory used by queued task
-#' payloads at dispatcher, in MB (metric, 1 MB = 1,000,000 bytes), to monitor
-#' queue pressure against the `capacity` budget set in [daemons()].
-#'
-#' @inheritParams mirai
-#'
-#' @return Named numeric vector of length 3: **used** (current) and **peak**
-#'   (high-watermark) usage, and **capacity** (the budget set in [daemons()],
-#'   `NA_real_` if unset/unbounded), all in MB. `NULL` if the compute profile
-#'   is not using dispatcher.
-#'
-#' @examplesIf interactive()
-#' daemons(1, capacity = 100)
-#' m <- mirai(Sys.sleep(0.5))
-#' capacity()
-#' m[]
-#' daemons(0)
-#'
-#' @export
-#'
-capacity <- function(.compute = NULL) {
-  envir <- compute_env(.compute)
-  (is.null(envir) || is.null(envir[["dispatcher"]])) && return()
-  .dispatcher_capacity(envir[["dispatcher"]])
 }
 
 #' Information Statistics
@@ -695,7 +676,7 @@ inproc_url <- function() sprintf("inproc://%s", random(12L))
 
 launch_daemon <- function(args) system2(.command, args = c("-e", shQuote(args)), wait = FALSE)
 
-launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, capacity = NULL) {
+launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL, memory = NULL) {
   local <- is.numeric(url)
   n <- if (local) url else 0L
   if (local) {
@@ -716,7 +697,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
 
   cv <- cv()
 
-  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], capacity, cv)
+  disp <- .dispatcher_start(url, urld, tls_cfg, serial, envir[["stream"]], memory, cv)
 
   if (!local) {
     url <- attr(disp, "url")
@@ -728,7 +709,7 @@ launch_dispatcher <- function(url, dots, envir, serial, tls = NULL, pass = NULL,
   `[[<-`(envir, "cv", cv)
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "dispatcher", disp)
-  `[[<-`(envir, "unbounded", is.null(capacity))
+  `[[<-`(envir, "unbounded", is.null(memory))
   `[[<-`(envir, "url", url)
 
   if (local) {
@@ -783,7 +764,8 @@ dispatcher_status <- function(envir) {
   list(
     connections = status[1L],
     daemons = envir[["url"]],
-    mirai = c(awaiting = status[3L], executing = status[4L], completed = status[5L])
+    mirai = c(awaiting = status[3L], executing = status[4L], completed = status[5L]),
+    memory = .dispatcher_capacity(envir[["dispatcher"]])
   )
 }
 

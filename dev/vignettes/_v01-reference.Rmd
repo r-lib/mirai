@@ -205,9 +205,9 @@ Consider cores reserved for other purposes.
 
 The default `dispatcher = TRUE` enables optimal FIFO scheduling.
 Tasks queue at the dispatcher and send to daemons as they become available.
-The `capacity` argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher.
+The `memory` argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher.
 New tasks block until existing ones are dispatched, providing memory-based backpressure to prevent host OOM.
-Current usage is surfaced via the `capacity()` accessor (returns MB, matching the `capacity` unit).
+Current usage is surfaced under the `memory` field of `status()` (in MB, matching the argument unit).
 It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument to `mirai()`.
 
 `info()` provides current statistics as an integer vector:
@@ -222,6 +222,8 @@ It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument
 #| label: info
 info()
 ```
+
+For a fuller picture as a list — including the listening URL and queue memory pressure — use `status()`.
 
 Set daemons to zero to reset.
 This reverts to creating a new background process per request.
@@ -727,7 +729,7 @@ Settings save under this name.
 
 Specify `.compute` in `mirai()` to use a profile (`NULL` uses 'default').
 
-Other functions (`info()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
+Other functions (`info()`, `status()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
 
 #### `with_daemons()` and `local_daemons()`
 

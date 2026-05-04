@@ -12,7 +12,7 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
-  capacity = NULL,
+  memory = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -47,12 +47,10 @@ sound, non-reproducible). An integer value instead initializes a stream per
 mirai, allowing reproducible results independent of which daemon evaluates
 it.}
 
-\item{capacity}{(numeric) memory budget in MB (metric, 1 MB = 1,000,000
-bytes) for queued task payloads at dispatcher. New tasks block until
-queued bytes drop below this threshold, providing memory-based
-backpressure to prevent host OOM. \code{NULL} (default) is unbounded.
-Degenerate values (0, non-finite, negative) are treated as unbounded.
-Requires dispatcher.}
+\item{memory}{(numeric) memory budget in MB (metric) for queued task
+payloads at dispatcher. New tasks block until queued bytes drop below this
+threshold, providing memory-based backpressure to prevent host OOM. \code{NULL}
+(default) is unbounded. Requires dispatcher.}
 
 \item{serial}{(configuration) for custom serialization of reference objects
 (e.g. Arrow Tables, torch tensors), created by \code{\link[=serial_config]{serial_config()}}. Requires
@@ -116,11 +114,11 @@ connecting back to the host process, either directly or via dispatcher.
 
 
 By default \code{dispatcher = TRUE} enables optimal FIFO scheduling, queuing
-tasks and sending to daemons as they become available. The \code{capacity}
+tasks and sending to daemons as they become available. The \code{memory}
 argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000
 bytes) of queued task payloads at dispatcher. New tasks block until existing
 ones are dispatched, providing memory-based backpressure to prevent host
-OOM. Current usage is surfaced via \code{\link[=capacity]{capacity()}}.
+OOM. Current usage is surfaced under the \code{memory} field of \code{\link[=status]{status()}}.
 Dispatcher also enables (i) mirai cancellation using \code{\link[=stop_mirai]{stop_mirai()}} or a
 \code{.timeout} argument to \code{\link[=mirai]{mirai()}}, and (ii) custom serialization
 configurations.
