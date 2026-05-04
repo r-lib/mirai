@@ -158,7 +158,7 @@ argument caps the approximate total memory (MB, metric — 1 MB =
 1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
 until existing ones are dispatched, providing memory-based backpressure
 to prevent host OOM. Current usage is surfaced via
-[`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md).
+[`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md).
 Dispatcher also enables (i) mirai cancellation using
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 a `.timeout` argument to
@@ -304,7 +304,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6763
+#> [1] 6653
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -313,5 +313,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6763
+#> [1] 6653
 ```

@@ -260,7 +260,7 @@ The `capacity` argument caps the approximate total memory (MB, metric —
 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher. New tasks
 block until existing ones are dispatched, providing memory-based
 backpressure to prevent host OOM. Current usage is surfaced via the
-[`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
+[`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md)
 accessor (returns MB, matching the `capacity` unit). It also enables
 mirai cancellation via
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or

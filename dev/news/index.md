@@ -14,8 +14,7 @@
   `NULL` (default) is unbounded (thanks
   [@t-kalinowski](https://github.com/t-kalinowski),
   [\#454](https://github.com/r-lib/mirai/issues/454)).
-- Adds
-  [`dispatcher_capacity()`](https://mirai.r-lib.org/dev/reference/dispatcher_capacity.md)
+- Adds [`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md)
   to query current and peak queued bytes (in MB) against the `capacity`
   budget.
 - Adds [`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md),

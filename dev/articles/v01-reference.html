@@ -310,9 +310,9 @@ become available. The <code>capacity</code> argument caps the
 approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued
 task payloads at dispatcher. New tasks block until existing ones are
 dispatched, providing memory-based backpressure to prevent host OOM.
-Current usage is surfaced via the <code><a href="../reference/dispatcher_capacity.html">dispatcher_capacity()</a></code>
-accessor (returns MB, matching the <code>capacity</code> unit). It also
-enables mirai cancellation via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the
+Current usage is surfaced via the <code><a href="../reference/capacity.html">capacity()</a></code> accessor
+(returns MB, matching the <code>capacity</code> unit). It also enables
+mirai cancellation via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the
 <code>.timeout</code> argument to <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
 <p><code><a href="../reference/info.html">info()</a></code> provides current statistics as an integer
 vector:</p>
