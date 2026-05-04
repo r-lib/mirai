@@ -360,14 +360,14 @@ connection && NOT_CRAN && {
 }
 # capacity tests
 connection && NOT_CRAN && {
-  # dispatcher_capacity() returns NULL when no profile / no dispatcher
-  test_null(dispatcher_capacity())
+  # capacity() returns NULL when no profile / no dispatcher
+  test_null(capacity())
   test_true(daemons(1, dispatcher = FALSE))
-  test_null(dispatcher_capacity())
+  test_null(capacity())
   test_false(daemons(0L))
   # Unlimited: capacity = NULL → used/peak zero, capacity reported as NA
   test_true(daemons(1, capacity = NULL))
-  qs <- dispatcher_capacity()
+  qs <- capacity()
   test_type("double", qs)
   test_equal(length(qs), 3L)
   test_zero(qs[["used"]])
@@ -378,7 +378,7 @@ connection && NOT_CRAN && {
   for (cap in list(0, -1, NA_real_, Inf)) {
     test_true(daemons(1, capacity = cap))
     test_equal(collect_mirai(mirai(1L + 1L)), 2L)
-    test_identical(dispatcher_capacity()[["capacity"]], NA_real_)
+    test_identical(capacity()[["capacity"]], NA_real_)
     test_false(daemons(0L))
   }
   # Queue accumulates with no daemon connected; peak retained after drain.
@@ -386,11 +386,11 @@ connection && NOT_CRAN && {
   # cross-thread visibility latency in queue accounting.
   test_true(daemons(url = local_url(), capacity = 1))
   m1 <- mirai(Sys.sleep(0.1))
-  while (dispatcher_capacity()[["used"]] == 0) Sys.sleep(0.05)
+  while (capacity()[["used"]] == 0) Sys.sleep(0.05)
   launch_local(1L)
   test_null(call_mirai(m1)$data)
-  while (dispatcher_capacity()[["used"]] > 0) Sys.sleep(0.05)
-  qs <- dispatcher_capacity()
+  while (capacity()[["used"]] > 0) Sys.sleep(0.05)
+  qs <- capacity()
   test_zero(qs[["used"]])
   test_true(qs[["peak"]] > 0)
   test_equal(qs[["capacity"]], 1)
@@ -398,10 +398,10 @@ connection && NOT_CRAN && {
   # Cancel clears used bytes; peak still reflects prior occupancy.
   test_true(daemons(url = local_url(), capacity = 1))
   m <- mirai(Sys.sleep(0.1))
-  while (dispatcher_capacity()[["used"]] == 0) Sys.sleep(0.05)
+  while (capacity()[["used"]] == 0) Sys.sleep(0.05)
   test_true(stop_mirai(m))
-  while (dispatcher_capacity()[["used"]] > 0) Sys.sleep(0.05)
-  qs <- dispatcher_capacity()
+  while (capacity()[["used"]] > 0) Sys.sleep(0.05)
+  qs <- capacity()
   test_zero(qs[["used"]])
   test_true(qs[["peak"]] > 0)
   test_false(daemons(0L))

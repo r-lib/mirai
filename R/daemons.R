@@ -83,7 +83,7 @@
 #' argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000
 #' bytes) of queued task payloads at dispatcher. New tasks block until existing
 #' ones are dispatched, providing memory-based backpressure to prevent host
-#' OOM. Current usage is surfaced via [dispatcher_capacity()].
+#' OOM. Current usage is surfaced via [capacity()].
 #' Dispatcher also enables (i) mirai cancellation using [stop_mirai()] or a
 #' `.timeout` argument to [mirai()], and (ii) custom serialization
 #' configurations.
@@ -373,7 +373,7 @@ status <- function(.compute = NULL) {
   list(connections = as.integer(stat(envir[["sock"]], "pipes")), daemons = envir[["url"]])
 }
 
-#' Dispatcher Capacity
+#' Capacity
 #'
 #' Retrieve the approximate current and peak memory used by queued task
 #' payloads at dispatcher, in MB (metric, 1 MB = 1,000,000 bytes), to monitor
@@ -389,13 +389,13 @@ status <- function(.compute = NULL) {
 #' @examplesIf interactive()
 #' daemons(1, capacity = 100)
 #' m <- mirai(Sys.sleep(0.5))
-#' dispatcher_capacity()
+#' capacity()
 #' m[]
 #' daemons(0)
 #'
 #' @export
 #'
-dispatcher_capacity <- function(.compute = NULL) {
+capacity <- function(.compute = NULL) {
   envir <- compute_env(.compute)
   (is.null(envir) || is.null(envir[["dispatcher"]])) && return()
   .dispatcher_capacity(envir[["dispatcher"]])

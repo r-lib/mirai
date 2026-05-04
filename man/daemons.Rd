@@ -120,7 +120,7 @@ tasks and sending to daemons as they become available. The \code{capacity}
 argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000
 bytes) of queued task payloads at dispatcher. New tasks block until existing
 ones are dispatched, providing memory-based backpressure to prevent host
-OOM. Current usage is surfaced via \code{\link[=dispatcher_capacity]{dispatcher_capacity()}}.
+OOM. Current usage is surfaced via \code{\link[=capacity]{capacity()}}.
 Dispatcher also enables (i) mirai cancellation using \code{\link[=stop_mirai]{stop_mirai()}} or a
 \code{.timeout} argument to \code{\link[=mirai]{mirai()}}, and (ii) custom serialization
 configurations.
