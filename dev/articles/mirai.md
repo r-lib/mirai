@@ -57,7 +57,7 @@ m[]                        # Wait and return value
 collect_mirai(m)           # Wait and return value
 call_mirai(m)              # Wait and return mirai object
 
-# Non-blocking variant (returns NULL if dispatcher capacity exhausted)
+# Non-blocking variant (returns NULL if dispatcher memory budget exhausted)
 m <- try_mirai(task())
 ```
 
@@ -103,7 +103,7 @@ info()
 daemons(
   n = 4,
   dispatcher = TRUE,          # Use dispatcher for optimal FIFO scheduling
-  capacity = NULL,            # Memory budget (MB) for queued tasks; NULL = unbounded
+  memory = NULL,              # Memory budget (MB) for queued tasks; NULL = unbounded
   cleanup = TRUE,             # Clean env between tasks
   output = FALSE,             # Capture stdout/stderr
   maxtasks = Inf,             # Task limit per daemon
@@ -413,8 +413,9 @@ m$data$message              # Error message
 
 ``` r
 
-info()                      # Connection and task statistics
-capacity()                  # Queue memory: used / peak / capacity (MB)
+info()                      # Quick stats as named integer vector
+status()                    # Full status as list (connections, daemons, mirai queue, memory)
+status()$memory             # Queue memory: used / peak / capacity (MB)
 
 daemons_set()               # Check if daemons exist
 require_daemons()           # Error if not set
@@ -551,7 +552,7 @@ mirai(func(x), func = my_func, x = data)
 # Dispatcher Required For
 stop_mirai(m)                           # Cancellation
 mirai(task(), .timeout = 1000)          # Timeout cancellation
-daemons(4, capacity = 100)              # Memory backpressure (queue budget in MB)
+daemons(4, memory = 100)                # Memory backpressure (queue budget in MB)
 daemons(4, serial = serial_config(...)) # Custom serialization
 
 # SSH Tunnelling

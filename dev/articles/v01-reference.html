@@ -306,13 +306,13 @@ performance. Consider cores reserved for other purposes.</p>
 </h4>
 <p>The default <code>dispatcher = TRUE</code> enables optimal FIFO
 scheduling. Tasks queue at the dispatcher and send to daemons as they
-become available. The <code>capacity</code> argument caps the
-approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued
-task payloads at dispatcher. New tasks block until existing ones are
+become available. The <code>memory</code> argument caps the approximate
+total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task
+payloads at dispatcher. New tasks block until existing ones are
 dispatched, providing memory-based backpressure to prevent host OOM.
-Current usage is surfaced via the <code><a href="../reference/capacity.html">capacity()</a></code> accessor
-(returns MB, matching the <code>capacity</code> unit). It also enables
-mirai cancellation via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the
+Current usage is surfaced under the <code>memory</code> field of
+<code><a href="../reference/status.html">status()</a></code> (in MB, matching the argument unit). It also
+enables mirai cancellation via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the
 <code>.timeout</code> argument to <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
 <p><code><a href="../reference/info.html">info()</a></code> provides current statistics as an integer
 vector:</p>
@@ -330,8 +330,10 @@ vector:</p>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/info.html">info</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; connections  cumulative    awaiting   executing   completed </span></span>
+<span><span class="co">#&gt; connections  cumulative    awaiting   executing   completed</span></span>
 <span><span class="co">#&gt;           6           6           0           0           0</span></span></code></pre></div>
+<p>For a fuller picture as a list — including the listening URL and
+queue memory pressure — use <code><a href="../reference/status.html">status()</a></code>.</p>
 <p>Set daemons to zero to reset. This reverts to creating a new
 background process per request.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -938,8 +940,9 @@ accelerators)</li>
 name.</p>
 <p>Specify <code>.compute</code> in <code><a href="../reference/mirai.html">mirai()</a></code> to use a
 profile (<code>NULL</code> uses ‘default’).</p>
-<p>Other functions (<code><a href="../reference/info.html">info()</a></code>, <code><a href="../reference/launch_local.html">launch_local()</a></code>,
-<code><a href="../reference/launch_local.html">launch_remote()</a></code>) also accept <code>.compute</code>.</p>
+<p>Other functions (<code><a href="../reference/info.html">info()</a></code>, <code><a href="../reference/status.html">status()</a></code>,
+<code><a href="../reference/launch_local.html">launch_local()</a></code>, <code><a href="../reference/launch_local.html">launch_remote()</a></code>) also accept
+<code>.compute</code>.</p>
 <div class="section level4">
 <h4 id="with_daemons-and-local_daemons">
 <code>with_daemons()</code> and <code>local_daemons()</code><a class="anchor" aria-label="anchor" href="#with_daemons-and-local_daemons"></a>

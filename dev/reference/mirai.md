@@ -49,7 +49,7 @@ try_mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 For `mirai()`: a 'mirai' object.
 
 For `try_mirai()`: a 'mirai' object, or `NULL` (invisibly) if the
-dispatcher's `capacity` budget is exhausted at the time of submission.
+dispatcher's `memory` budget is exhausted at the time of submission.
 
 ## Details
 
@@ -118,9 +118,9 @@ If a daemon crashes or terminates unexpectedly during evaluation, an
 tests for all error conditions including 'mirai' errors, interrupts, and
 timeouts.
 
-## Capacity
+## Memory
 
-The `capacity` argument to
+The `memory` argument to
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) caps the
 queued task payload at dispatcher (in MB), preventing host
 out-of-memory. `mirai()` blocks the calling R thread on submission until
@@ -128,14 +128,14 @@ queued bytes drop below this budget.
 
 `try_mirai()` is a non-blocking variant for event-loop contexts (Shiny,
 promises) where the host R thread cannot afford to wait. It returns
-`NULL` (invisibly) immediately if the queue is at capacity, instead of
-blocking. With no dispatcher, or `capacity` unset, `try_mirai()` always
-returns a 'mirai' — the contract is "don't block on queue pressure".
-Check for a `NULL` return value and handle accordingly — drop, retry, or
-signal upstream.
+`NULL` (invisibly) immediately if the queue is at the memory limit,
+instead of blocking. With no dispatcher, or `memory` unset,
+`try_mirai()` always returns a 'mirai'. Respond to a `NULL` return value
+by dropping the task, retrying later, or propagating backpressure
+upstream.
 
-Use [`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md) to
-inspect current and peak queue usage.
+Use [`status()`](https://mirai.r-lib.org/dev/reference/status.md) to
+inspect current and peak queue usage under its `memory` field.
 
 ## Examples
 
@@ -196,10 +196,10 @@ collect_mirai(m)
 }
 if (FALSE) { # interactive()
 # non-blocking submission - caller handles backpressure
-daemons(1, capacity = 1)
+daemons(1, memory = 1)
 m <- try_mirai(1 + 1)
 if (is.null(m)) {
-  # queue at capacity - drop, retry, signal upstream, etc.
+  # queue at memory limit - drop, retry, signal upstream, etc.
 } else {
   m[]
 }

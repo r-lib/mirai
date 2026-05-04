@@ -256,13 +256,13 @@ Consider cores reserved for other purposes.
 
 The default `dispatcher = TRUE` enables optimal FIFO scheduling. Tasks
 queue at the dispatcher and send to daemons as they become available.
-The `capacity` argument caps the approximate total memory (MB, metric —
-1 MB = 1,000,000 bytes) of queued task payloads at dispatcher. New tasks
+The `memory` argument caps the approximate total memory (MB, metric — 1
+MB = 1,000,000 bytes) of queued task payloads at dispatcher. New tasks
 block until existing ones are dispatched, providing memory-based
-backpressure to prevent host OOM. Current usage is surfaced via the
-[`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md)
-accessor (returns MB, matching the `capacity` unit). It also enables
-mirai cancellation via
+backpressure to prevent host OOM. Current usage is surfaced under the
+`memory` field of
+[`status()`](https://mirai.r-lib.org/dev/reference/status.md) (in MB,
+matching the argument unit). It also enables mirai cancellation via
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 the `.timeout` argument to
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
@@ -279,9 +279,13 @@ current statistics as an integer vector:
 ``` r
 
 info()
-#> connections  cumulative    awaiting   executing   completed 
+#> connections  cumulative    awaiting   executing   completed
 #>           6           6           0           0           0
 ```
+
+For a fuller picture as a list — including the listening URL and queue
+memory pressure — use
+[`status()`](https://mirai.r-lib.org/dev/reference/status.md).
 
 Set daemons to zero to reset. This reverts to creating a new background
 process per request.
@@ -992,6 +996,7 @@ profile (`NULL` uses ‘default’).
 
 Other functions
 ([`info()`](https://mirai.r-lib.org/dev/reference/info.md),
+[`status()`](https://mirai.r-lib.org/dev/reference/status.md),
 [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md),
 [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md))
 also accept `.compute`.

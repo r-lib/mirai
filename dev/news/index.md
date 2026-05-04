@@ -7,20 +7,19 @@
 - Dispatcher reimplemented as a thread for lower overhead, removing the
   separate dispatcher process
   ([\#581](https://github.com/r-lib/mirai/issues/581)).
-- Adds `capacity` argument to
+- Adds `memory` argument to
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
   setting a memory budget (MB, metric) for queued task payloads at
   dispatcher, providing memory-based backpressure. This is opt-in and
   `NULL` (default) is unbounded (thanks
   [@t-kalinowski](https://github.com/t-kalinowski),
-  [\#454](https://github.com/r-lib/mirai/issues/454)).
-- Adds [`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md)
-  to query current and peak queued bytes (in MB) against the `capacity`
-  budget.
+  [\#454](https://github.com/r-lib/mirai/issues/454)). Current and peak
+  queued bytes (in MB) are surfaced under the `memory` field of
+  [`status()`](https://mirai.r-lib.org/dev/reference/status.md).
 - Adds [`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md),
   a non-blocking variant of
   [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) that
-  returns `NULL` immediately if the dispatcher’s `capacity` budget is
+  returns `NULL` immediately if the dispatcher’s `memory` budget is
   exhausted, instead of blocking. Useful in event-loop contexts (Shiny,
   promises) where blocking the host R thread is unacceptable.
 

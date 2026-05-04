@@ -1,7 +1,8 @@
 # Status Information
 
 Retrieve status information for the specified compute profile,
-comprising current connections and daemons status.
+comprising current connections, daemons status, and (when using
+dispatcher) queue depth and memory pressure.
 
 ## Usage
 
@@ -31,7 +32,35 @@ A named list comprising:
   execution, and **completed** - number of tasks for which the result
   has been received (either completed or cancelled).
 
+- **memory** (present only if using dispatcher) - a named numeric vector
+  in MB (metric, 1 MB = 1,000,000 bytes) comprising: **used** - current
+  and **peak** - high-watermark queued task payloads at dispatcher, and
+  **capacity** - the budget set as the `memory` argument to
+  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
+  (`NA_real_` if unset/unbounded).
+
 ## See also
 
 [`info()`](https://mirai.r-lib.org/dev/reference/info.md) for more
 succinct information statistics.
+
+## Examples
+
+``` r
+status()
+#> $connections
+#> [1] 0
+#> 
+#> $daemons
+#> [1] 0
+#> 
+daemons(sync = TRUE)
+status()
+#> $connections
+#> [1] 0
+#> 
+#> $daemons
+#> [1] "abstract://adae75ecac8ed96873389f86"
+#> 
+daemons(0)
+```

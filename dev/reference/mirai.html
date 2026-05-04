@@ -106,7 +106,7 @@ profile.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>For <code>mirai()</code>: a 'mirai' object.</p>
 <p>For <code>try_mirai()</code>: a 'mirai' object, or <code>NULL</code> (invisibly) if the
-dispatcher's <code>capacity</code> budget is exhausted at the time of submission.</p>
+dispatcher's <code>memory</code> budget is exhausted at the time of submission.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -170,20 +170,21 @@ at <code>$condition.class</code>.</p>
 interrupts, and timeouts.</p>
     </div>
     <div class="section level2">
-    <h2 id="capacity">Capacity<a class="anchor" aria-label="anchor" href="#capacity"></a></h2>
+    <h2 id="memory">Memory<a class="anchor" aria-label="anchor" href="#memory"></a></h2>
 
 
 
-<p>The <code>capacity</code> argument to <code><a href="daemons.html">daemons()</a></code> caps the queued task payload at
+<p>The <code>memory</code> argument to <code><a href="daemons.html">daemons()</a></code> caps the queued task payload at
 dispatcher (in MB), preventing host out-of-memory. <code>mirai()</code> blocks the
 calling R thread on submission until queued bytes drop below this budget.</p>
 <p><code>try_mirai()</code> is a non-blocking variant for event-loop contexts (Shiny,
 promises) where the host R thread cannot afford to wait. It returns <code>NULL</code>
-(invisibly) immediately if the queue is at capacity, instead of blocking.
-With no dispatcher, or <code>capacity</code> unset, <code>try_mirai()</code> always returns a
-'mirai' — the contract is "don't block on queue pressure". Check for a <code>NULL</code>
-return value and handle accordingly — drop, retry, or signal upstream.</p>
-<p>Use <code><a href="capacity.html">capacity()</a></code> to inspect current and peak queue usage.</p>
+(invisibly) immediately if the queue is at the memory limit, instead of
+blocking. With no dispatcher, or <code>memory</code> unset, <code>try_mirai()</code> always
+returns a 'mirai'. Respond to a <code>NULL</code> return value by dropping the task,
+retrying later, or propagating backpressure upstream.</p>
+<p>Use <code><a href="status.html">status()</a></code> to inspect current and peak queue usage under its <code>memory</code>
+field.</p>
     </div>
 
     <div class="section level2">
@@ -244,10 +245,10 @@ return value and handle accordingly — drop, retry, or signal upstream.</p>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># interactive()</span></span></span>
 <span class="r-in"><span><span class="co"># non-blocking submission - caller handles backpressure</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, capacity <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span>, memory <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">try_mirai</span><span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="co"># queue at capacity - drop, retry, signal upstream, etc.</span></span></span>
+<span class="r-in"><span>  <span class="co"># queue at memory limit - drop, retry, signal upstream, etc.</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">m</span><span class="op">[</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>

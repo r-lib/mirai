@@ -19,7 +19,7 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
-  capacity = NULL,
+  memory = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -75,13 +75,12 @@ daemons(
   mirai, allowing reproducible results independent of which daemon
   evaluates it.
 
-- capacity:
+- memory:
 
-  (numeric) memory budget in MB (metric, 1 MB = 1,000,000 bytes) for
-  queued task payloads at dispatcher. New tasks block until queued bytes
-  drop below this threshold, providing memory-based backpressure to
-  prevent host OOM. `NULL` (default) is unbounded. Degenerate values (0,
-  non-finite, negative) are treated as unbounded. Requires dispatcher.
+  (numeric) memory budget in MB (metric) for queued task payloads at
+  dispatcher. New tasks block until queued bytes drop below this
+  threshold, providing memory-based backpressure to prevent host OOM.
+  `NULL` (default) is unbounded. Requires dispatcher.
 
 - serial:
 
@@ -153,12 +152,12 @@ host process, either directly or via dispatcher.
 ## Dispatcher
 
 By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
-tasks and sending to daemons as they become available. The `capacity`
+tasks and sending to daemons as they become available. The `memory`
 argument caps the approximate total memory (MB, metric — 1 MB =
 1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
 until existing ones are dispatched, providing memory-based backpressure
-to prevent host OOM. Current usage is surfaced via
-[`capacity()`](https://mirai.r-lib.org/dev/reference/capacity.md).
+to prevent host OOM. Current usage is surfaced under the `memory` field
+of [`status()`](https://mirai.r-lib.org/dev/reference/status.md).
 Dispatcher also enables (i) mirai cancellation using
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 a `.timeout` argument to
@@ -304,7 +303,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6650
+#> [1] 6719
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -313,5 +312,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6650
+#> [1] 6719
 ```
