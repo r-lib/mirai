@@ -380,7 +380,8 @@ m$data$message              # Error message
 ## 12. Monitoring
 
 ```r
-info()                      # Connection and task statistics
+info()                      # Quick stats as named integer vector
+status()                    # Full status as list (connections, daemons, mirai queue, memory)
 status()$memory             # Queue memory: used / peak / capacity (MB)
 
 daemons_set()               # Check if daemons exist

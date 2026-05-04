@@ -223,6 +223,8 @@ It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument
 info()
 ```
 
+For a fuller picture as a list — including the listening URL and queue memory pressure — use `status()`.
+
 Set daemons to zero to reset.
 This reverts to creating a new background process per request.
 
@@ -727,7 +729,7 @@ Settings save under this name.
 
 Specify `.compute` in `mirai()` to use a profile (`NULL` uses 'default').
 
-Other functions (`info()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
+Other functions (`info()`, `status()`, `launch_local()`, `launch_remote()`) also accept `.compute`.
 
 #### `with_daemons()` and `local_daemons()`
 
