@@ -77,5 +77,6 @@ str(m$data)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=race_mirai]{race_mirai()}}
+\code{\link[=collect_mirai]{collect_mirai()}} to return the value directly rather than the
+'mirai' object. \code{\link[=race_mirai]{race_mirai()}} to wait for the first of many.
 }

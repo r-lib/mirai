@@ -81,3 +81,7 @@ collect_mirai(m, c(".flat", ".progress"))
 daemons(0)
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\code{\link[=call_mirai]{call_mirai()}} to return the 'mirai' object (with the value at
+\verb{$data}) rather than the value directly.
+}

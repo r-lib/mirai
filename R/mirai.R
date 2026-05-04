@@ -323,7 +323,8 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
 #'
 #' @inheritSection mirai Errors
 #'
-#' @seealso [race_mirai()]
+#' @seealso [collect_mirai()] to return the value directly rather than the
+#'   'mirai' object. [race_mirai()] to wait for the first of many.
 #'
 #' @examplesIf interactive()
 #' # using call_mirai()
@@ -430,6 +431,9 @@ race_mirai <- function(x, .compute = NULL) {
 #'
 #' @inheritSection call_mirai Alternatively
 #' @inheritSection mirai Errors
+#'
+#' @seealso [call_mirai()] to return the 'mirai' object (with the value at
+#'   `$data`) rather than the value directly.
 #'
 #' @examplesIf interactive()
 #' # using collect_mirai()
