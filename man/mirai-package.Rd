@@ -53,6 +53,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Charlie Gao \email{charlie.gao@posit.co} (\href{https://orcid.org/0000-0002-0750-061X}{ORCID})
 
+Authors:
+\itemize{
+  \item Charlie Gao \email{charlie.gao@posit.co} (\href{https://orcid.org/0000-0002-0750-061X}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Joe Cheng \email{joe@posit.co} [contributor]

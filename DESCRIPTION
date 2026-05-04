@@ -37,10 +37,11 @@ Enhances:
     promises
 VignetteBuilder: 
     litedown
+Remotes: 
+    r-lib/nanonext
 Config/Needs/coverage: rlang
 Config/Needs/website: tidyverse/tidytemplate
+Config/roxygen2/markdown: TRUE
+Config/roxygen2/version: 8.0.0
 Config/usethis/last-upkeep: 2025-04-23
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
-Remotes: r-lib/nanonext

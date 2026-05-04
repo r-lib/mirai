@@ -35,7 +35,7 @@ For \strong{stop_cluster}: invisible NULL.
 \description{
 \code{make_cluster} creates a cluster of type 'miraiCluster', which may be used as
 a cluster object for any function in the \pkg{parallel} base package such as
-\code{\link[parallel:clusterApply]{parallel::clusterApply()}} or \code{\link[parallel:clusterApply]{parallel::parLapply()}}.
+\code{\link[parallel:clusterApply]{parallel::clusterApply()}} or \code{\link[parallel:parLapply]{parallel::parLapply()}}.
 
 \code{stop_cluster} stops a cluster created by \code{make_cluster}.
 }
