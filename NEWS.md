@@ -3,10 +3,10 @@
 #### New Features
 
 * Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581). 
-* Adds `capacity` argument to `daemons()` setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure.
+* Adds `memory` argument to `daemons()` setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure.
   This is opt-in and `NULL` (default) is unbounded (thanks @t-kalinowski, #454).
-* Adds `capacity()` to query current and peak queued bytes (in MB) against the `capacity` budget.
-* Adds `try_mirai()`, a non-blocking variant of `mirai()` that returns `NULL` immediately if the dispatcher's `capacity` budget is exhausted, instead of blocking.
+  Current and peak queued bytes (in MB) are surfaced under the `memory` field of `status()`.
+* Adds `try_mirai()`, a non-blocking variant of `mirai()` that returns `NULL` immediately if the dispatcher's `memory` budget is exhausted, instead of blocking.
   Useful in event-loop contexts (Shiny, promises) where blocking the host R thread is unacceptable.
 
 #### Updates

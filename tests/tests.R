@@ -358,16 +358,16 @@ connection && NOT_CRAN && {
   }
   test_false(test_tls(nanonext::write_cert(cn = "127.0.0.1")))
 }
-# capacity tests
+# memory tests
 connection && NOT_CRAN && {
-  # capacity() returns NULL when no profile / no dispatcher
-  test_null(capacity())
+  # status() has no memory field with no profile / no dispatcher
+  test_null(status()[["memory"]])
   test_true(daemons(1, dispatcher = FALSE))
-  test_null(capacity())
+  test_null(status()[["memory"]])
   test_false(daemons(0L))
-  # Unlimited: capacity = NULL → used/peak zero, capacity reported as NA
-  test_true(daemons(1, capacity = NULL))
-  qs <- capacity()
+  # Unlimited: memory = NULL → used/peak zero, capacity reported as NA
+  test_true(daemons(1, memory = NULL))
+  qs <- status()[["memory"]]
   test_type("double", qs)
   test_equal(length(qs), 3L)
   test_zero(qs[["used"]])
@@ -375,33 +375,33 @@ connection && NOT_CRAN && {
   test_identical(qs[["capacity"]], NA_real_)
   test_false(daemons(0L))
   # Degenerate inputs treated as unbounded (C normalizes to limit_bytes = 0)
-  for (cap in list(0, -1, NA_real_, Inf)) {
-    test_true(daemons(1, capacity = cap))
+  for (mem in list(0, -1, NA_real_, Inf)) {
+    test_true(daemons(1, memory = mem))
     test_equal(collect_mirai(mirai(1L + 1L)), 2L)
-    test_identical(capacity()[["capacity"]], NA_real_)
+    test_identical(status()[["memory"]][["capacity"]], NA_real_)
     test_false(daemons(0L))
   }
   # Queue accumulates with no daemon connected; peak retained after drain.
   # Verifying via peak (monotonic high-watermark) after drain is robust to
   # cross-thread visibility latency in queue accounting.
-  test_true(daemons(url = local_url(), capacity = 1))
+  test_true(daemons(url = local_url(), memory = 1))
   m1 <- mirai(Sys.sleep(0.1))
-  while (capacity()[["used"]] == 0) Sys.sleep(0.05)
+  while (status()[["memory"]][["used"]] == 0) Sys.sleep(0.05)
   launch_local(1L)
   test_null(call_mirai(m1)$data)
-  while (capacity()[["used"]] > 0) Sys.sleep(0.05)
-  qs <- capacity()
+  while (status()[["memory"]][["used"]] > 0) Sys.sleep(0.05)
+  qs <- status()[["memory"]]
   test_zero(qs[["used"]])
   test_true(qs[["peak"]] > 0)
   test_equal(qs[["capacity"]], 1)
   test_false(daemons(0L))
   # Cancel clears used bytes; peak still reflects prior occupancy.
-  test_true(daemons(url = local_url(), capacity = 1))
+  test_true(daemons(url = local_url(), memory = 1))
   m <- mirai(Sys.sleep(0.1))
-  while (capacity()[["used"]] == 0) Sys.sleep(0.05)
+  while (status()[["memory"]][["used"]] == 0) Sys.sleep(0.05)
   test_true(stop_mirai(m))
-  while (capacity()[["used"]] > 0) Sys.sleep(0.05)
-  qs <- capacity()
+  while (status()[["memory"]][["used"]] > 0) Sys.sleep(0.05)
+  qs <- status()[["memory"]]
   test_zero(qs[["used"]])
   test_true(qs[["peak"]] > 0)
   test_false(daemons(0L))
@@ -414,7 +414,7 @@ connection && NOT_CRAN && {
   test_class("mirai", m_nd)
   test_equal(collect_mirai(m_nd), 2L)
   test_false(daemons(0L))
-  # try_mirai returns mirai when capacity unset
+  # try_mirai returns mirai when memory unset
   test_true(daemons(1))
   m_unb <- try_mirai(2L + 2L)
   test_class("mirai", m_unb)
@@ -432,10 +432,10 @@ connection && NOT_CRAN && {
   test_class("mirai", m_sym)
   test_equal(collect_mirai(m_sym), 56L)
   test_false(daemons(0L))
-  # Capacity gate: try_mirai is non-blocking. Saturate via a URL with no
+  # Memory gate: try_mirai is non-blocking. Saturate via a URL with no
   # daemon connected so accumulation is deterministic (no race against a
   # daemon draining the queue) and no caller-side blocking is needed.
-  test_true(daemons(url = local_url(), capacity = 0.01))
+  test_true(daemons(url = local_url(), memory = 0.01))
   big <- runif(2000L)
   # Empty queue — try_mirai returns a mirai
   m1 <- try_mirai(NULL, .args = list(big = big))
@@ -462,7 +462,7 @@ connection && NOT_CRAN && {
   test_equal(collect_mirai(m_ok), 2L)
   test_false(daemons(0L))
   # No RNG advance on rejection — same no-daemon-URL trick to saturate
-  test_true(daemons(url = local_url(), capacity = 0.01, seed = 42L))
+  test_true(daemons(url = local_url(), memory = 0.01, seed = 42L))
   big <- runif(2000L)
   m1 <- try_mirai(NULL, .args = list(big = big))
   test_class("mirai", m1)

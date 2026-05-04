@@ -33,7 +33,7 @@ profile.}
 For \code{\link[=mirai]{mirai()}}: a 'mirai' object.
 
 For \code{\link[=try_mirai]{try_mirai()}}: a 'mirai' object, or \code{NULL} (invisibly) if the
-dispatcher's \code{capacity} budget is exhausted at the time of submission.
+dispatcher's \code{memory} budget is exhausted at the time of submission.
 }
 \description{
 Evaluate an expression asynchronously in a new background R process or
@@ -104,21 +104,22 @@ If a daemon crashes or terminates unexpectedly during evaluation, an
 interrupts, and timeouts.
 }
 
-\section{Capacity}{
+\section{Memory}{
 
 
-The \code{capacity} argument to \code{\link[=daemons]{daemons()}} caps the queued task payload at
+The \code{memory} argument to \code{\link[=daemons]{daemons()}} caps the queued task payload at
 dispatcher (in MB), preventing host out-of-memory. \code{\link[=mirai]{mirai()}} blocks the
 calling R thread on submission until queued bytes drop below this budget.
 
 \code{\link[=try_mirai]{try_mirai()}} is a non-blocking variant for event-loop contexts (Shiny,
 promises) where the host R thread cannot afford to wait. It returns \code{NULL}
-(invisibly) immediately if the queue is at capacity, instead of blocking.
-With no dispatcher, or \code{capacity} unset, \code{\link[=try_mirai]{try_mirai()}} always returns a
-'mirai' — the contract is "don't block on queue pressure". Check for a \code{NULL}
-return value and handle accordingly — drop, retry, or signal upstream.
+(invisibly) immediately if the queue is at the memory limit, instead of
+blocking. With no dispatcher, or \code{memory} unset, \code{\link[=try_mirai]{try_mirai()}} always
+returns a 'mirai'. Respond to a \code{NULL} return value by dropping the task,
+retrying later, or propagating backpressure upstream.
 
-Use \code{\link[=capacity]{capacity()}} to inspect current and peak queue usage.
+Use \code{\link[=status]{status()}} to inspect current and peak queue usage under its \code{memory}
+field.
 }
 
 \examples{
@@ -178,10 +179,10 @@ collect_mirai(m)
 \dontshow{\}) # examplesIf}
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # non-blocking submission - caller handles backpressure
-daemons(1, capacity = 1)
+daemons(1, memory = 1)
 m <- try_mirai(1 + 1)
 if (is.null(m)) {
-  # queue at capacity - drop, retry, signal upstream, etc.
+  # queue at memory limit - drop, retry, signal upstream, etc.
 } else {
   m[]
 }
