@@ -5,7 +5,7 @@
 Minimalist Async Evaluation Framework for R  
   
 
-→ Event-driven core with microsecond round-trips
+→ Event-driven core with microsecond messaging
 
 → Scale from laptop to HPC and cloud — add or remove compute on the fly
 
@@ -35,7 +35,7 @@ m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
 #> [1] TRUE
 m[]
-#> [1] 0.0007414215
+#> [1] 0.0004809922
 
 # Parallel map with progress and early-stop on error
 mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
@@ -65,7 +65,7 @@ bench::mark(mirai(1)[])
 #> # A tibble: 1 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 mirai(1)[]   84.8µs   98.4µs     9860.    9.68KB     2.05
+#> 1 mirai(1)[]     69µs   98.1µs     9753.    9.68KB     2.01
 daemons(0)
 ```
 
@@ -134,29 +134,7 @@ full deployment guide.
 
 ### Across the R stack
 
-[![R](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/articles/v04-parallel.html)
-   
-[![Shiny](https://github.com/rstudio/shiny/raw/main/man/figures/logo.png)](https://mirai.r-lib.org/articles/v02-promises.html)
-   
-[![plumber2](https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg)](https://mirai.r-lib.org/articles/v02-promises.html)
-   
-[![tidyverse](https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png)](https://www.tidyverse.org/)
-   
-[![purrr](https://purrr.tidyverse.org/logo.png)](https://purrr.tidyverse.org)
-   
-[![tidymodels](https://www.tidymodels.org/images/tidymodels.png)](https://www.tidymodels.org/)
-   
-[![tune](https://github.com/tidymodels/tune/raw/main/man/figures/logo.png)](https://tune.tidymodels.org/)
-   
-[![ragnar](https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png)](https://ragnar.tidyverse.org/)
-   
-[![targets](https://github.com/ropensci/targets/raw/main/man/figures/logo.png)](https://docs.ropensci.org/targets/)
-   
-[![crew](https://github.com/wlandau/crew/raw/main/man/figures/logo.png)](https://wlandau.github.io/crew/)
-   
-[![Arrow](https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png)](https://arrow.apache.org/docs/r/)
-   
-[![torch](https://torch.mlverse.org/css/images/hex/torch.png)](https://torch.mlverse.org/)
+[![R](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/articles/v04-parallel.html)   [![Shiny](https://github.com/rstudio/shiny/raw/main/man/figures/logo.png)](https://mirai.r-lib.org/articles/v02-promises.html)   [![plumber2](https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg)](https://mirai.r-lib.org/articles/v02-promises.html)   [![tidyverse](https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png)](https://www.tidyverse.org/)   [![purrr](https://purrr.tidyverse.org/logo.png)](https://purrr.tidyverse.org)   [![tidymodels](https://www.tidymodels.org/images/tidymodels.png)](https://www.tidymodels.org/)   [![tune](https://github.com/tidymodels/tune/raw/main/man/figures/logo.png)](https://tune.tidymodels.org/)   [![ragnar](https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png)](https://ragnar.tidyverse.org/)   [![targets](https://github.com/ropensci/targets/raw/main/man/figures/logo.png)](https://docs.ropensci.org/targets/)   [![crew](https://github.com/wlandau/crew/raw/main/man/figures/logo.png)](https://wlandau.github.io/crew/)   [![Arrow](https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png)](https://arrow.apache.org/docs/r/)   [![torch](https://torch.mlverse.org/css/images/hex/torch.png)](https://torch.mlverse.org/)
 
 mirai has become the shared async layer for the R ecosystem. It’s the
 [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html)
