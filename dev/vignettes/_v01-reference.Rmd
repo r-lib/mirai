@@ -300,7 +300,79 @@ everywhere(
 daemons(0)
 ```
 
-### 4. mirai_map
+### 4. Memory Management
+
+This section covers two complementary tools: queue backpressure at the dispatcher, and shared memory to avoid copying large objects to local daemons.
+
+#### Queue Backpressure
+
+By default, the dispatcher queues incoming tasks without bound.
+This risks host out-of-memory when tasks arrive faster than daemons consume them, particularly with large payloads.
+
+The `memory` argument to `daemons()` caps the approximate total payload of queued tasks at dispatcher (in MB, metric — 1 MB = 1,000,000 bytes).
+New `mirai()` calls block until queued bytes drop below this threshold, providing memory-based backpressure.
+
+```{r}
+#| label: memdaemons
+daemons(2, memory = 100)
+```
+
+Inspect current and peak usage via the `memory` field of `status()`:
+```{r}
+#| label: memstatus
+status()$memory
+```
+
+`used` is current and `peak` is the high-watermark queued payload, both in MB.
+`capacity` reflects the budget set above (`NA` if unset).
+Use `peak` to size the `memory` capacity: run a representative workload and set the budget at or above the observed value.
+
+#### Non-blocking Submission
+
+Blocking the host R thread is acceptable in batch scripts, but not in event-loop contexts such as Shiny or promises.
+
+`try_mirai()` is a non-blocking variant of `mirai()`.
+It returns `NULL` invisibly when the queue is at the memory limit, instead of blocking.
+The caller decides what to do — drop the task, retry later, or raise a condition.
+
+```{r}
+#| label: trymirai
+m <- try_mirai(rnorm(10)) %||% stop("queue full")
+```
+
+With `memory` unset or no dispatcher, `try_mirai()` always returns a mirai and behaves identically to `mirai()`.
+
+```{r}
+#| label: memdaemonsoff
+daemons(0)
+```
+
+#### Shared Memory with Local Daemons
+
+Each `mirai()` call serialises its arguments to the daemon and the result back, even when the daemon is on the same machine.
+For large objects, this copy can dominate evaluation time.
+
+The [`mori`](https://github.com/shikokuchuo/mori) package provides shared-memory R objects that local daemons read in place, without copying.
+Wrap an atomic vector, list, or dataframe with `mori::share()`:
+
+```{r}
+#| label: morishare
+library(lobstr)
+daemons(4)
+
+x <- mori::share(rnorm(1e6))
+m <- mirai(list(size = lobstr::obj_size(y), sum = sum(y)), y = x)
+m[]
+
+daemons(0)
+```
+
+Only the ~30-byte shared memory name is serialised across the wire; the daemon accesses the data directly via ALTREP.
+`lobstr::obj_size(y)` on the daemon reflects just the wrapper, confirming the 80 MB vector was never copied across.
+
+Shared objects are local-machine only and cannot be transferred to remote daemons — use regular argument-passing for distributed work.
+
+### 5. mirai_map
 
 `mirai_map()` performs asynchronous parallel mapping over lists or vectors.
 
@@ -372,7 +444,7 @@ daemons(url = local_url())
 launch_local(n)
 ```
 
-### 5. Remote Infrastructure
+### 6. Remote Infrastructure
 
 This section covers setting up remote daemons, launching them on remote machines, and securing connections with TLS.
 
@@ -717,7 +789,7 @@ Alternatively, generate certificates via a Certificate Signing Request (CSR) to 
   - If these are concatenated together as a single character string `certchain`, then the character vector comprising this and an empty character string `c(certchain, "")` may be supplied to 'tlscert'.
   - Alternatively, if these are written to a file (and the file replicated on the remote machines), then the 'tlscert' argument may also be specified as a path/filename (assuming these are the same on each machine).
 
-### 6. Compute Profiles
+### 7. Compute Profiles
 
 The `.compute` argument to `daemons()` creates separate, independent daemon pools (*compute profiles*) for heterogeneous compute requirements:
 
@@ -782,7 +854,7 @@ Don't wrap `shiny::shinyApp()` since `runApp()` is called when printed, after `w
 Shiny apps execute all mirai calls before returning (blocking).
 For other expressions, collect all mirai values to ensure completion before daemon reset.
 
-### 7. Advanced Topics
+### 8. Advanced Topics
 
 #### Random Number Generation
 
