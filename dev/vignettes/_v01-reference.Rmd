@@ -306,6 +306,9 @@ This section covers two complementary tools: queue backpressure at the dispatche
 
 #### Queue Backpressure
 
+Queue backpressure applies only in dispatcher mode (`dispatcher = TRUE`, the default), where all tasks queue at a single host process.
+Under `dispatcher = FALSE`, tasks distribute round-robin to daemons and each daemon holds its own backlog — memory pressure spreads across daemon processes rather than concentrating at the host.
+
 By default, the dispatcher queues incoming tasks without bound.
 This risks host out-of-memory when tasks arrive faster than daemons consume them, particularly with large payloads.
 
