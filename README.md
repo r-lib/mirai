@@ -64,7 +64,7 @@ bounded queues. Add or remove daemons at any time, and direct tasks to
 different *compute profiles* (CPU pool, GPU pool, remote cluster) from
 the same session.
 
-<img src="man/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" />
+<img src="https://raw.githubusercontent.com/shikokuchuo/wip/main/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" />
 
 Round-trip latency stays in the microseconds:
 
@@ -127,9 +127,11 @@ full deployment guide.
 
 ### Across the R stack
 
-<p align="center">
-<a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="46" /></a>   <a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" /></a>   <a href="https://www.tidyverse.org/"><img alt="tidyverse" src="https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://purrr.tidyverse.org"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" /></a>   <a href="https://www.tidymodels.org/"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" /></a>   <a href="https://tune.tidymodels.org/"><img alt="tune" src="https://github.com/tidymodels/tune/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://ragnar.tidyverse.org/"><img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://docs.ropensci.org/targets/"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://wlandau.github.io/crew/"><img alt="crew" src="https://github.com/wlandau/crew/raw/main/man/figures/logo.png" width="40" height="46" /></a>   <a href="https://arrow.apache.org/docs/r/"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" /></a>   <a href="https://torch.mlverse.org/"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" /></a>
-</p>
+<div align="center">
+
+<img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/shikokuchuo/wip/main/across-the-r-stack.svg" width="700" />
+
+</div>
 
 mirai has become the shared async layer for the R ecosystem. It’s the
 [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html)
