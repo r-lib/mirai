@@ -57,9 +57,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.607727 4.992878 3.953911 3.908682 4.023580
+#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
 m$data
-#> [1] 4.607727 4.992878 3.953911 3.908682 4.023580
+#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
 ```
 
 A mirai is *unresolved* until its result is received, then *resolved*.
@@ -87,7 +87,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 2.242510 4.504102 3.395497 4.191759 3.076361
+#> [1] 3.890969 4.009599 3.380416 3.514127 4.899060
 ```
 
 This example performs an asynchronous write operation.
@@ -335,8 +335,8 @@ This section covers two complementary tools: queue backpressure at the dispatche
 Queue backpressure applies only in dispatcher mode (`dispatcher = TRUE`, the default), where all tasks queue at a single host process.
 Under `dispatcher = FALSE`, tasks distribute round-robin to daemons and each daemon holds its own backlog — memory pressure spreads across daemon processes rather than concentrating at the host.
 
-By default, the dispatcher queues incoming tasks without bound.
-This risks host out-of-memory when tasks arrive faster than daemons consume them, particularly with large payloads.
+Each `mirai()` call serialises its arguments and hands them to the dispatcher, which holds them until a daemon is free.
+By default the queue is unbounded, so passing large objects or submitting faster than daemons can consume risks host out-of-memory.
 
 The `memory` argument to `daemons()` caps the approximate total payload of queued tasks at dispatcher (in MB, metric — 1 MB = 1,000,000 bytes).
 New `mirai()` calls block until queued bytes drop below this threshold, providing memory-based backpressure.
@@ -355,8 +355,8 @@ status()$memory
 ```
 
 `used` is current and `peak` is the high-watermark queued payload, both in MB.
-`capacity` reflects the budget set above (`NA` if unset).
-Use `peak` to size the `memory` capacity: run a representative workload and set the budget at or above the observed value.
+`capacity` reflects the value set above (`NA` if unset).
+Use `peak` to size `memory`: profile a representative workload with `memory = NULL` first to capture organic demand, then set the capacity at or above the observed peak.
 
 #### Non-blocking Submission
 
@@ -404,9 +404,12 @@ daemons(0)
 ```
 
 Only the ~30-byte shared memory name is serialised across the wire; the daemon accesses the data directly via ALTREP.
-`lobstr::obj_size(y)` on the daemon reflects just the wrapper, confirming the 80 MB vector was never copied across.
+`lobstr::obj_size(y)` on the daemon reflects just the wrapper, confirming the 8 MB vector was never copied across.
 
 Shared objects are local-machine only and cannot be transferred to remote daemons — use regular argument-passing for distributed work.
+
+`share()` and `memory =` compose: a `share()`-wrapped argument shrinks the queued payload to ~30 bytes, sidestepping backpressure on the input side.
+A daemon can also `share()` its return value for symmetric zero-copy on the result side.
 
 ### 5. mirai_map
 
@@ -529,7 +532,7 @@ Query `launch_remote()` for the assigned port:
 ``` r
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53593")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53887")'
 ```
 Dynamically scale the number of daemons up or down as needed.
 
@@ -795,7 +798,7 @@ Call `launch_remote()` without 'remote' to get shell commands for manual deploym
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53594")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53888")'
 daemons(0)
 ```
 
@@ -818,36 +821,36 @@ Self-signed certificates are included in `launch_remote()` commands:
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.7.113:53595",tlscert=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.7.113:53889",tlscert=c("-----BEGIN CERTIFICATE-----
 #> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
 #> MTY4LjcuMTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
 #> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4Ljcu
 #> MTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQCqTsTpq02Tml98MdjGT5c+Gj4o/q6z/BZa/2bH
-#> bsrMI5oSvzSfTLcpytEJxU9Oh3P4fqZXu4XfHUkdttonvaTCzRfiG6StWtpy7IdS
-#> BXBqfHB/3UjucyZBp1FGVT41r/XCza7qJI/JRm+XJB6zhDGzUJepDjk4yns9AgVq
-#> HBPv4XSoPf3XWp8zhie7vKih6TRMCAS6QLkJfUIt12PY/756n2bzJQ4rsy3SwfK5
-#> 5YZc6LUIAfui6+HdzfjS3aWK5k1fD6TTYuGKPV1eUSrC0seX/9sdPI/F2GTx5PQE
-#> rgv/N5eJ/WU1HAy4WYHLdHUDMJSY0m8Z1vrB2wSelddM06osRY4vw/rLSXjMQzmy
-#> JH/wYTfAgCGRWa65/j3DkMLUy9iiX51VH38kl7YYFll1s/P1SzU78X2Sv3IV+j/v
-#> L0wZOcoLUkL/MS4w47L3brsIAaDlN4BubySDOuZ1VXmCBZw5nJrFbT/j3ARDXny3
-#> ZxTfEnxKAUXNBEYZr/6xruv0T01ePB2LP0NghTR4I3aKFQAfeRaHipMn+fqhEM8s
-#> ZkHDQt4qVD4tdc2OmYPKS8+4ocSN5j5ukCIl9Hf4IzIHQDyGDBcHOZ31sJlNlODU
-#> tfkP26169LFooVwE/+GzT10w0yUUzp/zbwvZiamUZau/Jrkq5ezhIgsJvTA3scxQ
-#> VVNZrQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRMH0V7
-#> RZwTV3wbCPr8jrHzKkTC/TAfBgNVHSMEGDAWgBRMH0V7RZwTV3wbCPr8jrHzKkTC
-#> /TANBgkqhkiG9w0BAQsFAAOCAgEAdLy+/KI9SklDakn+1PO1r+QpZSO+SSOJKvaG
-#> bJZ/biqpYTi88nSLlr8Ep2Mu/VNxRno320pXjcGxQzzzDlLVEY3edSAXfcxwVD3o
-#> +CKJ5ChRrnna5a2s58HBSQ3xAZZfzVZiScKyh/NsCe8G8UmxaCi7lic35u7jS6I8
-#> 4/fzD1YWobmZ9lOzf3RZjJTI3X0Q2OhmIcbr+/B+4K+dUrRS43DYXePnVCoRy1bq
-#> qfNb6rmRy3apa7dLSQj822ttpnV6Y9xFZ5jgMeRlKpG59DvwC1dUR5nPLJ5nDuiX
-#> avLOq24PIQwKa4Np5OuK/hC7IRPKlB04fgq/YswAqCnFkf8a96PBm8RMMR2UUjSG
-#> eO1mcf/CDtoRUnsuGhfbkGm14FUrK7s2eE989zHOUeg3+5FqULddgipaw6kntx5n
-#> NW70as8CBqOOvSdWPWk2OVa+y9h494YSLC7rtGCvaEuw8VY2C4yZKw08icIhKkjM
-#> wPHkKJtBwnmbXOB2eviLRMkpbAl+5TH8B6KxxTDps3Al2OuwE7lwm5lqiklaGFVq
-#> R4GiG04Lc++wzsi0r8JJQ+jXHrz5S1Cf9XY2vmcfEliFWt43I9kUtKlc7D616noH
-#> XRpN1WXXDovwRNYlBNYqmp5Oedv3DHoT4DjKyKehTIazyJSeFzedidCFEtRslV5j
-#> i5po1DI=
+#> DQEBAQUAA4ICDwAwggIKAoICAQCGCUyn6GWWGAwNGQ5jhku6BWSKqRD/cgmEk7MA
+#> Whsxb5nSPqsqh4ivTXJQZ1LzhcESX9eI9whwzknQ9MVCOA+Rij9EVzRu9Ypawvax
+#> 1yDZmlwSG5WAUva9vGtMZirA09oMp8+8hKt9eY44DG3EikP5g7lxWwaCTsz0Q/br
+#> 9YechhF458mGoDmM7yGp/L65mVsn52nMrK6QWJ7wrfqNyqzzz35IEI7PVxKk0KzD
+#> bcUsFYsCg1+STNz1ADAlUtsJFD0RUg38oAUn0cBi77sLBX9TQihPWInUY51tzyvI
+#> fukiiavDE5N56z3JKqTQZVk66H5kDEPz3/zZQB6YeNjV7UEua63a6FOLD/hVi2fa
+#> C3S/ud2xEFudik3xVVoNf+oQbQ4aLH6YUlresFXhvlU/LKLmbyDwjzXq+QRdyhIt
+#> mWJisrvK19/2cUSt1AflIt8nQYVgHhJsTxK40FLq7bGvwKPVibJYf0+8DW2VFqjj
+#> Z2TMBjYom0Ynixs3quQ7j92+2o2WK6O6uL06pKiLNiJi8CD/7pqTXEHCkYGh03tL
+#> 5w+00bIXWXH4OoYmtyuHjvDlTKYQVzMOTwxH9zotOvq88Ifzn5UBZH7RvDbqFyo8
+#> KvsVXuVKcLL/F0tzraExI+Zv5/YjrSqK7Jxtrdd3QN1750rjnujiOjfU1iJwX20a
+#> ZIc3JQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRxU45I
+#> ZGU7XK6DwHipxYuGgnsnCzAfBgNVHSMEGDAWgBRxU45IZGU7XK6DwHipxYuGgnsn
+#> CzANBgkqhkiG9w0BAQsFAAOCAgEAIuzA09/e739fQ9/cwf7M6KXNHlv5Fd2aO5l/
+#> g5B7h7o/bZgGghchYNAmC+e7o0QSUoS2giGx3EW1GsH587+5V6ZliBYnl5LeTlRW
+#> 2OUq4odZYJvykpbyDatohnz+YzDQcdxYtOdJrHrqmjSuL2W28QnzKyYGTVbSi/4V
+#> cN8QMw0i53iayWYDmHtshXOF5DmnNCF+8ffVuR+B4Tzf3XN98zZU7gwxEEIDzF5n
+#> KfeVmAAUg69eQiALpJ6ZyWUFHQAd92H9Gezx8qMqCia1Iqym8Vg7aaWmXak0jYjm
+#> 35Mrfn57Oej8b7epSzsWKvZu2ZuKyBJ0T2rjdpXJwqz3IrMFJDM6dV9NFDfnGiAq
+#> uI64s80uRGvxZ+OtPvHD+1OMM9wcJGCfLx2INTII/AE6pWcCb2ddOfvv6JX1n54t
+#> pu5woTWihH3BaI604fmt1g+CHHVzw0Rpi1uPzIumzD5B59a8BptbSPqkoy2YlOU4
+#> 2c6VoY88pZvADYjzDMLVJHGax/FUDJeocN3TF+Ao2e9C0lPjrqb8i7tI49ZgNK6L
+#> YeLYVjWIWm+BUGN5xef7IBS6x0Vwqgrsffwb/64g11MJx7Tk9N6oOXYEN4TbOEfn
+#> evegzVN2xHKCml+R7W5/02yegUBEkzlo386v/5I4RfsqVb4yohp0HIZ6up6A+UPm
+#> X1Lbtco=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -914,14 +917,14 @@ with_daemons("gpu", {
 })
 
 m1[]
-#> [1] 40286
+#> [1] 42715
 m2[] # different to m1
-#> [1] 40301
+#> [1] 42730
 
 m3[] # same as m1
-#> [1] 40286
+#> [1] 42715
 m4[] # same as m1
-#> [1] 40286
+#> [1] 42715
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))

@@ -33,7 +33,7 @@ profile.}
 For \code{\link[=mirai]{mirai()}}: a 'mirai' object.
 
 For \code{\link[=try_mirai]{try_mirai()}}: a 'mirai' object, or \code{NULL} (invisibly) if the
-dispatcher's \code{memory} budget is exhausted at the time of submission.
+dispatcher's \code{memory} capacity is exhausted at the time of submission.
 }
 \description{
 Evaluate an expression asynchronously in a new background R process or
@@ -109,7 +109,7 @@ interrupts, and timeouts.
 
 The \code{memory} argument to \code{\link[=daemons]{daemons()}} caps the queued task payload at
 dispatcher (in MB), preventing host out-of-memory. \code{\link[=mirai]{mirai()}} blocks the
-calling R thread on submission until queued bytes drop below this budget.
+calling R thread on submission until queued bytes drop below this capacity.
 
 \code{\link[=try_mirai]{try_mirai()}} is a non-blocking variant for event-loop contexts (Shiny,
 promises) where the host R thread cannot afford to wait. It returns \code{NULL}

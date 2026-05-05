@@ -309,8 +309,8 @@ This section covers two complementary tools: queue backpressure at the dispatche
 Queue backpressure applies only in dispatcher mode (`dispatcher = TRUE`, the default), where all tasks queue at a single host process.
 Under `dispatcher = FALSE`, tasks distribute round-robin to daemons and each daemon holds its own backlog — memory pressure spreads across daemon processes rather than concentrating at the host.
 
-By default, the dispatcher queues incoming tasks without bound.
-This risks host out-of-memory when tasks arrive faster than daemons consume them, particularly with large payloads.
+Each `mirai()` call serialises its arguments and hands them to the dispatcher, which holds them until a daemon is free.
+By default the queue is unbounded, so passing large objects or submitting faster than daemons can consume risks host out-of-memory.
 
 The `memory` argument to `daemons()` caps the approximate total payload of queued tasks at dispatcher (in MB, metric — 1 MB = 1,000,000 bytes).
 New `mirai()` calls block until queued bytes drop below this threshold, providing memory-based backpressure.
@@ -327,8 +327,8 @@ status()$memory
 ```
 
 `used` is current and `peak` is the high-watermark queued payload, both in MB.
-`capacity` reflects the budget set above (`NA` if unset).
-Use `peak` to size the `memory` capacity: run a representative workload and set the budget at or above the observed value.
+`capacity` reflects the value set above (`NA` if unset).
+Use `peak` to size `memory`: profile a representative workload with `memory = NULL` first to capture organic demand, then set the capacity at or above the observed peak.
 
 #### Non-blocking Submission
 
@@ -371,9 +371,12 @@ daemons(0)
 ```
 
 Only the ~30-byte shared memory name is serialised across the wire; the daemon accesses the data directly via ALTREP.
-`lobstr::obj_size(y)` on the daemon reflects just the wrapper, confirming the 80 MB vector was never copied across.
+`lobstr::obj_size(y)` on the daemon reflects just the wrapper, confirming the 8 MB vector was never copied across.
 
 Shared objects are local-machine only and cannot be transferred to remote daemons — use regular argument-passing for distributed work.
+
+`share()` and `memory =` compose: a `share()`-wrapped argument shrinks the queued payload to ~30 bytes, sidestepping backpressure on the input side.
+A daemon can also `share()` its return value for symmetric zero-copy on the result side.
 
 ### 5. mirai_map
 

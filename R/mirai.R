@@ -39,7 +39,7 @@
 #' @return For [mirai()]: a 'mirai' object.
 #'
 #'   For [try_mirai()]: a 'mirai' object, or `NULL` (invisibly) if the
-#'   dispatcher's `memory` budget is exhausted at the time of submission.
+#'   dispatcher's `memory` capacity is exhausted at the time of submission.
 #'
 #' @section Evaluation:
 #'
@@ -158,7 +158,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 #'
 #' The `memory` argument to [daemons()] caps the queued task payload at
 #' dispatcher (in MB), preventing host out-of-memory. [mirai()] blocks the
-#' calling R thread on submission until queued bytes drop below this budget.
+#' calling R thread on submission until queued bytes drop below this capacity.
 #'
 #' [try_mirai()] is a non-blocking variant for event-loop contexts (Shiny,
 #' promises) where the host R thread cannot afford to wait. It returns `NULL`

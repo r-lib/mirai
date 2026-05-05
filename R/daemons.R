@@ -46,7 +46,7 @@
 #'   sound, non-reproducible). An integer value instead initializes a stream per
 #'   mirai, allowing reproducible results independent of which daemon evaluates
 #'   it.
-#' @param memory (numeric) memory budget in MB (metric) for queued task
+#' @param memory (numeric) memory capacity in MB (metric) for queued task
 #'   payloads at dispatcher. New tasks block until queued bytes drop below this
 #'   threshold, providing memory-based backpressure to prevent host OOM. `NULL`
 #'   (default) is unbounded. Requires dispatcher.
@@ -360,7 +360,7 @@ with.miraiDaemons <- function(data, expr, ...) {
 #'     \item **memory** (present only if using dispatcher) - a named numeric
 #'     vector in MB (metric, 1 MB = 1,000,000 bytes) comprising: **used** -
 #'     current and **peak** - high-watermark queued task payloads at dispatcher,
-#'     and **capacity** - the budget set as the `memory` argument to [daemons()]
+#'     and **capacity** - the value set as the `memory` argument to [daemons()]
 #'     (`NA_real_` if unset/unbounded).
 #'   }
 #'

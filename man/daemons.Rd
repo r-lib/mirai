@@ -47,7 +47,7 @@ sound, non-reproducible). An integer value instead initializes a stream per
 mirai, allowing reproducible results independent of which daemon evaluates
 it.}
 
-\item{memory}{(numeric) memory budget in MB (metric) for queued task
+\item{memory}{(numeric) memory capacity in MB (metric) for queued task
 payloads at dispatcher. New tasks block until queued bytes drop below this
 threshold, providing memory-based backpressure to prevent host OOM. \code{NULL}
 (default) is unbounded. Requires dispatcher.}
