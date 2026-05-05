@@ -24,7 +24,7 @@ been received (either completed or cancelled).
 \item \strong{memory} (present only if using dispatcher) - a named numeric
 vector in MB (metric, 1 MB = 1,000,000 bytes) comprising: \strong{used} -
 current and \strong{peak} - high-watermark queued task payloads at dispatcher,
-and \strong{capacity} - the budget set as the \code{memory} argument to \code{\link[=daemons]{daemons()}}
+and \strong{capacity} - the value set as the \code{memory} argument to \code{\link[=daemons]{daemons()}}
 (\code{NA_real_} if unset/unbounded).
 }
 }
