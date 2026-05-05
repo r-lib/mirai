@@ -54,7 +54,8 @@ daemons at any time, and direct tasks to different *compute profiles*
 (CPU pool, GPU pool, remote cluster) from the same session.
 
 ![Hub architecture diagram showing compute profiles with daemons
-connecting to host](reference/figures/architecture.svg)
+connecting to
+host](https://raw.githubusercontent.com/shikokuchuo/wip/main/architecture.svg)
 
 Round-trip latency stays in the microseconds:
 
@@ -134,7 +135,9 @@ full deployment guide.
 
 ### Across the R stack
 
-[![R](https://www.r-project.org/logo/Rlogo.png)](https://mirai.r-lib.org/articles/v04-parallel.html)   [![Shiny](https://github.com/rstudio/shiny/raw/main/man/figures/logo.png)](https://mirai.r-lib.org/articles/v02-promises.html)   [![plumber2](https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg)](https://mirai.r-lib.org/articles/v02-promises.html)   [![tidyverse](https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png)](https://www.tidyverse.org/)   [![purrr](https://purrr.tidyverse.org/logo.png)](https://purrr.tidyverse.org)   [![tidymodels](https://www.tidymodels.org/images/tidymodels.png)](https://www.tidymodels.org/)   [![tune](https://github.com/tidymodels/tune/raw/main/man/figures/logo.png)](https://tune.tidymodels.org/)   [![ragnar](https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png)](https://ragnar.tidyverse.org/)   [![targets](https://github.com/ropensci/targets/raw/main/man/figures/logo.png)](https://docs.ropensci.org/targets/)   [![crew](https://github.com/wlandau/crew/raw/main/man/figures/logo.png)](https://wlandau.github.io/crew/)   [![Arrow](https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png)](https://arrow.apache.org/docs/r/)   [![torch](https://torch.mlverse.org/css/images/hex/torch.png)](https://torch.mlverse.org/)
+![R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar,
+targets, crew, Arrow,
+torch](https://raw.githubusercontent.com/shikokuchuo/wip/main/across-the-r-stack.svg)
 
 mirai has become the shared async layer for the R ecosystem. It’s the
 [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html)
