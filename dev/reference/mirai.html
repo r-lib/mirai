@@ -106,7 +106,7 @@ profile.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>For <code>mirai()</code>: a 'mirai' object.</p>
 <p>For <code>try_mirai()</code>: a 'mirai' object, or <code>NULL</code> (invisibly) if the
-dispatcher's <code>memory</code> budget is exhausted at the time of submission.</p>
+dispatcher's <code>memory</code> capacity is exhausted at the time of submission.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -176,7 +176,7 @@ interrupts, and timeouts.</p>
 
 <p>The <code>memory</code> argument to <code><a href="daemons.html">daemons()</a></code> caps the queued task payload at
 dispatcher (in MB), preventing host out-of-memory. <code>mirai()</code> blocks the
-calling R thread on submission until queued bytes drop below this budget.</p>
+calling R thread on submission until queued bytes drop below this capacity.</p>
 <p><code>try_mirai()</code> is a non-blocking variant for event-loop contexts (Shiny,
 promises) where the host R thread cannot afford to wait. It returns <code>NULL</code>
 (invisibly) immediately if the queue is at the memory limit, instead of

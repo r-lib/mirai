@@ -77,7 +77,7 @@ daemons(
 
 - memory:
 
-  (numeric) memory budget in MB (metric) for queued task payloads at
+  (numeric) memory capacity in MB (metric) for queued task payloads at
   dispatcher. New tasks block until queued bytes drop below this
   threshold, providing memory-based backpressure to prevent host OOM.
   `NULL` (default) is unbounded. Requires dispatcher.
@@ -303,7 +303,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6719
+#> [1] 6670
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -312,5 +312,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6719
+#> [1] 6670
 ```

@@ -56,9 +56,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 5.270175 3.914122 3.552319 6.865269 3.453212
+#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
 m$data
-#> [1] 5.270175 3.914122 3.552319 6.865269 3.453212
+#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
 ```
 
 A mirai is *unresolved* until its result is received, then *resolved*.
@@ -94,7 +94,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 4.415458 2.328291 3.818041 4.409114 2.846948
+#> [1] 3.890969 4.009599 3.380416 3.514127 4.899060
 ```
 
 This example performs an asynchronous write operation. Passing
@@ -178,9 +178,15 @@ m3[]
 
 m3$data$stack.trace
 #> [[1]]
-#> stop("positive")
+#> .handleSimpleError(function (cnd) 
+#> {
+#>     `[[<-`(., "syscalls", sys.calls())
+#> }, "positive", base::quote(f(1)))
 #> 
 #> [[2]]
+#> stop("positive")
+#> 
+#> [[3]]
 #> f(1)
 m3$data$condition.class
 #> [1] "simpleError" "error"       "condition"
@@ -279,7 +285,7 @@ current statistics as an integer vector:
 ``` r
 
 info()
-#> connections  cumulative    awaiting   executing   completed
+#> connections  cumulative    awaiting   executing   completed 
 #>           6           6           0           0           0
 ```
 
@@ -371,7 +377,125 @@ everywhere(
 daemons(0)
 ```
 
-### 4. mirai_map
+### 4. Memory Management
+
+This section covers two complementary tools: queue backpressure at the
+dispatcher, and shared memory to avoid copying large objects to local
+daemons.
+
+#### Queue Backpressure
+
+Queue backpressure applies only in dispatcher mode (`dispatcher = TRUE`,
+the default), where all tasks queue at a single host process. Under
+`dispatcher = FALSE`, tasks distribute round-robin to daemons and each
+daemon holds its own backlog — memory pressure spreads across daemon
+processes rather than concentrating at the host.
+
+Each [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call
+serialises its arguments and hands them to the dispatcher, which holds
+them until a daemon is free. By default the queue is unbounded, so
+passing large objects or submitting faster than daemons can consume
+risks host out-of-memory.
+
+The `memory` argument to
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) caps the
+approximate total payload of queued tasks at dispatcher (in MB, metric —
+1 MB = 1,000,000 bytes). New
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) calls block
+until queued bytes drop below this threshold, providing memory-based
+backpressure.
+
+``` r
+
+daemons(2, memory = 100)
+```
+
+Inspect current and peak usage via the `memory` field of
+[`status()`](https://mirai.r-lib.org/dev/reference/status.md):
+
+``` r
+
+status()$memory
+#>     used     peak capacity 
+#>        0        0      100
+```
+
+`used` is current and `peak` is the high-watermark queued payload, both
+in MB. `capacity` reflects the value set above (`NA` if unset). Use
+`peak` to size `memory`: profile a representative workload with
+`memory = NULL` first to capture organic demand, then set the capacity
+at or above the observed peak.
+
+#### Non-blocking Submission
+
+Blocking the host R thread is acceptable in batch scripts, but not in
+event-loop contexts such as Shiny or promises.
+
+[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) is a
+non-blocking variant of
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md). It returns
+`NULL` invisibly when the queue is at the memory limit, instead of
+blocking. The caller decides what to do — drop the task, retry later, or
+raise a condition.
+
+``` r
+
+m <- try_mirai(rnorm(10)) %||% stop("queue full")
+```
+
+With `memory` unset or no dispatcher,
+[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) always
+returns a mirai and behaves identically to
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
+
+``` r
+
+daemons(0)
+```
+
+#### Shared Memory with Local Daemons
+
+Each [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) call
+serialises its arguments to the daemon and the result back, even when
+the daemon is on the same machine. For large objects, this copy can
+dominate evaluation time.
+
+The [`mori`](https://github.com/shikokuchuo/mori) package provides
+shared-memory R objects that local daemons read in place, without
+copying. Wrap an atomic vector, list, or dataframe with
+[`mori::share()`](https://shikokuchuo.net/mori/reference/share.html):
+
+``` r
+
+library(lobstr)
+daemons(4)
+
+x <- mori::share(rnorm(1e6))
+m <- mirai(list(size = lobstr::obj_size(y), sum = sum(y)), y = x)
+m[]
+#> $size
+#> 840 B
+#> 
+#> $sum
+#> [1] -1208.687
+
+daemons(0)
+```
+
+Only the ~30-byte shared memory name is serialised across the wire; the
+daemon accesses the data directly via ALTREP. `lobstr::obj_size(y)` on
+the daemon reflects just the wrapper, confirming the 8 MB vector was
+never copied across.
+
+Shared objects are local-machine only and cannot be transferred to
+remote daemons — use regular argument-passing for distributed work.
+
+`share()` and `memory =` compose: a `share()`-wrapped argument shrinks
+the queued payload to ~30 bytes, sidestepping backpressure on the input
+side. A daemon can also `share()` its return value for symmetric
+zero-copy on the result side.
+
+### 5. mirai_map
 
 [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
 performs asynchronous parallel mapping over lists or vectors.
@@ -406,7 +530,7 @@ daemons(4, seed = 2345L)
 fn <- function(x, range) runif(x, x, x + range)
 ml <- mirai_map(c(a = 1, b = 2, c = 3), \(x) fn(x, x * 2), fn = fn)
 ml
-#> < mirai map [3/3] >
+#> < mirai map [0/3] >
 ml[]
 #> $a
 #> [1] 2.637793
@@ -480,7 +604,7 @@ daemons(url = local_url())
 launch_local(n)
 ```
 
-### 5. Remote Infrastructure
+### 6. Remote Infrastructure
 
 This section covers setting up remote daemons, launching them on remote
 machines, and securing connections with TLS.
@@ -518,7 +642,7 @@ for the assigned port:
 
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.6.35:52588")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53887")'
 ```
 
 Dynamically scale the number of daemons up or down as needed.
@@ -850,7 +974,7 @@ without ‘remote’ to get shell commands for manual deployment:
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.6.35:52589")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53888")'
 daemons(0)
 ```
 
@@ -878,36 +1002,36 @@ commands:
 
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.6.35:52598",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxOTIu
-#> MTY4LjYuMzUxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
-#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDE5Mi4xNjguNi4z
-#> NTERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
-#> AQEFAAOCAg8AMIICCgKCAgEApmxpk2yNu8K6/ZOUHDA32DHsdCPUngcFRadywAHl
-#> Wvj97aVt+eCvmVmNpzPuYYQTeTrZpC+Mpbbyf4qSle7GyKW0xOav1n626lFa1Uxe
-#> MmO/fefzREDu50PCOHgpqx0gAxHtAtE8k9vyX54Myf3e+ceL0KZoATrkR9y5aoq/
-#> yqDi+siA5y1pIVuBySPePhZ+EyFJafhX3jVrWqmfuT9U6I0PcyQT1geY0i9ehgVk
-#> fijIarcB8hnNO+INjW906vjITB/Qy4hwzRsSrHYqirBnLLW8JyFiQFb0j5MGMQY4
-#> nhxeHxps5mXTZgy08zQGF6dPZWASQVxN7VV+fARb0klDhp0yV0H0nn7kaob4hh1P
-#> oZJ9F32IE7IAoE1vqH7XC3qOArpDe0E3BsjTA/QCICC1XUR929C8XhSnEovhpola
-#> eGbjelDQFRboZZp05rA+g5z9sZY8bvigjQsgNdr7BxjqmmpsBXiW4AM5NQY30CEI
-#> Xsgmw+NBAjgLhlHQiPtOdhqhUHKOriGE4THBlpD6wkNhphbIdKaK8zkrpEXcItHp
-#> 3hkJkVpaHhyJ4LfyyZv3O/bnuSRi42NtclSiozZgv/dROI5RHli4KM2rfonTnopK
-#> nnOpG/mWW1TZlwKUEnzIoUC9qrMpIoZpcUPGTxjkwXWtJJdcSZQa/1hm/0KNjLtO
-#> 1O0CAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUTeNve3TA
-#> iXoUbuBXNryo1MpQMB4wHwYDVR0jBBgwFoAUTeNve3TAiXoUbuBXNryo1MpQMB4w
-#> DQYJKoZIhvcNAQELBQADggIBAGtwHpE3dJmO8NdnCCTkyLBwT0rcd6hC1muHVi5k
-#> 9X/1LBFUandHKVFNgleROHgUX9dMp/WPbryBidlQAWH/wRwbszd1xxnAg9tOWw0A
-#> kVP0ZV/wkM/XzaOJR4vXuYdi/Uic1NIs4qllYE84tcjiPPfoierkmmLj3xE1R0QM
-#> N5VVDynb5i7n1QqRfNhGmsAL2fvnRgXX9LWVnO116r8J6QL94EzXT6CdUTACXZiT
-#> gRpBeop6kb1cTcX5lSwXiRCbqjWfzFIrnXvmv8khzlE75qCpmODaBbdPtZNTT615
-#> 46OeUZ1xczvEAJKxiLR2C1nzr+Adu7Qoy5KM5o2gEkmHsKR+PYz69EQzxhwF0vGr
-#> nFnDA3p1Eg0RL9C2brl/2ReUzAILsymhMMhvZqufeMrmKHDIenm4qLyl31mSW/b5
-#> b0+KYRlShPJhjOqF2Y1X9B4BrL/xsqHjV+4S8PvZtKmXkXSJ5m89mEeYD4CSuM7m
-#> nUBG2jmgLSeTJsLun6p9WD8ucuNS1YjIveLNm9ledjSZ6MA9EjN3gon6r3N8Q2Xk
-#> WOHYb0dgvawKmqoimJYveGNXL2dagohMDfa8baGAjmU2c1aROMSYf94wZMQmA5lg
-#> S6+cFcIKm9wE9KgIybHSf2jk6MHaQCdARDMZ7QQ/B/5zrz29CahBuWHZ7gAvKnlw
-#> pD5L
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.7.113:53889",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
+#> MTY4LjcuMTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4Ljcu
+#> MTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQCGCUyn6GWWGAwNGQ5jhku6BWSKqRD/cgmEk7MA
+#> Whsxb5nSPqsqh4ivTXJQZ1LzhcESX9eI9whwzknQ9MVCOA+Rij9EVzRu9Ypawvax
+#> 1yDZmlwSG5WAUva9vGtMZirA09oMp8+8hKt9eY44DG3EikP5g7lxWwaCTsz0Q/br
+#> 9YechhF458mGoDmM7yGp/L65mVsn52nMrK6QWJ7wrfqNyqzzz35IEI7PVxKk0KzD
+#> bcUsFYsCg1+STNz1ADAlUtsJFD0RUg38oAUn0cBi77sLBX9TQihPWInUY51tzyvI
+#> fukiiavDE5N56z3JKqTQZVk66H5kDEPz3/zZQB6YeNjV7UEua63a6FOLD/hVi2fa
+#> C3S/ud2xEFudik3xVVoNf+oQbQ4aLH6YUlresFXhvlU/LKLmbyDwjzXq+QRdyhIt
+#> mWJisrvK19/2cUSt1AflIt8nQYVgHhJsTxK40FLq7bGvwKPVibJYf0+8DW2VFqjj
+#> Z2TMBjYom0Ynixs3quQ7j92+2o2WK6O6uL06pKiLNiJi8CD/7pqTXEHCkYGh03tL
+#> 5w+00bIXWXH4OoYmtyuHjvDlTKYQVzMOTwxH9zotOvq88Ifzn5UBZH7RvDbqFyo8
+#> KvsVXuVKcLL/F0tzraExI+Zv5/YjrSqK7Jxtrdd3QN1750rjnujiOjfU1iJwX20a
+#> ZIc3JQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRxU45I
+#> ZGU7XK6DwHipxYuGgnsnCzAfBgNVHSMEGDAWgBRxU45IZGU7XK6DwHipxYuGgnsn
+#> CzANBgkqhkiG9w0BAQsFAAOCAgEAIuzA09/e739fQ9/cwf7M6KXNHlv5Fd2aO5l/
+#> g5B7h7o/bZgGghchYNAmC+e7o0QSUoS2giGx3EW1GsH587+5V6ZliBYnl5LeTlRW
+#> 2OUq4odZYJvykpbyDatohnz+YzDQcdxYtOdJrHrqmjSuL2W28QnzKyYGTVbSi/4V
+#> cN8QMw0i53iayWYDmHtshXOF5DmnNCF+8ffVuR+B4Tzf3XN98zZU7gwxEEIDzF5n
+#> KfeVmAAUg69eQiALpJ6ZyWUFHQAd92H9Gezx8qMqCia1Iqym8Vg7aaWmXak0jYjm
+#> 35Mrfn57Oej8b7epSzsWKvZu2ZuKyBJ0T2rjdpXJwqz3IrMFJDM6dV9NFDfnGiAq
+#> uI64s80uRGvxZ+OtPvHD+1OMM9wcJGCfLx2INTII/AE6pWcCb2ddOfvv6JX1n54t
+#> pu5woTWihH3BaI604fmt1g+CHHVzw0Rpi1uPzIumzD5B59a8BptbSPqkoy2YlOU4
+#> 2c6VoY88pZvADYjzDMLVJHGax/FUDJeocN3TF+Ao2e9C0lPjrqb8i7tI49ZgNK6L
+#> YeLYVjWIWm+BUGN5xef7IBS6x0Vwqgrsffwb/64g11MJx7Tk9N6oOXYEN4TbOEfn
+#> evegzVN2xHKCml+R7W5/02yegUBEkzlo386v/5I4RfsqVb4yohp0HIZ6up6A+UPm
+#> X1Lbtco=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -977,7 +1101,7 @@ Alternatively, generate certificates via a Certificate Signing Request
   specified as a path/filename (assuming these are the same on each
   machine).
 
-### 6. Compute Profiles
+### 7. Compute Profiles
 
 The `.compute` argument to
 [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md) creates
@@ -1026,14 +1150,14 @@ with_daemons("gpu", {
 })
 
 m1[]
-#> [1] 58278
+#> [1] 42715
 m2[] # different to m1
-#> [1] 58291
+#> [1] 42730
 
 m3[] # same as m1
-#> [1] 58278
+#> [1] 42715
 m4[] # same as m1
-#> [1] 58278
+#> [1] 42715
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -1062,7 +1186,7 @@ Shiny apps execute all mirai calls before returning (blocking). For
 other expressions, collect all mirai values to ensure completion before
 daemon reset.
 
-### 7. Advanced Topics
+### 8. Advanced Topics
 
 #### Random Number Generation
 
@@ -1106,10 +1230,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 57855
+#> [1] 5757
 #> 
 #> [[2]]
-#> [1] 57855
+#> [1] 5757
 
 
 # Use sync with the 'sync' compute profile:
@@ -1120,8 +1244,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 57855
+#> [1] 5757
 #> 
 #> [[2]]
-#> [1] 57855
+#> [1] 5757
 ```

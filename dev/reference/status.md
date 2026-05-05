@@ -35,7 +35,7 @@ A named list comprising:
 - **memory** (present only if using dispatcher) - a named numeric vector
   in MB (metric, 1 MB = 1,000,000 bytes) comprising: **used** - current
   and **peak** - high-watermark queued task payloads at dispatcher, and
-  **capacity** - the budget set as the `memory` argument to
+  **capacity** - the value set as the `memory` argument to
   [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md)
   (`NA_real_` if unset/unbounded).
 
@@ -60,7 +60,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "abstract://adae75ecac8ed96873389f86"
+#> [1] "abstract://9cc69642b1b2fd14ccb42478"
 #> 
 daemons(0)
 ```
