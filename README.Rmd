@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 Minimalist Async Evaluation Framework for R
 <br /><br />
 
-→ Event-driven core with microsecond round-trips
+→ Event-driven core with microsecond messaging
 
 → Scale from laptop to HPC and cloud — add or remove compute on the fly
 
@@ -116,30 +116,7 @@ See the [reference vignette](https://mirai.r-lib.org/articles/v01-reference.html
 
 ### Across the R stack
 
-<p align="center">
-<a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://www.tidyverse.org/"><img alt="tidyverse" src="https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://purrr.tidyverse.org"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://www.tidymodels.org/"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://tune.tidymodels.org/"><img alt="tune" src="https://github.com/tidymodels/tune/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://ragnar.tidyverse.org/"><img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://docs.ropensci.org/targets/"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://wlandau.github.io/crew/"><img alt="crew" src="https://github.com/wlandau/crew/raw/main/man/figures/logo.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://arrow.apache.org/docs/r/"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" /></a>
-&nbsp;&nbsp;&nbsp;
-<a href="https://torch.mlverse.org/"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" /></a>
+<p align="center"><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.tidyverse.org/"><img alt="tidyverse" src="https://github.com/tidyverse/tidyverse/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://purrr.tidyverse.org"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.tidymodels.org/"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://tune.tidymodels.org/"><img alt="tune" src="https://github.com/tidymodels/tune/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://ragnar.tidyverse.org/"><img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://docs.ropensci.org/targets/"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://wlandau.github.io/crew/"><img alt="crew" src="https://github.com/wlandau/crew/raw/main/man/figures/logo.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://arrow.apache.org/docs/r/"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" /></a>&nbsp;&nbsp;&nbsp;<a href="https://torch.mlverse.org/"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" /></a></p>
 
 mirai has become the shared async layer for the R ecosystem. It's the [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html) async backend for Shiny and the only one for plumber2 — if you're building APIs with plumber2's `@async` tag, you're already using mirai. It's the parallel engine behind `purrr::in_parallel()`, drives `targets` pipelines through `crew`, and is the first [official alternative communications backend](https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html) for R's `parallel`.
 
