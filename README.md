@@ -16,17 +16,16 @@ coverage](https://codecov.io/gh/r-lib/mirai/graph/badge.svg)](https://app.codeco
 
 ### ミライ
 
-*moving already* <br /><br /> Minimalist Async Evaluation Framework for
-R <br /><br />
+Minimalist Async Evaluation Framework for R <br /><br />
 
 → Event-driven core with microsecond round-trips
 
-→ Hub architecture — scale dynamically from laptop to HPC and cloud
+→ Hub topology — daemons dial in, scale from laptop to HPC and cloud
 
-→ Production-ready distributed tracing, custom serialization, and Shiny
-integration
+→ Built for production — bounded queues, cancellation, distributed
+tracing
 
-<br /><br /> [![Ask
+<br /> [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
 <br />
 
@@ -38,98 +37,100 @@ install.packages("mirai")
 
 ### Quick Start
 
-`mirai()` evaluates an R expression asynchronously in a parallel
-process.
-
-`daemons()` sets up *daemons*: persistent background processes that
-receive and execute tasks.
-
 ``` r
 library(mirai)
+daemons(4)
 
-# Set up 5 background processes
-daemons(5)
-
-# Send work -- non-blocking, returns immediately
-m <- mirai({
-  Sys.sleep(1)
-  100 + 42
-})
-m
-#> < mirai [] >
-
-# Map work across daemons in parallel
-mp <- mirai_map(1:9, \(x) {
-  Sys.sleep(1)
-  x^2
-})
-mp
-#> < mirai map [0/9] >
-
-# Collect results when ready
+# Async — non-blocking, event-driven
+m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
+unresolved(m)
+#> [1] TRUE
 m[]
-#> [1] 142
-mp[.flat]
+#> [1] 0.001706435
+
+# Parallel map with progress and early-stop on error
+mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 
-# Shut down
 daemons(0)
 ```
 
-See the [quick reference](https://mirai.r-lib.org/articles/mirai.html)
-for a full introduction.
-
 ### Architecture
 
-`mirai()` sends tasks to daemons for parallel execution.
-
-A *compute profile* is a set of connected daemons. Multiple profiles can
-coexist, directing tasks to different resources.
-
-*Hub architecture*: host listens at a URL, daemons connect to it — add
-or remove daemons at any time. Launch locally or remotely via different
-methods, and mix freely:
+`mirai()` sends tasks to *daemons* — persistent R worker processes. The
+host listens at a URL; daemons dial in and pull work via an in-process
+*dispatcher thread* that handles FIFO scheduling, cancellation, and
+bounded queues. Add or remove daemons at any time, and direct tasks to
+different *compute profiles* (CPU pool, GPU pool, remote cluster) from
+the same session.
 
 <img src="man/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="100%" />
 
-### Design Philosophy
+Round-trip latency stays in the microseconds:
 
-> **Dynamic Architecture** — *scale on demand*
->
-> - Host listens, daemons connect — true dynamic scaling
-> - Optimal load balancing via efficient FIFO scheduling
-> - Event-driven promises with zero-latency completion
+``` r
+daemons(1)
+bench::mark(mirai(1)[])
+#> # A tibble: 1 × 6
+#>   expression      min   median `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#> 1 mirai(1)[]   84.8µs   98.4µs     9860.    9.68KB     2.05
+daemons(0)
+```
 
-> **Modern Foundation** — *built for speed*
->
-> - NNG via nanonext — thousands of processes at scale
-> - Round-trip times in microseconds, not milliseconds
-> - IPC, TCP, and zero-config TLS certificates
+### Deploy
 
-> **Production First** — *reliable by design*
->
-> - Explicit dependencies prevent hidden-state surprises
-> - Cross-language serialization (torch, Arrow, Polars)
-> - OpenTelemetry for distributed process observability
+| Where                                       | Setup              |
+|---------------------------------------------|--------------------|
+| Local machine                               | `daemons(n)`       |
+| SSH (direct or tunnelled)                   | `ssh_config()`     |
+| HPC scheduler — Slurm, SGE, Torque/PBS, LSF | `cluster_config()` |
+| HTTP API — Posit Workbench, custom          | `http_config()`    |
+| Anywhere else                               | `remote_config()`  |
 
-> **Deploy Everywhere** — *laptop to cluster*
->
-> - Local machine, SSH remote, HPC cluster, or cloud platform
-> - Compute profiles direct tasks to best-fit resources
-> - Combine resources from any deployment type in a single profile
+``` r
+daemons(
+  n = 4,
+  url = host_url(tls = TRUE),
+  remote = cluster_config(options = "#SBATCH --mem=10G")
+)
+```
 
-### Async Foundation for the Modern R Stack
+See the [reference
+vignette](https://mirai.r-lib.org/articles/v01-reference.html) for the
+full deployment guide.
 
-mirai has become the convergence point for asynchronous and parallel
-computing across the R ecosystem.
+### What’s inside
+
+- **Async** — `mirai()`, `mirai_map()`, `everywhere()`, `race_mirai()`,
+  `try_mirai()`
+- **Collection** — `m[]`, `[.progress]`, `[.stop]`, `[.flat]`;
+  `call_mirai()`, `collect_mirai()`
+- **[Promises](https://mirai.r-lib.org/articles/v02-promises.html)** —
+  `as.promise()` for `mirai` and `mirai_map`; event-driven Shiny
+  ExtendedTask
+- **Cancellation & timeouts** — `stop_mirai()`, `.timeout`, early-stop
+  on map
+- **Backpressure** — `daemons(memory = …)` budget, peak watermark via
+  `status()$memory`, non-blocking `try_mirai()`
+- **[Serialization](https://mirai.r-lib.org/articles/v03-serialization.html)**
+  — `serial_config()` for torch, Arrow, polars, ADBC; `mori::share()`
+  for zero-copy local
+- **Reproducibility** — L’Ecuyer-CMRG streams; `seed` argument for
+  deterministic parallel RNG
+- **[Observability](https://mirai.r-lib.org/articles/v05-opentelemetry.html)**
+  — `info()`, `status()`, OpenTelemetry spans via `otelsdk`
+- **Compute profiles** — independent daemon pools, `with_daemons()`,
+  `local_daemons()`, `with(daemons(n), …)`
+- **[R parallel
+  cluster](https://mirai.r-lib.org/articles/v04-parallel.html)** —
+  `parallel::makeCluster(type = "MIRAI")` (R ≥ 4.5)
+
+### The async backbone of the R stack
 
 [<img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31" />](https://mirai.r-lib.org/articles/v04-parallel.html)
-  The first official alternative communications backend for R, a
-parallel cluster type.
-
-[<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
-  Powers parallel map for purrr, the tidyverse’s functional programming
-toolkit.
+  First official alternative communications backend for base R —
+`parallel` cluster type.
 
 [<img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   Primary async backend for Shiny, with full ExtendedTask support.
@@ -137,27 +138,23 @@ toolkit.
 [<img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v02-promises.html)
   Built-in async evaluator enabling the `@async` tag in plumber2.
 
+[<img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46" />](https://purrr.tidyverse.org)
+  Powers parallel map for purrr, the tidyverse’s functional programming
+toolkit.
+
+[<img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" />](https://tune.tidymodels.org/)
+  Core parallel processing infrastructure for tidymodels.
+
 [<img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46" />](https://ragnar.tidyverse.org/)
   Parallel processing backend for ragnar, a RAG framework for R.
 
-[<img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46" />](https://tune.tidymodels.org/)
-  Core parallel processing infrastructure provider for tidymodels.
-
-[<img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
-  Seamless use of torch tensors, models and optimizers across parallel
-processes.
-
-[<img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
-  Query databases over ADBC connections natively in the Arrow data
-format.
-
-[<img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
- Native handling of Polars objects across parallel processes via
-serialization hooks.
+[<img alt="Arrow / Polars / torch" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46" />](https://mirai.r-lib.org/articles/v03-serialization.html)
+  Native handling of Arrow, Polars, torch and ADBC objects across
+parallel processes via custom serialization hooks.
 
 [<img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46" />](https://docs.ropensci.org/targets/)
-  Powers targets pipelines via crew, a distributed worker launcher built
-on mirai.
+  Powers targets pipelines through crew, a distributed worker launcher
+built on mirai.
 
 ### Acknowledgements
 
@@ -186,13 +183,15 @@ discussions.
 
 ### Links
 
-[mirai](https://mirai.r-lib.org/) \|
-[nanonext](https://nanonext.r-lib.org/) \| [CRAN HPC Task
+[mirai](https://mirai.r-lib.org/) ·
+[changelog](https://mirai.r-lib.org/news/index.html) ·
+[issues](https://github.com/r-lib/mirai/issues) ·
+[nanonext](https://nanonext.r-lib.org/) · [CRAN HPC Task
 View](https://cran.r-project.org/view=HighPerformanceComputing)
 
 AI coding agents: the `r-lib` agent skill from the
-[`posit-dev-skills`](https://github.com/posit-dev/skills)
-plugin provides mirai-specific guidance.
+[`posit-dev-skills`](https://github.com/posit-dev/skills) plugin
+provides mirai-specific guidance.
 
 –
 
