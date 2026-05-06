@@ -39,18 +39,20 @@ install.packages("mirai")
 
 ``` r
 library(mirai)
-daemons(4)
+daemons(6)
 
-# Async — non-blocking, event-driven
+# Async — non-blocking, returns immediately
 m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
 #> [1] TRUE
-m[]
-#> [1] -0.000532212
 
-# Parallel map with progress and early-stop on error
-mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
+# Parallel map with progress, flattened (m runs concurrently)
+mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 #> [1]  1  4  9 16 25 36 49 64 81
+
+# Collect — m finished during the map
+m[]
+#> [1] 0.0005734454
 
 daemons(0)
 ```
@@ -64,7 +66,7 @@ bounded queues. Add or remove daemons at any time, and direct tasks to
 different *compute profiles* (CPU pool, GPU pool, remote cluster) from
 the same session.
 
-<img src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" />
+<a href="#architecture"><img src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" /></a>
 
 Round-trip latency stays in the microseconds:
 
@@ -90,7 +92,7 @@ daemons(0)
 
 ``` r
 daemons(
-  n = 4,
+  n = 6,
   url = host_url(tls = TRUE),
   remote = cluster_config(options = "#SBATCH --mem=10G")
 )
@@ -129,7 +131,7 @@ full deployment guide.
 
 <div align="center">
 
-<img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" />
+<a href="#across-the-r-stack"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" /></a>
 
 </div>
 

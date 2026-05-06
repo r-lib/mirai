@@ -51,15 +51,17 @@ install.packages("mirai")
 ```{r}
 #| label: quick-start
 library(mirai)
-daemons(4)
+daemons(6)
 
-# Async — non-blocking, event-driven
+# Async — non-blocking, returns immediately
 m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
-m[]
 
-# Parallel map with progress and early-stop on error
-mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
+# Parallel map with progress, flattened (m runs concurrently)
+mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
+
+# Collect — m finished during the map
+m[]
 
 daemons(0)
 ```
@@ -68,7 +70,7 @@ daemons(0)
 
 `mirai()` sends tasks to *daemons* — persistent R worker processes. The host listens at a URL; daemons dial in and pull work via an in-process *dispatcher thread* that handles FIFO scheduling, cancellation, and bounded queues. Add or remove daemons at any time, and direct tasks to different *compute profiles* (CPU pool, GPU pool, remote cluster) from the same session.
 
-<img src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" />
+<a href="#architecture"><img src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720" /></a>
 
 Round-trip latency stays in the microseconds:
 
@@ -93,7 +95,7 @@ daemons(0)
 #| label: deploy-example
 #| eval: false
 daemons(
-  n = 4,
+  n = 6,
   url = host_url(tls = TRUE),
   remote = cluster_config(options = "#SBATCH --mem=10G")
 )
@@ -116,7 +118,7 @@ See the [reference vignette](https://mirai.r-lib.org/articles/v01-reference.html
 
 ### Across the R stack
 
-<div align="center"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" /></div>
+<div align="center"><a href="#across-the-r-stack"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" /></a></div>
 
 mirai has become the shared async layer for the R ecosystem. It's the [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html) async backend for Shiny and the only one for plumber2, the engine behind `purrr::in_parallel()` and `targets` pipelines through `crew`, and is the first [official alternative communications backend](https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html) for base R's `parallel` package.
 
