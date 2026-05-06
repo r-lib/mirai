@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 295" fill="none">
+  <defs>
+    <style>
+      text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      }
+      .profile-box { fill: none; stroke: #c7bfb5; stroke-width: 0.75; }
+      .profile-label { font-size: 11px; fill: #8a8079; font-weight: 400; letter-spacing: 1.5px; }
+      .daemon-dot { fill: #d2604a; }
+      .daemon-label { font-size: 12.5px; fill: #6b635b; font-weight: 400; }
+      .host-box { fill: none; stroke: #d2604a; stroke-width: 1; }
+      .host-label { font-size: 13px; fill: #d2604a; font-weight: 500; letter-spacing: 0.5px; }
+      .code-label { font-size: 11px; fill: #8a8079; }
+      .launch-label { font-size: 11px; fill: #8a8079; }
+      .conn { stroke: #c7bfb5; stroke-width: 0.75; }
+      .dotted { stroke: #c7bfb5; stroke-width: 0.75; stroke-dasharray: 2 3; }
+      .arrow { fill: #c7bfb5; }
+      .arrow-accent { fill: #d2604a; }
+    </style>
+  </defs>
+
+  <!-- === TOP COMPUTE PROFILE === -->
+  <rect class="profile-box" x="240" y="10" width="215" height="115" rx="1" />
+  <text class="profile-label" x="347.5" y="31" text-anchor="middle">Compute profile</text>
+
+  <!-- Daemon 1 (y=58) -->
+  <circle class="daemon-dot" cx="264" cy="58" r="3" />
+  <text class="daemon-label" x="275" y="62.5">Daemon</text>
+  <line class="conn" x1="332" y1="58" x2="388" y2="58" />
+
+  <!-- Daemon 2 (y=96) -->
+  <circle class="daemon-dot" cx="264" cy="96" r="3" />
+  <text class="daemon-label" x="275" y="100.5">Daemon</text>
+  <line class="conn" x1="332" y1="96" x2="388" y2="96" />
+
+  <!-- Vertical bus -->
+  <line class="conn" x1="388" y1="58" x2="388" y2="96" />
+
+  <!-- Exit line to Host -->
+  <line class="conn" x1="388" y1="77" x2="502" y2="77" />
+  <polygon class="arrow" points="506,77 499,73 499,81" />
+
+  <!-- Host box (top) -->
+  <rect class="host-box" x="510" y="54" width="74" height="46" rx="1" />
+  <text class="host-label" x="547" y="82" text-anchor="middle">Host</text>
+
+  <!-- Host code label (top) -->
+  <text class="code-label mono" x="510" y="120">daemons(url = host_url())</text>
+
+  <!-- Launcher labels + dotted arrows (illustrative examples) -->
+  <text class="launch-label mono" x="190" y="62.5" text-anchor="end">ssh_config()</text>
+  <line class="dotted" x1="195" y1="58" x2="251" y2="58" />
+  <polygon class="arrow-accent" points="259,58 252,54 252,62" />
+  <text class="launch-label mono" x="190" y="100.5" text-anchor="end">cluster_config()</text>
+  <line class="dotted" x1="195" y1="96" x2="251" y2="96" />
+  <polygon class="arrow-accent" points="259,96 252,92 252,100" />
+
+  <!-- === BOTTOM COMPUTE PROFILE === -->
+  <rect class="profile-box" x="240" y="155" width="215" height="115" rx="1" />
+  <text class="profile-label" x="347.5" y="176" text-anchor="middle">Compute profile</text>
+
+  <!-- Daemon 1 (y=203) -->
+  <circle class="daemon-dot" cx="264" cy="203" r="3" />
+  <text class="daemon-label" x="275" y="207.5">Daemon</text>
+  <line class="conn" x1="332" y1="203" x2="388" y2="203" />
+
+  <!-- Daemon 2 (y=241) -->
+  <circle class="daemon-dot" cx="264" cy="241" r="3" />
+  <text class="daemon-label" x="275" y="245.5">Daemon</text>
+  <line class="conn" x1="332" y1="241" x2="388" y2="241" />
+
+  <!-- Vertical bus -->
+  <line class="conn" x1="388" y1="203" x2="388" y2="241" />
+
+  <!-- Exit line to Host -->
+  <line class="conn" x1="388" y1="222" x2="502" y2="222" />
+  <polygon class="arrow" points="506,222 499,218 499,226" />
+
+  <!-- Host box (bottom) -->
+  <rect class="host-box" x="510" y="199" width="74" height="46" rx="1" />
+  <text class="host-label" x="547" y="227" text-anchor="middle">Host</text>
+
+  <!-- Host code label (bottom) -->
+  <text class="code-label mono" x="510" y="265">daemons(2)</text>
+
+</svg>
