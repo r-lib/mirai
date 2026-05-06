@@ -239,7 +239,7 @@ To launch a daemon for one task only:
 launch_remote(remote = ssh_config("ssh://servername"), maxtasks = 1L)
 ```
 
-This enables on-demand HPC cluster jobs via
+This enables on-demand high-performance computing (HPC) cluster jobs via
 [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
 without persistent daemons. Note: you incur latency costs from job
 launch time.

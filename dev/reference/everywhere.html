@@ -118,7 +118,8 @@ profile.</p></dd>
     <p>If using dispatcher, this function forces a synchronization point: the
 <code>everywhere()</code> call must complete on all daemons before subsequent mirai
 evaluations proceed.</p>
-<p>Calling <code>everywhere()</code> does not affect the RNG stream for mirai calls when
+<p>Calling <code>everywhere()</code> does not affect the random number generator (RNG)
+stream for mirai calls when
 using a reproducible <code>seed</code> value at <code><a href="daemons.html">daemons()</a></code>. This allows the seed
 associated with each mirai call to be the same, regardless of the number of
 daemons used. However, code evaluated in an <code>everywhere()</code> call is itself

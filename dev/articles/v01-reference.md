@@ -264,15 +264,16 @@ that per-daemon memory footprint times `n` fits in host RAM.
 
 #### With Dispatcher (default)
 
-The default `dispatcher = TRUE` enables optimal FIFO scheduling. Tasks
-queue at the dispatcher and send to daemons as they become available.
-The `memory` argument caps the approximate total memory (MB, metric — 1
-MB = 1,000,000 bytes) of queued task payloads at dispatcher. New tasks
-block until existing ones are dispatched, providing memory-based
-backpressure to prevent host OOM. Current usage is surfaced under the
-`memory` field of
-[`status()`](https://mirai.r-lib.org/dev/reference/status.md) (in MB,
-matching the argument unit). It also enables mirai cancellation via
+The default `dispatcher = TRUE` enables optimal first-in-first-out
+(FIFO) scheduling. Tasks queue at the dispatcher and send to daemons as
+they become available. The `memory` argument caps the approximate total
+memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at
+dispatcher. New tasks block until existing ones are dispatched,
+providing memory-based backpressure to prevent the host process from
+running out of memory. Current usage is surfaced under the `memory`
+field of [`status()`](https://mirai.r-lib.org/dev/reference/status.md)
+(in MB, matching the argument unit). It also enables mirai cancellation
+via
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 the `.timeout` argument to
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
@@ -687,7 +688,8 @@ Four configuration options:
 1.  [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md)
     for SSH access
 2.  [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md)
-    for HPC resource managers (Slurm, SGE, Torque/PBS, LSF)
+    for high-performance computing (HPC) resource managers (Slurm, SGE,
+    Torque/PBS, LSF)
 3.  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
     for HTTP API launch (e.g., Posit Workbench)
 4.  [`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md)
@@ -1205,7 +1207,7 @@ daemon reset.
 #### Random Number Generation
 
 mirai uses L’Ecuyer-CMRG streams (like base R’s parallel package) for
-statistically-sound parallel RNG.
+statistically-sound parallel random number generation (RNG).
 
 Streams divide the RNG sequence at far-apart intervals that don’t
 overlap, ensuring valid parallel results.

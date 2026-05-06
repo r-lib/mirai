@@ -51,8 +51,8 @@ daemons(
 
 - dispatcher:
 
-  (logical) whether to use dispatcher for optimal FIFO scheduling. See
-  Dispatcher section below.
+  (logical) whether to use dispatcher for optimal first-in-first-out
+  (FIFO) scheduling. See Dispatcher section below.
 
 - ...:
 
@@ -69,18 +69,19 @@ daemons(
 
 - seed:
 
-  (integer) for reproducible random number generation. `NULL` (default)
-  initializes L'Ecuyer-CMRG RNG streams per daemon (statistically sound,
-  non-reproducible). An integer value instead initializes a stream per
-  mirai, allowing reproducible results independent of which daemon
-  evaluates it.
+  (integer) for reproducible random number generation (RNG). `NULL`
+  (default) initializes L'Ecuyer-CMRG RNG streams per daemon
+  (statistically sound, non-reproducible). An integer value instead
+  initializes a stream per mirai, allowing reproducible results
+  independent of which daemon evaluates it.
 
 - memory:
 
   (numeric) memory capacity in MB (metric) for queued task payloads at
   dispatcher. New tasks block until queued bytes drop below this
-  threshold, providing memory-based backpressure to prevent host OOM.
-  `NULL` (default) is unbounded. Requires dispatcher.
+  threshold, providing memory-based backpressure to prevent the host
+  process from running out of memory. `NULL` (default) is unbounded.
+  Requires dispatcher.
 
 - serial:
 
@@ -156,8 +157,9 @@ tasks and sending to daemons as they become available. The `memory`
 argument caps the approximate total memory (MB, metric — 1 MB =
 1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
 until existing ones are dispatched, providing memory-based backpressure
-to prevent host OOM. Current usage is surfaced under the `memory` field
-of [`status()`](https://mirai.r-lib.org/dev/reference/status.md).
+to prevent the host process from running out of memory. Current usage is
+surfaced under the `memory` field of
+[`status()`](https://mirai.r-lib.org/dev/reference/status.md).
 Dispatcher also enables (i) mirai cancellation using
 [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md) or
 a `.timeout` argument to
@@ -303,7 +305,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6664
+#> [1] 7599
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -312,5 +314,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6664
+#> [1] 7599
 ```

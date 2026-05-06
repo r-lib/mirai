@@ -315,16 +315,17 @@ per-daemon memory footprint times <code>n</code> fits in host RAM.</p>
 <div class="section level4">
 <h4 id="with-dispatcher-default">With Dispatcher (default)<a class="anchor" aria-label="anchor" href="#with-dispatcher-default"></a>
 </h4>
-<p>The default <code>dispatcher = TRUE</code> enables optimal FIFO
-scheduling. Tasks queue at the dispatcher and send to daemons as they
-become available. The <code>memory</code> argument caps the approximate
-total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task
-payloads at dispatcher. New tasks block until existing ones are
-dispatched, providing memory-based backpressure to prevent host OOM.
-Current usage is surfaced under the <code>memory</code> field of
-<code><a href="../reference/status.html">status()</a></code> (in MB, matching the argument unit). It also
-enables mirai cancellation via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the
-<code>.timeout</code> argument to <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
+<p>The default <code>dispatcher = TRUE</code> enables optimal
+first-in-first-out (FIFO) scheduling. Tasks queue at the dispatcher and
+send to daemons as they become available. The <code>memory</code>
+argument caps the approximate total memory (MB, metric — 1 MB =
+1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
+until existing ones are dispatched, providing memory-based backpressure
+to prevent the host process from running out of memory. Current usage is
+surfaced under the <code>memory</code> field of <code><a href="../reference/status.html">status()</a></code>
+(in MB, matching the argument unit). It also enables mirai cancellation
+via <code><a href="../reference/stop_mirai.html">stop_mirai()</a></code> or the <code>.timeout</code> argument to
+<code><a href="../reference/mirai.html">mirai()</a></code>.</p>
 <p><code><a href="../reference/info.html">info()</a></code> provides current statistics as an integer
 vector:</p>
 <ul>
@@ -659,8 +660,8 @@ launchers run <code>Rscript</code> on remote machines.</p>
 <li>
 <code><a href="../reference/ssh_config.html">ssh_config()</a></code> for SSH access</li>
 <li>
-<code><a href="../reference/cluster_config.html">cluster_config()</a></code> for HPC resource managers (Slurm, SGE,
-Torque/PBS, LSF)</li>
+<code><a href="../reference/cluster_config.html">cluster_config()</a></code> for high-performance computing (HPC)
+resource managers (Slurm, SGE, Torque/PBS, LSF)</li>
 <li>
 <code><a href="../reference/http_config.html">http_config()</a></code> for HTTP API launch (e.g., Posit
 Workbench)</li>
@@ -1119,7 +1120,7 @@ daemon reset.</p>
 <h4 id="random-number-generation">Random Number Generation<a class="anchor" aria-label="anchor" href="#random-number-generation"></a>
 </h4>
 <p>mirai uses L’Ecuyer-CMRG streams (like base R’s parallel package) for
-statistically-sound parallel RNG.</p>
+statistically-sound parallel random number generation (RNG).</p>
 <p>Streams divide the RNG sequence at far-apart intervals that don’t
 overlap, ensuring valid parallel results.</p>
 <p><strong>Default (<code>seed = NULL</code>)</strong>: New stream per

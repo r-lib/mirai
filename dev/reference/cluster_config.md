@@ -1,8 +1,8 @@
 # Cluster Remote Launch Configuration
 
-Generates a remote configuration for launching daemons using an HPC
-cluster resource manager such as Slurm sbatch, SGE and Torque/PBS qsub
-or LSF bsub.
+Generates a remote configuration for launching daemons using a high-
+performance computing (HPC) cluster resource manager such as Slurm
+sbatch, SGE and Torque/PBS qsub or LSF bsub.
 
 ## Usage
 
