@@ -2,8 +2,9 @@
 
 #' Next >> Developer Interface
 #'
-#' `nextstream` retrieves the currently stored L'Ecuyer-CMRG RNG stream
-#' for the specified compute profile and advances it to the next stream.
+#' `nextstream` retrieves the currently stored L'Ecuyer-CMRG random number
+#' generator (RNG) stream for the specified compute profile and advances it to
+#' the next stream.
 #'
 #' These functions are exported for use by packages extending \pkg{mirai} with
 #' alternative launchers of [daemon()] processes.

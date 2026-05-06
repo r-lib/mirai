@@ -22,8 +22,9 @@ A list in the required format to be supplied to the \code{remote} argument
 of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remote()}}.
 }
 \description{
-Generates a remote configuration for launching daemons using an HPC cluster
-resource manager such as Slurm sbatch, SGE and Torque/PBS qsub or LSF bsub.
+Generates a remote configuration for launching daemons using a high-
+performance computing (HPC) cluster resource manager such as Slurm sbatch,
+SGE and Torque/PBS qsub or LSF bsub.
 }
 \examples{
 # Slurm Config:

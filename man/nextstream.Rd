@@ -34,8 +34,9 @@ For \code{nextget}: the requested item, or else NULL if not present.
 For \code{nextcode}: character string.
 }
 \description{
-\code{nextstream} retrieves the currently stored L'Ecuyer-CMRG RNG stream
-for the specified compute profile and advances it to the next stream.
+\code{nextstream} retrieves the currently stored L'Ecuyer-CMRG random number
+generator (RNG) stream for the specified compute profile and advances it to
+the next stream.
 
 \code{nextget} retrieves the specified item from the specified compute profile.
 

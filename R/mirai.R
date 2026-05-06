@@ -211,7 +211,8 @@ try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NU
 #' [everywhere()] call must complete on all daemons before subsequent mirai
 #' evaluations proceed.
 #'
-#' Calling [everywhere()] does not affect the RNG stream for mirai calls when
+#' Calling [everywhere()] does not affect the random number generator (RNG)
+#' stream for mirai calls when
 #' using a reproducible `seed` value at [daemons()]. This allows the seed
 #' associated with each mirai call to be the same, regardless of the number of
 #' daemons used. However, code evaluated in an [everywhere()] call is itself

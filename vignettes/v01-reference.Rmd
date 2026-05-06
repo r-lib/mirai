@@ -229,10 +229,10 @@ Each local daemon runs a full R process, so check that per-daemon memory footpri
 
 #### With Dispatcher (default)
 
-The default `dispatcher = TRUE` enables optimal FIFO scheduling.
+The default `dispatcher = TRUE` enables optimal first-in-first-out (FIFO) scheduling.
 Tasks queue at the dispatcher and send to daemons as they become available.
 The `memory` argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher.
-New tasks block until existing ones are dispatched, providing memory-based backpressure to prevent host OOM.
+New tasks block until existing ones are dispatched, providing memory-based backpressure to prevent the host process from running out of memory.
 Current usage is surfaced under the `memory` field of `status()` (in MB, matching the argument unit).
 It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument to `mirai()`.
 
@@ -562,7 +562,7 @@ Supply a remote launch configuration to the 'remote' argument of `daemons()` or 
 Four configuration options:
 
 1. `ssh_config()` for SSH access
-2. `cluster_config()` for HPC resource managers (Slurm, SGE, Torque/PBS, LSF)
+2. `cluster_config()` for high-performance computing (HPC) resource managers (Slurm, SGE, Torque/PBS, LSF)
 3. `http_config()` for HTTP API launch (e.g., Posit Workbench)
 4. `remote_config()` for generic/custom launchers
 
@@ -960,7 +960,7 @@ For other expressions, collect all mirai values to ensure completion before daem
 
 #### Random Number Generation
 
-mirai uses L'Ecuyer-CMRG streams (like base R's parallel package) for statistically-sound parallel RNG.
+mirai uses L'Ecuyer-CMRG streams (like base R's parallel package) for statistically-sound parallel random number generation (RNG).
 
 Streams divide the RNG sequence at far-apart intervals that don't overlap, ensuring valid parallel results.
 
