@@ -1,224 +1,120 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working
-with code in this repository.
+Guidance for Claude Code working **on** the mirai package. mirai is a
+minimalist async / parallel / distributed evaluation framework for R,
+built on nanonext + NNG. R \>= 3.6, only runtime dependency is nanonext.
 
-## Skill
+## Skill vs. this file
 
-The mirai skill at `.claude/skills/mirai/SKILL.md` (symlinked from
-`dev/skills/mirai/`) provides LLM-optimized guidance for writing correct
-mirai code. It is also distributed via the `r-lib` skill in the
-[`posit-dev-skills`](https://github.com/posit-dev/skills) plugin for end
-users.
+`.claude/skills/mirai/SKILL.md` is LLM-targeted guidance for *writing
+user code that calls mirai*. The same skill ships to end users via the
+`r-lib` plugin in
+[posit-dev/skills](https://github.com/posit-dev/skills). When helping a
+user *use* mirai, defer to the skill. **This file is for working on the
+package source.**
 
-## Overview
-
-mirai is a minimalist async evaluation framework for R that provides
-asynchronous, parallel and distributed computing. Built on nanonext and
-NNG (Nanomsg-Next-Generation), it implements a message-passing paradigm
-where daemons (persistent background processes) execute tasks sent by
-the host process. Only runtime dependency: nanonext. Requires R \>= 3.6.
-
-## Development Commands
-
-### Testing
+## Commands
 
 ``` r
 
-# Run all tests (single file, custom minitest framework — not testthat)
-source("tests/tests.R")
+source("tests/tests.R")               # run the full suite (single-file minitest)
+devtools::document()                  # roxygen2 -> man/, NAMESPACE
+source("dev/vignettes/precompile.R")  # rebuild pre-compiled vignettes
+rmarkdown::render("README.Rmd")       # rebuild README
 ```
-
-Set `NOT_CRAN=true` environment variable to run extended tests that
-require network connectivity.
-
-### Building and Checking
 
 ``` bash
-# Build package
 R CMD build .
-
-# Check package (matches CI)
-R CMD check --no-manual --compact-vignettes=gs+qpdf mirai_*.tar.gz
+R CMD check --no-manual --compact-vignettes=gs+qpdf mirai_*.tar.gz   # matches CI
 ```
 
-``` r
+- `NOT_CRAN=true` gates extended tests (daemon connectivity,
+  dispatcher).
+- `tests/testthat/tests.R` is a one-line shim (`source("../tests.R")`)
+  so testthat-aware tooling discovers the suite — not a parallel
+  testthat run.
 
-# Generate documentation from roxygen2 comments
-devtools::document()
-```
+## Vignettes are pre-compiled
 
-### Code Formatting
+Vignettes need live daemon connections, so committed
+`vignettes/v0X-*.Rmd` are *outputs*, not sources. To change a vignette:
 
-Uses [Air](https://posit-dev.github.io/air/) formatter configured in
-`air.toml`: - Line width: 100, indent: 2 spaces,
-`persistent-line-breaks = false` - **tests/ directory is excluded** from
-Air formatting
+1.  Edit `dev/vignettes/_v0X-*.Rmd`.
+2.  `source("dev/vignettes/precompile.R")` — uses
+    [`knitr::knit`](https://rdrr.io/pkg/knitr/man/knit.html) to write
+    `vignettes/v0X-*.Rmd`.
+3.  At install/check time, the declared `VignetteBuilder` is
+    **litedown** (not knitr), which renders the already-knit `.Rmd`.
 
-### Vignettes
+Never edit `vignettes/v0X-*.Rmd` directly.
 
-Vignettes are pre-compiled because they require daemon connections.
-Source files live in `dev/vignettes/_*.Rmd` and compile to
-`vignettes/*.Rmd`:
+## Formatter
 
-``` r
+Air, configured in `air.toml`: width 100, 2-space indent,
+`persistent-line-breaks = false`. **`tests/` is excluded** — don’t
+reformat `tests/tests.R`.
 
-# Pre-compile all vignettes (uses knitr::knit, not litedown)
-source("dev/vignettes/precompile.R")
+## Internal state (package-level envs in `R/mirai-package.R`)
 
-# Build README
-rmarkdown::render("README.Rmd")
-```
+These are dot-prefixed and inscrutable on first read:
 
-The package uses **litedown** (not knitr) as VignetteBuilder for final
-rendering.
-
-## Key Architecture
-
-### Core Components
-
-- **mirai()**: Creates an async evaluation, returns immediately with a
-  ‘mirai’ object
-- **daemons()**: Sets up persistent background daemon processes
-- **daemon()**: The daemon instance running in background processes
-- **Dispatcher**: FIFO scheduler implemented in C within nanonext
-  (managed via nanonext’s
-  `.dispatcher_start`/`.dispatcher_stop`/`.dispatcher_info`)
-- **mirai_map()**: Async parallel map with progress bars and early
-  stopping
-- **everywhere()**: Evaluates expressions on all connected daemons
-- **collect_mirai()/call_mirai()**: Block until results are available
-- **status()**: Query daemon/dispatcher status
-
-### Message-Passing Topology
-
-Daemons **dial into** the host/dispatcher (not vice versa). The
-host/dispatcher listens at a URL, enabling dynamic addition/removal of
-compute resources. Supports IPC (platform-dependent), TCP, and TLS
-transports.
-
-### Dispatcher vs. Direct Connection
-
-- **With Dispatcher** (`dispatcher = TRUE`, default): FIFO scheduling,
-  cancellation via
-  [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md),
-  custom serialization support
-- **Direct Connection** (`dispatcher = FALSE`): Round-robin
-  distribution, lower overhead, no cancellation/serialization support
-
-### Evaluation Model
-
-Expressions evaluate in a **clean environment** (not global), containing
-only objects supplied via `.args`. Objects passed through `...` are
-assigned to the daemon’s global environment. All dependencies must be
-passed explicitly.
-
-### Compute Profiles
-
-Multiple named profiles can coexist via the `.compute` parameter.
-Default profile is “default”.
-
-## Internal State Management
-
-Understanding these package-level environments in `mirai-package.R` is
-essential for working on the codebase:
-
-- **`.`**: Stores the current compute profile name (default:
-  `"default"`) under key `"cp"`
-- **`..`**: Stores compute profile configurations (daemon URLs,
-  connections, etc.)
-- **`.opts`**: Collection options for
+- `.` — current compute profile, key `"cp"` (default `"default"`)
+- `..` — compute profile configs (URLs, sockets, connection state)
+- `.opts` —
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
-  (`.flat`, `.progress`, `.stop`)
-- **`._`**: Error message templates (created with `hash = TRUE` for fast
-  lookup)
+  collection options (`.flat`, `.progress`, `.stop`)
+- `._` — error message templates, `hash = TRUE` for fast lookup
+- `.command`, `.urlscheme`, `cli_enabled` — populated in `.onLoad`
 
-### Platform-Specific Initialization
+`.onLoad` sets the URL scheme by platform: `abstract://` (Linux abstract
+Unix sockets), `ipc:///tmp/` (macOS/POSIX Unix sockets), `ipc://`
+(Windows named pipes). Override via `url` argument to
+[`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md).
 
-`.onLoad` sets platform-dependent defaults: - **Linux**: `abstract://`
-URL scheme (abstract Unix domain sockets) - **macOS/POSIX**:
-`ipc:///tmp/` URL scheme (Unix domain sockets) - **Windows**: `ipc://`
-URL scheme (named pipes)
+## Codebase shape (`R/`, 10 files)
 
-Also caches the Rscript path in `.command` and checks for cli package
-availability.
+Most filenames are self-explanatory. Non-obvious mappings:
 
-## Code Organization
+- `parallel.R` —
+  [`make_cluster()`](https://mirai.r-lib.org/dev/reference/make_cluster.md),
+  the official alternative communications backend for R’s `parallel`
+  package.
+- `next.R` —
+  [`nextstream()`](https://mirai.r-lib.org/dev/reference/nextstream.md)/[`nextget()`](https://mirai.r-lib.org/dev/reference/nextstream.md),
+  the developer interface for packages extending mirai.
+- The dispatcher itself is implemented in C **inside nanonext**; mirai
+  only launches/queries it via `nanonext::.dispatcher_*`. (No NEWS
+  entries needed for nanonext-internal additions.)
 
-### R/ Directory Structure
+## Evaluation model (load-bearing when changing core)
 
-- **mirai-package.R**: Package docs, `.onLoad`, global state (`.`, `..`,
-  `.opts`, `._`), constants
-- **mirai.R**: Core
-  [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md),
-  [`unresolved()`](https://mirai.r-lib.org/dev/reference/unresolved.md),
-  [`call_mirai()`](https://mirai.r-lib.org/dev/reference/call_mirai.md),
-  [`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md),
-  [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md),
-  [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
-- **daemons.R**:
-  [`daemons()`](https://mirai.r-lib.org/dev/reference/daemons.md),
-  dispatcher launch (`launch_dispatcher()`), compute profiles,
-  [`with_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md),
-  [`local_daemons()`](https://mirai.r-lib.org/dev/reference/with_daemons.md)
-- **daemon.R**: Daemon instance implementation
-- **map.R**:
-  [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
-  with collection options
-- **launchers.R**:
-  [`launch_local()`](https://mirai.r-lib.org/dev/reference/launch_local.md),
-  [`launch_remote()`](https://mirai.r-lib.org/dev/reference/launch_local.md),
-  [`remote_config()`](https://mirai.r-lib.org/dev/reference/remote_config.md),
-  [`ssh_config()`](https://mirai.r-lib.org/dev/reference/ssh_config.md),
-  [`cluster_config()`](https://mirai.r-lib.org/dev/reference/cluster_config.md),
-  [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
-- **parallel.R**:
-  [`make_cluster()`](https://mirai.r-lib.org/dev/reference/make_cluster.md)
-  — official alternative communications backend for R’s parallel package
-- **promises.R**: Promises integration for async workflows and Shiny
-  ExtendedTask
-- **next.R**: Developer interface
-  ([`nextstream()`](https://mirai.r-lib.org/dev/reference/nextstream.md),
-  [`nextget()`](https://mirai.r-lib.org/dev/reference/nextstream.md))
-  for packages extending mirai
-- **otel.R**: OpenTelemetry distributed tracing integration
+mirai expressions evaluate in a **clean environment**, not the daemon’s
+global env. Objects passed via `.args` populate that local env; objects
+in `...` are assigned to the daemon’s global env (and persist across
+subsequent calls on that daemon). There is **no closure capture from the
+host** — every dependency must be passed explicitly.
 
-## Testing Framework
+`dispatcher = TRUE` (default): FIFO scheduling,
+[`stop_mirai()`](https://mirai.r-lib.org/dev/reference/stop_mirai.md)
+cancellation, custom serialization. `dispatcher = FALSE`: round-robin,
+lower overhead, no cancellation/serialization.
 
-Uses **minitest**, a minimal custom framework defined at the top of
-`tests/tests.R`: - `test_true()`, `test_false()`, `test_null()`,
-`test_notnull()`, `test_zero()` - `test_type()`, `test_class()`,
-`test_equal()`, `test_identical()` - `test_error()` for expecting errors
-with optional message matching - `test_print()` for verifying
-printability
+## Error classes
 
-All tests run sequentially in a single file. Extended tests (daemon
-connectivity, dispatcher) are gated behind `NOT_CRAN=true`.
+- `miraiError` — wraps daemon errors; preserves `$stack.trace` and
+  `$condition.class`.
+- `miraiInterrupt` — task cancellation.
 
-## Error Handling
+Both implement
+[`conditionMessage()`](https://rdrr.io/r/base/conditions.html) /
+[`conditionCall()`](https://rdrr.io/r/base/conditions.html).
 
-Custom error classes with structured information: - **miraiError**:
-Wraps errors from daemon evaluation, preserves `$stack.trace` and
-`$condition.class` - **miraiInterrupt**: Represents task cancellation -
-Both support
-[`conditionMessage()`](https://rdrr.io/r/base/conditions.html) and
-[`conditionCall()`](https://rdrr.io/r/base/conditions.html) methods
+## Packaging notes
 
-## CI/CD
-
-GitHub Actions in `.github/workflows/`: - **R-CMD-check.yaml**: 8
-OS/R-version combinations (Ubuntu ARM devel, Ubuntu/macOS/Windows
-release+oldrel variants) - **test-coverage.yaml**: Coverage via covr,
-uploaded to codecov - **pkgdown.yaml**: Documentation site with
-tidytemplate - **rhub.yaml**: R-Hub checks - **shiny-coreci.yaml**:
-Shiny integration tests (manual trigger) - **pr-commands.yaml**: PR
-comment commands `/document` (roxygen2) and `/style` (styler)
-
-## Package Conventions
-
-- roxygen2 with markdown support; NAMESPACE is auto-generated
-- Version: major.minor.patch.dev (e.g., 2.5.3.9000 for development)
-- MIT license, r-lib GitHub organization, maintained by Posit Software,
-  PBC
-- `CLAUDE.md` and `.claude/` are excluded from package builds (via
-  `.Rbuildignore`)
+- roxygen2 with markdown; `NAMESPACE` is generated — never hand-edit.
+- Version is `major.minor.patch.dev` (current dev tag `.9000`).
+- `CLAUDE.md` and `.claude/` are in `.Rbuildignore` and don’t ship to
+  CRAN.
+- PR-comment commands (`.github/workflows/pr-commands.yaml`) —
+  commenting `/document` runs `roxygen2::roxygenise()`; `/style` runs
+  `styler::style_pkg()`. Both commit back to the PR branch.
