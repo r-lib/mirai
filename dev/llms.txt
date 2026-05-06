@@ -35,7 +35,7 @@ m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
 #> [1] TRUE
 m[]
-#> [1] 0.0004809922
+#> [1] -0.000532212
 
 # Parallel map with progress and early-stop on error
 mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
@@ -55,7 +55,7 @@ daemons at any time, and direct tasks to different *compute profiles*
 
 ![Hub architecture diagram showing compute profiles with daemons
 connecting to
-host](https://raw.githubusercontent.com/shikokuchuo/wip/main/architecture.svg)
+host](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg)
 
 Round-trip latency stays in the microseconds:
 
@@ -66,7 +66,7 @@ bench::mark(mirai(1)[])
 #> # A tibble: 1 × 6
 #>   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 mirai(1)[]     69µs   98.1µs     9753.    9.68KB     2.01
+#> 1 mirai(1)[]     67µs   97.3µs     9868.    9.68KB     2.01
 daemons(0)
 ```
 
@@ -137,18 +137,16 @@ full deployment guide.
 
 ![R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar,
 targets, crew, Arrow,
-torch](https://raw.githubusercontent.com/shikokuchuo/wip/main/across-the-r-stack.svg)
+torch](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg)
 
 mirai has become the shared async layer for the R ecosystem. It’s the
 [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html)
-async backend for Shiny and the only one for plumber2 — if you’re
-building APIs with plumber2’s `@async` tag, you’re already using mirai.
-It’s the parallel engine behind
-[`purrr::in_parallel()`](https://purrr.tidyverse.org/reference/in_parallel.html),
-drives `targets` pipelines through `crew`, and is the first [official
+async backend for Shiny and the only one for plumber2, the engine behind
+[`purrr::in_parallel()`](https://purrr.tidyverse.org/reference/in_parallel.html)
+and `targets` pipelines through `crew`, and is the first [official
 alternative communications
 backend](https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html)
-for R’s `parallel`.
+for base R’s `parallel` package.
 
 ### Acknowledgements
 

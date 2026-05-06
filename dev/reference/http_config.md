@@ -105,7 +105,7 @@ tryCatch(http_config(), error = identity)
 #> {
 #>     file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")
 #> }
-#> <bytecode: 0x55dc0834ed30>
+#> <bytecode: 0x55d66fdf4d58>
 #> <environment: namespace:mirai>
 #> 
 #> $method
@@ -117,7 +117,7 @@ tryCatch(http_config(), error = identity)
 #>     is.null(.[["pwb_cookie"]]) || return(.[["pwb_cookie"]])
 #>     Sys.getenv("RS_SESSION_RPC_COOKIE")
 #> }
-#> <bytecode: 0x55dc083522d8>
+#> <bytecode: 0x55d66fdf44d0>
 #> <environment: namespace:mirai>
 #> 
 #> $token
@@ -177,7 +177,7 @@ tryCatch(http_config(), error = identity)
 #>     }
 #>     secretbase::jsonenc(list(method = "launch_job", kwparams = list(job = job)))
 #> }
-#> <bytecode: 0x55dc083516d0>
+#> <bytecode: 0x55d66fdf76c0>
 #> <environment: namespace:mirai>
 #> 
 #> $dots
@@ -204,12 +204,12 @@ http_config(
 #> $cookie
 #> function () 
 #> Sys.getenv("MY_SESSION_COOKIE")
-#> <environment: 0x55dc08344428>
+#> <environment: 0x55d66fde6540>
 #> 
 #> $token
 #> function () 
 #> Sys.getenv("MY_API_KEY")
-#> <environment: 0x55dc08344428>
+#> <environment: 0x55d66fde6540>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"
