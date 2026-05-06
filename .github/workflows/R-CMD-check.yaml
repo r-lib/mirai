@@ -30,7 +30,6 @@ jobs:
           - {os: macOS-latest,     r: 'release'}
           - {os: macos-15-intel,   r: 'oldrel-1'}
           - {os: windows-latest,   r: 'release'}
-          - {os: windows-latest,   r: 'oldrel-4'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -49,9 +48,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            any::rcmdcheck
-            otelsdk=?ignore-before-r=4.3.0
+          extra-packages: any::rcmdcheck
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2

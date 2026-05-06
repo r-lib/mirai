@@ -118,7 +118,7 @@ See the [reference vignette](https://mirai.r-lib.org/articles/v01-reference.html
 
 <div align="center"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" /></div>
 
-mirai has become the shared async layer for the R ecosystem. It's the [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html) async backend for Shiny and the only one for plumber2 — if you're building APIs with plumber2's `@async` tag, you're already using mirai. It's the parallel engine behind `purrr::in_parallel()`, drives `targets` pipelines through `crew`, and is the first [official alternative communications backend](https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html) for R's `parallel`.
+mirai has become the shared async layer for the R ecosystem. It's the [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html) async backend for Shiny and the only one for plumber2, the engine behind `purrr::in_parallel()` and `targets` pipelines through `crew`, and is the first [official alternative communications backend](https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html) for base R's `parallel` package.
 
 ### Acknowledgements
 

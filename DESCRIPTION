@@ -29,6 +29,7 @@ Suggests:
     cli,
     later,
     litedown,
+    mori,
     otel,
     otelsdk,
     secretbase
