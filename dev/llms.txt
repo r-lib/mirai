@@ -28,18 +28,20 @@ install.packages("mirai")
 ``` r
 
 library(mirai)
-daemons(4)
+daemons(6)
 
-# Async — non-blocking, event-driven
+# Async — non-blocking, returns immediately
 m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
 #> [1] TRUE
-m[]
-#> [1] -0.000532212
 
-# Parallel map with progress and early-stop on error
-mirai_map(1:9, \(x) { Sys.sleep(0.1); x^2 })[.progress, .flat]
+# Parallel map with progress, flattened (m runs concurrently)
+mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 #> [1]  1  4  9 16 25 36 49 64 81
+
+# Collect — m finished during the map
+m[]
+#> [1] 0.0005734454
 
 daemons(0)
 ```
@@ -53,9 +55,9 @@ handles FIFO scheduling, cancellation, and bounded queues. Add or remove
 daemons at any time, and direct tasks to different *compute profiles*
 (CPU pool, GPU pool, remote cluster) from the same session.
 
-![Hub architecture diagram showing compute profiles with daemons
+[![Hub architecture diagram showing compute profiles with daemons
 connecting to
-host](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg)
+host](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg)](#architecture)
 
 Round-trip latency stays in the microseconds:
 
@@ -83,7 +85,7 @@ daemons(0)
 ``` r
 
 daemons(
-  n = 4,
+  n = 6,
   url = host_url(tls = TRUE),
   remote = cluster_config(options = "#SBATCH --mem=10G")
 )
@@ -135,9 +137,9 @@ full deployment guide.
 
 ### Across the R stack
 
-![R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar,
+[![R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar,
 targets, crew, Arrow,
-torch](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg)
+torch](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg)](#across-the-r-stack)
 
 mirai has become the shared async layer for the R ecosystem. It’s the
 [recommended](https://rstudio.github.io/promises/articles/promises_04_mirai.html)
