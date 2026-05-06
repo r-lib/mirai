@@ -305,8 +305,13 @@ launching.</p>
 <p>Specify the number of daemons to launch:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
-<p>Set <code>n</code> to one less than available cores for optimal
-performance. Consider cores reserved for other purposes.</p>
+<p>For CPU-bound work, set <code>n</code> to roughly
+<code>ps::ps_cpu_count() - 1</code>, leaving a core free for the host R
+process and OS, and accounting for any cores reserved for other
+purposes. For I/O-bound work (waiting on network, disk, or subprocess),
+<code>n</code> can exceed core count since daemons spend most of their
+time idle. Each local daemon runs a full R process, so check that
+per-daemon memory footprint times <code>n</code> fits in host RAM.</p>
 <div class="section level4">
 <h4 id="with-dispatcher-default">With Dispatcher (default)<a class="anchor" aria-label="anchor" href="#with-dispatcher-default"></a>
 </h4>
@@ -438,6 +443,16 @@ reflects the value set above (<code>NA</code> if unset). Use
 <code>peak</code> to size <code>memory</code>: profile a representative
 workload with <code>memory = NULL</code> first to capture organic
 demand, then set the capacity at or above the observed peak.</p>
+<p>If profiling isn’t practical, treat <code>memory</code> as a fraction
+of host RAM rather than the whole of it. With local daemons, the same
+machine runs the host R process, the dispatcher, and <code>n</code>
+daemon processes — and each daemon holds an in-flight payload copy while
+executing — so total memory pressure scales with <code>n</code>. A
+reasonable starting point is
+<code>ps::ps_system_memory()[["avail"]] / 2e6</code> (half of currently
+available RAM, in MB), revised down if <code>n</code> is large or
+payloads are big. With remote daemons only the host and dispatcher
+consume local RAM, so the budget can be more generous.</p>
 </div>
 <div class="section level4">
 <h4 id="non-blocking-submission">Non-blocking Submission<a class="anchor" aria-label="anchor" href="#non-blocking-submission"></a>

@@ -60,7 +60,7 @@ status()
 #> [1] 0
 #> 
 #> $daemons
-#> [1] "abstract://683a098420a8163f79f46d2d"
+#> [1] "abstract://c9127a7357c65be106fd57e0"
 #> 
 daemons(0)
 ```

@@ -255,8 +255,12 @@ Specify the number of daemons to launch:
 daemons(6)
 ```
 
-Set `n` to one less than available cores for optimal performance.
-Consider cores reserved for other purposes.
+For CPU-bound work, set `n` to roughly `ps::ps_cpu_count() - 1`, leaving
+a core free for the host R process and OS, and accounting for any cores
+reserved for other purposes. For I/O-bound work (waiting on network,
+disk, or subprocess), `n` can exceed core count since daemons spend most
+of their time idle. Each local daemon runs a full R process, so check
+that per-daemon memory footprint times `n` fits in host RAM.
 
 #### With Dispatcher (default)
 
@@ -425,6 +429,16 @@ in MB. `capacity` reflects the value set above (`NA` if unset). Use
 `peak` to size `memory`: profile a representative workload with
 `memory = NULL` first to capture organic demand, then set the capacity
 at or above the observed peak.
+
+If profiling isn’t practical, treat `memory` as a fraction of host RAM
+rather than the whole of it. With local daemons, the same machine runs
+the host R process, the dispatcher, and `n` daemon processes — and each
+daemon holds an in-flight payload copy while executing — so total memory
+pressure scales with `n`. A reasonable starting point is
+`ps::ps_system_memory()[["avail"]] / 2e6` (half of currently available
+RAM, in MB), revised down if `n` is large or payloads are big. With
+remote daemons only the host and dispatcher consume local RAM, so the
+budget can be more generous.
 
 #### Non-blocking Submission
 
