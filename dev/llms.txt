@@ -56,8 +56,7 @@ daemons at any time, and direct tasks to different *compute profiles*
 (CPU pool, GPU pool, remote cluster) from the same session.
 
 [![Hub architecture diagram showing compute profiles with daemons
-connecting to
-host](https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/architecture.svg)](#architecture)
+connecting to host](reference/figures/architecture.svg)](#architecture)
 
 Round-trip latency stays in the microseconds:
 
