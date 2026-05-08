@@ -51,7 +51,7 @@ CRAN release: 2026-05-08
   produced invalid JSON in the request payload.
 - Improved performance and reduced memory consumption through
   optimizations in the underlying nanonext/NNG transport layer.
-- Requires nanonext \>= \[1.8.2.9000\].
+- Requires nanonext \>= 1.9.0.
 
 ## mirai 2.6.1
 
