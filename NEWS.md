@@ -1,3 +1,5 @@
+# mirai (development version)
+
 # mirai 2.7.0
 
 #### New Features
@@ -18,7 +20,7 @@
 * Fixes `mirai_map()` progress bar customization issues (thanks @mcol, #519).
 * Fixes `launch_remote()` with `http_config()` failing for TLS connections, where newlines in the PEM certificate produced invalid JSON in the request payload.
 * Improved performance and reduced memory consumption through optimizations in the underlying nanonext/NNG transport layer.
-* Requires nanonext >= [1.8.2.9000].
+* Requires nanonext >= 1.9.0.
 
 # mirai 2.6.1
 
