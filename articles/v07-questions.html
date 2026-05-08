@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Community FAQs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.6.1/vignettes/v07-questions.Rmd" class="external-link"><code>vignettes/v07-questions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v07-questions.Rmd" class="external-link"><code>vignettes/v07-questions.Rmd</code></a></small>
       <div class="d-none name"><code>v07-questions.Rmd</code></div>
     </div>
 
@@ -285,8 +285,8 @@ mid-task)</li>
 <p>To launch a daemon for one task only:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span>remote <span class="op">=</span> <span class="fu"><a href="../reference/ssh_config.html">ssh_config</a></span><span class="op">(</span><span class="st">"ssh://servername"</span><span class="op">)</span>, maxtasks <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
-<p>This enables on-demand HPC cluster jobs via
-<code><a href="../reference/cluster_config.html">cluster_config()</a></code> without persistent daemons. Note: you
+<p>This enables on-demand high-performance computing (HPC) cluster jobs
+via <code><a href="../reference/cluster_config.html">cluster_config()</a></code> without persistent daemons. Note: you
 incur latency costs from job launch time.</p>
 </div>
 <div class="section level3">

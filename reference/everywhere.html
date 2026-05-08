@@ -17,7 +17,7 @@ setting."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ setting."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Evaluate Everywhere</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.6.1/R/mirai.R" class="external-link"><code>R/mirai.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/R/mirai.R" class="external-link"><code>R/mirai.R</code></a></small>
       <div class="d-none name"><code>everywhere.Rd</code></div>
     </div>
 
@@ -118,7 +118,8 @@ profile.</p></dd>
     <p>If using dispatcher, this function forces a synchronization point: the
 <code>everywhere()</code> call must complete on all daemons before subsequent mirai
 evaluations proceed.</p>
-<p>Calling <code>everywhere()</code> does not affect the RNG stream for mirai calls when
+<p>Calling <code>everywhere()</code> does not affect the random number generator (RNG)
+stream for mirai calls when
 using a reproducible <code>seed</code> value at <code><a href="daemons.html">daemons()</a></code>. This allows the seed
 associated with each mirai call to be the same, regardless of the number of
 daemons used. However, code evaluated in an <code>everywhere()</code> call is itself

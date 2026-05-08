@@ -42,6 +42,7 @@ index of the first resolved in list order.
 
 This enables an efficient "process as completed" pattern:
 
+
       remaining <- list(m1, m2, m3)
       while (length(remaining) > 0) {
         idx <- race_mirai(remaining)

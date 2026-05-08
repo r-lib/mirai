@@ -37,6 +37,7 @@ Mirai promises pass return values to `onFulfilled` (success) or
 This outputs “hello” after one second:
 
 ``` r
+
 library(mirai)
 library(promises)
 
@@ -49,6 +50,7 @@ Access mirai values at `$data` while using promises for side effects
 (assigning to an environment):
 
 ``` r
+
 env <- new.env()
 
 m <- mirai({
@@ -65,6 +67,7 @@ m[]
 After returning to the top level prompt:
 
 ``` r
+
 env$res
 #> [1] "hello"
 ```
@@ -93,6 +96,7 @@ until completion.
 > app exits.
 
 ``` r
+
 library(shiny)
 library(bslib)
 library(mirai)
@@ -141,6 +145,7 @@ based.*
     (disables during computation):
 
 ``` r
+
 input_task_button("btn", "Plot uniform distribution")
 ```
 
@@ -149,6 +154,7 @@ input_task_button("btn", "Plot uniform distribution")
     bind to button:
 
 ``` r
+
 task <- ExtendedTask$new(
   function(...) mirai({Sys.sleep(y); runif(x)}, ...)
 ) |> bind_task_button("btn")
@@ -158,12 +164,14 @@ task <- ExtendedTask$new(
     arguments:
 
 ``` r
+
 observeEvent(input$btn, task$invoke(x = input$n, y = input$delay))
 ```
 
 4.  **Server**: Render output consuming ExtendedTask result:
 
 ``` r
+
 output$plot <- renderPlot(hist(task$result()))
 ```
 
@@ -180,6 +188,7 @@ Assign a mirai reference in `ExtendedTask$new()`, then pass to
 [`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md):
 
 ``` r
+
 library(shiny)
 library(bslib)
 library(mirai)
@@ -250,6 +259,7 @@ Wrapping `runApp()` in `with(daemons(...), ...)` sets up daemons for the
 app’s duration, exiting automatically on stop.
 
 ``` r
+
 library(shiny)
 library(mirai)
 library(bslib)
@@ -339,6 +349,7 @@ instead of `...` to pass calling environment variables to mirai.
     [`bslib::input_task_button()`](https://rstudio.github.io/bslib/reference/input_task_button.html):
 
 ``` r
+
 input_task_button(ns("resample"), "Resample")
 ```
 
@@ -346,6 +357,7 @@ input_task_button(ns("resample"), "Resample")
     [`environment()`](https://rdrr.io/r/base/environment.html):
 
 ``` r
+
 task <- ExtendedTask$new(
   function(time, run) mirai(run(time), environment())
 ) |> bind_task_button("resample")
@@ -354,12 +366,14 @@ task <- ExtendedTask$new(
 3.  **Server**: Observe button, invoke ExtendedTask with arguments:
 
 ``` r
+
 observeEvent(input$resample, task$invoke(calc_time, run_task))
 ```
 
 4.  **Server**: Render output consuming result:
 
 ``` r
+
 output$plot <- renderPlot(plot_result(task$result()))
 ```
 
@@ -374,6 +388,7 @@ This performs multiple simultaneous calculations across daemons,
 returning results asynchronously:
 
 ``` r
+
 library(shiny)
 library(bslib)
 library(mirai)
@@ -428,6 +443,7 @@ The ‘.promise’ argument registers promise actions for each mapped
 operation, updating reactive values or interacting with the app:
 
 ``` r
+
 library(shiny)
 library(mirai)
 
@@ -498,6 +514,7 @@ update a Shiny progress bar with custom messages and a reactive value
 upon completion (asynchronously):
 
 ``` r
+
 library(shiny)
 library(mirai)
 library(promises)
@@ -572,6 +589,7 @@ expensive computation), and returns the ‘msg’ header with timestamp and
 process ID:
 
 ``` r
+
 library(mirai)
 
 daemons(1L, dispatcher = FALSE)
@@ -616,6 +634,7 @@ All 8 requests submit at once, but responses have differing timestamps
 (only 4 process simultaneously due to daemon limit):
 
 ``` r
+
 library(nanonext)
 res <- lapply(
   1:8,
@@ -660,6 +679,7 @@ Always access `req$postBody` in the router process and pass to mirai as
 an argument (it uses a non-serializable connection):
 
 ``` r
+
 library(mirai)
 
 daemons(1L, dispatcher = FALSE)
@@ -702,6 +722,7 @@ m <- mirai({
 Querying produces the same output as the previous example:
 
 ``` r
+
 library(nanonext)
 res <- lapply(
   1:8,

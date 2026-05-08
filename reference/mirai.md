@@ -9,6 +9,8 @@ once complete.
 
 ``` r
 mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
+
+try_mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 ```
 
 ## Arguments
@@ -44,7 +46,10 @@ mirai(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL)
 
 ## Value
 
-A 'mirai' object.
+For `mirai()`: a 'mirai' object.
+
+For `try_mirai()`: a 'mirai' object, or `NULL` (invisibly) if the
+dispatcher's `memory` capacity is exhausted at the time of submission.
 
 ## Details
 
@@ -113,6 +118,25 @@ If a daemon crashes or terminates unexpectedly during evaluation, an
 tests for all error conditions including 'mirai' errors, interrupts, and
 timeouts.
 
+## Memory
+
+The `memory` argument to
+[`daemons()`](https://mirai.r-lib.org/reference/daemons.md) caps the
+queued task payload at dispatcher (in MB), preventing host
+out-of-memory. `mirai()` blocks the calling R thread on submission until
+queued bytes drop below this capacity.
+
+`try_mirai()` is a non-blocking variant for event-loop contexts (Shiny,
+promises) where the host R thread cannot afford to wait. It returns
+`NULL` (invisibly) immediately if the queue is at the memory limit,
+instead of blocking. With no dispatcher, or `memory` unset,
+`try_mirai()` always returns a 'mirai'. Respond to a `NULL` return value
+by dropping the task, retrying later, or propagating backpressure
+upstream.
+
+Use [`status()`](https://mirai.r-lib.org/reference/status.md) to inspect
+current and peak queue usage under its `memory` field.
+
 ## Examples
 
 ``` r
@@ -169,5 +193,16 @@ expr <- quote(a + b + 2)
 args <- list(a = 2, b = 3)
 m <- mirai(.expr = expr, .args = args)
 collect_mirai(m)
+}
+if (FALSE) { # interactive()
+# non-blocking submission - caller handles backpressure
+daemons(1, memory = 1)
+m <- try_mirai(1 + 1)
+if (is.null(m)) {
+  # queue at memory limit - drop, retry, signal upstream, etc.
+} else {
+  m[]
+}
+daemons(0)
 }
 ```

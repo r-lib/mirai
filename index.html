@@ -18,8 +18,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Minimalist Async Evaluation Framework for R">
-<meta name="description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
-<meta property="og:description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
+<meta name="description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation and bounded queues, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
+<meta property="og:description" content="Evaluates R expressions asynchronously and in parallel, locally or distributed across networks. An official parallel cluster type for R. Built on nanonext and NNG, its non-polling, event-driven architecture scales from a laptop to thousands of processes across high-performance computing clusters and cloud platforms. Features FIFO scheduling with task cancellation and bounded queues, promises for reactive programming, OpenTelemetry distributed tracing, and custom serialization for cross-language data types.">
 <meta property="og:image" content="https://mirai.r-lib.org/logo.png">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,11 +90,11 @@
 <div class="section level3">
 <h3 id="ミライ">ミライ<a class="anchor" aria-label="anchor" href="#%E3%83%9F%E3%83%A9%E3%82%A4"></a>
 </h3>
-<p><em>moving already</em> <br><br> Minimalist Async Evaluation Framework for R <br><br></p>
-<p>→ Event-driven core with microsecond round-trips</p>
-<p>→ Hub architecture — scale dynamically from laptop to HPC and cloud</p>
-<p>→ Production-ready distributed tracing, custom serialization, and Shiny integration</p>
-<p><br><br><a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a> <br></p>
+<p>Minimalist Async Evaluation Framework for R <br><br></p>
+<p>→ Event-driven core with microsecond messaging</p>
+<p>→ Scale from laptop to HPC and cloud — add or remove compute on the fly</p>
+<p>→ Built for production — bounded queues, cancellation, distributed tracing</p>
+<p><br><a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a> <br></p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -105,98 +105,118 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p><code><a href="reference/mirai.html">mirai()</a></code> evaluates an R expression asynchronously in a parallel process.</p>
-<p><code><a href="reference/daemons.html">daemons()</a></code> sets up <em>daemons</em>: persistent background processes that receive and execute tasks.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mirai.r-lib.org">mirai</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Set up 5 background processes</span></span>
-<span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co"># Async — non-blocking, returns immediately</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai.html">mirai</a></span><span class="op">(</span><span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1e6</span><span class="op">)</span><span class="op">)</span> <span class="op">}</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="co"># Send work -- non-blocking, returns immediately</span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai.html">mirai</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="fl">100</span> <span class="op">+</span> <span class="fl">42</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="va">m</span></span>
-<span><span class="co">#&gt; &lt; mirai [] &gt;</span></span>
-<span></span>
-<span><span class="co"># Map work across daemons in parallel</span></span>
-<span><span class="va">mp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="va">mp</span></span>
-<span><span class="co">#&gt; &lt; mirai map [0/9] &gt;</span></span>
-<span></span>
-<span><span class="co"># Collect results when ready</span></span>
-<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 142</span></span>
-<span><span class="va">mp</span><span class="op">[</span><span class="va">.flat</span><span class="op">]</span></span>
+<span><span class="co"># Parallel map with progress, flattened (m runs concurrently)</span></span>
+<span><span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>; <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">}</span><span class="op">)</span><span class="op">[</span><span class="va">.progress</span>, <span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1]  1  4  9 16 25 36 49 64 81</span></span>
 <span></span>
-<span><span class="co"># Shut down</span></span>
+<span><span class="co"># Collect — m finished during the map</span></span>
+<span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.0005734454</span></span>
+<span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>See the <a href="https://mirai.r-lib.org/articles/mirai.html">quick reference</a> for a full introduction.</p>
 </div>
 <div class="section level3">
 <h3 id="architecture">Architecture<a class="anchor" aria-label="anchor" href="#architecture"></a>
 </h3>
-<p><code><a href="reference/mirai.html">mirai()</a></code> sends tasks to daemons for parallel execution.</p>
-<p>A <em>compute profile</em> is a set of connected daemons. Multiple profiles can coexist, directing tasks to different resources.</p>
-<p><em>Hub architecture</em>: host listens at a URL, daemons connect to it — add or remove daemons at any time. Launch locally or remotely via different methods, and mix freely:</p>
-<p><img src="reference/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="100%"></p>
+<p><code><a href="reference/mirai.html">mirai()</a></code> sends tasks to <em>daemons</em> — persistent R worker processes. The host listens at a URL; daemons dial in and pull work via an in-process <em>dispatcher thread</em> that handles scheduling, cancellation, and bounded queues. Add or remove daemons at any time, and direct tasks to different <em>compute profiles</em> (CPU pool, GPU pool, remote cluster) from the same session.</p>
+<p><a href="#architecture"><img src="reference/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720"></a></p>
+<p>Round-trip latency stays in the microseconds:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">bench</span><span class="fu">::</span><span class="fu">mark</span><span class="op">(</span><span class="fu"><a href="reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 6</span></span>
+<span><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 mirai(1)[]     67µs   97.3µs     9868.    9.68KB     2.01</span></span>
+<span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="design-philosophy">Design Philosophy<a class="anchor" aria-label="anchor" href="#design-philosophy"></a>
+<h3 id="deploy">Deploy<a class="anchor" aria-label="anchor" href="#deploy"></a>
 </h3>
-<blockquote>
-<p><strong>Dynamic Architecture</strong> — <em>scale on demand</em></p>
-<ul>
-<li>Host listens, daemons connect — true dynamic scaling</li>
-<li>Optimal load balancing via efficient FIFO scheduling</li>
-<li>Event-driven promises with zero-latency completion</li>
-</ul>
-</blockquote>
-<blockquote>
-<p><strong>Modern Foundation</strong> — <em>built for speed</em></p>
-<ul>
-<li>NNG via nanonext — thousands of processes at scale</li>
-<li>Round-trip times in microseconds, not milliseconds</li>
-<li>IPC, TCP, and zero-config TLS certificates</li>
-</ul>
-</blockquote>
-<blockquote>
-<p><strong>Production First</strong> — <em>reliable by design</em></p>
-<ul>
-<li>Explicit dependencies prevent hidden-state surprises</li>
-<li>Cross-language serialization (torch, Arrow, Polars)</li>
-<li>OpenTelemetry for distributed process observability</li>
-</ul>
-</blockquote>
-<blockquote>
-<p><strong>Deploy Everywhere</strong> — <em>laptop to cluster</em></p>
-<ul>
-<li>Local machine, SSH remote, HPC cluster, or cloud platform</li>
-<li>Compute profiles direct tasks to best-fit resources</li>
-<li>Combine resources from any deployment type in a single profile</li>
-</ul>
-</blockquote>
+<table class="table">
+<thead><tr>
+<th>Where</th>
+<th>Setup</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Local machine</td>
+<td><code>daemons(n)</code></td>
+</tr>
+<tr>
+<td>SSH (direct or tunnelled)</td>
+<td><code><a href="reference/ssh_config.html">ssh_config()</a></code></td>
+</tr>
+<tr>
+<td>HPC scheduler — Slurm, SGE, Torque/PBS, LSF</td>
+<td><code><a href="reference/cluster_config.html">cluster_config()</a></code></td>
+</tr>
+<tr>
+<td>HTTP API — Posit Workbench, custom</td>
+<td><code><a href="reference/http_config.html">http_config()</a></code></td>
+</tr>
+<tr>
+<td>Anywhere else</td>
+<td><code><a href="reference/remote_config.html">remote_config()</a></code></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span></span>
+<span>  n <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  url <span class="op">=</span> <span class="fu"><a href="reference/host_url.html">host_url</a></span><span class="op">(</span>tls <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  remote <span class="op">=</span> <span class="fu"><a href="reference/cluster_config.html">cluster_config</a></span><span class="op">(</span>options <span class="op">=</span> <span class="st">"#SBATCH --mem=10G"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>See the <a href="https://mirai.r-lib.org/articles/v01-reference.html">reference vignette</a> for the full deployment guide.</p>
 </div>
 <div class="section level3">
-<h3 id="async-foundation-for-the-modern-r-stack">Async Foundation for the Modern R Stack<a class="anchor" aria-label="anchor" href="#async-foundation-for-the-modern-r-stack"></a>
+<h3 id="whats-inside">What’s inside<a class="anchor" aria-label="anchor" href="#whats-inside"></a>
 </h3>
-<p>mirai has become the convergence point for asynchronous and parallel computing across the R ecosystem.</p>
-<p><a href="https://mirai.r-lib.org/articles/v04-parallel.html"><img alt="R parallel" src="https://www.r-project.org/logo/Rlogo.png" width="40" height="31"></a>   The first official alternative communications backend for R, a parallel cluster type.</p>
-<p><a href="https://purrr.tidyverse.org" class="external-link"><img alt="purrr" src="https://purrr.tidyverse.org/logo.png" width="40" height="46"></a>   Powers parallel map for purrr, the tidyverse’s functional programming toolkit.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="Shiny" src="https://github.com/rstudio/shiny/raw/main/man/figures/logo.png" width="40" height="46"></a>   Primary async backend for Shiny, with full ExtendedTask support.</p>
-<p><a href="https://mirai.r-lib.org/articles/v02-promises.html"><img alt="plumber2" src="https://github.com/posit-dev/plumber2/raw/main/man/figures/logo.svg" width="40" height="46"></a>   Built-in async evaluator enabling the <code>@async</code> tag in plumber2.</p>
-<p><a href="https://ragnar.tidyverse.org/" class="external-link"><img alt="ragnar" src="https://github.com/tidyverse/ragnar/raw/main/man/figures/logo.png" width="40" height="46"></a>   Parallel processing backend for ragnar, a RAG framework for R.</p>
-<p><a href="https://tune.tidymodels.org/" class="external-link"><img alt="tidymodels" src="https://www.tidymodels.org/images/tidymodels.png" width="40" height="46"></a>   Core parallel processing infrastructure provider for tidymodels.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="torch" src="https://torch.mlverse.org/css/images/hex/torch.png" width="40" height="46"></a>   Seamless use of torch tensors, models and optimizers across parallel processes.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Arrow" src="https://arrow.apache.org/img/arrow-logo_hex_black-txt_white-bg.png" width="40" height="46"></a>   Query databases over ADBC connections natively in the Arrow data format.</p>
-<p><a href="https://mirai.r-lib.org/articles/v03-serialization.html"><img alt="Polars" src="https://github.com/pola-rs/polars-static/raw/master/logos/polars_logo_blue.svg" width="40" height="46"></a>  Native handling of Polars objects across parallel processes via serialization hooks.</p>
-<p><a href="https://docs.ropensci.org/targets/" class="external-link"><img alt="targets" src="https://github.com/ropensci/targets/raw/main/man/figures/logo.png" width="40" height="46"></a>   Powers targets pipelines via crew, a distributed worker launcher built on mirai.</p>
+<ul>
+<li>
+<strong>Async</strong> — <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/mirai_map.html">mirai_map()</a></code>, <code><a href="reference/everywhere.html">everywhere()</a></code>, <code><a href="reference/race_mirai.html">race_mirai()</a></code>, <code><a href="reference/mirai.html">try_mirai()</a></code>
+</li>
+<li>
+<strong>Collection</strong> — <code>m[]</code>, <code><a href="reference/collect_mirai.html">collect_mirai()</a></code>, <code><a href="reference/call_mirai.html">call_mirai()</a></code>, <code>.flat</code>, <code>.progress</code>, <code>.stop</code>
+</li>
+<li>
+<strong><a href="https://mirai.r-lib.org/articles/v02-promises.html">Promises</a></strong> — <code>as.promise()</code> for <code>mirai</code> and <code>mirai_map</code>; event-driven Shiny ExtendedTask</li>
+<li>
+<strong>Cancellation &amp; timeouts</strong> — <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, <code>.timeout</code>, <code>.stop</code>
+</li>
+<li>
+<strong>Backpressure</strong> — <code>daemons(memory = …)</code> capacity, peak watermark via <code>status()$memory</code>, non-blocking <code><a href="reference/mirai.html">try_mirai()</a></code>
+</li>
+<li>
+<strong><a href="https://mirai.r-lib.org/articles/v03-serialization.html">Serialization</a></strong> — <code><a href="reference/serial_config.html">serial_config()</a></code> for torch, Arrow, polars, ADBC; <code><a href="https://shikokuchuo.net/mori/reference/share.html" class="external-link">mori::share()</a></code> for local shared memory</li>
+<li>
+<strong>Reproducibility</strong> — L’Ecuyer-CMRG streams; <code>daemons(seed = …)</code> for deterministic parallel RNG</li>
+<li>
+<strong><a href="https://mirai.r-lib.org/articles/v05-opentelemetry.html">Observability</a></strong> — <code><a href="reference/info.html">info()</a></code>, <code><a href="reference/status.html">status()</a></code>, OpenTelemetry spans via <code>otel</code>
+</li>
+<li>
+<strong>Compute profiles</strong> — independent daemon pools, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
+</li>
+<li>
+<strong><a href="https://mirai.r-lib.org/articles/v04-parallel.html">R parallel cluster</a></strong> — <code>parallel::makeCluster(type = "MIRAI")</code> (R ≥ 4.5)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="across-the-r-stack">Across the R stack<a class="anchor" aria-label="anchor" href="#across-the-r-stack"></a>
+</h3>
+<div align="center">
+<p><a href="#across-the-r-stack"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700"></a></p>
+</div>
+<p>mirai has become the shared async layer for the R ecosystem. It’s the <a href="https://rstudio.github.io/promises/articles/promises_04_mirai.html" class="external-link">recommended</a> async backend for Shiny and the only one for plumber2, the engine behind <code><a href="https://purrr.tidyverse.org/reference/in_parallel.html" class="external-link">purrr::in_parallel()</a></code> and <code>targets</code> pipelines through <code>crew</code>, and is the first <a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html" class="external-link">official alternative communications backend</a> for base R’s <code>parallel</code> package.</p>
 </div>
 <div class="section level3">
 <h3 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -211,6 +231,7 @@
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
 </h3>
 <p><a href="https://mirai.r-lib.org/">mirai</a> | <a href="https://nanonext.r-lib.org/" class="external-link">nanonext</a> | <a href="https://cran.r-project.org/view=HighPerformanceComputing" class="external-link">CRAN HPC Task View</a></p>
+<p>AI coding agents: the <code>r-lib</code> agent skill from the <a href="https://github.com/posit-dev/skills" class="external-link"><code>posit-dev-skills</code></a> plugin provides mirai-specific guidance.</p>
 <p>–</p>
 <p>Please note that this project is released with a <a href="https://mirai.r-lib.org/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>

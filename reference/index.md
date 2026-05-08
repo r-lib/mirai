@@ -2,7 +2,8 @@
 
 ## Async Evaluation
 
-- [`mirai()`](https://mirai.r-lib.org/reference/mirai.md) : mirai
+- [`mirai()`](https://mirai.r-lib.org/reference/mirai.md)
+  [`try_mirai()`](https://mirai.r-lib.org/reference/mirai.md) : mirai
   (Evaluate Async)
 - [`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md) :
   mirai Map
@@ -26,8 +27,6 @@
 - [`launch_local()`](https://mirai.r-lib.org/reference/launch_local.md)
   [`launch_remote()`](https://mirai.r-lib.org/reference/launch_local.md)
   : Launch Daemons
-- [`dispatcher()`](https://mirai.r-lib.org/reference/dispatcher.md) :
-  Dispatcher
 - [`daemon()`](https://mirai.r-lib.org/reference/daemon.md) : Daemon
   Instance
 
@@ -49,6 +48,8 @@
 
 - [`info()`](https://mirai.r-lib.org/reference/info.md) : Information
   Statistics
+- [`status()`](https://mirai.r-lib.org/reference/status.md) : Status
+  Information
 - [`daemons_set()`](https://mirai.r-lib.org/reference/daemons_set.md) :
   Query if Daemons are Set
 - [`require_daemons()`](https://mirai.r-lib.org/reference/require_daemons.md)

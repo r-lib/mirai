@@ -12,14 +12,6 @@ Expressions to be provided to the `[]` method for 'mirai_map' objects.
 .stop
 ```
 
-## Format
-
-An object of class `bytecode` of length 1.
-
-An object of class `bytecode` of length 1.
-
-An object of class `bytecode` of length 1.
-
 ## Collection Options
 
 `x[]` collects the results of a 'mirai_map' `x` and returns a list. This

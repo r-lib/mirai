@@ -1,8 +1,8 @@
 # Cluster Remote Launch Configuration
 
-Generates a remote configuration for launching daemons using an HPC
-cluster resource manager such as Slurm sbatch, SGE and Torque/PBS qsub
-or LSF bsub.
+Generates a remote configuration for launching daemons using a high-
+performance computing (HPC) cluster resource manager such as Slurm
+sbatch, SGE and Torque/PBS qsub or LSF bsub.
 
 ## Usage
 
@@ -62,7 +62,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                                                 
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.6.0/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -86,7 +86,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                        
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.6.0/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -110,7 +110,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                          
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.6.0/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL
@@ -134,7 +134,7 @@ cluster_config(
 #> [3] "\nEOF"                                                                                          
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.6.0/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> NULL

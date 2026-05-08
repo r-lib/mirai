@@ -51,6 +51,7 @@ A Shiny app may have used
 code similar to the following within the server component:
 
 ``` r
+
 func <- function(x, y){
   Sys.sleep(y)
   runif(x)
@@ -67,6 +68,7 @@ The equivalent in
 [`mirai()`](https://mirai.r-lib.org/reference/mirai.md) is achieved by:
 
 ``` r
+
 task <- ExtendedTask$new(
   function(...) mirai(func(...), func = func, .args = environment())
 ) |> bind_task_button("btn")
@@ -83,6 +85,7 @@ each daemon ensure global environment variables don’t carry over to
 subsequent runs. This can be assumed to include `.Random.seed`.
 
 ``` r
+
 library(mirai)
 daemons(4)
 
@@ -170,6 +173,7 @@ size (more accurate than base R’s `object.size`).
   (supplying anything required by `fn` via `...`):
 
 ``` r
+
 func <- carrier::crate(\(x) fn(x), fn = fn)
 ```
 
@@ -185,12 +189,14 @@ Setting daemons is separate from launching (deploying) them. To set
 daemons for local use:
 
 ``` r
+
 daemons(url = local_url())
 ```
 
 For local and/or remote machines:
 
 ``` r
+
 daemons(url = host_url())
 ```
 
@@ -199,12 +205,14 @@ This creates a ‘base station’ listening for incoming daemon connections.
 To launch (deploy) a daemon:
 
 ``` r
+
 launch_local()
 ```
 
 or
 
 ``` r
+
 launch_remote(remote = ssh_config("ssh://servername")) # or cluster_config() / http_config()
 ```
 
@@ -224,10 +232,11 @@ apply by default for all launches:
 To launch a daemon for one task only:
 
 ``` r
+
 launch_remote(remote = ssh_config("ssh://servername"), maxtasks = 1L)
 ```
 
-This enables on-demand HPC cluster jobs via
+This enables on-demand high-performance computing (HPC) cluster jobs via
 [`cluster_config()`](https://mirai.r-lib.org/reference/cluster_config.md)
 without persistent daemons. Note: you incur latency costs from job
 launch time.
@@ -243,6 +252,7 @@ To skip loading startup files, use
 to pass the `--vanilla` flag:
 
 ``` r
+
 cfg <- remote_config(command = "Rscript", rscript = "--vanilla")
 daemons(6, url = local_url(), remote = cfg)
 ```

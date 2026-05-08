@@ -66,7 +66,7 @@ remote_config(
 #> [1] "--mem 512" "-n 1"      "."        
 #> 
 #> $rscript
-#> [1] "/opt/R/4.5.2/lib/R/bin/Rscript"
+#> [1] "/opt/R/4.6.0/lib/R/bin/Rscript"
 #> 
 #> $quote
 #> [1] FALSE

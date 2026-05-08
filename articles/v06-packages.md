@@ -1,5 +1,12 @@
 # mirai - For Package Authors
 
+### Agent Skill
+
+AI coding agents: the `r-lib` agent skill from the
+[`posit-dev-skills`](https://github.com/posit-dev/skills) plugin
+provides mirai-specific guidance for writing correct async, parallel,
+and distributed code.
+
 ### 1. Developer Interfaces
 
 mirai provides these functions for package authors:
@@ -49,6 +56,7 @@ packages.
         haven’t set daemons:
 
         ``` r
+
         with(if (!daemons_set()) daemons(sync = TRUE), {
           mirai_map(...)
         })

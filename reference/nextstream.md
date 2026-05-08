@@ -1,7 +1,8 @@
 # Next \>\> Developer Interface
 
-`nextstream` retrieves the currently stored L'Ecuyer-CMRG RNG stream for
-the specified compute profile and advances it to the next stream.
+`nextstream` retrieves the currently stored L'Ecuyer-CMRG random number
+generator (RNG) stream for the specified compute profile and advances it
+to the next stream.
 
 `nextget` retrieves the specified item from the specified compute
 profile.
@@ -64,14 +65,14 @@ is returned on subsequent calls.
 ``` r
 daemons(sync = TRUE)
 nextstream()
-#> [1]       10407   466761875   751420600  -515383463  -331456698
-#> [6] -1206986481   -34040828
+#> [1]       10407   955490588 -1688047763  -588725430  2073633859
+#> [6]  -457412440   759611017
 nextstream()
-#> [1]       10407 -1171813903 -1636859713   -45560966  1701905993
-#> [6]  -739104734  -843469383
+#> [1]       10407  1813634809  1271865761 -1234193909 -1161227463
+#> [6]  1750100714 -2071934474
 
 nextget("url")
-#> [1] "abstract://0228e4a17f050ad72348d3bc"
+#> [1] "abstract://b79e792f238140780a0e36f7"
 
 daemons(0)
 

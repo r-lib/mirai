@@ -19,6 +19,7 @@ daemons(
   ...,
   sync = FALSE,
   seed = NULL,
+  memory = NULL,
   serial = NULL,
   tls = NULL,
   pass = NULL,
@@ -50,8 +51,8 @@ daemons(
 
 - dispatcher:
 
-  (logical) whether to use dispatcher for optimal FIFO scheduling. See
-  Dispatcher section below.
+  (logical) whether to use dispatcher for optimal first-in-first-out
+  (FIFO) scheduling. See Dispatcher section below.
 
 - ...:
 
@@ -68,11 +69,19 @@ daemons(
 
 - seed:
 
-  (integer) for reproducible random number generation. `NULL` (default)
-  initializes L'Ecuyer-CMRG RNG streams per daemon (statistically sound,
-  non-reproducible). An integer value instead initializes a stream per
-  mirai, allowing reproducible results independent of which daemon
-  evaluates it.
+  (integer) for reproducible random number generation (RNG). `NULL`
+  (default) initializes L'Ecuyer-CMRG RNG streams per daemon
+  (statistically sound, non-reproducible). An integer value instead
+  initializes a stream per mirai, allowing reproducible results
+  independent of which daemon evaluates it.
+
+- memory:
+
+  (numeric) memory capacity in MB (metric) for queued task payloads at
+  dispatcher. New tasks block until queued bytes drop below this
+  threshold, providing memory-based backpressure to prevent the host
+  process from running out of memory. `NULL` (default) is unbounded.
+  Requires dispatcher.
 
 - serial:
 
@@ -142,15 +151,19 @@ process, either directly or via dispatcher.
 
 ## Dispatcher
 
-By default `dispatcher = TRUE` launches a background process running
-[`dispatcher()`](https://mirai.r-lib.org/reference/dispatcher.md).
-Dispatcher connects to daemons on behalf of the host, queues tasks, and
-ensures optimal FIFO scheduling. Dispatcher also enables (i) mirai
-cancellation using
-[`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md) or
-when using a `.timeout` argument to
-[`mirai()`](https://mirai.r-lib.org/reference/mirai.md), and (ii) the
-use of custom serialization configurations.
+By default `dispatcher = TRUE` enables optimal FIFO scheduling, queuing
+tasks and sending to daemons as they become available. The `memory`
+argument caps the approximate total memory (MB, metric — 1 MB =
+1,000,000 bytes) of queued task payloads at dispatcher. New tasks block
+until existing ones are dispatched, providing memory-based backpressure
+to prevent the host process from running out of memory. Current usage is
+surfaced under the `memory` field of
+[`status()`](https://mirai.r-lib.org/reference/status.md). Dispatcher
+also enables (i) mirai cancellation using
+[`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md) or a
+`.timeout` argument to
+[`mirai()`](https://mirai.r-lib.org/reference/mirai.md), and (ii) custom
+serialization configurations.
 
 With `dispatcher = FALSE`, daemons connect directly to the host and
 tasks are distributed round-robin, with tasks queued at each daemon.
@@ -290,7 +303,7 @@ daemons(sync = TRUE)
 m <- mirai(Sys.getpid())
 daemons(0)
 m[]
-#> [1] 6778
+#> [1] 6672
 
 # Synchronous mode restricted to a specific compute profile
 daemons(sync = TRUE, .compute = "sync")
@@ -299,5 +312,5 @@ with_daemons("sync", {
 })
 daemons(0, .compute = "sync")
 m[]
-#> [1] 6778
+#> [1] 6672
 ```

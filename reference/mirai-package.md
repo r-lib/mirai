@@ -1,15 +1,13 @@
 # mirai: Minimalist Async Evaluation Framework for R
 
-*moving already*  
-  
 Evaluates R expressions asynchronously and in parallel, locally or
 distributed across networks. An official parallel cluster type for R.
 Built on 'nanonext' and 'NNG', its non-polling, event-driven
 architecture scales from a laptop to thousands of processes across
 high-performance computing clusters and cloud platforms. Features FIFO
-scheduling with task cancellation, promises for reactive programming,
-'OpenTelemetry' distributed tracing, and custom serialization for
-cross-language data types.
+scheduling with task cancellation and bounded queues, promises for
+reactive programming, 'OpenTelemetry' distributed tracing, and custom
+serialization for cross-language data types.
 
 ## Notes
 
@@ -48,6 +46,11 @@ Useful links:
 
 **Maintainer**: Charlie Gao <charlie.gao@posit.co>
 ([ORCID](https://orcid.org/0000-0002-0750-061X))
+
+Authors:
+
+- Charlie Gao <charlie.gao@posit.co>
+  ([ORCID](https://orcid.org/0000-0002-0750-061X))
 
 Other contributors:
 
