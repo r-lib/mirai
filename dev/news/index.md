@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.7.0
+
+CRAN release: 2026-05-08
+
 ##### New Features
 
 - Dispatcher reimplemented as a thread for lower overhead, removing the
@@ -50,7 +54,7 @@
   produced invalid JSON in the request payload.
 - Improved performance and reduced memory consumption through
   optimizations in the underlying nanonext/NNG transport layer.
-- Requires nanonext \>= \[1.8.2.9000\].
+- Requires nanonext \>= 1.9.0.
 
 ## mirai 2.6.1
 
