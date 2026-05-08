@@ -1,7 +1,7 @@
 Type: Package
 Package: mirai
 Title: Minimalist Async Evaluation Framework for R
-Version: 2.6.1.9000
+Version: 2.7.0
 Authors@R: c(
     person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0750-061X")),
@@ -15,9 +15,9 @@ Description: Evaluates R expressions asynchronously and in parallel,
     type for R. Built on 'nanonext' and 'NNG', its non-polling,
     event-driven architecture scales from a laptop to thousands of
     processes across high-performance computing clusters and cloud
-    platforms.  Features FIFO scheduling with task cancellation, promises
-    for reactive programming, 'OpenTelemetry' distributed tracing, and
-    custom serialization for cross-language data types.
+    platforms. Features FIFO scheduling with task cancellation and bounded
+    queues, promises for reactive programming, 'OpenTelemetry' distributed
+    tracing, and custom serialization for cross-language data types.
 License: MIT + file LICENSE
 URL: https://mirai.r-lib.org, https://github.com/r-lib/mirai
 BugReports: https://github.com/r-lib/mirai/issues
