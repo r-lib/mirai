@@ -255,12 +255,12 @@ Specify the number of daemons to launch:
 daemons(6)
 ```
 
-For CPU-bound work, set `n` to roughly `ps::ps_cpu_count() - 1`, leaving
-a core free for the host R process and OS, and accounting for any cores
-reserved for other purposes. For I/O-bound work (waiting on network,
-disk, or subprocess), `n` can exceed core count since daemons spend most
-of their time idle. Each local daemon runs a full R process, so check
-that per-daemon memory footprint times `n` fits in host RAM.
+For CPU-bound work, set `n` to roughly one less than your number of CPU
+cores, leaving a core free for the host R process and OS. Account for
+any cores reserved for other purposes. For I/O-bound work (waiting on
+network, disk, or subprocess), `n` can exceed core count since daemons
+spend most of their time idle. Each local daemon runs a full R process,
+so check that per-daemon memory footprint times `n` fits in host RAM.
 
 #### With Dispatcher (default)
 
@@ -426,10 +426,9 @@ status()$memory
 ```
 
 `used` is current and `peak` is the high-watermark queued payload, both
-in MB. `capacity` reflects the value set above (`NA` if unset). Use
-`peak` to size `memory`: profile a representative workload with
-`memory = NULL` first to capture organic demand, then set the capacity
-at or above the observed peak.
+in MB. Profile a representative workload with `memory = NULL` first
+(where `capacity` reports `NA`) to capture organic demand, then set
+`memory` at or above the observed `peak`.
 
 If profiling isn’t practical, treat `memory` as a fraction of host RAM
 rather than the whole of it. With local daemons, the same machine runs
@@ -444,24 +443,43 @@ budget can be more generous.
 #### Non-blocking Submission
 
 Blocking the host R thread is acceptable in batch scripts, but not in
-event-loop contexts such as Shiny or promises.
+event-loop contexts. A Shiny session that calls
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) from inside
+an ExtendedTask can’t afford to block while the queue drains — that same
+session is also driving the UI for all users.
 
-[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) is a
-non-blocking variant of
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md). It returns
-`NULL` invisibly when the queue is at the memory limit, instead of
-blocking. The caller decides what to do — drop the task, retry later, or
-raise a condition.
+[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) returns
+immediately when the queue is full, instead of blocking:
+
+- Below capacity, behaves identically to
+  [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) and
+  returns a mirai.
+- At capacity, returns `NULL` invisibly without blocking, leaving the
+  caller to decide what to do next.
 
 ``` r
 
 m <- try_mirai(rnorm(10)) %||% stop("queue full")
 ```
 
+The three response strategies are: drop the task (best when the work is
+idempotent and frequent), retry later (queue behind a
+[`later::later()`](https://later.r-lib.org/reference/later.html) call),
+or propagate backpressure upstream by raising a condition (as in the
+example above). Which is right is application-specific.
+
 With `memory` unset or no dispatcher,
 [`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) always
 returns a mirai and behaves identically to
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
+[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) — safe to
+use unconditionally; it only diverges in the bounded-queue case.
+
+`daemons(memory = ...)` and
+[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) together
+are the canonical event-loop combination: set the cap to what the
+session can afford to hold, submit through
+[`try_mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md), and the
+application adapts to load instead of locking up.
 
 ``` r
 
@@ -497,17 +515,17 @@ m[]
 daemons(0)
 ```
 
-Only the ~30-byte shared memory name is serialised across the wire; the
-daemon accesses the data directly via ALTREP. `lobstr::obj_size(y)` on
-the daemon reflects just the wrapper, confirming the 8 MB vector was
-never copied across.
+Only a reference to the shared memory is serialised across the wire; the
+daemon accesses the data directly via ALTREP (R’s alternative
+representation system). `lobstr::obj_size(y)` on the daemon reflects
+just the wrapper, confirming the 8 MB vector was never copied across.
 
 Shared objects are local-machine only and cannot be transferred to
 remote daemons — use regular argument-passing for distributed work.
 
 `share()` and `memory =` compose: a `share()`-wrapped argument shrinks
-the queued payload to ~30 bytes, sidestepping backpressure on the input
-side. A daemon can also `share()` its return value for symmetric
+the queued payload to just a reference, sidestepping backpressure on the
+input side. A daemon can also `share()` its return value for symmetric
 zero-copy on the result side.
 
 ### 5. mirai_map

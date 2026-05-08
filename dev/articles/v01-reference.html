@@ -305,13 +305,13 @@ launching.</p>
 <p>Specify the number of daemons to launch:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
-<p>For CPU-bound work, set <code>n</code> to roughly
-<code>ps::ps_cpu_count() - 1</code>, leaving a core free for the host R
-process and OS, and accounting for any cores reserved for other
-purposes. For I/O-bound work (waiting on network, disk, or subprocess),
-<code>n</code> can exceed core count since daemons spend most of their
-time idle. Each local daemon runs a full R process, so check that
-per-daemon memory footprint times <code>n</code> fits in host RAM.</p>
+<p>For CPU-bound work, set <code>n</code> to roughly one less than your
+number of CPU cores, leaving a core free for the host R process and OS.
+Account for any cores reserved for other purposes. For I/O-bound work
+(waiting on network, disk, or subprocess), <code>n</code> can exceed
+core count since daemons spend most of their time idle. Each local
+daemon runs a full R process, so check that per-daemon memory footprint
+times <code>n</code> fits in host RAM.</p>
 <div class="section level4">
 <h4 id="with-dispatcher-default">With Dispatcher (default)<a class="anchor" aria-label="anchor" href="#with-dispatcher-default"></a>
 </h4>
@@ -439,11 +439,11 @@ backpressure.</p>
 <span><span class="co">#&gt;     used     peak capacity </span></span>
 <span><span class="co">#&gt;        0        0      100</span></span></code></pre></div>
 <p><code>used</code> is current and <code>peak</code> is the
-high-watermark queued payload, both in MB. <code>capacity</code>
-reflects the value set above (<code>NA</code> if unset). Use
-<code>peak</code> to size <code>memory</code>: profile a representative
-workload with <code>memory = NULL</code> first to capture organic
-demand, then set the capacity at or above the observed peak.</p>
+high-watermark queued payload, both in MB. Profile a representative
+workload with <code>memory = NULL</code> first (where
+<code>capacity</code> reports <code>NA</code>) to capture organic
+demand, then set <code>memory</code> at or above the observed
+<code>peak</code>.</p>
 <p>If profiling isn’t practical, treat <code>memory</code> as a fraction
 of host RAM rather than the whole of it. With local daemons, the same
 machine runs the host R process, the dispatcher, and <code>n</code>
@@ -459,16 +459,32 @@ consume local RAM, so the budget can be more generous.</p>
 <h4 id="non-blocking-submission">Non-blocking Submission<a class="anchor" aria-label="anchor" href="#non-blocking-submission"></a>
 </h4>
 <p>Blocking the host R thread is acceptable in batch scripts, but not in
-event-loop contexts such as Shiny or promises.</p>
-<p><code><a href="../reference/mirai.html">try_mirai()</a></code> is a non-blocking variant of
-<code><a href="../reference/mirai.html">mirai()</a></code>. It returns <code>NULL</code> invisibly when the
-queue is at the memory limit, instead of blocking. The caller decides
-what to do — drop the task, retry later, or raise a condition.</p>
+event-loop contexts. A Shiny session that calls <code><a href="../reference/mirai.html">mirai()</a></code>
+from inside an ExtendedTask can’t afford to block while the queue drains
+— that same session is also driving the UI for all users.</p>
+<p><code><a href="../reference/mirai.html">try_mirai()</a></code> returns immediately when the queue is full,
+instead of blocking:</p>
+<ul>
+<li>Below capacity, behaves identically to <code><a href="../reference/mirai.html">mirai()</a></code> and
+returns a mirai.</li>
+<li>At capacity, returns <code>NULL</code> invisibly without blocking,
+leaving the caller to decide what to do next.</li>
+</ul>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">try_mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"queue full"</span><span class="op">)</span></span></code></pre></div>
+<p>The three response strategies are: drop the task (best when the work
+is idempotent and frequent), retry later (queue behind a
+<code><a href="https://later.r-lib.org/reference/later.html" class="external-link">later::later()</a></code> call), or propagate backpressure upstream by
+raising a condition (as in the example above). Which is right is
+application-specific.</p>
 <p>With <code>memory</code> unset or no dispatcher,
 <code><a href="../reference/mirai.html">try_mirai()</a></code> always returns a mirai and behaves identically
-to <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
+to <code><a href="../reference/mirai.html">mirai()</a></code> — safe to use unconditionally; it only diverges
+in the bounded-queue case.</p>
+<p><code>daemons(memory = ...)</code> and <code><a href="../reference/mirai.html">try_mirai()</a></code>
+together are the canonical event-loop combination: set the cap to what
+the session can afford to hold, submit through <code><a href="../reference/mirai.html">try_mirai()</a></code>,
+and the application adapts to load instead of locking up.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -496,17 +512,18 @@ without copying. Wrap an atomic vector, list, or dataframe with
 <span><span class="co">#&gt; [1] -1208.687</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Only the ~30-byte shared memory name is serialised across the wire;
-the daemon accesses the data directly via ALTREP.
-<code>lobstr::obj_size(y)</code> on the daemon reflects just the
-wrapper, confirming the 8 MB vector was never copied across.</p>
+<p>Only a reference to the shared memory is serialised across the wire;
+the daemon accesses the data directly via ALTREP (R’s alternative
+representation system). <code>lobstr::obj_size(y)</code> on the daemon
+reflects just the wrapper, confirming the 8 MB vector was never copied
+across.</p>
 <p>Shared objects are local-machine only and cannot be transferred to
 remote daemons — use regular argument-passing for distributed work.</p>
 <p><code>share()</code> and <code>memory =</code> compose: a
-<code>share()</code>-wrapped argument shrinks the queued payload to ~30
-bytes, sidestepping backpressure on the input side. A daemon can also
-<code>share()</code> its return value for symmetric zero-copy on the
-result side.</p>
+<code>share()</code>-wrapped argument shrinks the queued payload to just
+a reference, sidestepping backpressure on the input side. A daemon can
+also <code>share()</code> its return value for symmetric zero-copy on
+the result side.</p>
 </div>
 </div>
 <div class="section level3">

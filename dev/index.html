@@ -128,7 +128,7 @@
 <div class="section level3">
 <h3 id="architecture">Architecture<a class="anchor" aria-label="anchor" href="#architecture"></a>
 </h3>
-<p><code><a href="reference/mirai.html">mirai()</a></code> sends tasks to <em>daemons</em> — persistent R worker processes. The host listens at a URL; daemons dial in and pull work via an in-process <em>dispatcher thread</em> that handles FIFO scheduling, cancellation, and bounded queues. Add or remove daemons at any time, and direct tasks to different <em>compute profiles</em> (CPU pool, GPU pool, remote cluster) from the same session.</p>
+<p><code><a href="reference/mirai.html">mirai()</a></code> sends tasks to <em>daemons</em> — persistent R worker processes. The host listens at a URL; daemons dial in and pull work via an in-process <em>dispatcher thread</em> that handles scheduling, cancellation, and bounded queues. Add or remove daemons at any time, and direct tasks to different <em>compute profiles</em> (CPU pool, GPU pool, remote cluster) from the same session.</p>
 <p><a href="#architecture"><img src="reference/figures/architecture.svg" alt="Hub architecture diagram showing compute profiles with daemons connecting to host" width="720"></a></p>
 <p>Round-trip latency stays in the microseconds:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">

@@ -51,7 +51,7 @@ daemons(0)
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) sends tasks
 to *daemons* — persistent R worker processes. The host listens at a URL;
 daemons dial in and pull work via an in-process *dispatcher thread* that
-handles FIFO scheduling, cancellation, and bounded queues. Add or remove
+handles scheduling, cancellation, and bounded queues. Add or remove
 daemons at any time, and direct tasks to different *compute profiles*
 (CPU pool, GPU pool, remote cluster) from the same session.
 
