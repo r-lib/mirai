@@ -157,15 +157,9 @@ m3[]
 
 m3$data$stack.trace
 #> [[1]]
-#> .handleSimpleError(function (cnd) 
-#> {
-#>     `[[<-`(., "syscalls", sys.calls())
-#> }, "positive", base::quote(f(1)))
-#> 
-#> [[2]]
 #> stop("positive")
 #> 
-#> [[3]]
+#> [[2]]
 #> f(1)
 m3$data$condition.class
 #> [1] "simpleError" "error"       "condition"
