@@ -2,6 +2,12 @@
 
 ## mirai (development version)
 
+##### Updates
+
+- Fixes [`.handleSimpleError()`](https://rdrr.io/r/base/conditions.html)
+  appearing in `$stack.trace` on a `miraiError` (regression in mirai
+  2.7.0).
+
 ## mirai 2.7.0
 
 CRAN release: 2026-05-08
