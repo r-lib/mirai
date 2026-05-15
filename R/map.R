@@ -157,42 +157,30 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
 
   spn <- otel_map_span(.compute)
 
+  dispatch_one <- function(elem, .expr) {
+    mirai(
+      .expr = .expr,
+      ...,
+      .args = list(.f = .f, .x = elem, .args = .args, .mirai_within_map = TRUE),
+      .compute = .compute
+    )
+  }
+
   dx <- dim(.x)
   vec <- if (is.null(dx)) {
-    `names<-`(
-      lapply(.x, function(x) {
-        mirai(
-          .expr = do.call(.f, c(list(.x), .args), quote = TRUE),
-          ...,
-          .args = list(.f = .f, .x = x, .args = .args, .mirai_within_map = TRUE),
-          .compute = .compute
-        )
-      }),
-      names(.x)
-    )
+    expr <- quote(do.call(.f, c(list(.x), .args), quote = TRUE))
+    `names<-`(lapply(.x, dispatch_one, expr), names(.x))
   } else if (is.data.frame(.x)) {
+    expr <- quote(do.call(.f, c(.x, .args), quote = TRUE))
     rn <- attr(.x, "row.names", exact = TRUE)
     `names<-`(
-      lapply(seq_len(dx[1L]), function(i) {
-        mirai(
-          .expr = do.call(.f, c(.x, .args), quote = TRUE),
-          ...,
-          .args = list(.f = .f, .x = lapply(.x, `[[`, i), .args = .args, .mirai_within_map = TRUE),
-          .compute = .compute
-        )
-      }),
+      lapply(seq_len(dx[1L]), function(i) dispatch_one(lapply(.x, `[[`, i), expr)),
       if (is.character(rn)) rn
     )
   } else {
+    expr <- quote(do.call(.f, c(as.list(.x), .args), quote = TRUE))
     `names<-`(
-      lapply(seq_len(dx[1L]), function(i) {
-        mirai(
-          .expr = do.call(.f, c(as.list(.x), .args), quote = TRUE),
-          ...,
-          .args = list(.f = .f, .x = .x[i, ], .args = .args, .mirai_within_map = TRUE),
-          .compute = .compute
-        )
-      }),
+      lapply(seq_len(dx[1L]), function(i) dispatch_one(.x[i, ], expr)),
       if (is.matrix(.x)) dimnames(.x)[[1L]]
     )
   }
