@@ -289,11 +289,9 @@ connection && NOT_CRAN && {
   test_false(daemons(0L))
   test_zero(with(daemons(url = "tcp://:0", correcttype = c(1, 0), token = TRUE), {8L - 9L + 1L}))
   ns <- getNamespace("mirai")
-  original_ll <- mock_binding(ns, ".limit_long", 100L)
+  original_ll <- mock_binding(ns, ".limit_long", 10L)
   original_lls <- mock_binding(ns, ".limit_long_secs", 1L)
   suppressMessages(test_true(daemons(n = 2, "ws://:0")))
-  restore_binding(ns, ".limit_long_secs", original_lls)
-  restore_binding(ns, ".limit_long", original_ll)
   test_type("externalptr", nextget("dispatcher"))
   test_equal(length(nextget("url")), 1L)
   status <- status()
@@ -309,6 +307,15 @@ connection && NOT_CRAN && {
   test_type("double", res[[1L]])
   test_type("double", res[[2L]])
   test_false(daemons(0L))
+  msgs <- character()
+  withCallingHandlers(
+    test_true(daemons(n = 1, dispatcher = FALSE)),
+    message = function(m) { msgs <<- c(msgs, conditionMessage(m)); invokeRestart("muffleMessage") }
+  )
+  test_true(any(grepl("initial sync", msgs)))
+  test_false(daemons(0L))
+  restore_binding(ns, ".limit_long_secs", original_lls)
+  restore_binding(ns, ".limit_long", original_ll)
   test_true(daemons(url = "tls+tcp://127.0.0.1:0", dispatcher = TRUE))
   test_type("character", launch_remote(remote = ssh_config(c("ssh://remotehost", "ssh://remotenode"), tunnel = TRUE, command = "echo")))
   test_equal(launch_local(), 1L)
