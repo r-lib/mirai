@@ -264,18 +264,7 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   envir <- ..[[.compute]]
 
   expr <- substitute(.expr)
-  .expr <- c(
-    .snapshot,
-    as.expression(
-      if (
-        is.symbol(expr) && exists(as.character(expr), envir = parent.frame()) && is.language(.expr)
-      ) {
-        .expr
-      } else {
-        expr
-      }
-    )
-  )
+  .expr <- c(.snapshot, as.expression(resolve_expr(expr, .expr, parent.frame())))
 
   xlen <- if (is.null(envir[["dispatcher"]])) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
@@ -683,19 +672,21 @@ validate_dispatch <- function(missing_expr, globals, args, where = sys.call(-1L)
   list(globals, args)
 }
 
+resolve_expr <- function(expr, .expr, parent) {
+  if (is.symbol(expr) && exists(as.character(expr), envir = parent) && is.language(.expr)) {
+    .expr
+  } else {
+    expr
+  }
+}
+
 do_mirai <- function(expr, .expr, globals, .args, .timeout, envir, parent) {
   ctx_spn <- otel_mirai_span(envir)
   if (length(envir[["seed"]])) {
     globals[[".Random.seed"]] <- next_stream(envir)
   }
   data <- list(
-    ._expr_. = if (
-      is.symbol(expr) && exists(as.character(expr), envir = parent) && is.language(.expr)
-    ) {
-      .expr
-    } else {
-      expr
-    },
+    ._expr_. = resolve_expr(expr, .expr, parent),
     ._globals_. = globals,
     ._otel_. = ctx_spn[[1L]]
   )
