@@ -4,6 +4,7 @@
 
 ##### Updates
 
+- Reduces overhead for synchronous daemons.
 - Fixes [`.handleSimpleError()`](https://rdrr.io/r/base/conditions.html)
   appearing in `$stack.trace` on a `miraiError` (regression in mirai
   2.7.0).
