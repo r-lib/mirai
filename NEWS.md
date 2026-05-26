@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Reduces overhead for synchronous daemons.
 * Fixes `.handleSimpleError()` appearing in `$stack.trace` on a `miraiError` (regression in mirai 2.7.0).
 
 # mirai 2.7.0

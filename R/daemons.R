@@ -243,7 +243,7 @@ daemons <- function(
   envir <- ..[[.compute]]
 
   if (sync) {
-    url <- local_url()
+    url <- inproc_url()
     dispatcher <- FALSE
     remote <- serial <- tls <- pass <- NULL
   }
