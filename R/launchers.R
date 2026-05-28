@@ -602,7 +602,9 @@ find_dot <- function(args) {
   sel
 }
 
-posit_workbench_headers <- function() {
+posit_workbench_headers <- function() pwb_headers()
+
+pwb_headers <- function() {
   cookie <- if (is.null(.[["pwb_cookie"]])) {
     Sys.getenv("RS_SESSION_RPC_COOKIE")
   } else {
@@ -611,11 +613,15 @@ posit_workbench_headers <- function() {
   c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie)
 }
 
-posit_workbench_url <- function() {
+posit_workbench_url <- function() pwb_url()
+
+pwb_url <- function() {
   file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")
 }
 
-posit_workbench_data <- function(
+posit_workbench_data <- function(...) pwb_data(...)
+
+pwb_data <- function(
   rscript = "Rscript",
   job_name = "mirai_daemon",
   cluster = NULL,
