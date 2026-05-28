@@ -60,6 +60,7 @@
 <code><a href="../reference/http_config.html">http_config()</a></code> gains a <code>headers</code> argument, now the primary way to supply HTTP headers (including authentication such as session cookie, bearer token, or API key). <code>cookie</code> and <code>token</code> are retained as convenience arguments that append <code>Cookie:</code> and <code>Authorization: Bearer</code> entries to <code>headers</code> (thanks <a href="https://github.com/ddl-dkelkhoff" class="external-link">@ddl-dkelkhoff</a>, <a href="https://github.com/r-lib/mirai/issues/612" class="external-link">#612</a>).</li>
 <li>Reduces overhead for synchronous daemons by using an in-process transport.</li>
 <li>Fixes <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">.handleSimpleError()</a></code> appearing in <code>$stack.trace</code> on a <code>miraiError</code> (regression in mirai 2.7.0).</li>
+<li>Fixes load-balanced parallel functions (e.g. <code><a href="https://rdrr.io/r/parallel/clusterApply.html" class="external-link">parLapplyLB()</a></code>, <code>foreach::%dopar%</code>) hanging on a mirai cluster when there are more tasks than nodes, a regression in mirai 2.5.1 (thanks <a href="https://github.com/manforkr" class="external-link">@manforkr</a>, <a href="https://github.com/r-lib/mirai/issues/591" class="external-link">#591</a>).</li>
 </ul></div>
 </div>
     <div class="section level2">

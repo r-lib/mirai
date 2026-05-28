@@ -16,6 +16,12 @@
 - Fixes [`.handleSimpleError()`](https://rdrr.io/r/base/conditions.html)
   appearing in `$stack.trace` on a `miraiError` (regression in mirai
   2.7.0).
+- Fixes load-balanced parallel functions
+  (e.g. [`parLapplyLB()`](https://rdrr.io/r/parallel/clusterApply.html),
+  `foreach::%dopar%`) hanging on a mirai cluster when there are more
+  tasks than nodes, a regression in mirai 2.5.1 (thanks
+  [@manforkr](https://github.com/manforkr),
+  [\#591](https://github.com/r-lib/mirai/issues/591)).
 
 ## mirai 2.7.0
 
