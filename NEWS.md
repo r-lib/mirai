@@ -5,6 +5,7 @@
 * `http_config()` gains a `headers` argument, now the primary way to supply HTTP headers (including authentication such as session cookie, bearer token, or API key). `cookie` and `token` are retained as convenience arguments that append `Cookie:` and `Authorization: Bearer` entries to `headers` (thanks @ddl-dkelkhoff, #612).
 * Reduces overhead for synchronous daemons by using an in-process transport.
 * Fixes `.handleSimpleError()` appearing in `$stack.trace` on a `miraiError` (regression in mirai 2.7.0).
+* Fixes load-balanced parallel functions (e.g. `parLapplyLB()`, `foreach::%dopar%`) hanging on a mirai cluster when there are more tasks than nodes, a regression in mirai 2.5.1 (thanks @manforkr, #591).
 
 # mirai 2.7.0
 
