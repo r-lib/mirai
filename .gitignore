@@ -4,8 +4,7 @@
 .Ruserdata
 /docs/
 /revdep/
-/.claude/*
-!/.claude/skills/
+/.claude/
 /.quarto/
 **/*.quarto_ipynb
 .DS_Store
