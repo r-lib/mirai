@@ -7,10 +7,11 @@
 http_config(
   url = posit_workbench_url,
   method = "POST",
-  cookie = posit_workbench_cookie,
-  token = NULL,
+  headers = posit_workbench_headers,
   data = posit_workbench_data,
-  ...
+  ...,
+  cookie = NULL,
+  token = NULL
 )
 }
 \arguments{
@@ -19,13 +20,10 @@ function returning the URL value.}
 
 \item{method}{(character) HTTP method, typically \code{"POST"}.}
 
-\item{cookie}{(character or function) session cookie value. May be a
-function returning the cookie value. Set to \code{NULL} if not required for
-authentication.}
-
-\item{token}{(character or function) authentication bearer token. May be a
-function returning the token value. Set to \code{NULL} if not required for
-authentication.}
+\item{headers}{(named character vector or function) HTTP headers sent with
+the request, supplying any required authentication (e.g. session cookie,
+bearer token, API key) as well as other API metadata. May be a function
+returning a named character vector.}
 
 \item{data}{(character or function) JSON or formatted request body containing
 the daemon launch command. May be a function returning the data value.
@@ -35,6 +33,14 @@ will be inserted at launch time.}
 \item{...}{additional arguments passed to \code{data} when it is a function.
 See the Posit Workbench Options section for those accepted by the
 default value of \code{data}.}
+
+\item{cookie}{(character or function) convenience argument that, if non-NULL,
+appends a \verb{Cookie: <value>} entry to \code{headers}. May be a function returning
+the cookie value.}
+
+\item{token}{(character or function) convenience argument that, if non-NULL,
+appends an \verb{Authorization: Bearer <value>} entry to \code{headers}. May be a
+function returning the token value.}
 }
 \value{
 A list in the required format to be supplied to the \code{remote} argument
@@ -44,6 +50,13 @@ of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remot
 Generates a remote configuration for launching daemons via HTTP API. By
 default, automatically configures for Posit Workbench using environment
 variables.
+}
+\details{
+Arguments accepting either a value or a function (\code{url}, \code{headers}, \code{data},
+\code{cookie}, \code{token}) may be supplied as a function to defer evaluation until
+the time of launch. This is the recommended way to supply credentials, so
+that they are fetched lazily when needed rather than captured when the
+configuration is created.
 }
 \section{Posit Workbench Options}{
 
@@ -72,8 +85,10 @@ tryCatch(http_config(), error = identity)
 http_config(
   url = "https://api.example.com/launch",
   method = "POST",
-  cookie = function() Sys.getenv("MY_SESSION_COOKIE"),
-  token = function() Sys.getenv("MY_API_KEY"),
+  headers = function() c(
+    Authorization = sprintf("Bearer \%s", Sys.getenv("MY_API_KEY")),
+    `X-API-Version` = "2"
+  ),
   data = '{"command": "\%s"}'
 )
 

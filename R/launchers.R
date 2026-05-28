@@ -373,15 +373,19 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' default, automatically configures for Posit Workbench using environment
 #' variables.
 #'
+#' Arguments accepting either a value or a function (`url`, `headers`, `data`,
+#' `cookie`, `token`) may be supplied as a function to defer evaluation until
+#' the time of launch. This is the recommended way to supply credentials, so
+#' that they are fetched lazily when needed rather than captured when the
+#' configuration is created.
+#'
 #' @param url (character or function) URL endpoint for the launch API. May be a
 #'   function returning the URL value.
 #' @param method (character) HTTP method, typically `"POST"`.
-#' @param cookie (character or function) session cookie value. May be a
-#'   function returning the cookie value. Set to `NULL` if not required for
-#'   authentication.
-#' @param token (character or function) authentication bearer token. May be a
-#'   function returning the token value. Set to `NULL` if not required for
-#'   authentication.
+#' @param headers (named character vector or function) HTTP headers sent with
+#'   the request, supplying any required authentication (e.g. session cookie,
+#'   bearer token, API key) as well as other API metadata. May be a function
+#'   returning a named character vector.
 #' @param data (character or function) JSON or formatted request body containing
 #'   the daemon launch command. May be a function returning the data value.
 #'   Should include a placeholder `"%s"` where the `mirai::daemon()` call
@@ -389,6 +393,12 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' @param ... additional arguments passed to `data` when it is a function.
 #'   See the Posit Workbench Options section for those accepted by the
 #'   default value of `data`.
+#' @param cookie (character or function) convenience argument that, if non-NULL,
+#'   appends a `Cookie: <value>` entry to `headers`. May be a function returning
+#'   the cookie value.
+#' @param token (character or function) convenience argument that, if non-NULL,
+#'   appends an `Authorization: Bearer <value>` entry to `headers`. May be a
+#'   function returning the token value.
 #'
 #' @inherit remote_config return
 #'
@@ -419,8 +429,10 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' http_config(
 #'   url = "https://api.example.com/launch",
 #'   method = "POST",
-#'   cookie = function() Sys.getenv("MY_SESSION_COOKIE"),
-#'   token = function() Sys.getenv("MY_API_KEY"),
+#'   headers = function() c(
+#'     Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")),
+#'     `X-API-Version` = "2"
+#'   ),
 #'   data = '{"command": "%s"}'
 #' )
 #'
@@ -448,19 +460,21 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 http_config <- function(
   url = posit_workbench_url,
   method = "POST",
-  cookie = posit_workbench_cookie,
-  token = NULL,
+  headers = posit_workbench_headers,
   data = posit_workbench_data,
-  ...
+  ...,
+  cookie = NULL,
+  token = NULL
 ) {
   list(
     type = "http",
     url = url,
     method = method,
-    cookie = cookie,
-    token = token,
+    headers = headers,
     data = data,
-    dots = list(...)
+    dots = list(...),
+    cookie = cookie,
+    token = token
   )
 }
 
@@ -550,13 +564,13 @@ launch_remote_http <- function(n, remote, url, write_args, dots, envir, tls) {
   if (is.function(data)) {
     data <- do.call(data, remote[["dots"]])
   }
-  token <- resolve_field(remote[["token"]])
-  cookie <- resolve_field(remote[["cookie"]])
-  headers <- c(
-    Authorization = sprintf("Bearer %s", token),
-    Cookie = cookie,
-    `X-RS-Session-Server-RPC-Cookie` = cookie
-  )
+  headers <- resolve_field(remote[["headers"]])
+  if (!is.null(remote[["cookie"]])) {
+    headers <- c(headers, Cookie = resolve_field(remote[["cookie"]]))
+  }
+  if (!is.null(remote[["token"]])) {
+    headers <- c(headers, Authorization = sprintf("Bearer %s", resolve_field(remote[["token"]])))
+  }
   lapply(seq_len(n), function(i) {
     cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
     cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
@@ -588,9 +602,13 @@ find_dot <- function(args) {
   sel
 }
 
-posit_workbench_cookie <- function() {
-  is.null(.[["pwb_cookie"]]) || return(.[["pwb_cookie"]])
-  Sys.getenv("RS_SESSION_RPC_COOKIE")
+posit_workbench_headers <- function() {
+  cookie <- if (is.null(.[["pwb_cookie"]])) {
+    Sys.getenv("RS_SESSION_RPC_COOKIE")
+  } else {
+    .[["pwb_cookie"]]
+  }
+  c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie)
 }
 
 posit_workbench_url <- function() {
