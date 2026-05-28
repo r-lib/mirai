@@ -68,10 +68,11 @@ variables.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">http_config</span><span class="op">(</span></span>
 <span>  url <span class="op">=</span> <span class="va">posit_workbench_url</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"POST"</span>,</span>
-<span>  cookie <span class="op">=</span> <span class="va">posit_workbench_cookie</span>,</span>
-<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  headers <span class="op">=</span> <span class="va">posit_workbench_headers</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">posit_workbench_data</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  cookie <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  token <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,16 +89,11 @@ function returning the URL value.</p></dd>
 <dd><p>(character) HTTP method, typically <code>"POST"</code>.</p></dd>
 
 
-<dt id="arg-cookie">cookie<a class="anchor" aria-label="anchor" href="#arg-cookie"></a></dt>
-<dd><p>(character or function) session cookie value. May be a
-function returning the cookie value. Set to <code>NULL</code> if not required for
-authentication.</p></dd>
-
-
-<dt id="arg-token">token<a class="anchor" aria-label="anchor" href="#arg-token"></a></dt>
-<dd><p>(character or function) authentication bearer token. May be a
-function returning the token value. Set to <code>NULL</code> if not required for
-authentication.</p></dd>
+<dt id="arg-headers">headers<a class="anchor" aria-label="anchor" href="#arg-headers"></a></dt>
+<dd><p>(named character vector or function) HTTP headers sent with
+the request, supplying any required authentication (e.g. session cookie,
+bearer token, API key) as well as other API metadata. May be a function
+returning a named character vector.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
@@ -112,11 +108,31 @@ will be inserted at launch time.</p></dd>
 See the Posit Workbench Options section for those accepted by the
 default value of <code>data</code>.</p></dd>
 
+
+<dt id="arg-cookie">cookie<a class="anchor" aria-label="anchor" href="#arg-cookie"></a></dt>
+<dd><p>(character or function) convenience argument that, if non-NULL,
+appends a <code>Cookie: &lt;value&gt;</code> entry to <code>headers</code>. May be a function returning
+the cookie value.</p></dd>
+
+
+<dt id="arg-token">token<a class="anchor" aria-label="anchor" href="#arg-token"></a></dt>
+<dd><p>(character or function) convenience argument that, if non-NULL,
+appends an <code>Authorization: Bearer &lt;value&gt;</code> entry to <code>headers</code>. May be a
+function returning the token value.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list in the required format to be supplied to the <code>remote</code> argument
 of <code><a href="daemons.html">daemons()</a></code> or <code><a href="launch_local.html">launch_remote()</a></code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Arguments accepting either a value or a function (<code>url</code>, <code>headers</code>, <code>data</code>,
+<code>cookie</code>, <code>token</code>) may be supplied as a function to defer evaluation until
+the time of launch. This is the recommended way to supply credentials, so
+that they are fetched lazily when needed rather than captured when the
+configuration is created.</p>
     </div>
     <div class="section level2">
     <h2 id="posit-workbench-options">Posit Workbench Options<a class="anchor" aria-label="anchor" href="#posit-workbench-options"></a></h2>
@@ -150,94 +166,43 @@ types of remote configuration.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $url</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e54d59a968&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pwb_url()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56207470c560&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $method</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POST"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cookie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $headers</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     is.null(.[["pwb_cookie"]]) || return(.[["pwb_cookie"]])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sys.getenv("RS_SESSION_RPC_COOKIE")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e54d597858&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pwb_headers()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56207470bed0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $token</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (rscript = "Rscript", job_name = "mirai_daemon", cluster = NULL, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     resource_profile = NULL, cpus = NULL, memory = NULL) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     url &lt;- Sys.getenv("RS_SERVER_ADDRESS")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     cookie &lt;- Sys.getenv("RS_SESSION_RPC_COOKIE")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     nzchar(url) &amp;&amp; nzchar(cookie) || stop(._[["posit_api"]])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     envs &lt;- ncurl(file.path(url, "api", "get_compute_envs"), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         headers = c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         timeout = .limit_short)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (envs[["status"]] != 200L) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         envs &lt;- posit_workbench_fetch("api/get_compute_envs")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         envs[["status"]] == 200L || stop(._[["posit_api"]])</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .$pwb_cookie &lt;- envs[["cookie"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     clusters &lt;- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (is.null(cluster)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cluster_obj &lt;- clusters[[1L]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cluster_names &lt;- vapply(clusters, `[[`, character(1L), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "name")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cluster %in% cluster_names || stop(sprintf("cluster '%s' not found. Available: %s", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             cluster, paste(cluster_names, collapse = ", ")))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cluster_obj &lt;- clusters[[which(cluster_names == cluster)]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     lp &lt;- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         .libPaths()), collapse = ","))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     job &lt;- list(cluster = cluster_obj[["name"]], container = list(image = cluster_obj[["defaultImage"]]), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         name = job_name, exe = rscript, args = c("-e", sprintf("{%s;%%s}", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             lp)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (!is.null(resource_profile)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         profiles &lt;- cluster_obj[["resourceProfiles"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         profile_names &lt;- vapply(profiles, `[[`, character(1L), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             "name")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         resource_profile %in% profile_names || stop(sprintf("resource profile '%s' not found. Available: %s", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             resource_profile, paste(profile_names, collapse = ", ")))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         job[["resourceProfile"]] &lt;- resource_profile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (!is.null(cpus) || !is.null(memory)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         if (is.null(cpus)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             cpus &lt;- 1L</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         if (is.null(memory)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             memory &lt;- 512L</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         job[["resources"]] &lt;- list(cpus = cpus, memory = memory)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         job[["resourceProfile"]] &lt;- cluster_obj[["resourceProfiles"]][[1L]][["name"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     secretbase::jsonenc(list(method = "launch_job", kwparams = list(job = job)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e54d598690&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (...) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pwb_data(...)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56207470b840&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dots</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cookie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $token</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom HTTP configuration example:</span></span></span>
 <span class="r-in"><span><span class="fu">http_config</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  url <span class="op">=</span> <span class="st">"https://api.example.com/launch"</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"POST"</span>,</span></span>
-<span class="r-in"><span>  cookie <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_SESSION_COOKIE"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  token <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_API_KEY"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  headers <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    Authorization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Bearer %s"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_API_KEY"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    `X-API-Version` <span class="op">=</span> <span class="st">"2"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="st">'{"command": "%s"}'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
@@ -249,21 +214,23 @@ types of remote configuration.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $method</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POST"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cookie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $headers</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sys.getenv("MY_SESSION_COOKIE")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e54d5a8b98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $token</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sys.getenv("MY_API_KEY")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e54d5a8b98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> c(Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     `X-API-Version` = "2")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5620746fded0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{\"command\": \"%s\"}"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dots</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cookie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $token</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
