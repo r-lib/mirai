@@ -4,6 +4,9 @@
 
 ##### Updates
 
+- mirai’s agent skill is now included in the installed package at
+  `skills` and picked up automatically by `btw` and other packages
+  following this convention.
 - [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
   gains a `headers` argument, now the primary way to supply HTTP headers
   (including authentication such as session cookie, bearer token, or API
