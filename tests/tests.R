@@ -285,6 +285,14 @@ connection && {
   test_print(cl <- make_cluster(n = 1, url = local_url(), remote = remote_config()))
   test_null(stopCluster(cl))
 }
+# load-balancing across multiple nodes with more tasks than nodes
+connection && NOT_CRAN && {
+  cl <- make_cluster(2)
+  res <- parLapplyLB(cl, 1:6, function(i) i * 2L)
+  test_identical(res, as.list(seq(2L, 12L, by = 2L)))
+  test_identical(parSapplyLB(cl, 1:6, function(i) i + 1L), 2:7)
+  test_null(stopCluster(cl))
+}
 # advanced daemons and dispatcher tests
 connection && NOT_CRAN && {
   test_true(daemons(url = "ws://:0", correctype = 0L, token = TRUE))

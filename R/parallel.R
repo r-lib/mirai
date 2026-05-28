@@ -89,6 +89,8 @@ make_cluster <- function(n, url = NULL, remote = NULL, ...) {
     daemons(n, dispatcher = FALSE, ..., cleanup = FALSE, .compute = id)
   }
 
+  `[[<-`(..[[id]], "cvs", cv())
+
   cl <- lapply(seq_len(n), create_node, id = id)
   `attributes<-`(cl, list(class = c("miraiCluster", "cluster"), id = id))
 }
@@ -121,7 +123,8 @@ sendData.miraiNode <- function(node, data) {
   value <- data[["data"]]
   tagged <- !is.null(value[["tag"]])
   if (tagged) {
-    cv_reset(envir[["cv"]])
+    orig_cv <- envir[["cv"]]
+    `[[<-`(envir, "cv", envir[["cvs"]])
   }
 
   m <- mirai(
@@ -131,6 +134,7 @@ sendData.miraiNode <- function(node, data) {
     .compute = id
   )
   if (tagged) {
+    `[[<-`(envir, "cv", orig_cv)
     `[[<-`(m, "tag", value[["tag"]])
   }
   `[[<-`(node, "mirai", m)
@@ -143,7 +147,7 @@ recvData.miraiNode <- function(node) call_aio(.subset2(node, "mirai"))
 #' @exportS3Method parallel::recvOneData
 #'
 recvOneData.miraiCluster <- function(cl) {
-  wait(..[[attr(cl, "id")]][["cv"]])
+  wait(..[[attr(cl, "id")]][["cvs"]])
   node <- which.min(lapply(cl, node_unresolved))
   m <- .subset2(.subset2(cl, node), "mirai")
   list(node = node, value = `class<-`(m, NULL))
