@@ -2,7 +2,8 @@
 
 #### Updates
 
-* Reduces overhead for synchronous daemons.
+* `http_config()` gains a `headers` argument, now the primary way to supply HTTP headers (including authentication such as session cookie, bearer token, or API key). `cookie` and `token` are retained as convenience arguments that append `Cookie:` and `Authorization: Bearer` entries to `headers` (thanks @ddl-dkelkhoff, #612).
+* Reduces overhead for synchronous daemons by using an in-process transport.
 * Fixes `.handleSimpleError()` appearing in `$stack.trace` on a `miraiError` (regression in mirai 2.7.0).
 
 # mirai 2.7.0
