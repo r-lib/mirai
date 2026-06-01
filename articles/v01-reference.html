@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Reference Manual</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
       <div class="d-none name"><code>v01-reference.Rmd</code></div>
     </div>
 
@@ -246,15 +246,9 @@ and <code>$condition.class</code> for original condition classes:</p>
 <span></span>
 <span><span class="va">m3</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">stack.trace</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; .handleSimpleError(function (cnd) </span></span>
-<span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;     `[[&lt;-`(., "syscalls", sys.calls())</span></span>
-<span><span class="co">#&gt; }, "positive", base::quote(f(1)))</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
 <span><span class="co">#&gt; stop("positive")</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
 <span><span class="co">#&gt; f(1)</span></span>
 <span><span class="va">m3</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">condition.class</span></span>
 <span><span class="co">#&gt; [1] "simpleError" "error"       "condition"</span></span></code></pre></div>

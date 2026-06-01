@@ -10,10 +10,11 @@ variables.
 http_config(
   url = posit_workbench_url,
   method = "POST",
-  cookie = posit_workbench_cookie,
-  token = NULL,
+  headers = posit_workbench_headers,
   data = posit_workbench_data,
-  ...
+  ...,
+  cookie = NULL,
+  token = NULL
 )
 ```
 
@@ -28,17 +29,12 @@ http_config(
 
   (character) HTTP method, typically `"POST"`.
 
-- cookie:
+- headers:
 
-  (character or function) session cookie value. May be a function
-  returning the cookie value. Set to `NULL` if not required for
-  authentication.
-
-- token:
-
-  (character or function) authentication bearer token. May be a function
-  returning the token value. Set to `NULL` if not required for
-  authentication.
+  (named character vector or function) HTTP headers sent with the
+  request, supplying any required authentication (e.g. session cookie,
+  bearer token, API key) as well as other API metadata. May be a
+  function returning a named character vector.
 
 - data:
 
@@ -54,11 +50,31 @@ http_config(
   Posit Workbench Options section for those accepted by the default
   value of `data`.
 
+- cookie:
+
+  (character or function) convenience argument that, if non-NULL,
+  appends a `Cookie: <value>` entry to `headers`. May be a function
+  returning the cookie value.
+
+- token:
+
+  (character or function) convenience argument that, if non-NULL,
+  appends an `Authorization: Bearer <value>` entry to `headers`. May be
+  a function returning the token value.
+
 ## Value
 
 A list in the required format to be supplied to the `remote` argument of
 [`daemons()`](https://mirai.r-lib.org/reference/daemons.md) or
 [`launch_remote()`](https://mirai.r-lib.org/reference/launch_local.md).
+
+## Details
+
+Arguments accepting either a value or a function (`url`, `headers`,
+`data`, `cookie`, `token`) may be supplied as a function to defer
+evaluation until the time of launch. This is the recommended way to
+supply credentials, so that they are fetched lazily when needed rather
+than captured when the configuration is created.
 
 ## Posit Workbench Options
 
@@ -102,94 +118,43 @@ tryCatch(http_config(), error = identity)
 #> 
 #> $url
 #> function () 
-#> {
-#>     file.path(Sys.getenv("RS_SERVER_ADDRESS"), "api", "launch_job")
-#> }
-#> <bytecode: 0x55d0db93db60>
+#> pwb_url()
+#> <bytecode: 0x560c0bf48058>
 #> <environment: namespace:mirai>
 #> 
 #> $method
 #> [1] "POST"
 #> 
-#> $cookie
+#> $headers
 #> function () 
-#> {
-#>     is.null(.[["pwb_cookie"]]) || return(.[["pwb_cookie"]])
-#>     Sys.getenv("RS_SESSION_RPC_COOKIE")
-#> }
-#> <bytecode: 0x55d0db93d2d8>
+#> pwb_headers()
+#> <bytecode: 0x560c0bf4b7c0>
 #> <environment: namespace:mirai>
 #> 
-#> $token
-#> NULL
-#> 
 #> $data
-#> function (rscript = "Rscript", job_name = "mirai_daemon", cluster = NULL, 
-#>     resource_profile = NULL, cpus = NULL, memory = NULL) 
-#> {
-#>     requireNamespace("secretbase", quietly = TRUE) || stop(._[["secretbase"]])
-#>     url <- Sys.getenv("RS_SERVER_ADDRESS")
-#>     cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
-#>     nzchar(url) && nzchar(cookie) || stop(._[["posit_api"]])
-#>     envs <- ncurl(file.path(url, "api", "get_compute_envs"), 
-#>         headers = c(Cookie = cookie, `X-RS-Session-Server-RPC-Cookie` = cookie), 
-#>         timeout = .limit_short)
-#>     if (envs[["status"]] != 200L) {
-#>         envs <- posit_workbench_fetch("api/get_compute_envs")
-#>         envs[["status"]] == 200L || stop(._[["posit_api"]])
-#>         .$pwb_cookie <- envs[["cookie"]]
-#>     }
-#>     clusters <- secretbase::jsondec(envs[["data"]])[["result"]][["clusters"]]
-#>     if (is.null(cluster)) {
-#>         cluster_obj <- clusters[[1L]]
-#>     }
-#>     else {
-#>         cluster_names <- vapply(clusters, `[[`, character(1L), 
-#>             "name")
-#>         cluster %in% cluster_names || stop(sprintf("cluster '%s' not found. Available: %s", 
-#>             cluster, paste(cluster_names, collapse = ", ")))
-#>         cluster_obj <- clusters[[which(cluster_names == cluster)]]
-#>     }
-#>     lp <- sprintf(".libPaths(c(%s))", paste(sprintf("\"%s\"", 
-#>         .libPaths()), collapse = ","))
-#>     job <- list(cluster = cluster_obj[["name"]], container = list(image = cluster_obj[["defaultImage"]]), 
-#>         name = job_name, exe = rscript, args = c("-e", sprintf("{%s;%%s}", 
-#>             lp)))
-#>     if (!is.null(resource_profile)) {
-#>         profiles <- cluster_obj[["resourceProfiles"]]
-#>         profile_names <- vapply(profiles, `[[`, character(1L), 
-#>             "name")
-#>         resource_profile %in% profile_names || stop(sprintf("resource profile '%s' not found. Available: %s", 
-#>             resource_profile, paste(profile_names, collapse = ", ")))
-#>         job[["resourceProfile"]] <- resource_profile
-#>     }
-#>     else if (!is.null(cpus) || !is.null(memory)) {
-#>         if (is.null(cpus)) {
-#>             cpus <- 1L
-#>         }
-#>         if (is.null(memory)) {
-#>             memory <- 512L
-#>         }
-#>         job[["resources"]] <- list(cpus = cpus, memory = memory)
-#>     }
-#>     else {
-#>         job[["resourceProfile"]] <- cluster_obj[["resourceProfiles"]][[1L]][["name"]]
-#>     }
-#>     secretbase::jsonenc(list(method = "launch_job", kwparams = list(job = job)))
-#> }
-#> <bytecode: 0x55d0db93c6d0>
+#> function (...) 
+#> pwb_data(...)
+#> <bytecode: 0x560c0bf4b130>
 #> <environment: namespace:mirai>
 #> 
 #> $dots
 #> list()
+#> 
+#> $cookie
+#> NULL
+#> 
+#> $token
+#> NULL
 #> 
 
 # Custom HTTP configuration example:
 http_config(
   url = "https://api.example.com/launch",
   method = "POST",
-  cookie = function() Sys.getenv("MY_SESSION_COOKIE"),
-  token = function() Sys.getenv("MY_API_KEY"),
+  headers = function() c(
+    Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")),
+    `X-API-Version` = "2"
+  ),
   data = '{"command": "%s"}'
 )
 #> $type
@@ -201,21 +166,23 @@ http_config(
 #> $method
 #> [1] "POST"
 #> 
-#> $cookie
+#> $headers
 #> function () 
-#> Sys.getenv("MY_SESSION_COOKIE")
-#> <environment: 0x55d0db929140>
-#> 
-#> $token
-#> function () 
-#> Sys.getenv("MY_API_KEY")
-#> <environment: 0x55d0db929140>
+#> c(Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")), 
+#>     `X-API-Version` = "2")
+#> <environment: 0x560c0bf3ac98>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"
 #> 
 #> $dots
 #> list()
+#> 
+#> $cookie
+#> NULL
+#> 
+#> $token
+#> NULL
 #> 
 
 if (FALSE) { # \dontrun{

@@ -1,5 +1,33 @@
 # Changelog
 
+## mirai 2.7.1
+
+CRAN release: 2026-06-01
+
+##### Updates
+
+- mirai’s agent skill is now included in the installed package at
+  `skills` and picked up automatically by `btw` and other packages
+  following this convention.
+- [`http_config()`](https://mirai.r-lib.org/reference/http_config.md)
+  gains a `headers` argument, now the primary way to supply HTTP headers
+  (including authentication such as session cookie, bearer token, or API
+  key). `cookie` and `token` are retained as convenience arguments that
+  append `Cookie:` and `Authorization: Bearer` entries to `headers`
+  (thanks [@ddl-dkelkhoff](https://github.com/ddl-dkelkhoff),
+  [\#612](https://github.com/r-lib/mirai/issues/612)).
+- Reduces overhead for synchronous daemons by using an in-process
+  transport.
+- Fixes [`.handleSimpleError()`](https://rdrr.io/r/base/conditions.html)
+  appearing in `$stack.trace` on a `miraiError` (regression in mirai
+  2.7.0).
+- Fixes load-balanced parallel functions
+  (e.g. [`parLapplyLB()`](https://rdrr.io/r/parallel/clusterApply.html),
+  `foreach::%dopar%`) hanging on a mirai cluster when there are more
+  tasks than nodes, a regression in mirai 2.5.1 (thanks
+  [@manforkr](https://github.com/manforkr),
+  [\#591](https://github.com/r-lib/mirai/issues/591)).
+
 ## mirai 2.7.0
 
 CRAN release: 2026-05-08
