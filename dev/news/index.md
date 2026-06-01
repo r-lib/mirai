@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.7.1
+
+CRAN release: 2026-06-01
+
 ##### Updates
 
 - mirai’s agent skill is now included in the installed package at
