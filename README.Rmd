@@ -77,7 +77,7 @@ Round-trip latency stays in the microseconds:
 ```{r}
 #| label: bench
 daemons(1)
-bench::mark(mirai(1)[])
+bench::mark(mirai("hello world")[])
 daemons(0)
 ```
 
