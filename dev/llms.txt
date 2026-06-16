@@ -41,7 +41,7 @@ mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 
 # Collect — m finished during the map
 m[]
-#> [1] 0.0005734454
+#> [1] 0.001006898
 
 daemons(0)
 ```
@@ -63,11 +63,11 @@ Round-trip latency stays in the microseconds:
 ``` r
 
 daemons(1)
-bench::mark(mirai(1)[])
+bench::mark(mirai("hello world")[])
 #> # A tibble: 1 × 6
-#>   expression      min   median `itr/sec` mem_alloc `gc/sec`
-#>   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 mirai(1)[]     67µs   97.3µs     9868.    9.68KB     2.01
+#>   expression                      min   median `itr/sec` mem_alloc `gc/sec`
+#>   <bch:expr>                 <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#> 1 "mirai(\"hello world\")[]"     66µs   97.8µs     9939.    9.68KB     2.01
 daemons(0)
 ```
 
