@@ -85,33 +85,33 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - For Package Authors</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.7.1/vignettes/v06-packages.Rmd" class="external-link"><code>vignettes/v06-packages.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v06-packages.Rmd" class="external-link"><code>vignettes/v06-packages.Rmd</code></a></small>
       <div class="d-none name"><code>v06-packages.Rmd</code></div>
     </div>
 
     
     
 <div class="section level3">
-<h3 id="agent-skill">Agent Skill<a class="anchor" aria-label="anchor" href="#agent-skill"></a>
+<h3 id="agent-skill">1. Agent Skill<a class="anchor" aria-label="anchor" href="#agent-skill"></a>
 </h3>
 <p>AI coding agents: the <code>r-lib</code> agent skill from the <a href="https://github.com/posit-dev/skills" class="external-link"><code>posit-dev-skills</code></a>
 plugin provides mirai-specific guidance for writing correct async,
 parallel, and distributed code.</p>
 </div>
 <div class="section level3">
-<h3 id="developer-interfaces">1. Developer Interfaces<a class="anchor" aria-label="anchor" href="#developer-interfaces"></a>
+<h3 id="developer-interfaces">2. Developer Interfaces<a class="anchor" aria-label="anchor" href="#developer-interfaces"></a>
 </h3>
-<p>mirai provides these functions for package authors:</p>
+<p>mirai provides these functions primarily for package authors:</p>
 <ol style="list-style-type: decimal">
 <li>
 <code><a href="../reference/require_daemons.html">require_daemons()</a></code> - errors and prompts users to set
-daemons if not already set (with clickable function link if cli package
-available)</li>
+daemons if not already set, with a clickable function link (if the cli
+package is available)</li>
 <li>
 <code><a href="../reference/daemons_set.html">daemons_set()</a></code> - detects if daemons are set</li>
 <li>
-<code><a href="../reference/on_daemon.html">on_daemon()</a></code> - detects if code runs on a daemon (within
-a <code><a href="../reference/mirai.html">mirai()</a></code> call)</li>
+<code><a href="../reference/on_daemon.html">on_daemon()</a></code> - detects if it is running on a daemon
+(within a <code><a href="../reference/mirai.html">mirai()</a></code> call)</li>
 <li>
 <code><a href="../reference/register_serial.html">register_serial()</a></code> - registers custom serialization
 functions, automatically available for all subsequent
@@ -123,7 +123,7 @@ are supported interfaces.</li>
 </ol>
 </div>
 <div class="section level3">
-<h3 id="guidance">2. Guidance<a class="anchor" aria-label="anchor" href="#guidance"></a>
+<h3 id="guidance">3. Guidance<a class="anchor" aria-label="anchor" href="#guidance"></a>
 </h3>
 <p>mirai supports transparent, inter-operable package use. Not relying
 on global options or environment variables minimizes conflicts between
@@ -145,8 +145,8 @@ creation (e.g., if your function is used within another package’s
 mirai-using function)
 <ul>
 <li>
-<p><strong>Exception</strong>: Can provide a synchronous fallback if
-users haven’t set daemons:</p>
+<p><strong>Exception</strong>: You may provide a synchronous
+fallback if users have not set daemons:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/daemons_set.html">daemons_set</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>sync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
@@ -156,10 +156,10 @@ users haven’t set daemons:</p>
 </li>
 <li>
 <strong>Exceptional case</strong>: Use
-<code>daemons(n = 1, dispatcher = FALSE, .compute = ...)</code> for a
-single dedicated daemon only with a unique <code>.compute</code> value.
-Example: <code>logger::appender_async()</code> where logger’s
-‘namespace’ maps to mirai’s ‘compute profile’.</li>
+<code>daemons(n = 1, .compute = ...)</code> for a single dedicated
+daemon only with a unique <code>.compute</code> value. Example:
+<code>logger::appender_async()</code> where logger’s ‘namespace’ maps to
+mirai’s ‘compute profile’.</li>
 </ul>
 </li>
 <li>
@@ -167,7 +167,7 @@ Example: <code>logger::appender_async()</code> where logger’s
 programmatically.</strong> Its interface may change. Use
 <code><a href="../reference/info.html">info()</a></code> instead.</p>
 <ul>
-<li>For <code>status()$daemons</code>, use
+<li>For the value of <code>status()$daemons</code>, instead use
 <code>nextget("url")</code>
 </li>
 </ul>

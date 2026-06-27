@@ -1,23 +1,23 @@
 # mirai - For Package Authors
 
-### Agent Skill
+### 1. Agent Skill
 
 AI coding agents: the `r-lib` agent skill from the
 [`posit-dev-skills`](https://github.com/posit-dev/skills) plugin
 provides mirai-specific guidance for writing correct async, parallel,
 and distributed code.
 
-### 1. Developer Interfaces
+### 2. Developer Interfaces
 
-mirai provides these functions for package authors:
+mirai provides these functions primarily for package authors:
 
 1.  [`require_daemons()`](https://mirai.r-lib.org/reference/require_daemons.md) -
-    errors and prompts users to set daemons if not already set (with
-    clickable function link if cli package available)
+    errors and prompts users to set daemons if not already set, with a
+    clickable function link (if the cli package is available)
 2.  [`daemons_set()`](https://mirai.r-lib.org/reference/daemons_set.md) -
     detects if daemons are set
 3.  [`on_daemon()`](https://mirai.r-lib.org/reference/on_daemon.md) -
-    detects if code runs on a daemon (within a
+    detects if it is running on a daemon (within a
     [`mirai()`](https://mirai.r-lib.org/reference/mirai.md) call)
 4.  [`register_serial()`](https://mirai.r-lib.org/reference/register_serial.md) -
     registers custom serialization functions, automatically available
@@ -28,7 +28,7 @@ mirai provides these functions for package authors:
     documentation). Note: only specifically-documented values are
     supported interfaces.
 
-### 2. Guidance
+### 3. Guidance
 
 mirai supports transparent, inter-operable package use. Not relying on
 global options or environment variables minimizes conflicts between
@@ -52,8 +52,8 @@ packages.
       [`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md)**
       to prevent accidental recursive daemon creation (e.g., if your
       function is used within another package’s mirai-using function)
-      - **Exception**: Can provide a synchronous fallback if users
-        haven’t set daemons:
+      - **Exception**: You may provide a synchronous fallback if users
+        have not set daemons:
 
         ``` r
 
@@ -61,18 +61,17 @@ packages.
           mirai_map(...)
         })
         ```
-    - **Exceptional case**: Use
-      `daemons(n = 1, dispatcher = FALSE, .compute = ...)` for a single
-      dedicated daemon only with a unique `.compute` value. Example:
-      `logger::appender_async()` where logger’s ‘namespace’ maps to
-      mirai’s ‘compute profile’.
+    - **Exceptional case**: Use `daemons(n = 1, .compute = ...)` for a
+      single dedicated daemon only with a unique `.compute` value.
+      Example: `logger::appender_async()` where logger’s ‘namespace’
+      maps to mirai’s ‘compute profile’.
 
 2.  **Don’t use
     [`status()`](https://mirai.r-lib.org/reference/status.md)
     programmatically.** Its interface may change. Use
     [`info()`](https://mirai.r-lib.org/reference/info.md) instead.
 
-    - For `status()$daemons`, use `nextget("url")`
+    - For the value of `status()$daemons`, instead use `nextget("url")`
 
 3.  **Use [`info()`](https://mirai.r-lib.org/reference/info.md)
     programmatically by name, not position.** Index by element name

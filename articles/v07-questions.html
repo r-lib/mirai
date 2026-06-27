@@ -85,7 +85,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>mirai - Community FAQs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.7.1/vignettes/v07-questions.Rmd" class="external-link"><code>vignettes/v07-questions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v07-questions.Rmd" class="external-link"><code>vignettes/v07-questions.Rmd</code></a></small>
       <div class="d-none name"><code>v07-questions.Rmd</code></div>
     </div>
 
@@ -99,32 +99,36 @@ community.</p>
 <p>Translating Shiny ExtendedTask or async code from
 <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">promises::future_promise()</a></code> to mirai is straightforward.</p>
 <p><code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> exists because <code>future(...)</code>
-alone isn’t always async - it blocks when parallel processes run out.
-<code><a href="../reference/mirai.html">mirai()</a></code> is built as an async framework, so use it directly
-in place of <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
+alone isn’t always async - it blocks whenever the number of tasks exceed
+available workers. <code><a href="../reference/mirai.html">mirai()</a></code> is built as an async framework,
+so use it directly in place of <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code>.</p>
 <p><strong>Globals:</strong></p>
-<p><code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> by default infers required global
-variables. If your code depended on this, pass variables explicitly via
+<p><code>future()</code> and <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> by default
+infer global variables. This means that they use heuristics to try to
+determine which variables are needed for the expression, and
+automagically passes them to the worker process.</p>
+<p>If your code depended on this, instead pass variables explicitly via
 <code>...</code> in <code><a href="../reference/mirai.html">mirai()</a></code>. A mirai requires
 self-contained expressions with all variables or helper functions
 explicitly supplied.</p>
-<p>If your code used the <code>globals</code> argument, pass it directly
-to <code>.args</code> in <code><a href="../reference/mirai.html">mirai()</a></code> (if it’s a named
-list).</p>
-<p><strong>Always pass globals explicitly.</strong> This matches the
-behaviour of multi-process parallelism and is suited for programmatic
-use. Automatic globals detection creates an imperfect abstraction
-leading to unpredictable edge cases or slower operation from sending
-unnecessary data to daemons. Explicitly passing variables ensures
-reliable, transparent behaviour.</p>
+<p>If your code used the <code>globals</code> argument, pass this
+directly to <code>.args</code> in <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
+<p><strong>Always pass globals explicitly.</strong> This matches what
+actually happens in multi-process parallelism, and is better suited for
+programmatic use. It is the norm for base R, and in other programming
+languages. Automatic globals detection is inherently a <a href="https://en.wikipedia.org/wiki/Leaky_abstraction" class="external-link">leaky
+abstraction</a>, which can lead to unpredictable edge cases or slower
+operation from sending unnecessary data to daemons. Explicitly passing
+variables ensures reliable and transparent behaviour. See <a href="https://rstudio.github.io/promises/articles/promises_05a_futures.html#caveats-and-limitations" class="external-link">this
+article by Joe Cheng</a> for a full discussion.</p>
 <p><strong>Capture globals using
 <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code>:</strong></p>
 <p><code><a href="../reference/mirai.html">mirai()</a></code> accepts an environment passed to
 <code>...</code> or <code>.args</code>. This is useful for Shiny
 ExtendedTask invoked with arguments. Using
 <code>mirai::mirai({...}, environment())</code> automatically captures
-variables provided to the invoke method. See the Shiny vignette for
-examples.</p>
+variables provided to the ExtendedTask invoke method. See the Shiny
+vignette for examples.</p>
 <p><strong>Special Case: <code>...</code>:</strong></p>
 <p>A Shiny app may have used <code><a href="https://rstudio.github.io/promises/reference/future_promise.html" class="external-link">future_promise()</a></code> code similar
 to the following within the server component:</p>
@@ -164,10 +168,10 @@ subsequent runs. This can be assumed to include
 <span><span class="co"># Returns different values: good</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1]  0.001644678 -1.187782046 -0.297140635</span></span>
+<span><span class="co">#&gt; [1] -0.7211057 -0.8825230 -0.9686437</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1]  0.02582566  0.96725416 -0.87824600</span></span>
+<span><span class="co">#&gt; [1] 0.5623672 0.5822853 0.4782794</span></span>
 <span></span>
 <span><span class="co"># Set the seed in the function</span></span>
 <span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">vec</span>, <span class="va">vec2</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>

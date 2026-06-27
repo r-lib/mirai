@@ -27,10 +27,6 @@ Expressions must be self-contained:
 - Pass required functions, data, or objects explicitly via `...` or
   `.args`.
 
-> This explicit design perfectly matches message-passing parallelism -
-> attempting to infer global variables introduces unreliability, which
-> we do not compromise on.
-
 This example mimics an expensive calculation:
 
 ``` r
@@ -66,8 +62,8 @@ Use [`unresolved()`](https://mirai.r-lib.org/reference/unresolved.md) to
 check its state.
 
 Access results via `m$data` once resolved. This will be the return
-value, or an ‘errorValue’ if the expression errored, crashed, or timed
-out (see [Error Handling](#error-handling)).
+value, or an ‘errorValue’ if the expression errored, crashed, timed out,
+or was canceled (see [Error Handling](#error-handling)).
 
 Use `m[]` to efficiently wait for and collect the value instead of
 repeatedly checking `unresolved(m)`.
@@ -84,7 +80,7 @@ using:
 
 For programmatic use, ‘.expr’ accepts a pre-constructed language object
 and ‘.args’ accepts a named list of arguments. The following is
-equivalent:
+accepted:
 
 ``` r
 
@@ -96,10 +92,10 @@ m1[]
 #> [1] 3.890969 4.009599 3.380416 3.514127 4.899060
 ```
 
-This example performs an asynchronous write operation. Passing
-[`environment()`](https://rdrr.io/r/base/environment.html) to ‘.args’
-conveniently provides all objects from the calling environment (like `x`
-and `file`):
+Passing [`environment()`](https://rdrr.io/r/base/environment.html) to
+‘.args’ allows you to conveniently provides all objects from the calling
+environment (like `x` and `file` in the following asynchronous write
+example):
 
 ``` r
 
@@ -231,6 +227,19 @@ is_error_value(m5$data)
 [`is_error_value()`](https://mirai.r-lib.org/reference/is_mirai_error.md)
 tests for all mirai execution errors, user interrupts and timeouts.
 
+Cancel a mirai with
+[`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md). If
+the mirai was still in progress, it resolves immediately to an
+‘errorValue’ of 20L (Operation canceled):
+
+``` r
+
+m6 <- mirai(Sys.sleep(10))
+stop_mirai(m6)
+m6[]
+#> 'errorValue' int 20 | Operation canceled
+```
+
 ### 3. Local Daemons
 
 Daemons are persistent background processes that receive
@@ -238,7 +247,8 @@ Daemons are persistent background processes that receive
 
 > Daemons inherit system configuration (‘.Renviron’, ‘.Rprofile’) and
 > load default packages. To load only the base package (cutting startup
-> time in half), set `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
+> time in half), set the environment variable
+> `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
 
 Specify the number of daemons to launch:
 
@@ -247,12 +257,14 @@ Specify the number of daemons to launch:
 daemons(6)
 ```
 
-For CPU-bound work, set `n` to roughly one less than your number of CPU
-cores, leaving a core free for the host R process and OS. Account for
-any cores reserved for other purposes. For I/O-bound work (waiting on
-network, disk, or subprocess), `n` can exceed core count since daemons
-spend most of their time idle. Each local daemon runs a full R process,
-so check that per-daemon memory footprint times `n` fits in host RAM.
+For CPU-bound work, a good rule of thumb is to set `n` to one less than
+your number of CPU cores, leaving a core free for the host R process and
+OS. Account for any cores reserved for other purposes.
+
+For I/O-bound work (waiting on network, disk, or subprocess), `n` can
+exceed core count since daemons spend most of their time idle. Each
+local daemon runs a full R process, so check that per-daemon memory
+footprint times `n` fits in host RAM.
 
 #### With Dispatcher (default)
 
@@ -262,12 +274,9 @@ they become available. The `memory` argument caps the approximate total
 memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at
 dispatcher. New tasks block until existing ones are dispatched,
 providing memory-based backpressure to prevent the host process from
-running out of memory. Current usage is surfaced under the `memory`
-field of [`status()`](https://mirai.r-lib.org/reference/status.md) (in
-MB, matching the argument unit). It also enables mirai cancellation via
+running out of memory. Dispatcher also enables mirai cancellation (via
 [`stop_mirai()`](https://mirai.r-lib.org/reference/stop_mirai.md) or the
-`.timeout` argument to
-[`mirai()`](https://mirai.r-lib.org/reference/mirai.md).
+`mirai(.timeout=)` argument).
 
 [`info()`](https://mirai.r-lib.org/reference/info.md) provides current
 statistics as an integer vector:
@@ -312,7 +321,7 @@ unknown beforehand. Tasks may queue behind long-running tasks while
 other daemons sit idle.
 
 This resource-light approach suits similar-length tasks or when
-concurrent tasks don’t exceed available daemons.
+concurrent tasks don’t typically exceed available daemons.
 
 Info now shows 6 connections:
 
@@ -565,7 +574,7 @@ ml[]
 #> [1] 5.302906 3.531788 6.389231
 ```
 
-#### Collecting Options
+#### Collection Options
 
 - `x[.flat]` flattens results (checks types to avoid coercion)
 - `x[.progress]` shows progress bar (via cli) or text indicator
@@ -617,9 +626,16 @@ daemons(0)
 
 #### Nested Maps
 
-For nested mapping, don’t launch local daemons from within
-[`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md).
-Instead:
+For nested mapping, trying to launch local daemons from within
+[`mirai_map()`](https://mirai.r-lib.org/reference/mirai_map.md) in a
+single call like this fails:
+
+``` r
+
+daemons(n)
+```
+
+Instead use:
 
 ``` r
 

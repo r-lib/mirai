@@ -119,7 +119,7 @@ tryCatch(http_config(), error = identity)
 #> $url
 #> function () 
 #> pwb_url()
-#> <bytecode: 0x55ce679e2bc0>
+#> <bytecode: 0x565225729ad0>
 #> <environment: namespace:mirai>
 #> 
 #> $method
@@ -128,13 +128,13 @@ tryCatch(http_config(), error = identity)
 #> $headers
 #> function () 
 #> pwb_headers()
-#> <bytecode: 0x55ce679e2530>
+#> <bytecode: 0x565225729408>
 #> <environment: namespace:mirai>
 #> 
 #> $data
 #> function (...) 
 #> pwb_data(...)
-#> <bytecode: 0x55ce679e5c98>
+#> <bytecode: 0x565225728d78>
 #> <environment: namespace:mirai>
 #> 
 #> $dots
@@ -170,7 +170,7 @@ http_config(
 #> function () 
 #> c(Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")), 
 #>     `X-API-Version` = "2")
-#> <environment: 0x55ce679d5448>
+#> <environment: 0x56522571b558>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"
