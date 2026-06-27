@@ -9,31 +9,38 @@ Translating Shiny ExtendedTask or async code from
 to mirai is straightforward.
 
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html)
-exists because `future(...)` alone isn’t always async - it blocks when
-parallel processes run out.
+exists because `future(...)` alone isn’t always async - it blocks
+whenever the number of tasks exceed available workers.
 [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) is built as
 an async framework, so use it directly in place of
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html).
 
 **Globals:**
 
+`future()` and
 [`future_promise()`](https://rstudio.github.io/promises/reference/future_promise.html)
-by default infers required global variables. If your code depended on
-this, pass variables explicitly via `...` in
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md). A mirai
-requires self-contained expressions with all variables or helper
+by default infer global variables. This means that they use heuristics
+to try to determine which variables are needed for the expression, and
+automagically passes them to the worker process.
+
+If your code depended on this, instead pass variables explicitly via
+`...` in [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md). A
+mirai requires self-contained expressions with all variables or helper
 functions explicitly supplied.
 
-If your code used the `globals` argument, pass it directly to `.args` in
-[`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md) (if it’s a
-named list).
+If your code used the `globals` argument, pass this directly to `.args`
+in [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
 
-**Always pass globals explicitly.** This matches the behaviour of
-multi-process parallelism and is suited for programmatic use. Automatic
-globals detection creates an imperfect abstraction leading to
-unpredictable edge cases or slower operation from sending unnecessary
-data to daemons. Explicitly passing variables ensures reliable,
-transparent behaviour.
+**Always pass globals explicitly.** This matches what actually happens
+in multi-process parallelism, and is better suited for programmatic use.
+It is the norm for base R, and in other programming languages. Automatic
+globals detection is inherently a [leaky
+abstraction](https://en.wikipedia.org/wiki/Leaky_abstraction), which can
+lead to unpredictable edge cases or slower operation from sending
+unnecessary data to daemons. Explicitly passing variables ensures
+reliable and transparent behaviour. See [this article by Joe
+Cheng](https://rstudio.github.io/promises/articles/promises_05a_futures.html#caveats-and-limitations)
+for a full discussion.
 
 **Capture globals using
 [`environment()`](https://rdrr.io/r/base/environment.html):**
@@ -42,7 +49,8 @@ transparent behaviour.
 environment passed to `...` or `.args`. This is useful for Shiny
 ExtendedTask invoked with arguments. Using
 `mirai::mirai({...}, environment())` automatically captures variables
-provided to the invoke method. See the Shiny vignette for examples.
+provided to the ExtendedTask invoke method. See the Shiny vignette for
+examples.
 
 **Special Case: `...`:**
 
@@ -96,10 +104,10 @@ vec2 <- 4:6
 # Returns different values: good
 mirai_map(list(vec, vec2), \(x) rnorm(x))[]
 #> [[1]]
-#> [1]  0.001644678 -1.187782046 -0.297140635
+#> [1] -0.7211057 -0.8825230 -0.9686437
 #> 
 #> [[2]]
-#> [1]  0.02582566  0.96725416 -0.87824600
+#> [1] 0.5623672 0.5822853 0.4782794
 
 # Set the seed in the function
 mirai_map(list(vec, vec2), \(x) {

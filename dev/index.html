@@ -122,7 +122,7 @@
 <span></span>
 <span><span class="co"># Collect — m finished during the map</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 0.001006898</span></span>
+<span><span class="co">#&gt; [1] 0.001157286</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -185,31 +185,31 @@
 </h3>
 <ul>
 <li>
-<strong>Async</strong> — <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/mirai_map.html">mirai_map()</a></code>, <code><a href="reference/everywhere.html">everywhere()</a></code>, <code><a href="reference/race_mirai.html">race_mirai()</a></code>, <code><a href="reference/mirai.html">try_mirai()</a></code>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#introduction">Async</a> — <code><a href="reference/mirai.html">mirai()</a></code>, <code><a href="reference/mirai_map.html">mirai_map()</a></code>, <code><a href="reference/everywhere.html">everywhere()</a></code>, <code><a href="reference/race_mirai.html">race_mirai()</a></code>, <code><a href="reference/mirai.html">try_mirai()</a></code>
 </li>
 <li>
-<strong>Collection</strong> — <code>m[]</code>, <code><a href="reference/collect_mirai.html">collect_mirai()</a></code>, <code><a href="reference/call_mirai.html">call_mirai()</a></code>, <code>.flat</code>, <code>.progress</code>, <code>.stop</code>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#introduction">Collection</a> — <code>m[]</code>, <code><a href="reference/collect_mirai.html">collect_mirai()</a></code>, <code><a href="reference/call_mirai.html">call_mirai()</a></code>, <code>.flat</code>, <code>.progress</code>, <code>.stop</code>
 </li>
 <li>
-<strong><a href="https://mirai.r-lib.org/articles/v02-promises.html">Promises</a></strong> — <code>as.promise()</code> for <code>mirai</code> and <code>mirai_map</code>; event-driven Shiny ExtendedTask</li>
+<a href="https://mirai.r-lib.org/articles/v02-promises.html">Promises</a> — <code>as.promise()</code> for <code>mirai</code> and <code>mirai_map</code>; event-driven Shiny ExtendedTask</li>
 <li>
-<strong>Cancellation &amp; timeouts</strong> — <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, <code>.timeout</code>, <code>.stop</code>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#error-handling">Cancellation &amp; timeouts</a> — <code><a href="reference/stop_mirai.html">stop_mirai()</a></code>, <code>.timeout</code>, <code>.stop</code>
 </li>
 <li>
-<strong>Backpressure</strong> — <code>daemons(memory = …)</code> capacity, peak watermark via <code>status()$memory</code>, non-blocking <code><a href="reference/mirai.html">try_mirai()</a></code>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#memory-management">Backpressure</a> — <code>daemons(memory = …)</code> capacity, peak watermark via <code>status()$memory</code>, non-blocking <code><a href="reference/mirai.html">try_mirai()</a></code>
 </li>
 <li>
-<strong><a href="https://mirai.r-lib.org/articles/v03-serialization.html">Serialization</a></strong> — <code><a href="reference/serial_config.html">serial_config()</a></code> for torch, Arrow, polars, ADBC; <code><a href="https://shikokuchuo.net/mori/reference/share.html" class="external-link">mori::share()</a></code> for local shared memory</li>
+<a href="https://mirai.r-lib.org/articles/v03-serialization.html">Serialization</a> — <code><a href="reference/serial_config.html">serial_config()</a></code> for torch, Arrow, polars, ADBC; <code><a href="https://shikokuchuo.net/mori/reference/share.html" class="external-link">mori::share()</a></code> for local shared memory</li>
 <li>
-<strong>Reproducibility</strong> — L’Ecuyer-CMRG streams; <code>daemons(seed = …)</code> for deterministic parallel RNG</li>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#random-number-generation">Reproducibility</a> — L’Ecuyer-CMRG streams; <code>daemons(seed = …)</code> for deterministic parallel RNG</li>
 <li>
-<strong><a href="https://mirai.r-lib.org/articles/v05-opentelemetry.html">Observability</a></strong> — <code><a href="reference/info.html">info()</a></code>, <code><a href="reference/status.html">status()</a></code>, OpenTelemetry spans via <code>otel</code>
+<a href="https://mirai.r-lib.org/articles/v05-opentelemetry.html">Observability</a> — <code><a href="reference/info.html">info()</a></code>, <code><a href="reference/status.html">status()</a></code>, OpenTelemetry spans via <code>otel</code>
 </li>
 <li>
-<strong>Compute profiles</strong> — independent daemon pools, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
+<a href="https://mirai.r-lib.org/articles/v01-reference.html#compute-profiles">Compute profiles</a> — independent daemon pools, <code><a href="reference/with_daemons.html">with_daemons()</a></code>, <code><a href="reference/with_daemons.html">local_daemons()</a></code>
 </li>
 <li>
-<strong><a href="https://mirai.r-lib.org/articles/v04-parallel.html">R parallel cluster</a></strong> — <code>parallel::makeCluster(type = "MIRAI")</code> (R ≥ 4.5)</li>
+<a href="https://mirai.r-lib.org/articles/v04-parallel.html">R parallel cluster</a> — <code>parallel::makeCluster(type = "MIRAI")</code> (R ≥ 4.5)</li>
 </ul>
 </div>
 <div class="section level3">
