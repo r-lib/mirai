@@ -52,7 +52,7 @@ mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 
 # Collect — m finished during the map
 m[]
-#> [1] 0.001006898
+#> [1] 0.001157286
 
 daemons(0)
 ```
@@ -104,27 +104,34 @@ full deployment guide.
 
 ### What’s inside
 
-- **Async** — `mirai()`, `mirai_map()`, `everywhere()`, `race_mirai()`,
+- [Async](https://mirai.r-lib.org/articles/v01-reference.html#introduction)
+  — `mirai()`, `mirai_map()`, `everywhere()`, `race_mirai()`,
   `try_mirai()`
-- **Collection** — `m[]`, `collect_mirai()`, `call_mirai()`, `.flat`,
-  `.progress`, `.stop`
-- **[Promises](https://mirai.r-lib.org/articles/v02-promises.html)** —
+- [Collection](https://mirai.r-lib.org/articles/v01-reference.html#introduction)
+  — `m[]`, `collect_mirai()`, `call_mirai()`, `.flat`, `.progress`,
+  `.stop`
+- [Promises](https://mirai.r-lib.org/articles/v02-promises.html) —
   `as.promise()` for `mirai` and `mirai_map`; event-driven Shiny
   ExtendedTask
-- **Cancellation & timeouts** — `stop_mirai()`, `.timeout`, `.stop`
-- **Backpressure** — `daemons(memory = …)` capacity, peak watermark via
+- [Cancellation &
+  timeouts](https://mirai.r-lib.org/articles/v01-reference.html#error-handling)
+  — `stop_mirai()`, `.timeout`, `.stop`
+- [Backpressure](https://mirai.r-lib.org/articles/v01-reference.html#memory-management)
+  — `daemons(memory = …)` capacity, peak watermark via
   `status()$memory`, non-blocking `try_mirai()`
-- **[Serialization](https://mirai.r-lib.org/articles/v03-serialization.html)**
+- [Serialization](https://mirai.r-lib.org/articles/v03-serialization.html)
   — `serial_config()` for torch, Arrow, polars, ADBC; `mori::share()`
   for local shared memory
-- **Reproducibility** — L’Ecuyer-CMRG streams; `daemons(seed = …)` for
-  deterministic parallel RNG
-- **[Observability](https://mirai.r-lib.org/articles/v05-opentelemetry.html)**
+- [Reproducibility](https://mirai.r-lib.org/articles/v01-reference.html#random-number-generation)
+  — L’Ecuyer-CMRG streams; `daemons(seed = …)` for deterministic
+  parallel RNG
+- [Observability](https://mirai.r-lib.org/articles/v05-opentelemetry.html)
   — `info()`, `status()`, OpenTelemetry spans via `otel`
-- **Compute profiles** — independent daemon pools, `with_daemons()`,
-  `local_daemons()`
-- **[R parallel
-  cluster](https://mirai.r-lib.org/articles/v04-parallel.html)** —
+- [Compute
+  profiles](https://mirai.r-lib.org/articles/v01-reference.html#compute-profiles)
+  — independent daemon pools, `with_daemons()`, `local_daemons()`
+- [R parallel
+  cluster](https://mirai.r-lib.org/articles/v04-parallel.html) —
   `parallel::makeCluster(type = "MIRAI")` (R ≥ 4.5)
 
 ### Across the R stack
