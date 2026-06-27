@@ -460,7 +460,7 @@ ml[]
 #> [1] 5.302906 3.531788 6.389231
 ```
 
-#### Collecting Options
+#### Collection Options
 
 - `x[.flat]` flattens results (checks types to avoid coercion)
 - `x[.progress]` shows progress bar (via cli) or text indicator
