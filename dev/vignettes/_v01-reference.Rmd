@@ -69,7 +69,7 @@ A mirai is *unresolved* until its result is received, then *resolved*.
 Use `unresolved()` to check its state.
 
 Access results via `m$data` once resolved.
-This will be the return value, or an 'errorValue' if the expression errored, crashed, or timed out (see [Error Handling](#error-handling)).
+This will be the return value, or an 'errorValue' if the expression errored, crashed, timed out, or was canceled (see [Error Handling](#error-handling)).
 
 Use `m[]` to efficiently wait for and collect the value instead of repeatedly checking `unresolved(m)`.
 
@@ -81,7 +81,7 @@ You may also wait efficiently for mirai (or lists of mirai) to resolve using:
 #### mirai (advanced)
 
 For programmatic use, '.expr' accepts a pre-constructed language object and '.args' accepts a named list of arguments.
-The following is equivalent:
+The following is accepted:
 
 ```{r}
 #| label: equiv
@@ -92,8 +92,7 @@ m1 <- mirai(.expr = expr, .args = args)
 m1[]
 ```
 
-This example performs an asynchronous write operation.
-Passing `environment()` to '.args' conveniently provides all objects from the calling environment (like `x` and `file`):
+Passing `environment()` to '.args' allows you to conveniently provides all objects from the calling environment (like `x` and `file` in the following asynchronous write example):
 ```{r}
 #| label: exec2
 write.csv.async <- function(x, file) {
@@ -198,7 +197,7 @@ m6[]
 Daemons are persistent background processes that receive `mirai()` requests.
 
 > Daemons inherit system configuration ('.Renviron', '.Rprofile') and load default packages.
-To load only the base package (cutting startup time in half), set `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
+To load only the base package (cutting startup time in half), set the environment variable  `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
 
 Specify the number of daemons to launch:
 ```{r}
@@ -206,8 +205,9 @@ Specify the number of daemons to launch:
 daemons(6)
 ```
 
-For CPU-bound work, set `n` to roughly one less than your number of CPU cores, leaving a core free for the host R process and OS.
+For CPU-bound work, a good rule of thumb is to set `n` to one less than your number of CPU cores, leaving a core free for the host R process and OS.
 Account for any cores reserved for other purposes.
+
 For I/O-bound work (waiting on network, disk, or subprocess), `n` can exceed core count since daemons spend most of their time idle.
 Each local daemon runs a full R process, so check that per-daemon memory footprint times `n` fits in host RAM.
 
@@ -217,8 +217,7 @@ The default `dispatcher = TRUE` enables optimal first-in-first-out (FIFO) schedu
 Tasks queue at the dispatcher and send to daemons as they become available.
 The `memory` argument caps the approximate total memory (MB, metric — 1 MB = 1,000,000 bytes) of queued task payloads at dispatcher.
 New tasks block until existing ones are dispatched, providing memory-based backpressure to prevent the host process from running out of memory.
-Current usage is surfaced under the `memory` field of `status()` (in MB, matching the argument unit).
-It also enables mirai cancellation via `stop_mirai()` or the `.timeout` argument to `mirai()`.
+Dispatcher also enables mirai cancellation (via `stop_mirai()` or the `mirai(.timeout=)` argument).
 
 `info()` provides current statistics as an integer vector:
 
@@ -260,7 +259,7 @@ Tasks send immediately in round-robin fashion, ensuring even distribution.
 However, scheduling isn't optimal since task duration is unknown beforehand.
 Tasks may queue behind long-running tasks while other daemons sit idle.
 
-This resource-light approach suits similar-length tasks or when concurrent tasks don't exceed available daemons.
+This resource-light approach suits similar-length tasks or when concurrent tasks typically don't exceed available daemons.
 
 Info now shows 6 connections:
 ```{r}
@@ -464,8 +463,11 @@ daemons(0)
 
 #### Nested Maps
 
-For nested mapping, don't launch local daemons from within `mirai_map()`.
-Instead:
+For nested mapping, trying to launch local daemons from within `mirai_map()` in a single call like this fails:
+```r
+daemons(n)
+```
+Instead use:
 ```r
 daemons(url = local_url())
 launch_local(n)
