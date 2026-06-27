@@ -15,21 +15,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-### Agent Skill
+### 1. Agent Skill
 
 AI coding agents: the `r-lib` agent skill from the [`posit-dev-skills`](https://github.com/posit-dev/skills) plugin provides mirai-specific guidance for writing correct async, parallel, and distributed code.
 
-### 1. Developer Interfaces
+### 2. Developer Interfaces
 
-mirai provides these functions for package authors:
+mirai provides these functions primarily for package authors:
 
-1. `require_daemons()` - errors and prompts users to set daemons if not already set (with clickable function link if cli package available)
+1. `require_daemons()` - errors and prompts users to set daemons if not already set, with a clickable function link (if the cli package is available)
 2. `daemons_set()` - detects if daemons are set
-3. `on_daemon()` - detects if code runs on a daemon (within a `mirai()` call)
+3. `on_daemon()` - detects if it is running on a daemon (within a `mirai()` call)
 4. `register_serial()` - registers custom serialization functions, automatically available for all subsequent `daemons()` calls
 5. `nextget()` - queries compute profile values like 'url' (see function documentation). Note: only specifically-documented values are supported interfaces.
 
-### 2. Guidance
+### 3. Guidance
 
 mirai supports transparent, inter-operable package use. Not relying on global options or environment variables minimizes conflicts between packages.
 
@@ -39,16 +39,16 @@ mirai supports transparent, inter-operable package use. Not relying on global op
 
    - Point to `mirai::daemons()` documentation or re-export `daemons()` for convenience
    - **Never call `daemons()` when using `mirai_map()`** to prevent accidental recursive daemon creation (e.g., if your function is used within another package's mirai-using function)
-     + **Exception**: Can provide a synchronous fallback if users haven't set daemons:
+     + **Exception**: You may provide a synchronous fallback if users have not set daemons:
        ```r
        with(if (!daemons_set()) daemons(sync = TRUE), {
          mirai_map(...)
        })
        ```
-   - **Exceptional case**: Use `daemons(n = 1, dispatcher = FALSE, .compute = ...)` for a single dedicated daemon only with a unique `.compute` value. Example: `logger::appender_async()` where logger's 'namespace' maps to mirai's 'compute profile'.
+   - **Exceptional case**: Use `daemons(n = 1, .compute = ...)` for a single dedicated daemon only with a unique `.compute` value. Example: `logger::appender_async()` where logger's 'namespace' maps to mirai's 'compute profile'.
 
 2. **Don't use `status()` programmatically.** Its interface may change. Use `info()` instead.
-   - For `status()$daemons`, use `nextget("url")`
+   - For the value of `status()$daemons`, instead use `nextget("url")`
 
 3. **Use `info()` programmatically by name, not position.** Index by element name (e.g., `info()[["cumulative"]]`) not position (e.g., `info()[[2]]`) in case values are added later.
 
