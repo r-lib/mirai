@@ -30,7 +30,14 @@
 #'
 #' `vignette("mirai", package = "mirai")`
 #'
-#' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_ .context cv cv_reset cv_signal cv_value dial .dispatcher_capacity .dispatcher_gate .dispatcher_info .dispatcher_start .dispatcher_stop .dispatcher_try_gate .dispatcher_wait handler http_server ip_addr is_error_value .keep listen .mark mclock monitor msleep ncurl nng_error opt opt<- parse_url pipe_id pipe_notify race_aio random reap recv recv_aio request send serial_config socket stat stop_aio stop_request tls_config unresolved .unresolved until wait wait_ write_cert
+#' @importFrom nanonext .advance call_aio call_aio_ collect_aio collect_aio_
+#'   .context cv cv_reset cv_signal cv_value dial .dispatcher_capacity
+#'   .dispatcher_gate .dispatcher_info .dispatcher_start .dispatcher_stop
+#'   .dispatcher_try_gate .dispatcher_wait handler http_server ip_addr
+#'   is_error_value .keep listen .mark mclock monitor msleep ncurl nng_error opt
+#'   opt<- parse_url pipe_id pipe_notify race_aio random reap recv recv_aio
+#'   request send serial_config socket stat stop_aio stop_request tls_config
+#'   unresolved .unresolved until wait wait_ write_cert
 #'
 "_PACKAGE"
 
