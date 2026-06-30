@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### Updates
+
+* Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks @jan-swissre, #619).
+
 # mirai 2.7.1
 
 #### Updates
