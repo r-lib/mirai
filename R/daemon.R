@@ -200,7 +200,7 @@ daemon <- function(
   dial(sock, url = url, autostart = NA, fail = 2L)
   `[[<-`(., "sock", sock)
   m <- recv(sock, mode = 1L, block = TRUE)
-  marked(send(sock, eval_mirai(m), mode = 1L, block = TRUE)) || wait(cv)
+  invisible(marked(send(sock, eval_mirai(m), mode = 1L, block = TRUE)) || wait(cv))
 }
 
 # internals --------------------------------------------------------------------
