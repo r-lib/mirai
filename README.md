@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mirai <a href="https://mirai.r-lib.org/" alt="mirai"><img src="man/figures/logo.png" alt="mirai logo" align="right" width="120"/></a>
+# mirai <a href="https://mirai.r-lib.org/" alt="mirai"><img src="man/figures/logo.svg" alt="mirai logo" align="right" width="120"/></a>
 
 <!-- badges: start -->
 

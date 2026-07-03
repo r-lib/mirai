@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mirai <a href="https://mirai.r-lib.org/" alt="mirai"><img src="man/figures/logo.png" alt="mirai logo" align="right" width="120"/></a>
+# mirai <a href="https://mirai.r-lib.org/" alt="mirai"><img src="man/figures/logo.svg" alt="mirai logo" align="right" width="120"/></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/mirai)](https://CRAN.R-project.org/package=mirai)
