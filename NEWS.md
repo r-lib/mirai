@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Adds `register_knitr()`, which installs a knitr `evaluate` hook so that R code chunks tagged with a `#| compute:` chunk option are evaluated on a mirai daemon rather than in the host session, providing a lightweight way to run selected chunks of a knitr, R Markdown or Quarto document on parallel or remote daemons.
+
 #### Updates
 
 * Requires nanonext >= 1.10.2.

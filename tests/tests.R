@@ -820,5 +820,31 @@ requireNamespace("secretbase", quietly = TRUE) && requireNamespace("promises", q
   test_type("character", mirai:::posit_workbench_headers())
   nzchar(mirai:::posit_workbench_headers()[["Cookie"]]) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
+# register_knitr() - evaluate knitr chunks on daemons
+connection && NOT_CRAN &&
+  requireNamespace("knitr", quietly = TRUE) &&
+  requireNamespace("evaluate", quietly = TRUE) && {
+  knit_chunk <- function(code, options = character()) {
+    opts <- if (length(options)) paste0("#| ", options, "\n", collapse = "") else ""
+    knitr::knit(text = sprintf("```{r}\n%s%s\n```\n", opts, code), quiet = TRUE)
+  }
+  hostpid <- Sys.getpid()
+  register_knitr()
+  # untagged chunk evaluates in the host session
+  test_true(grepl("TRUE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid)), fixed = TRUE))
+  # a chunk tagged with a profile that has no daemons errors informatively
+  test_error(knit_chunk("1L", "compute: ghost"), "no daemons set for compute profile 'ghost'")
+  daemons(1L, .compute = "kn", cleanup = FALSE)
+  # a routed chunk evaluates in a separate process
+  test_true(grepl("FALSE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid), "compute: kn"), fixed = TRUE))
+  # chunks on the same profile share state sequentially (cleanup = FALSE)
+  invisible(knit_chunk("kn_state <- 41L", "compute: kn"))
+  test_true(grepl("42", knit_chunk("kn_state + 1L", "compute: kn"), fixed = TRUE))
+  # the host session is isolated from the daemon's state
+  test_true(grepl("FALSE", knit_chunk("exists('kn_state')"), fixed = TRUE))
+  # a honored chunk error is rendered and does not abort the render
+  test_true(grepl("boom", knit_chunk("stop('boom')", c("compute: kn", "error: true")), fixed = TRUE))
+  test_false(daemons(0L, .compute = "kn"))
+}
 test_false(daemons(0))
 Sys.sleep(1L)

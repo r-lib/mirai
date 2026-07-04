@@ -27,6 +27,8 @@ Imports:
     nanonext (>= 1.10.2)
 Suggests: 
     cli,
+    evaluate,
+    knitr,
     litedown,
     mori,
     otel,
