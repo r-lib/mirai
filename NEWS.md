@@ -3,6 +3,7 @@
 #### Updates
 
 * Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks @jan-swissre, #619).
+* Requires nanonext >= 1.10.1.
 
 # mirai 2.7.1
 

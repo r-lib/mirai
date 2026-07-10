@@ -493,20 +493,19 @@ connection && NOT_CRAN && {
 }
 # promises tests
 connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
-  run_now <- getNamespace("later")[["run_now"]]
   test_true(daemons(1, notused = "wrongtype"))
   test_true(grepl("://", launch_remote(1L), fixed = TRUE))
   test_true(promises::is.promise(p1 <- promises::as.promise(mirai("completed"))))
   test_true(promises::is.promise(p2 <- promises::`%...>%`(mirai(Sys.sleep(0.1)), identity())))
   test_true(promises::is.promise(p3 <- promises::as.promise(call_mirai(mirai("completed")))))
   test_true(promises::is.promise(promises::then(mirai(stop()), identity, function(x) test_true(inherits(x, "simpleError")))))
-  run_now(1L)
+  nanonext::run_event_loop(1000L)
   test_true(promises::is.promise(promises::then(mirai(Sys.sleep(0.1), .timeout = 10), identity, function(x) test_true(inherits(x, "simpleError")))))
-  run_now(1L)
+  nanonext::run_event_loop(1000L)
   test_true(promises::is.promise(promises::then(call_mirai(mirai(stop())), identity, function(x) test_true(inherits(x, "simpleError")))))
-  run_now(1L)
+  nanonext::run_event_loop(1000L)
   test_true(promises::is.promise(promises::then(call_mirai(mirai(Sys.sleep(0.1), .timeout = 10)), identity, function(x) test_true(inherits(x, "simpleError")))))
-  run_now(1L)
+  nanonext::run_event_loop(1000L)
   test_zero(mirai_map(0:1, function(x) x, .promise = identity)[][[1L]])
   mat <- matrix(1:4, nrow = 2L)
   dimnames(mat) <- list(c("a", "b"), c("y", "x"))
@@ -515,7 +514,7 @@ connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
   test_true(all(mp[.flat, .stop] == 2L))
   test_identical(names(mp[]), c("a", "b"))
   test_class("errorValue", mirai_map(1, function(x) stop(x), .promise = list(identity, identity))[][[1L]])
-  run_now(1L)
+  nanonext::run_event_loop(1000L)
   test_false(daemons(NULL))
 }
 # mirai daemon limits tests
@@ -689,7 +688,7 @@ connection && requireNamespace("otelsdk", quietly = TRUE) && NOT_CRAN && {
 }
 # Posit Workbench tests
 nzchar(Sys.getenv("RS_SERVER_ADDRESS")) || test_error(mirai:::posit_workbench_fetch("api/test"), "Posit Workbench")
-requireNamespace("secretbase", quietly = TRUE) && requireNamespace("later", quietly = TRUE) && {
+requireNamespace("secretbase", quietly = TRUE) && requireNamespace("promises", quietly = TRUE) && {
   old_server <- Sys.getenv("RS_SERVER_ADDRESS")
   old_cookie <- Sys.getenv("RS_SESSION_RPC_COOKIE")
   Sys.setenv(RS_SERVER_ADDRESS = "http://127.0.0.1", RS_SESSION_RPC_COOKIE = "test_cookie")
