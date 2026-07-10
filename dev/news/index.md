@@ -8,6 +8,7 @@
   unnecessary output when this is being logged (thanks
   [@jan-swissre](https://github.com/jan-swissre),
   [\#619](https://github.com/r-lib/mirai/issues/619)).
+- Requires nanonext \>= 1.10.1.
 
 ## mirai 2.7.1
 
