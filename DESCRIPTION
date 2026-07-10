@@ -24,10 +24,9 @@ BugReports: https://github.com/r-lib/mirai/issues
 Depends: 
     R (>= 3.6)
 Imports: 
-    nanonext (>= 1.9.0)
+    nanonext (>= 1.10.1)
 Suggests: 
     cli,
-    later,
     litedown,
     mori,
     otel,

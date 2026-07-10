@@ -710,7 +710,7 @@ posit_workbench_fetch <- function(endpoint) {
   rs[[".rs.api.viewer"]](srv$url)
   timeout <- mclock() + .limit_short
   while (is.null(cookie) && mclock() < timeout) {
-    later::run_now(1L)
+    nanonext::run_event_loop(1000L)
   }
   is.null(cookie) && stop(._[["posit_api"]])
   rs[[".rs.api.executeCommand"]]("activateConsole")
