@@ -195,7 +195,7 @@ m6[]
 Daemons are persistent background processes that receive `mirai()` requests.
 
 > Daemons inherit system configuration ('.Renviron', '.Rprofile') and load default packages.
-To load only the base package (cutting startup time in half), set the environment variable  `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
+To load only the base package (cutting startup time in half), set the environment variable `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
 
 Specify the number of daemons to launch:
 ```{r}
