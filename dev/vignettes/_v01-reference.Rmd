@@ -430,7 +430,7 @@ ml[]
 ```{r}
 #| label: mmapcollect
 #| error: true
-mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
+mirai_map(list(a = 1, b = "a", c = 3), \(x) exp(x))[.stop]
 
 mirai_map(c(0.1, 0.2, 0.3), Sys.sleep)[.progress, .flat]
 ```

@@ -3,7 +3,7 @@ name: mirai
 description: Help users write correct R code for async, parallel, and distributed computing using mirai. Use when users need to run R code asynchronously or in parallel, write mirai code with correct dependency passing, set up parallel workers, convert from future or parallel, use mirai_map, integrate with Shiny or promises, or configure cluster/HPC computing.
 metadata:
   author: Charlie Gao (@shikokuchuo)
-  version: "1.2"
+  version: "1.3"
 license: MIT
 ---
 
@@ -183,7 +183,7 @@ Requires daemons to be set. Maps `.x` element-wise over a function, distributing
 daemons(4)
 
 # Basic map — collect with []
-results <- mirai_map(1:10, function(x) x^2)[]
+results <- mirai_map(1:10, \(x) x^2)[]
 
 # Constants via .args, helpers via ... (same passing rules as mirai())
 results <- mirai_map(
@@ -404,8 +404,8 @@ daemons(4, seed = 42)
 # Synchronous mode — runs in the host process, supports browser()
 daemons(sync = TRUE)
 m <- mirai({
-  browser()
   result <- tricky_function(x)
+  browser()
   result
 }, .args = list(tricky_function = tricky_function, x = my_x))
 daemons(0)
@@ -419,7 +419,7 @@ daemons(4, output = TRUE)
 Inside daemon callbacks (e.g., `mirai_map`), use `local_url()` + `launch_local()` instead of `daemons(n)` to avoid conflicting with the outer daemon pool.
 
 ```r
-mirai_map(1:10, function(x) {
+mirai_map(1:10, \(x) {
   daemons(url = local_url())
   launch_local(2)
   result <- mirai_map(1:5, function(y, x) x * y, .args = list(x = x))[]

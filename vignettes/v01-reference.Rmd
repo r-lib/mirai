@@ -55,9 +55,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
+#> [1] 4.888673 4.063032 4.082977 5.786405 4.694404
 m$data
-#> [1] 5.270938 5.500935 5.818627 3.365140 5.994334
+#> [1] 4.888673 4.063032 4.082977 5.786405 4.694404
 ```
 
 A mirai is *unresolved* until its result is received, then *resolved*.
@@ -85,7 +85,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.890969 4.009599 3.380416 3.514127 4.899060
+#> [1] 3.929109 2.791720 4.597985 3.775215 4.145794
 ```
 
 Passing `environment()` to '.args' allows you to conveniently provides all objects from the calling environment (like `x` and `file` in the following asynchronous write example):
@@ -215,7 +215,7 @@ m6[]
 Daemons are persistent background processes that receive `mirai()` requests.
 
 > Daemons inherit system configuration ('.Renviron', '.Rprofile') and load default packages.
-To load only the base package (cutting startup time in half), set the environment variable `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
+To load only the base package (cutting startup time in half), set the environment variable  `R_SCRIPT_DEFAULT_PACKAGES=NULL` before launching.
 
 Specify the number of daemons to launch:
 
@@ -275,7 +275,7 @@ Tasks send immediately in round-robin fashion, ensuring even distribution.
 However, scheduling isn't optimal since task duration is unknown beforehand.
 Tasks may queue behind long-running tasks while other daemons sit idle.
 
-This resource-light approach suits similar-length tasks or when concurrent tasks don't typically exceed available daemons.
+This resource-light approach suits similar-length tasks or when concurrent tasks typically don't exceed available daemons.
 
 Info now shows 6 connections:
 
@@ -454,7 +454,7 @@ daemons(4, seed = 2345L)
 fn <- function(x, range) runif(x, x, x + range)
 ml <- mirai_map(c(a = 1, b = 2, c = 3), \(x) fn(x, x * 2), fn = fn)
 ml
-#> < mirai map [0/3] >
+#> < mirai map [2/3] >
 ml[]
 #> $a
 #> [1] 2.637793
@@ -474,7 +474,7 @@ ml[]
 
 
 ``` r
-mirai_map(list(a = 1, b = "a", c = 3), function(x) exp(x))[.stop]
+mirai_map(list(a = 1, b = "a", c = 3), \(x) exp(x))[.stop]
 #> Error in `mirai_map()`:
 #> ℹ In index: 2.
 #> ℹ With name: b.
@@ -548,7 +548,7 @@ Query `launch_remote()` for the assigned port:
 ``` r
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53887")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.0.116:49295")'
 ```
 Dynamically scale the number of daemons up or down as needed.
 
@@ -814,7 +814,7 @@ Call `launch_remote()` without 'remote' to get shell commands for manual deploym
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.7.113:53888")'
+#> Rscript -e 'mirai::daemon("tcp://192.168.0.116:49296")'
 daemons(0)
 ```
 
@@ -837,36 +837,36 @@ Self-signed certificates are included in `launch_remote()` commands:
 ``` r
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.7.113:53889",tlscert=c("-----BEGIN CERTIFICATE-----
+#> Rscript -e 'mirai::daemon("tls+tcp://192.168.0.116:49297",tlscert=c("-----BEGIN CERTIFICATE-----
 #> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
-#> MTY4LjcuMTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
-#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4Ljcu
-#> MTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQCGCUyn6GWWGAwNGQ5jhku6BWSKqRD/cgmEk7MA
-#> Whsxb5nSPqsqh4ivTXJQZ1LzhcESX9eI9whwzknQ9MVCOA+Rij9EVzRu9Ypawvax
-#> 1yDZmlwSG5WAUva9vGtMZirA09oMp8+8hKt9eY44DG3EikP5g7lxWwaCTsz0Q/br
-#> 9YechhF458mGoDmM7yGp/L65mVsn52nMrK6QWJ7wrfqNyqzzz35IEI7PVxKk0KzD
-#> bcUsFYsCg1+STNz1ADAlUtsJFD0RUg38oAUn0cBi77sLBX9TQihPWInUY51tzyvI
-#> fukiiavDE5N56z3JKqTQZVk66H5kDEPz3/zZQB6YeNjV7UEua63a6FOLD/hVi2fa
-#> C3S/ud2xEFudik3xVVoNf+oQbQ4aLH6YUlresFXhvlU/LKLmbyDwjzXq+QRdyhIt
-#> mWJisrvK19/2cUSt1AflIt8nQYVgHhJsTxK40FLq7bGvwKPVibJYf0+8DW2VFqjj
-#> Z2TMBjYom0Ynixs3quQ7j92+2o2WK6O6uL06pKiLNiJi8CD/7pqTXEHCkYGh03tL
-#> 5w+00bIXWXH4OoYmtyuHjvDlTKYQVzMOTwxH9zotOvq88Ifzn5UBZH7RvDbqFyo8
-#> KvsVXuVKcLL/F0tzraExI+Zv5/YjrSqK7Jxtrdd3QN1750rjnujiOjfU1iJwX20a
-#> ZIc3JQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRxU45I
-#> ZGU7XK6DwHipxYuGgnsnCzAfBgNVHSMEGDAWgBRxU45IZGU7XK6DwHipxYuGgnsn
-#> CzANBgkqhkiG9w0BAQsFAAOCAgEAIuzA09/e739fQ9/cwf7M6KXNHlv5Fd2aO5l/
-#> g5B7h7o/bZgGghchYNAmC+e7o0QSUoS2giGx3EW1GsH587+5V6ZliBYnl5LeTlRW
-#> 2OUq4odZYJvykpbyDatohnz+YzDQcdxYtOdJrHrqmjSuL2W28QnzKyYGTVbSi/4V
-#> cN8QMw0i53iayWYDmHtshXOF5DmnNCF+8ffVuR+B4Tzf3XN98zZU7gwxEEIDzF5n
-#> KfeVmAAUg69eQiALpJ6ZyWUFHQAd92H9Gezx8qMqCia1Iqym8Vg7aaWmXak0jYjm
-#> 35Mrfn57Oej8b7epSzsWKvZu2ZuKyBJ0T2rjdpXJwqz3IrMFJDM6dV9NFDfnGiAq
-#> uI64s80uRGvxZ+OtPvHD+1OMM9wcJGCfLx2INTII/AE6pWcCb2ddOfvv6JX1n54t
-#> pu5woTWihH3BaI604fmt1g+CHHVzw0Rpi1uPzIumzD5B59a8BptbSPqkoy2YlOU4
-#> 2c6VoY88pZvADYjzDMLVJHGax/FUDJeocN3TF+Ao2e9C0lPjrqb8i7tI49ZgNK6L
-#> YeLYVjWIWm+BUGN5xef7IBS6x0Vwqgrsffwb/64g11MJx7Tk9N6oOXYEN4TbOEfn
-#> evegzVN2xHKCml+R7W5/02yegUBEkzlo386v/5I4RfsqVb4yohp0HIZ6up6A+UPm
-#> X1Lbtco=
+#> MTY4LjAuMTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
+#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjAu
+#> MTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
+#> DQEBAQUAA4ICDwAwggIKAoICAQC+c2346/FIbdtrOcQBpwJkif6MQEXsXSz4wAjZ
+#> Wk1zvYPaEszI4k2PlR8j+9curxvFltwBEnhyFFYeFcL8HTq809eYbUnTbsFbP/7u
+#> kKZnngNwc2NV3NRAGtMdFhqQm3wN/AAIAEVLbUsiNzU65/TaYiEyhi1AGCkB2iB8
+#> SQ21Urf733XiP6iwUeNjdZwLJ0+oRySCEOESdL4HTU1Phe8pYZ01g36CaK2N82Cc
+#> b9/cyOsOYuJs4XsBdjPcVCwHMJoB/AiHZYH24xM9bcOCOVuAOe9NWFMeZzxucZXf
+#> INDCmyiPyj1IEKqfGnXDFymqnZPTsZHGGhE+mdOAFWq2XX5amDNweAy+kjzrcWgH
+#> e9zQQzxcCi4kajRGE0C9cg2zKNDSXULwdESn5ee/y4ZbNV92ejRRqiuJIW40SVhi
+#> g8OOITdsF/wibXKnEQC3EEV43U1GdUcmgUdSV+DhIHFe1gclLbmnOnKkrouY1fem
+#> 2SofxPXUYKtLIdbATTrtsuyl5bt/HZ88W1kyeGuNo0zkBONboSNUBnSEjRYrv0ol
+#> rERrEyCA25pVKQxb5sUYtY/WKE/zZEdfqt95QmVfnDoOI8PPvXm3h2vN9+NfCWze
+#> FvvQWmroPWc7w6HhNZlEwVCEmMwZodoSJAws1MKZ7gbMO1S9MrI8EJIUNPOX13ga
+#> oc/DJwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS0B1gv
+#> FfyRC9VpFmP3rltabJBzJTAfBgNVHSMEGDAWgBS0B1gvFfyRC9VpFmP3rltabJBz
+#> JTANBgkqhkiG9w0BAQsFAAOCAgEASFUf2zqnjGkj8rkQweDeG95ANA1oCJfxlhWW
+#> 36S55AUgyqqhoup2V/o3Xb5l7lP/qm9YFxUO0rz/MOfMJUmgXf4vBGPcEtNI6qk8
+#> 82iE9STONTZY/mKHxIgFJ88SPV7V9mJ9ewgJWZ2YXg9CJTNgQecniUIvDcORmT5w
+#> RtiXzt0g8k9u7LV5yarNPAKxzgQLSY+tJwNxsSSJbmJ4LYqw/zpB3NY4LkOIfIBz
+#> +R3ZmKSGj6/uTDNBVpqS2sGGYTwQoQcJtZ9rNK06NCF/JUq8j17yg8lADXJw6BLz
+#> OB0z96g07wMRh78g4Y8T7hQUpnZtUUxMOuCBZKPJuinvbEXpq7SuonVVcculy6ZK
+#> IlLhoUt+t+qwyz/VaY4eTekYvH0g5O87e2sr9C+GNtJxHzPo2YqIXDulOqE1emKr
+#> sAoZPJkKvMKleBpm6efqLIHNZ8TbNkNdKOxAh0+GQ4uF9A/JsZDoPq8apkB0ppj6
+#> FlYl62TnWFrwsak7SCLKcCtblq/wdWmY3eczasb944hRHGjbIOuCrqJHJfcUeJIW
+#> sevrTsVGHfHWBtGWAYWhhT3mdjbpnubSqk1yd/e0zsZrr+eCiLnQJIcn3mpxVPHw
+#> MpXS2J8i3W7dgXZDyZ37sqrf4c3zGrDStlcv10gbKrTvM57ffclfumz0nt3CEKYS
+#> rUVjBDk=
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -933,14 +933,14 @@ with_daemons("gpu", {
 })
 
 m1[]
-#> [1] 42715
+#> [1] 10409
 m2[] # different to m1
-#> [1] 42730
+#> [1] 10425
 
 m3[] # same as m1
-#> [1] 42715
+#> [1] 10409
 m4[] # same as m1
-#> [1] 42715
+#> [1] 10409
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -1004,10 +1004,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 5757
+#> [1] 7053
 #> 
 #> [[2]]
-#> [1] 5757
+#> [1] 7053
 
 
 # Use sync with the 'sync' compute profile:
@@ -1018,8 +1018,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 5757
+#> [1] 7053
 #> 
 #> [[2]]
-#> [1] 5757
+#> [1] 7053
 ```
