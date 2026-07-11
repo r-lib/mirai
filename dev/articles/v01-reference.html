@@ -138,9 +138,9 @@ via <code><a href="https://rdrr.io/r/base/library.html" class="external-link">li
 <span><span class="co"># Do work whilst unresolved</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 5.270938 5.500935 5.818627 3.365140 5.994334</span></span>
+<span><span class="co">#&gt; [1] 4.888673 4.063032 4.082977 5.786405 4.694404</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 5.270938 5.500935 5.818627 3.365140 5.994334</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 4.888673 4.063032 4.082977 5.786405 4.694404</span></span></code></pre></div>
 <p>A mirai is <em>unresolved</em> until its result is received, then
 <em>resolved</em>. Use <code><a href="../reference/unresolved.html">unresolved()</a></code> to check its state.</p>
 <p>Access results via <code>m$data</code> once resolved. This will be
@@ -172,7 +172,7 @@ accepted:</p>
 <span></span>
 <span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3.890969 4.009599 3.380416 3.514127 4.899060</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3.929109 2.791720 4.597985 3.775215 4.145794</span></span></code></pre></div>
 <p>Passing <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> to ‘.args’ allows you to
 conveniently provides all objects from the calling environment (like
 <code>x</code> and <code>file</code> in the following asynchronous write
@@ -360,7 +360,7 @@ distribution. However, scheduling isn’t optimal since task duration is
 unknown beforehand. Tasks may queue behind long-running tasks while
 other daemons sit idle.</p>
 <p>This resource-light approach suits similar-length tasks or when
-concurrent tasks don’t typically exceed available daemons.</p>
+concurrent tasks typically don’t exceed available daemons.</p>
 <p>Info now shows 6 connections:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/info.html">info</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -553,7 +553,7 @@ ephemeral daemons).</p>
 <span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">range</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span>, <span class="va">x</span> <span class="op">+</span> <span class="va">range</span><span class="op">)</span></span>
 <span><span class="va">ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span><span class="op">)</span>, fn <span class="op">=</span> <span class="va">fn</span><span class="op">)</span></span>
 <span><span class="va">ml</span></span>
-<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
+<span><span class="co">#&gt; &lt; mirai map [2/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
 <span><span class="co">#&gt; [1] 2.637793</span></span>
@@ -579,7 +579,7 @@ indicator</li>
 tasks on first failure</li>
 </ul>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="st">"a"</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">.stop</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="st">"a"</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">.stop</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Error in `mirai_map()`:</span></span>
 <span><span class="co">#&gt; ℹ In index: 2.</span></span>
 <span><span class="co">#&gt; ℹ With name: b.</span></span>
@@ -654,7 +654,7 @@ automatically assigns a free ephemeral port:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.7.113:53887")'</span></span></code></pre></div>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.0.116:49295")'</span></span></code></pre></div>
 <p>Dynamically scale the number of daemons up or down as needed.</p>
 <p>Reset all connections:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -929,7 +929,7 @@ commands for manual deployment:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.7.113:53888")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.0.116:49296")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -950,36 +950,36 @@ commands:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.7.113:53889",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.0.116:49297",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjcuMTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw</span></span>
-<span><span class="co">#&gt; MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4Ljcu</span></span>
-<span><span class="co">#&gt; MTEzMREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3</span></span>
-<span><span class="co">#&gt; DQEBAQUAA4ICDwAwggIKAoICAQCGCUyn6GWWGAwNGQ5jhku6BWSKqRD/cgmEk7MA</span></span>
-<span><span class="co">#&gt; Whsxb5nSPqsqh4ivTXJQZ1LzhcESX9eI9whwzknQ9MVCOA+Rij9EVzRu9Ypawvax</span></span>
-<span><span class="co">#&gt; 1yDZmlwSG5WAUva9vGtMZirA09oMp8+8hKt9eY44DG3EikP5g7lxWwaCTsz0Q/br</span></span>
-<span><span class="co">#&gt; 9YechhF458mGoDmM7yGp/L65mVsn52nMrK6QWJ7wrfqNyqzzz35IEI7PVxKk0KzD</span></span>
-<span><span class="co">#&gt; bcUsFYsCg1+STNz1ADAlUtsJFD0RUg38oAUn0cBi77sLBX9TQihPWInUY51tzyvI</span></span>
-<span><span class="co">#&gt; fukiiavDE5N56z3JKqTQZVk66H5kDEPz3/zZQB6YeNjV7UEua63a6FOLD/hVi2fa</span></span>
-<span><span class="co">#&gt; C3S/ud2xEFudik3xVVoNf+oQbQ4aLH6YUlresFXhvlU/LKLmbyDwjzXq+QRdyhIt</span></span>
-<span><span class="co">#&gt; mWJisrvK19/2cUSt1AflIt8nQYVgHhJsTxK40FLq7bGvwKPVibJYf0+8DW2VFqjj</span></span>
-<span><span class="co">#&gt; Z2TMBjYom0Ynixs3quQ7j92+2o2WK6O6uL06pKiLNiJi8CD/7pqTXEHCkYGh03tL</span></span>
-<span><span class="co">#&gt; 5w+00bIXWXH4OoYmtyuHjvDlTKYQVzMOTwxH9zotOvq88Ifzn5UBZH7RvDbqFyo8</span></span>
-<span><span class="co">#&gt; KvsVXuVKcLL/F0tzraExI+Zv5/YjrSqK7Jxtrdd3QN1750rjnujiOjfU1iJwX20a</span></span>
-<span><span class="co">#&gt; ZIc3JQIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRxU45I</span></span>
-<span><span class="co">#&gt; ZGU7XK6DwHipxYuGgnsnCzAfBgNVHSMEGDAWgBRxU45IZGU7XK6DwHipxYuGgnsn</span></span>
-<span><span class="co">#&gt; CzANBgkqhkiG9w0BAQsFAAOCAgEAIuzA09/e739fQ9/cwf7M6KXNHlv5Fd2aO5l/</span></span>
-<span><span class="co">#&gt; g5B7h7o/bZgGghchYNAmC+e7o0QSUoS2giGx3EW1GsH587+5V6ZliBYnl5LeTlRW</span></span>
-<span><span class="co">#&gt; 2OUq4odZYJvykpbyDatohnz+YzDQcdxYtOdJrHrqmjSuL2W28QnzKyYGTVbSi/4V</span></span>
-<span><span class="co">#&gt; cN8QMw0i53iayWYDmHtshXOF5DmnNCF+8ffVuR+B4Tzf3XN98zZU7gwxEEIDzF5n</span></span>
-<span><span class="co">#&gt; KfeVmAAUg69eQiALpJ6ZyWUFHQAd92H9Gezx8qMqCia1Iqym8Vg7aaWmXak0jYjm</span></span>
-<span><span class="co">#&gt; 35Mrfn57Oej8b7epSzsWKvZu2ZuKyBJ0T2rjdpXJwqz3IrMFJDM6dV9NFDfnGiAq</span></span>
-<span><span class="co">#&gt; uI64s80uRGvxZ+OtPvHD+1OMM9wcJGCfLx2INTII/AE6pWcCb2ddOfvv6JX1n54t</span></span>
-<span><span class="co">#&gt; pu5woTWihH3BaI604fmt1g+CHHVzw0Rpi1uPzIumzD5B59a8BptbSPqkoy2YlOU4</span></span>
-<span><span class="co">#&gt; 2c6VoY88pZvADYjzDMLVJHGax/FUDJeocN3TF+Ao2e9C0lPjrqb8i7tI49ZgNK6L</span></span>
-<span><span class="co">#&gt; YeLYVjWIWm+BUGN5xef7IBS6x0Vwqgrsffwb/64g11MJx7Tk9N6oOXYEN4TbOEfn</span></span>
-<span><span class="co">#&gt; evegzVN2xHKCml+R7W5/02yegUBEkzlo386v/5I4RfsqVb4yohp0HIZ6up6A+UPm</span></span>
-<span><span class="co">#&gt; X1Lbtco=</span></span>
+<span><span class="co">#&gt; MTY4LjAuMTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw</span></span>
+<span><span class="co">#&gt; MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjAu</span></span>
+<span><span class="co">#&gt; MTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3</span></span>
+<span><span class="co">#&gt; DQEBAQUAA4ICDwAwggIKAoICAQC+c2346/FIbdtrOcQBpwJkif6MQEXsXSz4wAjZ</span></span>
+<span><span class="co">#&gt; Wk1zvYPaEszI4k2PlR8j+9curxvFltwBEnhyFFYeFcL8HTq809eYbUnTbsFbP/7u</span></span>
+<span><span class="co">#&gt; kKZnngNwc2NV3NRAGtMdFhqQm3wN/AAIAEVLbUsiNzU65/TaYiEyhi1AGCkB2iB8</span></span>
+<span><span class="co">#&gt; SQ21Urf733XiP6iwUeNjdZwLJ0+oRySCEOESdL4HTU1Phe8pYZ01g36CaK2N82Cc</span></span>
+<span><span class="co">#&gt; b9/cyOsOYuJs4XsBdjPcVCwHMJoB/AiHZYH24xM9bcOCOVuAOe9NWFMeZzxucZXf</span></span>
+<span><span class="co">#&gt; INDCmyiPyj1IEKqfGnXDFymqnZPTsZHGGhE+mdOAFWq2XX5amDNweAy+kjzrcWgH</span></span>
+<span><span class="co">#&gt; e9zQQzxcCi4kajRGE0C9cg2zKNDSXULwdESn5ee/y4ZbNV92ejRRqiuJIW40SVhi</span></span>
+<span><span class="co">#&gt; g8OOITdsF/wibXKnEQC3EEV43U1GdUcmgUdSV+DhIHFe1gclLbmnOnKkrouY1fem</span></span>
+<span><span class="co">#&gt; 2SofxPXUYKtLIdbATTrtsuyl5bt/HZ88W1kyeGuNo0zkBONboSNUBnSEjRYrv0ol</span></span>
+<span><span class="co">#&gt; rERrEyCA25pVKQxb5sUYtY/WKE/zZEdfqt95QmVfnDoOI8PPvXm3h2vN9+NfCWze</span></span>
+<span><span class="co">#&gt; FvvQWmroPWc7w6HhNZlEwVCEmMwZodoSJAws1MKZ7gbMO1S9MrI8EJIUNPOX13ga</span></span>
+<span><span class="co">#&gt; oc/DJwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS0B1gv</span></span>
+<span><span class="co">#&gt; FfyRC9VpFmP3rltabJBzJTAfBgNVHSMEGDAWgBS0B1gvFfyRC9VpFmP3rltabJBz</span></span>
+<span><span class="co">#&gt; JTANBgkqhkiG9w0BAQsFAAOCAgEASFUf2zqnjGkj8rkQweDeG95ANA1oCJfxlhWW</span></span>
+<span><span class="co">#&gt; 36S55AUgyqqhoup2V/o3Xb5l7lP/qm9YFxUO0rz/MOfMJUmgXf4vBGPcEtNI6qk8</span></span>
+<span><span class="co">#&gt; 82iE9STONTZY/mKHxIgFJ88SPV7V9mJ9ewgJWZ2YXg9CJTNgQecniUIvDcORmT5w</span></span>
+<span><span class="co">#&gt; RtiXzt0g8k9u7LV5yarNPAKxzgQLSY+tJwNxsSSJbmJ4LYqw/zpB3NY4LkOIfIBz</span></span>
+<span><span class="co">#&gt; +R3ZmKSGj6/uTDNBVpqS2sGGYTwQoQcJtZ9rNK06NCF/JUq8j17yg8lADXJw6BLz</span></span>
+<span><span class="co">#&gt; OB0z96g07wMRh78g4Y8T7hQUpnZtUUxMOuCBZKPJuinvbEXpq7SuonVVcculy6ZK</span></span>
+<span><span class="co">#&gt; IlLhoUt+t+qwyz/VaY4eTekYvH0g5O87e2sr9C+GNtJxHzPo2YqIXDulOqE1emKr</span></span>
+<span><span class="co">#&gt; sAoZPJkKvMKleBpm6efqLIHNZ8TbNkNdKOxAh0+GQ4uF9A/JsZDoPq8apkB0ppj6</span></span>
+<span><span class="co">#&gt; FlYl62TnWFrwsak7SCLKcCtblq/wdWmY3eczasb944hRHGjbIOuCrqJHJfcUeJIW</span></span>
+<span><span class="co">#&gt; sevrTsVGHfHWBtGWAYWhhT3mdjbpnubSqk1yd/e0zsZrr+eCiLnQJIcn3mpxVPHw</span></span>
+<span><span class="co">#&gt; MpXS2J8i3W7dgXZDyZ37sqrf4c3zGrDStlcv10gbKrTvM57ffclfumz0nt3CEKYS</span></span>
+<span><span class="co">#&gt; rUVjBDk=</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
@@ -1097,14 +1097,14 @@ profile name sets the default for all functions within that scope:</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 42715</span></span>
+<span><span class="co">#&gt; [1] 10409</span></span>
 <span><span class="va">m2</span><span class="op">[</span><span class="op">]</span> <span class="co"># different to m1</span></span>
-<span><span class="co">#&gt; [1] 42730</span></span>
+<span><span class="co">#&gt; [1] 10425</span></span>
 <span></span>
 <span><span class="va">m3</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 42715</span></span>
+<span><span class="co">#&gt; [1] 10409</span></span>
 <span><span class="va">m4</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 42715</span></span>
+<span><span class="co">#&gt; [1] 10409</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"cpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"gpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -1174,10 +1174,10 @@ Only <code>seed</code> affects behavior with
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 5757</span></span>
+<span><span class="co">#&gt; [1] 7053</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 5757</span></span>
+<span><span class="co">#&gt; [1] 7053</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Use sync with the 'sync' compute profile:</span></span>
@@ -1188,10 +1188,10 @@ Only <code>seed</code> affects behavior with
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 5757</span></span>
+<span><span class="co">#&gt; [1] 7053</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 5757</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7053</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
