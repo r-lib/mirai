@@ -56,7 +56,7 @@ m <- mirai({
   "hello"
 })
 
-promises::then(m, function(x) env$res <- x)
+promises::then(m, \(x) env$res <- x)
 
 m[]
 ```
@@ -556,7 +556,7 @@ m <- mirai({
             )
           },
           msg = req$HTTP_MSG
-        ) %...>% (function(x) {
+        ) %...>% (\(x) {
           res$status <- x$status
           res$body <- x$body
         })
@@ -624,7 +624,7 @@ m <- mirai({
             )
           },
           data = req$postBody
-        ) %...>% (function(x) {
+        ) %...>% (\(x) {
           res$status <- x$status
           res$body <- x$body
         })

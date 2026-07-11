@@ -45,7 +45,7 @@ Pass this configuration to the 'serial' argument of `daemons()`:
 cfg <- serial_config(
   "ArrowTabular",
   arrow::write_to_raw,
-  function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
+  \(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
 )
 
 daemons(1, serial = cfg)
@@ -68,7 +68,7 @@ daemons(
   serial = serial_config(
     c("ArrowTabular", "polars_data_frame"),
     list(arrow::write_to_raw, \(x) x$serialize()),
-    list(function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$deserialize_df)
+    list(\(x) arrow::read_ipc_stream(x, as_data_frame = FALSE), polars::pl$deserialize_df)
   )
 )
 
@@ -116,7 +116,7 @@ model <- nn_module(
     self$conv1 <- nn_conv2d(in_size, out_size, 5)
     self$conv2 <- nn_conv2d(in_size, out_size, 5)
   },
-  forward = function(x) {
+  forward = \(x) {
     x <- self$conv1(x)
     x <- nnf_relu(x)
     x <- self$conv2(x)
@@ -166,7 +166,7 @@ library(mirai)
 cfg <- serial_config(
   class = "nanoarrow_array_stream",
   sfunc = arrow::write_to_raw,
-  ufunc = function(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
+  ufunc = \(x) arrow::read_ipc_stream(x, as_data_frame = FALSE)
 )
 
 daemons(1, serial = cfg)
