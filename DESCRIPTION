@@ -33,8 +33,9 @@ Suggests:
     mori,
     otel,
     otelsdk,
-    secretbase
-Enhances: 
+    secretbase,
+    xfun
+Enhances:
     parallel,
     promises
 VignetteBuilder: 

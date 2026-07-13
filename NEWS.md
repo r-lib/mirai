@@ -2,7 +2,8 @@
 
 #### New Features
 
-* Adds `register_knitr()`, which installs a knitr `evaluate` hook so that R code chunks tagged with a `#| compute:` chunk option are evaluated on a mirai daemon rather than in the host session, providing a lightweight way to run selected chunks of a knitr, R Markdown or Quarto document on parallel or remote daemons.
+* Adds `register_render()`, which installs a hook with knitr and/or litedown so that R code chunks tagged with a `#| compute:` chunk option are evaluated on a mirai daemon rather than in the host session, providing a lightweight way to run selected chunks of a knitr, R Markdown, Quarto or litedown document on parallel or remote daemons.
+* Adds `daemon_call()`, a developer interface that evaluates a function call synchronously on a daemon of a compute profile; used to integrate mirai as an evaluation backend (e.g. by `register_render()`).
 
 #### Updates
 

@@ -820,7 +820,20 @@ requireNamespace("secretbase", quietly = TRUE) && requireNamespace("promises", q
   test_type("character", mirai:::posit_workbench_headers())
   nzchar(mirai:::posit_workbench_headers()[["Cookie"]]) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
-# register_knitr() - evaluate knitr chunks on daemons
+# daemon_call() - evaluate a function call on a daemon
+connection && NOT_CRAN && {
+  daemons(1L, .compute = "dc", cleanup = FALSE)
+  test_equal(daemon_call(sum, 1:10, .compute = "dc"), 55L)
+  # a function accepting 'envir' is called in the daemon's global env (persists)
+  test_true(daemon_call(function(x, envir) {assign("dc_state", x, envir); TRUE}, 7L, .compute = "dc"))
+  test_equal(daemon_call(function() get0("dc_state", envir = globalenv()), .compute = "dc"), 7L)
+  # the host session is isolated from the daemon's state
+  test_false(exists("dc_state"))
+  # an unset compute profile errors informatively
+  test_error(daemon_call(sum, 1L, .compute = "ghost"), "No daemons set for the 'ghost' compute profile")
+  test_false(daemons(0L, .compute = "dc"))
+}
+# register_render() - evaluate knitr chunks on daemons
 connection && NOT_CRAN &&
   requireNamespace("knitr", quietly = TRUE) &&
   requireNamespace("evaluate", quietly = TRUE) && {
@@ -829,11 +842,11 @@ connection && NOT_CRAN &&
     knitr::knit(text = sprintf("```{r}\n%s%s\n```\n", opts, code), quiet = TRUE)
   }
   hostpid <- Sys.getpid()
-  register_knitr()
+  register_render()
   # untagged chunk evaluates in the host session
   test_true(grepl("TRUE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid)), fixed = TRUE))
   # a chunk tagged with a profile that has no daemons errors informatively
-  test_error(knit_chunk("1L", "compute: ghost"), "no daemons set for compute profile 'ghost'")
+  test_error(knit_chunk("1L", "compute: ghost"), "No daemons set for the 'ghost' compute profile")
   daemons(1L, .compute = "kn", cleanup = FALSE)
   # a routed chunk evaluates in a separate process
   test_true(grepl("FALSE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid), "compute: kn"), fixed = TRUE))
@@ -845,6 +858,31 @@ connection && NOT_CRAN &&
   # a honored chunk error is rendered and does not abort the render
   test_true(grepl("boom", knit_chunk("stop('boom')", c("compute: kn", "error: true")), fixed = TRUE))
   test_false(daemons(0L, .compute = "kn"))
+}
+# register_render() - evaluate litedown chunks on daemons
+connection && NOT_CRAN &&
+  requireNamespace("litedown", quietly = TRUE) && {
+  fuse_chunk <- function(code, options = character()) {
+    opts <- if (length(options)) paste0("#| ", options, "\n", collapse = "") else ""
+    paste(litedown::fuse(text = sprintf("```{r}\n%s%s\n```\n", opts, code), output = "markdown"), collapse = "\n")
+  }
+  hostpid <- Sys.getpid()
+  register_render()
+  # untagged chunk evaluates in the host session
+  test_true(grepl("TRUE", fuse_chunk(sprintf("Sys.getpid() == %dL", hostpid)), fixed = TRUE))
+  # a chunk tagged with a profile that has no daemons errors informatively
+  test_error(fuse_chunk("1L", "compute: ghost"), "No daemons set for the 'ghost' compute profile")
+  daemons(1L, .compute = "ld", cleanup = FALSE)
+  # a routed chunk evaluates in a separate process
+  test_true(grepl("FALSE", fuse_chunk(sprintf("Sys.getpid() == %dL", hostpid), "compute: ld"), fixed = TRUE))
+  # chunks on the same profile share state sequentially (cleanup = FALSE)
+  invisible(fuse_chunk("ld_state <- 41L", "compute: ld"))
+  test_true(grepl("42", fuse_chunk("ld_state + 1L", "compute: ld"), fixed = TRUE))
+  # the host session is isolated from the daemon's state
+  test_true(grepl("FALSE", fuse_chunk("exists('ld_state')"), fixed = TRUE))
+  # a honored chunk error is rendered and does not abort the render
+  test_true(grepl("boom", fuse_chunk("stop('boom')", c("compute: ld", "error: true")), fixed = TRUE))
+  test_false(daemons(0L, .compute = "ld"))
 }
 test_false(daemons(0))
 Sys.sleep(1L)

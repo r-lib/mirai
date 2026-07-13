@@ -80,6 +80,48 @@ nextcode <- function(xc) {
   )
 }
 
+#' Evaluate a Function Call on a Daemon
+#'
+#' Evaluates a function call synchronously on a daemon of the specified compute
+#' profile, returning its value. This is a developer interface for packages
+#' integrating \pkg{mirai} as an evaluation backend, for example the rendering
+#' hooks installed by [register_render()].
+#'
+#' The call is dispatched as a single [mirai()] and blocks until it resolves. If
+#' `.f` accepts an `envir` argument and none is supplied in `...`, it is called
+#' with `envir` set to the daemon's global environment, so that objects created
+#' by successive calls to a `cleanup = FALSE` profile persist and are visible to
+#' one another (mirroring an interactive session). Arguments in `...` are
+#' evaluated in the caller and passed by value to the daemon.
+#'
+#' @param .f a function to call on the daemon.
+#' @param ... arguments passed to `.f`.
+#' @inheritParams mirai
+#'
+#' @return The value of `.f` called with the supplied arguments, evaluated on a
+#'   daemon of the compute profile.
+#'
+#' @examples
+#' daemons(sync = TRUE)
+#' daemon_call(sum, 1:10)
+#' daemons(0)
+#'
+#' @export
+#'
+daemon_call <- function(.f, ..., .compute = NULL) {
+  require_daemons(.compute = .compute)
+  args <- list(...)
+  add_envir <- is.null(args[["envir"]]) && "envir" %in% names(formals(.f))
+  # Build the call with `.f` and its arguments inlined; `globalenv()` is left
+  # unevaluated so it resolves to the daemon's global environment.
+  expr <- if (add_envir) {
+    bquote(do.call(.(.f), c(.(args), list(envir = globalenv()))))
+  } else {
+    bquote(do.call(.(.f), .(args)))
+  }
+  mirai(expr, .compute = .compute)[]
+}
+
 # internals --------------------------------------------------------------------
 
 next_stream <- function(envir) {
