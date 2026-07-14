@@ -7,7 +7,7 @@ apply to all mirai requests for that compute profile."><meta property="og:descri
 serialization and unserialization of normally non-exportable reference
 objects, allowing these to be used seamlessly between different R sessions.
 Once set by passing to the serial argument of daemons(), the functions
-apply to all mirai requests for that compute profile."><meta property="og:image" content="https://mirai.r-lib.org/logo.png"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+apply to all mirai requests for that compute profile."><meta property="og:image" content="https://mirai.r-lib.org/logo.svg"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -56,7 +56,7 @@ apply to all mirai requests for that compute profile."><meta property="og:image"
 </nav><div class="container template-reference-topic" id="container">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Create Serialization Configuration</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Create Serialization Configuration</h1>
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/daemons.R" class="external-link"><code>R/daemons.R</code></a></small>
       <div class="d-none name"><code>serial_config.Rd</code></div>
     </div>
@@ -114,7 +114,7 @@ vector and returning a reference object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> serialize(x, NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x565223454958&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e7524be670&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
@@ -126,7 +126,7 @@ vector and returning a reference object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         stop("'connection' must be a connection")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .Internal(unserialize(connection, refhook))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56522345eca0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e7524ca8d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -144,12 +144,12 @@ vector and returning a reference object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> serialize(x, NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x565223454958&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e7524be670&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> serialize(x, NULL)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x565223454958&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e7524be670&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
@@ -161,7 +161,7 @@ vector and returning a reference object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         stop("'connection' must be a connection")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .Internal(unserialize(connection, refhook))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56522345eca0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e7524ca8d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[2]]</span>
@@ -172,7 +172,7 @@ vector and returning a reference object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         stop("'connection' must be a connection")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .Internal(unserialize(connection, refhook))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56522345eca0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55e7524ca8d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:base&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -190,7 +190,7 @@ vector and returning a reference object.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer></body></html>

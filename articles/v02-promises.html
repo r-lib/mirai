@@ -82,7 +82,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>mirai - Promises (Shiny and Plumber)</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>mirai - Promises (Shiny and Plumber)</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v02-promises.Rmd" class="external-link"><code>vignettes/v02-promises.Rmd</code></a></small>
@@ -134,7 +134,7 @@ side effects (assigning to an environment):</p>
 <span>  <span class="st">"hello"</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">promises</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">then</a></span><span class="op">(</span><span class="va">m</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">env</span><span class="op">$</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">promises</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/promises/reference/then.html" class="external-link">then</a></span><span class="op">(</span><span class="va">m</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">env</span><span class="op">$</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "hello"</span></span></code></pre></div>
@@ -642,7 +642,7 @@ process ID:</p>
 <span>            <span class="op">)</span></span>
 <span>          <span class="op">}</span>,</span>
 <span>          msg <span class="op">=</span> <span class="va">req</span><span class="op">$</span><span class="va">HTTP_MSG</span></span>
-<span>        <span class="op">)</span> <span class="op"><a href="https://rstudio.github.io/promises/reference/pipes.html" class="external-link">%...&gt;%</a></span> <span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="op">)</span> <span class="op"><a href="https://rstudio.github.io/promises/reference/pipes.html" class="external-link">%...&gt;%</a></span> <span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>          <span class="va">res</span><span class="op">$</span><span class="va">status</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">status</span></span>
 <span>          <span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">body</span></span>
 <span>        <span class="op">}</span><span class="op">)</span></span>
@@ -665,28 +665,28 @@ timestamps (only 4 process simultaneously due to daemon limit):</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:52\"],\"msg\":[\"1\"],\"pid\":[80775]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:00\"],\"msg\":[\"1\"],\"pid\":[18653]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:52\"],\"msg\":[\"2\"],\"pid\":[80773]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:01\"],\"msg\":[\"2\"],\"pid\":[18671]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:53\"],\"msg\":[\"3\"],\"pid\":[80785]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:01\"],\"msg\":[\"3\"],\"pid\":[18655]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:52\"],\"msg\":[\"4\"],\"pid\":[80785]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:00\"],\"msg\":[\"4\"],\"pid\":[18671]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:52\"],\"msg\":[\"5\"],\"pid\":[80791]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:00\"],\"msg\":[\"5\"],\"pid\":[18655]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:53\"],\"msg\":[\"6\"],\"pid\":[80791]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:00\"],\"msg\":[\"6\"],\"pid\":[18665]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:53\"],\"msg\":[\"7\"],\"pid\":[80775]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:01\"],\"msg\":[\"7\"],\"pid\":[18653]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:53\"],\"msg\":[\"8\"],\"pid\":[80773]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:01\"],\"msg\":[\"8\"],\"pid\":[18665]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -727,7 +727,7 @@ connection):</p>
 <span>            <span class="op">)</span></span>
 <span>          <span class="op">}</span>,</span>
 <span>          data <span class="op">=</span> <span class="va">req</span><span class="op">$</span><span class="va">postBody</span></span>
-<span>        <span class="op">)</span> <span class="op"><a href="https://rstudio.github.io/promises/reference/pipes.html" class="external-link">%...&gt;%</a></span> <span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="op">)</span> <span class="op"><a href="https://rstudio.github.io/promises/reference/pipes.html" class="external-link">%...&gt;%</a></span> <span class="op">(</span>\<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>          <span class="va">res</span><span class="op">$</span><span class="va">status</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">status</span></span>
 <span>          <span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">body</span></span>
 <span>        <span class="op">}</span><span class="op">)</span></span>
@@ -748,28 +748,28 @@ connection):</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nanonext.r-lib.org/reference/collect_aio.html" class="external-link">collect_aio</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:56\"],\"msg\":[\"1\"],\"pid\":[80857]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:05\"],\"msg\":[\"1\"],\"pid\":[18735]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:56\"],\"msg\":[\"2\"],\"pid\":[80867]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:05\"],\"msg\":[\"2\"],\"pid\":[18733]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:56\"],\"msg\":[\"3\"],\"pid\":[80855]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:05\"],\"msg\":[\"3\"],\"pid\":[18745]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:57\"],\"msg\":[\"4\"],\"pid\":[80867]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:05\"],\"msg\":[\"4\"],\"pid\":[18751]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:56\"],\"msg\":[\"5\"],\"pid\":[80873]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:06\"],\"msg\":[\"5\"],\"pid\":[18745]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:57\"],\"msg\":[\"6\"],\"pid\":[80855]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:06\"],\"msg\":[\"6\"],\"pid\":[18733]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:57\"],\"msg\":[\"7\"],\"pid\":[80873]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:06\"],\"msg\":[\"7\"],\"pid\":[18751]}"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] "{\"time\":[\"2026-02-27 00:08:57\"],\"msg\":[\"8\"],\"pid\":[80857]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"time\":[\"2026-07-11 16:33:06\"],\"msg\":[\"8\"],\"pid\":[18735]}"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -786,7 +786,7 @@ connection):</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer>
