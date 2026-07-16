@@ -5,6 +5,7 @@
 * `mirai_map()` dispatches tasks with lower per-element overhead.
 * `everywhere()` dispatches with lower overhead, and errors upfront for a missing expression or invalid `...` arguments.
 * Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks @jan-swissre, #619).
+* Fixes daemon cleanup not restoring options modified during evaluation, as the recorded options tracked subsequent changes by reference (#631).
 * Requires nanonext >= 1.10.1.
 
 # mirai 2.7.1
