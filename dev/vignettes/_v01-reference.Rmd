@@ -643,28 +643,31 @@ It takes the following arguments:
 
 - `url`: API endpoint URL
 - `method`: HTTP method (typically `"POST"`)
-- `cookie`: session cookie for authentication
-- `token`: bearer token for authentication
+- `headers`: named character vector of HTTP headers, supplying any required authentication (session cookie, bearer token, API key) as well as other API metadata
 - `data`: request body containing a `"%s"` placeholder where the daemon launch command is inserted
+- `cookie`, `token`: conveniences that append `Cookie: <value>` and `Authorization: Bearer <value>` entries to `headers`
 
-Each argument accepts either a character value or a **function** returning a value.
-When a function is supplied, it is called at launch time (when `launch_remote()` runs), not when the configuration is created.
-This lazy evaluation ensures that dynamic values such as session cookies, API tokens, or endpoint URLs are always fresh at the moment of use.
+The two pieces that adapt mirai to a new platform are `data` and `headers`.
+At launch time, the `"%s"` placeholder in `data` is replaced by a `mirai::daemon()` call, e.g. `mirai::daemon("tcp://10.0.0.7:34291")` — when using TLS, the certificate is also inlined in the call.
+The receiving platform only has to run this expression using `Rscript -e` to start a daemon, which then dials back to the host.
+
+Each argument other than `method` accepts either a value or a **function** returning a value.
+A plain value is captured when the configuration is created; a function is called at launch time (when `launch_remote()` runs).
+This lazy evaluation ensures that dynamic values such as session cookies, API tokens, or endpoint URLs are always fresh at the moment of use — and the same configuration object may be stored and reused, for example to scale up later in a session.
 
 ##### Default: Posit Workbench
 
 > Requires Posit Workbench 2026.01 or later, which supports authenticating the launcher using the session cookie.
 
 By default, `http_config()` auto-configures for Posit Workbench.
-The defaults for `url`, `cookie`, and `data` are functions (not function calls) that read Workbench environment information:
+The defaults for `url`, `headers`, and `data` are functions (not function calls) that read Workbench environment information:
 
 ```r
 http_config(
-  url = posit_workbench_url,     # reads server address at launch time
+  url = posit_workbench_url,         # reads server address at launch time
   method = "POST",
-  cookie = posit_workbench_cookie, # reads session cookie at launch time
-  token = NULL,
-  data = posit_workbench_data    # queries the compute environment at launch time
+  headers = posit_workbench_headers, # reads session cookie at launch time
+  data = posit_workbench_data        # queries the compute environment at launch time
 )
 ```
 
@@ -678,6 +681,8 @@ Launch daemons in Posit Workbench:
 #| eval: false
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
+
+Where the launched jobs run depends on the backend Posit Workbench is configured with: on a Local backend the daemons share the server hosting your session, while on a Kubernetes or Slurm backend each daemon is scheduled onto the cluster as its own job.
 
 The default Workbench launch may be customised by supplying additional options to `http_config()`, which are forwarded to the `data` builder.
 Select a named cluster and resource profile:
@@ -717,13 +722,16 @@ daemons(
   remote = http_config(
     url = "https://api.example.com/launch",
     method = "POST",
-    token = function() Sys.getenv("MY_API_KEY"),
+    headers = function() c(
+      Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")),
+      `X-API-Version` = "2"
+    ),
     data = '{"command": "%s"}'
   )
 )
 ```
 
-Here, `token` is a function so the API key environment variable is read each time daemons are launched.
+Here, `headers` is a function so the API key environment variable is read each time daemons are launched.
 The remaining arguments are plain character values used as-is.
 
 ##### Troubleshooting

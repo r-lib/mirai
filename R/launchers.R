@@ -374,10 +374,19 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #' variables.
 #'
 #' Arguments accepting either a value or a function (`url`, `headers`, `data`,
-#' `cookie`, `token`) may be supplied as a function to defer evaluation until
-#' the time of launch. This is the recommended way to supply credentials, so
-#' that they are fetched lazily when needed rather than captured when the
-#' configuration is created.
+#' `cookie`, `token`) may be supplied as a function to defer evaluation: a
+#' plain value is captured when the configuration is created, whereas a
+#' function is evaluated at the time each daemon is launched. This is the
+#' recommended way to supply credentials such as session cookies or API
+#' tokens, as the same configuration object may be stored and reused (for
+#' example to scale up later in a session), with a fresh credential fetched
+#' at each launch.
+#'
+#' At launch time, the `"%s"` placeholder in `data` is replaced by a
+#' `mirai::daemon()` call, e.g. `mirai::daemon("tcp://10.0.0.7:34291")` (when
+#' using TLS, the certificate is also inlined in the call). The receiving
+#' platform only has to run this expression using `Rscript -e` to start a
+#' daemon, which then dials back to the host.
 #'
 #' @param url (character or function) URL endpoint for the launch API. May be a
 #'   function returning the URL value.
@@ -404,7 +413,8 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 #'
 #' @section Posit Workbench Options:
 #'
-#' When using the default value of `data`, the following arguments may be
+#' The default values of `url`, `headers` and `data` configure the launch
+#' automatically on Posit Workbench. The following arguments may additionally be
 #' supplied via `...` to customise the launched job:
 #'
 #' - `rscript` (character) Rscript executable path. Default `"Rscript"`.

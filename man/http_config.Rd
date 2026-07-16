@@ -53,15 +53,25 @@ variables.
 }
 \details{
 Arguments accepting either a value or a function (\code{url}, \code{headers}, \code{data},
-\code{cookie}, \code{token}) may be supplied as a function to defer evaluation until
-the time of launch. This is the recommended way to supply credentials, so
-that they are fetched lazily when needed rather than captured when the
-configuration is created.
+\code{cookie}, \code{token}) may be supplied as a function to defer evaluation: a
+plain value is captured when the configuration is created, whereas a
+function is evaluated at the time each daemon is launched. This is the
+recommended way to supply credentials such as session cookies or API
+tokens, as the same configuration object may be stored and reused (for
+example to scale up later in a session), with a fresh credential fetched
+at each launch.
+
+At launch time, the \code{"\%s"} placeholder in \code{data} is replaced by a
+\code{mirai::daemon()} call, e.g. \code{mirai::daemon("tcp://10.0.0.7:34291")} (when
+using TLS, the certificate is also inlined in the call). The receiving
+platform only has to run this expression using \code{Rscript -e} to start a
+daemon, which then dials back to the host.
 }
 \section{Posit Workbench Options}{
 
 
-When using the default value of \code{data}, the following arguments may be
+The default values of \code{url}, \code{headers} and \code{data} configure the launch
+automatically on Posit Workbench. The following arguments may additionally be
 supplied via \code{...} to customise the launched job:
 \itemize{
 \item \code{rscript} (character) Rscript executable path. Default \code{"Rscript"}.
