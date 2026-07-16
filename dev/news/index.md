@@ -9,6 +9,8 @@
 - [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
   dispatches with lower overhead, and errors upfront for a missing
   expression or invalid `...` arguments.
+- Fixes daemon cleanup not restoring options modified during evaluation
+  ([\#631](https://github.com/r-lib/mirai/issues/631)).
 - Ephemeral daemons return invisibly so that they do not print
   unnecessary output when this is being logged (thanks
   [@jan-swissre](https://github.com/jan-swissre),
