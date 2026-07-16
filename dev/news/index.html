@@ -56,7 +56,11 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks <a href="https://github.com/jan-swissre" class="external-link">@jan-swissre</a>, <a href="https://github.com/r-lib/mirai/issues/619" class="external-link">#619</a>).</li>
+<ul><li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> dispatches tasks with lower per-element overhead.</li>
+<li>
+<code><a href="../reference/everywhere.html">everywhere()</a></code> dispatches with lower overhead, and errors upfront for a missing expression or invalid <code>...</code> arguments.</li>
+<li>Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks <a href="https://github.com/jan-swissre" class="external-link">@jan-swissre</a>, <a href="https://github.com/r-lib/mirai/issues/619" class="external-link">#619</a>).</li>
 <li>Requires nanonext &gt;= 1.10.1.</li>
 </ul></div>
 </div>

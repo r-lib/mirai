@@ -4,6 +4,11 @@
 
 ##### Updates
 
+- [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
+  dispatches tasks with lower per-element overhead.
+- [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
+  dispatches with lower overhead, and errors upfront for a missing
+  expression or invalid `...` arguments.
 - Ephemeral daemons return invisibly so that they do not print
   unnecessary output when this is being logged (thanks
   [@jan-swissre](https://github.com/jan-swissre),
