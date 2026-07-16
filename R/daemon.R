@@ -249,7 +249,7 @@ do_cleanup <- function() {
 }
 
 snapshot <- function() {
-  `[[<-`(`[[<-`(`[[<-`(., "op", .Options), "se", search()), "vars", names(globalenv()))
+  `[[<-`(`[[<-`(`[[<-`(., "op", as.list(.Options)), "se", search()), "vars", names(globalenv()))
 }
 
 flag_value <- function(autoexit) {

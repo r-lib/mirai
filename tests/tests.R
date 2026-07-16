@@ -339,6 +339,11 @@ connection && NOT_CRAN && {
   q <- quote(list2env(list(b = 2), envir = globalenv()))
   m <- mirai("Seattle", .timeout = 1000)
   if (!is_error_value(m[])) test_equal(m[], "Seattle")
+  od <- mirai(getOption("digits"), .timeout = 1000)[]
+  if (!is_error_value(od)) {
+    test_equal(mirai({ options(digits = getOption("digits") + 1L); getOption("digits") })[], od + 1L)
+    test_equal(mirai(getOption("digits"))[], od)
+  }
   test_class("errorValue", mirai(q(), .timeout = 1000)[])
   test_true(daemons(sync = TRUE, .compute = "seq"))
   with_daemons("seq", {
