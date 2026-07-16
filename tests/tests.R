@@ -220,6 +220,8 @@ connection && {
   test_error(mirai_map(1:2, identity, 1), "all `...` arguments must be named")
   test_identical(mirai_map(list(1, NULL), is.null)[], list(FALSE, TRUE))
   test_true(all(mirai_map(1:2, function(x) x + y, as.environment(list(y = 10)))[.flat] == 11:12))
+  test_error(everywhere(), "missing expression, perhaps wrap in {}?")
+  test_error(everywhere({}, 1), "all `...` arguments must be named")
   test_false(daemons(0L))
 }
 # parallel cluster tests

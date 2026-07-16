@@ -263,10 +263,12 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   }
   envir <- ..[[.compute]]
 
-  expr <- substitute(.expr)
-  .expr <- c(.snapshot, as.expression(resolve_expr(expr, .expr, parent.frame())))
+  v <- validate_dispatch(missing(.expr), list(...), .args)
+  expr <- c(.snapshot, as.expression(resolve_expr(substitute(.expr), .expr, parent.frame())))
 
-  xlen <- if (is.null(envir[["dispatcher"]])) {
+  disp <- envir[["dispatcher"]]
+  gated <- !is.null(disp) && !envir[["unbounded"]]
+  xlen <- if (is.null(disp)) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
     max(.min, info(.compute)[[1L]])
@@ -275,10 +277,11 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   on.exit(`[[<-`(envir, "seed", seed))
   `[[<-`(envir, "seed", NULL)
   vec <- lapply(seq_len(xlen), function(i) {
+    gated && .dispatcher_gate(disp)
     if (i < xlen) {
-      marked(mirai(.expr, ..., .args = .args, .compute = .compute))
+      marked(do_mirai(expr, v[[1L]], v[[2L]], NULL, envir))
     } else {
-      mirai(.expr, ..., .args = .args, .compute = .compute)
+      do_mirai(expr, v[[1L]], v[[2L]], NULL, envir)
     }
   })
   `[[<-`(envir, "everywhere", vec)
