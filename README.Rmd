@@ -55,14 +55,14 @@ library(mirai)
 # Launch 6 background R processes (daemons) to run tasks on
 daemons(6)
 
-# mirai() starts an async task — returns immediately while work continues in the background
+# mirai() starts an async task and returns immediately
 m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 
 # Task still running, but the console is free
 unresolved(m)
 
-# Parallel map across daemons: [] collects results, .progress shows a progress bar,
-# .flat returns a vector
+# Parallel map across daemons: [] collects results,
+# .progress shows a progress bar, .flat returns a vector
 mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 
 # m[] waits for and returns the result
