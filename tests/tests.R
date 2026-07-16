@@ -217,6 +217,11 @@ connection && {
   test_type("language", mirai_map(list(quote(1+2)), identity)[][[1]])
   test_class("Date", mirai_map(data.frame(x = as.Date("2020-01-01")), identity)[][[1]])
   test_true(is_mirai_error(mirai_map(1:2, function(x) daemons(1))[][[1]]))
+  test_error(mirai_map(1:2, identity, 1), "all `...` arguments must be named")
+  test_identical(mirai_map(list(1, NULL), is.null)[], list(FALSE, TRUE))
+  test_true(all(mirai_map(1:2, function(x) x + y, as.environment(list(y = 10)))[.flat] == 11:12))
+  test_error(everywhere(), "missing expression, perhaps wrap in {}?")
+  test_error(everywhere({}, 1), "all `...` arguments must be named")
   test_false(daemons(0L))
 }
 # parallel cluster tests
@@ -422,6 +427,10 @@ connection && NOT_CRAN && {
   test_zero(qs[["used"]])
   test_true(qs[["peak"]] > 0)
   test_false(daemons(0L))
+  # mirai_map dispatch applies the memory gate per task
+  test_true(daemons(1, memory = 1))
+  test_true(all(mirai_map(1:4, function(x) x + 1L)[.flat] == 2:5))
+  test_false(daemons(0L))
 }
 # try_mirai non-blocking submission tests
 connection && NOT_CRAN && {
@@ -598,15 +607,18 @@ connection && NOT_CRAN && {
   test_type("character", launch_remote())
   test_class("mirai_map", everywhere(TRUE, .min = 3L))
   m <- mirai_map(1:12, rnorm)[]
+  m2 <- mirai_map(1:3, function(x) rnorm(1L) * y, y = 10)[]
   test_false(daemons(0))
   test_true(daemons(4, dispatcher = FALSE, seed = 1234L, .compute = "gpu"))
   with_daemons("gpu", {
     test_class("mirai_map", everywhere(TRUE))
     n <- mirai_map(1:12, rnorm)[]
+    n2 <- mirai_map(1:3, function(x) rnorm(1L) * y, y = 10)[]
     test_false(daemons(NULL))
   })
   test_false(daemons_set("gpu"))
   test_identical(m, n)
+  test_identical(m2, n2)
 }
 # dispatcher L'Ecuyer-CMRG C implementation tests
 connection && NOT_CRAN && {

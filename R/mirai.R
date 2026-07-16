@@ -142,14 +142,14 @@
 mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   v <- validate_dispatch(missing(.expr), list(...), .args)
   envir <- compute_env(.compute)
-  expr <- substitute(.expr)
+  expr <- resolve_expr(substitute(.expr), .expr, parent.frame())
 
   if (!is.null(envir)) {
     disp <- envir[["dispatcher"]]
     is.null(disp) || envir[["unbounded"]] || .dispatcher_gate(disp)
   }
 
-  do_mirai(expr, .expr, v[[1L]], v[[2L]], .timeout, envir, parent.frame())
+  do_mirai(expr, v[[1L]], v[[2L]], .timeout, envir)
 }
 
 #' @rdname mirai
@@ -186,7 +186,7 @@ mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) 
 try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NULL) {
   v <- validate_dispatch(missing(.expr), list(...), .args)
   envir <- compute_env(.compute)
-  expr <- substitute(.expr)
+  expr <- resolve_expr(substitute(.expr), .expr, parent.frame())
 
   if (!is.null(envir)) {
     disp <- envir[["dispatcher"]]
@@ -195,7 +195,7 @@ try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NU
     }
   }
 
-  do_mirai(expr, .expr, v[[1L]], v[[2L]], .timeout, envir, parent.frame())
+  do_mirai(expr, v[[1L]], v[[2L]], .timeout, envir)
 }
 
 #' Evaluate Everywhere
@@ -263,10 +263,12 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   }
   envir <- ..[[.compute]]
 
-  expr <- substitute(.expr)
-  .expr <- c(.snapshot, as.expression(resolve_expr(expr, .expr, parent.frame())))
+  v <- validate_dispatch(missing(.expr), list(...), .args)
+  expr <- c(.snapshot, as.expression(resolve_expr(substitute(.expr), .expr, parent.frame())))
 
-  xlen <- if (is.null(envir[["dispatcher"]])) {
+  disp <- envir[["dispatcher"]]
+  gated <- !is.null(disp) && !envir[["unbounded"]]
+  xlen <- if (is.null(disp)) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
     max(.min, info(.compute)[[1L]])
@@ -275,10 +277,11 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   on.exit(`[[<-`(envir, "seed", seed))
   `[[<-`(envir, "seed", NULL)
   vec <- lapply(seq_len(xlen), function(i) {
+    gated && .dispatcher_gate(disp)
     if (i < xlen) {
-      marked(mirai(.expr, ..., .args = .args, .compute = .compute))
+      marked(do_mirai(expr, v[[1L]], v[[2L]], NULL, envir))
     } else {
-      mirai(.expr, ..., .args = .args, .compute = .compute)
+      do_mirai(expr, v[[1L]], v[[2L]], NULL, envir)
     }
   })
   `[[<-`(envir, "everywhere", vec)
@@ -652,16 +655,7 @@ conditionMessage.miraiError <- function(c) attr(c, "message")
 
 validate_dispatch <- function(missing_expr, globals, args, where = sys.call(-1L)) {
   missing_expr && stop(simpleError(._[["missing_expression"]], call = where))
-  if (length(globals)) {
-    gn <- names(globals)
-    if (is.null(gn)) {
-      is.environment(globals[[1L]]) || stop(simpleError(._[["named_dots"]], call = where))
-      globals <- as.list.environment(globals[[1L]], all.names = TRUE)
-      globals[[".Random.seed"]] <- NULL
-    } else if (!all(nzchar(gn))) {
-      stop(simpleError(._[["named_dots"]], call = where))
-    }
-  }
+  globals <- validate_globals(globals, where)
   if (length(args)) {
     if (is.environment(args)) {
       args <- as.list.environment(args, all.names = TRUE)
@@ -672,6 +666,20 @@ validate_dispatch <- function(missing_expr, globals, args, where = sys.call(-1L)
   list(globals, args)
 }
 
+validate_globals <- function(globals, where = sys.call(-1L)) {
+  if (length(globals)) {
+    gn <- names(globals)
+    if (is.null(gn)) {
+      is.environment(globals[[1L]]) || stop(simpleError(._[["named_dots"]], call = where))
+      globals <- as.list.environment(globals[[1L]], all.names = TRUE)
+      globals[[".Random.seed"]] <- NULL
+    } else if (!all(nzchar(gn))) {
+      stop(simpleError(._[["named_dots"]], call = where))
+    }
+  }
+  globals
+}
+
 resolve_expr <- function(expr, .expr, parent) {
   if (is.symbol(expr) && exists(as.character(expr), envir = parent) && is.language(.expr)) {
     .expr
@@ -680,13 +688,13 @@ resolve_expr <- function(expr, .expr, parent) {
   }
 }
 
-do_mirai <- function(expr, .expr, globals, .args, .timeout, envir, parent) {
+do_mirai <- function(expr, globals, .args, .timeout, envir) {
   ctx_spn <- otel_mirai_span(envir)
   if (length(envir[["seed"]])) {
     globals[[".Random.seed"]] <- next_stream(envir)
   }
   data <- list(
-    ._expr_. = resolve_expr(expr, .expr, parent),
+    ._expr_. = expr,
     ._globals_. = globals,
     ._otel_. = ctx_spn[[1L]]
   )

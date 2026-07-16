@@ -154,15 +154,22 @@ mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = N
   if (is.null(.compute)) {
     .compute <- .[["cp"]]
   }
+  envir <- ..[[.compute]]
 
   spn <- otel_map_span(.compute)
 
+  globals <- validate_globals(list(...))
+  disp <- envir[["dispatcher"]]
+  gated <- !is.null(disp) && !envir[["unbounded"]]
+
   dispatch_one <- function(elem, .expr) {
-    mirai(
-      .expr = .expr,
-      ...,
-      .args = list(.f = .f, .x = elem, .args = .args, .mirai_within_map = TRUE),
-      .compute = .compute
+    gated && .dispatcher_gate(disp)
+    do_mirai(
+      .expr,
+      globals,
+      list(.f = .f, .x = elem, .args = .args, .mirai_within_map = TRUE),
+      NULL,
+      envir
     )
   }
 
