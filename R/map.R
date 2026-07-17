@@ -232,25 +232,26 @@ print.mirai_map <- function(x, ...) {
 .flat <- compiler::compile(quote(
   if (i == 0L) {
     xi <- TRUE
-  } else if (i == 1L) {
-    typ <<- typeof(xi)
   } else {
     is_error_value(xi) && stop_m(x, i, xi)
-    typeof(xi) != typ &&
-      {
-        stop_mirai(x)
-        cli_enabled ||
-          stop(
-            sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
-            call. = FALSE
+    if (typeof(xi) != typ) {
+      i == 1L ||
+        {
+          stop_mirai(x)
+          cli_enabled ||
+            stop(
+              sprintf("Cannot flatten outputs of differing type: %s / %s", typ, typeof(xi)),
+              call. = FALSE
+            )
+          cli::cli_abort(
+            c(`!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"),
+            location = i,
+            name = names(x)[i],
+            call = quote(mirai_map())
           )
-        cli::cli_abort(
-          c(`!` = "cannot flatten outputs of differing type: {typ} / {typeof(xi)}"),
-          location = i,
-          name = names(x)[i],
-          call = quote(mirai_map())
-        )
-      }
+        }
+      typ <<- typeof(xi)
+    }
   }
 ))
 
