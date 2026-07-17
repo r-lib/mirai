@@ -214,6 +214,7 @@ connection && {
   test_true(all(mres == 7L))
   test_null(names(mres))
   test_true(all(mirai_map(list(c(a = 1, b = 1, c = 1), 3), sum)[.flat] == 3))
+  test_error(mirai_map(list("a"), function(x) x + 1L)[.flat])
   test_type("language", mirai_map(list(quote(1+2)), identity)[][[1]])
   test_class("Date", mirai_map(data.frame(x = as.Date("2020-01-01")), identity)[][[1]])
   test_true(is_mirai_error(mirai_map(1:2, function(x) daemons(1))[][[1]]))
