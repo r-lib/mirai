@@ -4,6 +4,10 @@
 
 ##### Updates
 
+- Fixes
+  [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
+  collection option `.flat` ignoring an ‘errorValue’ in the first
+  element ([\#639](https://github.com/r-lib/mirai/issues/639)).
 - Fixes [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md)
   returning exit code 1 (idletime) instead of 2 (walltime) when
   `walltime` elapses while idle
@@ -15,13 +19,13 @@
   ([\#635](https://github.com/r-lib/mirai/issues/635)).
 - Fixes daemon crash for errors raised before evaluation begins
   ([\#633](https://github.com/r-lib/mirai/issues/633)).
+- Fixes daemon cleanup not restoring options modified during evaluation
+  ([\#631](https://github.com/r-lib/mirai/issues/631)).
 - [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   dispatches tasks with lower per-element overhead.
 - [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
   dispatches with lower overhead, and errors upfront for a missing
   expression or invalid `...` arguments.
-- Fixes daemon cleanup not restoring options modified during evaluation
-  ([\#631](https://github.com/r-lib/mirai/issues/631)).
 - Ephemeral daemons return invisibly so that they do not print
   unnecessary output when this is being logged (thanks
   [@jan-swissre](https://github.com/jan-swissre),
