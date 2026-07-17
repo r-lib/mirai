@@ -311,13 +311,24 @@ mmap <- function(x, dots, envir = parent.frame()) {
 
 stop_m <- function(x, i, xi) {
   stop_mirai(x)
-  cli_enabled || stop(sprintf("In index %d:\n%s", i, attr(xi, "message")), call. = FALSE)
+  msg <- if (is_mirai_error(xi)) {
+    attr(xi, "message")
+  } else if (is_mirai_interrupt(xi)) {
+    "Interrupted"
+  } else {
+    nng_error(xi)
+  }
+  cli_enabled || stop(sprintf("In index %d:\n%s", i, msg), call. = FALSE)
   name <- names(x)[i]
   cli::cli_abort(
     c(i = "In index: {i}.", i = if (length(name) && nzchar(name)) "With name: {name}."),
     location = i,
     name = name,
-    parent = `class<-`(attributes(xi), c("error", "condition")),
+    parent = if (is_mirai_error(xi)) {
+      `class<-`(attributes(xi), c("error", "condition"))
+    } else {
+      errorCondition(msg)
+    },
     call = quote(mirai_map())
   )
 }
