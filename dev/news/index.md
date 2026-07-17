@@ -4,6 +4,8 @@
 
 ##### Updates
 
+- Fixes daemon crash for errors raised before evaluation begins
+  ([\#633](https://github.com/r-lib/mirai/issues/633)).
 - [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   dispatches tasks with lower per-element overhead.
 - [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
