@@ -124,7 +124,7 @@ daemon <- function(
         is.integer(m) &&
           {
             m == 5L || next
-            xc <- 1L
+            xc <- 1L + (maxtime && mclock() >= maxtime)
             break
           }
         (task >= maxtasks || maxtime && mclock() >= maxtime) &&
@@ -154,7 +154,7 @@ daemon <- function(
       m <- collect_aio(aio)
       is.integer(m) &&
         {
-          xc <- 1L
+          xc <- 1L + (maxtime && mclock() >= maxtime)
           break
         }
       (task >= maxtasks || maxtime && mclock() >= maxtime) &&

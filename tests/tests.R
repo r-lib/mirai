@@ -539,6 +539,10 @@ connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
 }
 # mirai daemon limits tests
 connection && NOT_CRAN && {
+  sock <- nanonext::socket("req", listen = url <- local_url())
+  test_equal(daemon(url, dispatcher = FALSE, autoexit = FALSE, output = TRUE, walltime = 500), 2L)
+  test_equal(daemon(url, dispatcher = FALSE, autoexit = FALSE, output = TRUE, idletime = 100), 1L)
+  close(sock)
   test_true(daemons(1, cleanup = FALSE, maxtasks = 2L))
   test_true(daemons_set("default"))
   test_equal(mirai(1)[], mirai(1)[])

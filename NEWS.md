@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Fixes `daemon()` returning exit code 1 (idletime) instead of 2 (walltime) when `walltime` elapses while idle (#637).
 * Fixes `race_mirai()` not waiting for resolution on compute profiles set with `url` and `dispatcher = FALSE` (#635).
 * Fixes daemon crash for errors raised before evaluation begins (#633).
 * `mirai_map()` dispatches tasks with lower per-element overhead.
