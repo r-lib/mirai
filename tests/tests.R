@@ -601,7 +601,15 @@ connection && NOT_CRAN && {
   mp <- mirai_map(30, Sys.sleep)
   stop_mirai(mp)
   test_error(mp[.stop], "In index")
+  mp <- mirai_map(0L, function(x) signalCondition(structure(class = c("interrupt", "condition"), list())))
+  test_error(mp[.stop], "Interrupted")
   restore_binding(ns, "cli_enabled", original_cli)
+  if (original_cli && requireNamespace("rlang", quietly = TRUE)) {
+    mp <- mirai_map(30, Sys.sleep)
+    stop_mirai(mp)
+    err <- tryCatch(mp[.stop], error = identity)
+    test_type("character", conditionMessage(err$parent))
+  }
   everywhere({ assign("lk", 0L, envir = globalenv()); lockBinding("lk", globalenv()) })
   e <- mirai(0L, lk = 1L, .timeout = 1000)[]
   if (is_mirai_error(e)) test_null(e$stack.trace) else test_equal(e, 5L)
