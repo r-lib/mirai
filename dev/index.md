@@ -39,8 +39,7 @@ m <- mirai({ Sys.sleep(1); mean(rnorm(1e6)) })
 unresolved(m)
 #> [1] TRUE
 
-# Parallel map across daemons: [] collects results,
-# .progress shows a progress bar, .flat returns a vector
+# Async map: [] collects results; options for progress bar and flatmap
 mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 #> [1]  1  4  9 16 25 36 49 64 81
 

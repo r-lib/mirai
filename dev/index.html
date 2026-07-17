@@ -120,8 +120,7 @@
 <span><span class="fu"><a href="reference/unresolved.html">unresolved</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="co"># Parallel map across daemons: [] collects results,</span></span>
-<span><span class="co"># .progress shows a progress bar, .flat returns a vector</span></span>
+<span><span class="co"># Async map: [] collects results; options for progress bar and flatmap</span></span>
 <span><span class="fu"><a href="reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>; <span class="va">x</span><span class="op">^</span><span class="fl">2</span> <span class="op">}</span><span class="op">)</span><span class="op">[</span><span class="va">.progress</span>, <span class="va">.flat</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1]  1  4  9 16 25 36 49 64 81</span></span>
 <span></span>
