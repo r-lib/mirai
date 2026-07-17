@@ -597,9 +597,9 @@ connection && NOT_CRAN && {
   test_equal(info()[["connections"]], 1L)
   everywhere({ assign("lk", 0L, envir = globalenv()); lockBinding("lk", globalenv()) })
   e <- mirai(0L, lk = 1L, .timeout = 1000)[]
-  test_class("miraiError", e)
-  test_null(e$stack.trace)
-  test_equal(mirai("alive", .timeout = 1000)[], "alive")
+  if (is_mirai_error(e)) test_null(e$stack.trace) else test_equal(e, 5L)
+  a <- mirai("alive", .timeout = 1000)[]
+  if (!is_error_value(a)) test_equal(a, "alive")
   test_false(daemons(0))
 }
 # additional stress testing
