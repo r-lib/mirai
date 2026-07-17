@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Removes an ineffective promise cache from the `as.promise()` method for 'mirai_map' objects.
 * Fixes `mirai_map()` collection option `.flat` ignoring an 'errorValue' in the first element (#639).
 * Fixes `daemon()` returning exit code 1 (idletime) instead of 2 (walltime) when `walltime` elapses while idle (#637).
 * Fixes `race_mirai()` not waiting for resolution on compute profiles set with `url` and `dispatcher = FALSE` (#635).
