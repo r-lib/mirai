@@ -4,6 +4,10 @@
 
 ##### Updates
 
+- Fixes [`daemon()`](https://mirai.r-lib.org/dev/reference/daemon.md)
+  returning exit code 1 (idletime) instead of 2 (walltime) when
+  `walltime` elapses while idle
+  ([\#637](https://github.com/r-lib/mirai/issues/637)).
 - Fixes
   [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
   not waiting for resolution on compute profiles set with `url` and
