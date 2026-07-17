@@ -120,7 +120,7 @@
 #' file <- tempfile()
 #' cat("r <- rnorm(n)", file = file)
 #' m <- mirai({source(file); r}, file = file, n = n)
-#' call_mirai(m)$datado
+#' call_mirai(m)$data
 #' unlink(file)
 #'
 #' # use source(local = TRUE) when passing in local variables via '.args'
@@ -693,11 +693,7 @@ do_mirai <- function(expr, globals, .args, .timeout, envir) {
   if (length(envir[["seed"]])) {
     globals[[".Random.seed"]] <- next_stream(envir)
   }
-  data <- list(
-    ._expr_. = expr,
-    ._globals_. = globals,
-    ._otel_. = ctx_spn[[1L]]
-  )
+  data <- list(._expr_. = expr, ._globals_. = globals, ._otel_. = ctx_spn[[1L]])
 
   if (length(.args)) {
     data <- c(.args, data)
