@@ -89,15 +89,7 @@ handle_fulfilled <- function(value, .visible) {
 #'
 #' @exportS3Method promises::as.promise
 #'
-as.promise.mirai_map <- function(x) {
-  promise <- attr(x, "promise")
-
-  if (is.null(promise)) {
-    attr(x, "promise") <- promises::promise_all(.list = x) -> promise
-  }
-
-  promise
-}
+as.promise.mirai_map <- function(x) promises::promise_all(.list = x)
 
 #' @exportS3Method promises::is.promising
 #'
