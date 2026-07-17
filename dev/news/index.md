@@ -4,6 +4,11 @@
 
 ##### Updates
 
+- Fixes
+  [`race_mirai()`](https://mirai.r-lib.org/dev/reference/race_mirai.md)
+  not waiting for resolution on compute profiles set with `url` and
+  `dispatcher = FALSE`
+  ([\#635](https://github.com/r-lib/mirai/issues/635)).
 - Fixes daemon crash for errors raised before evaluation begins
   ([\#633](https://github.com/r-lib/mirai/issues/633)).
 - [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
