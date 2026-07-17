@@ -271,7 +271,7 @@ everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
   xlen <- if (is.null(disp)) {
     max(stat(envir[["sock"]], "pipes"), envir[["n"]])
   } else {
-    max(.min, info(.compute)[[1L]])
+    max(.min, .dispatcher_info(disp)[1L])
   }
   seed <- envir[["seed"]]
   on.exit(`[[<-`(envir, "seed", seed))
