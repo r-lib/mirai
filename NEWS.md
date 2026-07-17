@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Fixes `race_mirai()` not waiting for resolution on compute profiles set with `url` and `dispatcher = FALSE` (#635).
 * Fixes daemon crash for errors raised before evaluation begins (#633).
 * `mirai_map()` dispatches tasks with lower per-element overhead.
 * `everywhere()` dispatches with lower overhead, and errors upfront for a missing expression or invalid `...` arguments.

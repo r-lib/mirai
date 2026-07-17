@@ -745,6 +745,7 @@ launch_daemons <- function(seq, dots, envir) {
 
 create_sock <- function(envir, url, tls) {
   sock <- req_socket(url, tls = tls)
+  `[[<-`(envir, "cv", cv())
   `[[<-`(envir, "sock", sock)
   `[[<-`(envir, "url", attr(attr(sock, "listener")[[1L]], "url"))
 }
