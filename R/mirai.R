@@ -693,8 +693,11 @@ do_mirai <- function(expr, globals, .args, .timeout, envir) {
   if (length(envir[["seed"]])) {
     globals[[".Random.seed"]] <- next_stream(envir)
   }
-  data <- list(._expr_. = expr, ._globals_. = globals, ._otel_. = ctx_spn[[1L]])
-
+  data <- if (is.null(ctx_spn)) {
+    list(._expr_. = expr, ._globals_. = globals)
+  } else {
+    list(._expr_. = expr, ._globals_. = globals, ._otel_. = ctx_spn[[1L]])
+  }
   if (length(.args)) {
     data <- c(.args, data)
   }
