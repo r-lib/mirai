@@ -4,6 +4,9 @@
 
 ##### Updates
 
+- Removes an ineffective promise cache from the
+  [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
+  method for ‘mirai_map’ objects.
 - Fixes
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   collection option `.flat` ignoring an ‘errorValue’ in the first
