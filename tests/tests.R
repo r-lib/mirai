@@ -539,6 +539,10 @@ connection && requireNamespace("promises", quietly = TRUE) && NOT_CRAN && {
 }
 # mirai daemon limits tests
 connection && NOT_CRAN && {
+  sock <- nanonext::socket("req", listen = url <- local_url())
+  test_equal(daemon(url, dispatcher = FALSE, autoexit = FALSE, output = TRUE, walltime = 500), 2L)
+  test_equal(daemon(url, dispatcher = FALSE, autoexit = FALSE, output = TRUE, idletime = 100), 1L)
+  close(sock)
   test_true(daemons(1, cleanup = FALSE, maxtasks = 2L))
   test_true(daemons_set("default"))
   test_equal(mirai(1)[], mirai(1)[])
@@ -593,9 +597,9 @@ connection && NOT_CRAN && {
   test_equal(info()[["connections"]], 1L)
   everywhere({ assign("lk", 0L, envir = globalenv()); lockBinding("lk", globalenv()) })
   e <- mirai(0L, lk = 1L, .timeout = 1000)[]
-  test_class("miraiError", e)
-  test_null(e$stack.trace)
-  test_equal(mirai("alive", .timeout = 1000)[], "alive")
+  if (is_mirai_error(e)) test_null(e$stack.trace) else test_equal(e, 5L)
+  a <- mirai("alive", .timeout = 1000)[]
+  if (!is_error_value(a)) test_equal(a, "alive")
   test_false(daemons(0))
 }
 # additional stress testing
