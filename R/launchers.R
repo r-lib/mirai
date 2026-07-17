@@ -557,9 +557,7 @@ local_url <- function(tcp = FALSE, port = 0) {
 #' @export
 #'
 print.miraiLaunchCmd <- function(x, ...) {
-  for (i in seq_along(x)) {
-    cat(sprintf("[%d]\n%s\n\n", i, x[i]), file = stdout())
-  }
+  cat(sprintf("[%d]\n%s\n", seq_along(x), x), file = stdout(), sep = "\n")
   invisible(x)
 }
 
