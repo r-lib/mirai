@@ -149,14 +149,10 @@
 #' @export
 #'
 mirai_map <- function(.x, .f, ..., .args = list(), .promise = NULL, .compute = NULL) {
-  require_daemons(.compute = .compute, call = environment())
+  envir <- require_env(.compute, environment())
   is.function(.f) || stop(sprintf(._[["function_required"]], typeof(.f)))
-  if (is.null(.compute)) {
-    .compute <- .[["cp"]]
-  }
-  envir <- ..[[.compute]]
 
-  spn <- otel_map_span(.compute)
+  spn <- otel_map_span(envir)
 
   globals <- validate_globals(list(...))
   disp <- envir[["dispatcher"]]

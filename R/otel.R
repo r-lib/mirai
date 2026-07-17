@@ -43,11 +43,11 @@ local({
     )
   }
 
-  otel_map_span <<- function(.compute) {
+  otel_map_span <<- function(envir) {
     otel_is_tracing || return()
     otel::start_local_active_span(
       "mirai_map",
-      links = list(..[[.compute]][["otel_span"]]),
+      links = list(envir[["otel_span"]]),
       tracer = otel_tracer,
       activation_scope = parent.frame()
     )

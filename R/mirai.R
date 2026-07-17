@@ -257,11 +257,7 @@ try_mirai <- function(.expr, ..., .args = list(), .timeout = NULL, .compute = NU
 #' @export
 #'
 everywhere <- function(.expr, ..., .args = list(), .min = 1L, .compute = NULL) {
-  require_daemons(.compute = .compute, call = environment())
-  if (is.null(.compute)) {
-    .compute <- .[["cp"]]
-  }
-  envir <- ..[[.compute]]
+  envir <- require_env(.compute, environment())
 
   v <- validate_dispatch(missing(.expr), list(...), .args)
   expr <- c(.snapshot, as.expression(resolve_expr(substitute(.expr), .expr, parent.frame())))

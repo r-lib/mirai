@@ -590,6 +590,12 @@ defer <- function(expr, envir) {
 
 compute_env <- function(x) ..[[if (is.null(x)) .[["cp"]] else x]]
 
+require_env <- function(.compute, call) {
+  envir <- compute_env(.compute)
+  is.null(envir) && stop_d(.compute, call)
+  envir
+}
+
 configure_tls <- function(url, tls, pass, envir) {
   purl <- parse_url(url)
   sch <- purl[["scheme"]]
