@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Fixes uninformative errors from `mirai_map()` collection when a task resolves to a non-mirai 'errorValue', e.g. cancelled or timed out (#642).
 * Removes an ineffective promise cache from the `as.promise()` method for 'mirai_map' objects.
 * Fixes `mirai_map()` collection option `.flat` ignoring an 'errorValue' in the first element (#639).
 * Fixes `daemon()` returning exit code 1 (idletime) instead of 2 (walltime) when `walltime` elapses while idle (#637).
