@@ -56,7 +56,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
 <div class="section level5">
 <h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
-<ul><li>Removes an ineffective promise cache from the <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for ‘mirai_map’ objects.</li>
+<ul><li>Fixes uninformative errors from <code><a href="../reference/mirai_map.html">mirai_map()</a></code> collection when a task resolves to a non-mirai ‘errorValue’, e.g. cancelled or timed out (<a href="https://github.com/r-lib/mirai/issues/642" class="external-link">#642</a>).</li>
+<li>Removes an ineffective promise cache from the <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for ‘mirai_map’ objects.</li>
 <li>Fixes <code><a href="../reference/mirai_map.html">mirai_map()</a></code> collection option <code>.flat</code> ignoring an ‘errorValue’ in the first element (<a href="https://github.com/r-lib/mirai/issues/639" class="external-link">#639</a>).</li>
 <li>Fixes <code><a href="../reference/daemon.html">daemon()</a></code> returning exit code 1 (idletime) instead of 2 (walltime) when <code>walltime</code> elapses while idle (<a href="https://github.com/r-lib/mirai/issues/637" class="external-link">#637</a>).</li>
 <li>Fixes <code><a href="../reference/race_mirai.html">race_mirai()</a></code> not waiting for resolution on compute profiles set with <code>url</code> and <code>dispatcher = FALSE</code> (<a href="https://github.com/r-lib/mirai/issues/635" class="external-link">#635</a>).</li>

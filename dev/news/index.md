@@ -4,6 +4,11 @@
 
 ##### Updates
 
+- Fixes uninformative errors from
+  [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
+  collection when a task resolves to a non-mirai ‘errorValue’,
+  e.g. cancelled or timed out
+  ([\#642](https://github.com/r-lib/mirai/issues/642)).
 - Removes an ineffective promise cache from the
   [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
   method for ‘mirai_map’ objects.
