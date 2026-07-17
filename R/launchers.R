@@ -579,18 +579,16 @@ launch_remote_http <- function(n, remote, url, write_args, dots, envir, tls) {
   if (!is.null(remote[["token"]])) {
     headers <- c(headers, Authorization = sprintf("Bearer %s", resolve_field(remote[["token"]])))
   }
-  lapply(seq_len(n), function(i) {
-    cmd <- write_args(url, dots, maybe_next_stream(envir), tls)
-    cmd <- gsub("\\", "\\\\", cmd, fixed = TRUE)
-    cmd <- gsub("\"", "\\\"", cmd, fixed = TRUE)
-    cmd <- gsub("\n", "\\n", cmd, fixed = TRUE)
-    ncurl(
-      url = api_url,
-      method = method,
-      headers = headers,
-      data = sprintf(data, cmd),
-      timeout = .limit_short
-    )
+  cmds <- vapply(
+    seq_len(n),
+    function(i) write_args(url, dots, maybe_next_stream(envir), tls),
+    character(1L)
+  )
+  cmds <- gsub("\\", "\\\\", cmds, fixed = TRUE)
+  cmds <- gsub("\"", "\\\"", cmds, fixed = TRUE)
+  cmds <- gsub("\n", "\\n", cmds, fixed = TRUE)
+  lapply(sprintf(data, cmds), function(body) {
+    ncurl(url = api_url, method = method, headers = headers, data = body, timeout = .limit_short)
   })
 }
 
