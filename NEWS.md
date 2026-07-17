@@ -2,6 +2,7 @@
 
 #### Updates
 
+* Fixes daemon crash for errors raised before evaluation begins (#633).
 * `mirai_map()` dispatches tasks with lower per-element overhead.
 * `everywhere()` dispatches with lower overhead, and errors upfront for a missing expression or invalid `...` arguments.
 * Fixes daemon cleanup not restoring options modified during evaluation (#631).

@@ -765,12 +765,14 @@ mk_mirai_error <- function(cnd) {
   } else {
     sprintf("Error in %s: %s", call, .subset2(cnd, "message"))
   }
-  idx <- max(which(as.logical(lapply(sc, `==`, eval_call))))
-  sc <- sc[(length(sc) - 1L):(idx + 1L)]
-  if (identical(sc[[1L]][[1L]], quote(.handleSimpleError))) {
-    sc <- sc[-1L]
+  idx <- which(as.logical(lapply(sc, `==`, eval_call)))
+  if (length(idx)) {
+    sc <- sc[(length(sc) - 1L):(max(idx) + 1L)]
+    if (identical(sc[[1L]][[1L]], quote(.handleSimpleError))) {
+      sc <- sc[-1L]
+    }
+    cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
   }
-  cnd[["stack.trace"]] <- lapply(sc, `attributes<-`, NULL)
   `class<-`(`attributes<-`(msg, cnd), c("miraiError", "errorValue", "try-error"))
 }
 
