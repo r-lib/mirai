@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.7.2
+
+CRAN release: 2026-07-20
+
 ##### Updates
 
 - Fixes uninformative errors from
@@ -9,9 +13,6 @@
   collection when a task resolves to a non-mirai ‘errorValue’,
   e.g. cancelled or timed out
   ([\#642](https://github.com/r-lib/mirai/issues/642)).
-- Removes an ineffective promise cache from the
-  [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
-  method for ‘mirai_map’ objects.
 - Fixes
   [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   collection option `.flat` ignoring an ‘errorValue’ in the first
@@ -29,6 +30,9 @@
   ([\#633](https://github.com/r-lib/mirai/issues/633)).
 - Fixes daemon cleanup not restoring options modified during evaluation
   ([\#631](https://github.com/r-lib/mirai/issues/631)).
+- Removes an ineffective promise cache from the
+  [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
+  method for ‘mirai_map’ objects.
 - [`mirai_map()`](https://mirai.r-lib.org/dev/reference/mirai_map.md)
   dispatches tasks with lower per-element overhead.
 - [`everywhere()`](https://mirai.r-lib.org/dev/reference/everywhere.md)
