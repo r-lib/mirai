@@ -72,7 +72,7 @@ bench::mark(mirai("hello world")[])
 #> # A tibble: 1 × 6
 #>   expression                      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>                 <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 "mirai(\"hello world\")[]"     66µs   97.8µs     9939.    9.68KB     2.01
+#> 1 "mirai(\"hello world\")[]"   73.6µs   91.9µs    10301.    9.68KB     4.02
 daemons(0)
 ```
 

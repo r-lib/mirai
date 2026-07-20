@@ -1,7 +1,8 @@
 # HTTP Remote Launch Configuration
 
-Generates a remote configuration for launching daemons via HTTP API. By
-default, automatically configures for Posit Workbench using environment
+Generates a remote configuration for launching daemons via HTTP API, as
+may be used by Kubernetes or other such platforms. By default,
+automatically configures for Posit Workbench using environment
 variables.
 
 ## Usage
@@ -130,7 +131,7 @@ tryCatch(http_config(), error = identity)
 #> $url
 #> function () 
 #> pwb_url()
-#> <bytecode: 0x562371c2a0b8>
+#> <bytecode: 0x559cfb03f9e8>
 #> <environment: namespace:mirai>
 #> 
 #> $method
@@ -139,13 +140,13 @@ tryCatch(http_config(), error = identity)
 #> $headers
 #> function () 
 #> pwb_headers()
-#> <bytecode: 0x562371c2d858>
+#> <bytecode: 0x559cfb043188>
 #> <environment: namespace:mirai>
 #> 
 #> $data
 #> function (...) 
 #> pwb_data(...)
-#> <bytecode: 0x562371c2d1c8>
+#> <bytecode: 0x559cfb042af8>
 #> <environment: namespace:mirai>
 #> 
 #> $dots
@@ -181,7 +182,7 @@ http_config(
 #> function () 
 #> c(Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")), 
 #>     `X-API-Version` = "2")
-#> <environment: 0x562371c1f7e8>
+#> <environment: 0x559cfb035118>
 #> 
 #> $data
 #> [1] "{\"command\": \"%s\"}"

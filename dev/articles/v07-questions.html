@@ -114,10 +114,11 @@ self-contained expressions with all variables or helper functions
 explicitly supplied.</p>
 <p>If your code used the <code>globals</code> argument, pass this
 directly to <code>.args</code> in <code><a href="../reference/mirai.html">mirai()</a></code>.</p>
-<p><strong>Always pass globals explicitly.</strong> This matches what
-actually happens in multi-process parallelism, and is better suited for
-programmatic use. It is the norm for base R, and in other programming
-languages. Automatic globals detection is inherently a <a href="https://en.wikipedia.org/wiki/Leaky_abstraction" class="external-link">leaky
+<p><strong><em>Always pass globals explicitly.</em></strong> This
+matches what actually happens in multi-process parallelism, and is
+better suited for programmatic use. It is the norm for base R, and in
+other programming languages. Automatic globals detection is inherently a
+<a href="https://en.wikipedia.org/wiki/Leaky_abstraction" class="external-link">leaky
 abstraction</a>, which can lead to unpredictable edge cases or slower
 operation from sending unnecessary data to daemons. Explicitly passing
 variables ensures reliable and transparent behaviour. See <a href="https://rstudio.github.io/promises/articles/promises_05a_futures.html#caveats-and-limitations" class="external-link">this

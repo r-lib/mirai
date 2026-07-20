@@ -850,7 +850,8 @@ daemons(
 #### HTTP Launcher
 
 [`http_config()`](https://mirai.r-lib.org/dev/reference/http_config.md)
-launches daemons via HTTP API.
+launches daemons via HTTP API, as may be used by Kubernetes or other
+such platforms.
 
 It takes the following arguments:
 

@@ -31,7 +31,7 @@ functions explicitly supplied.
 If your code used the `globals` argument, pass this directly to `.args`
 in [`mirai()`](https://mirai.r-lib.org/dev/reference/mirai.md).
 
-**Always pass globals explicitly.** This matches what actually happens
+***Always pass globals explicitly.*** This matches what actually happens
 in multi-process parallelism, and is better suited for programmatic use.
 It is the norm for base R, and in other programming languages. Automatic
 globals detection is inherently a [leaky
