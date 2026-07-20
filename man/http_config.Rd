@@ -47,9 +47,9 @@ A list in the required format to be supplied to the \code{remote} argument
 of \code{\link[=daemons]{daemons()}} or \code{\link[=launch_remote]{launch_remote()}}.
 }
 \description{
-Generates a remote configuration for launching daemons via HTTP API. By
-default, automatically configures for Posit Workbench using environment
-variables.
+Generates a remote configuration for launching daemons via HTTP API, as may
+be used by Kubernetes or other such platforms. By default, automatically
+configures for Posit Workbench using environment variables.
 }
 \details{
 Arguments accepting either a value or a function (\code{url}, \code{headers}, \code{data},

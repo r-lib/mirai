@@ -26,7 +26,7 @@ A mirai requires self-contained expressions with all variables or helper functio
 
 If your code used the `globals` argument, pass this directly to `.args` in `mirai()`.
 
-**Always pass globals explicitly.** This matches what actually happens in multi-process parallelism, and is better suited for programmatic use. It is the norm for base R, and in other programming languages.
+***Always pass globals explicitly.*** This matches what actually happens in multi-process parallelism, and is better suited for programmatic use. It is the norm for base R, and in other programming languages.
 Automatic globals detection is inherently a [leaky abstraction](https://en.wikipedia.org/wiki/Leaky_abstraction), which can lead to unpredictable edge cases or slower operation from sending unnecessary data to daemons.
 Explicitly passing variables ensures reliable and transparent behaviour. See [this article by Joe Cheng](https://rstudio.github.io/promises/articles/promises_05a_futures.html#caveats-and-limitations) for a full discussion.
 

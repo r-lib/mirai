@@ -689,7 +689,7 @@ daemons(
 
 #### HTTP Launcher
 
-`http_config()` launches daemons via HTTP API.
+`http_config()` launches daemons via HTTP API, as may be used by Kubernetes or other such platforms.
 
 It takes the following arguments:
 

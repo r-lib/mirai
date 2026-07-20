@@ -369,9 +369,9 @@ cluster_config <- function(command = "sbatch", options = "", rscript = "Rscript"
 
 #' HTTP Remote Launch Configuration
 #'
-#' Generates a remote configuration for launching daemons via HTTP API. By
-#' default, automatically configures for Posit Workbench using environment
-#' variables.
+#' Generates a remote configuration for launching daemons via HTTP API, as may
+#' be used by Kubernetes or other such platforms. By default, automatically
+#' configures for Posit Workbench using environment variables.
 #'
 #' Arguments accepting either a value or a function (`url`, `headers`, `data`,
 #' `cookie`, `token`) may be supplied as a function to defer evaluation: a
