@@ -3,7 +3,7 @@
 be used by Kubernetes or other such platforms. By default, automatically
 configures for Posit Workbench using environment variables."><meta property="og:description" content="Generates a remote configuration for launching daemons via HTTP API, as may
 be used by Kubernetes or other such platforms. By default, automatically
-configures for Posit Workbench using environment variables."><meta property="og:image" content="https://mirai.r-lib.org/logo.svg"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
+configures for Posit Workbench using environment variables."><meta property="og:image" content="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/mirai.png"><meta property="og:image:alt" content="mirai"><script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-hide-below="1200" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="mirai.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
 
 
@@ -53,7 +53,7 @@ configures for Posit Workbench using environment variables."><meta property="og:
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>HTTP Remote Launch Configuration</h1>
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/v2.7.2/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/R/launchers.R" class="external-link"><code>R/launchers.R</code></a></small>
       <div class="d-none name"><code>http_config.Rd</code></div>
     </div>
 
@@ -176,7 +176,7 @@ types of remote configuration.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $url</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pwb_url()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55650fa58830&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x559cace755e0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $method</span>
@@ -185,13 +185,13 @@ types of remote configuration.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $headers</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pwb_headers()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55650fa581a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x559cace74f50&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (...) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pwb_data(...)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55650fa57b10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x559cace748c0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mirai&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dots</span>
@@ -227,7 +227,7 @@ types of remote configuration.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function () </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> c(Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     `X-API-Version` = "2")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55650fa4c0c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x559cace66f18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{\"command\": \"%s\"}"</span>
