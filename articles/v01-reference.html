@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>mirai - Reference Manual</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/release/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/mirai/blob/main/vignettes/v01-reference.Rmd" class="external-link"><code>vignettes/v01-reference.Rmd</code></a></small>
       <div class="d-none name"><code>v01-reference.Rmd</code></div>
     </div>
 
@@ -137,9 +137,9 @@ via <code><a href="https://rdrr.io/r/base/library.html" class="external-link">li
 <span><span class="co"># Do work whilst unresolved</span></span>
 <span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 4.888673 4.063032 4.082977 5.786405 4.694404</span></span>
+<span><span class="co">#&gt; [1] 5.008926 5.312573 5.832515 4.781068 4.170053</span></span>
 <span><span class="va">m</span><span class="op">$</span><span class="va">data</span></span>
-<span><span class="co">#&gt; [1] 4.888673 4.063032 4.082977 5.786405 4.694404</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5.008926 5.312573 5.832515 4.781068 4.170053</span></span></code></pre></div>
 <p>A mirai is <em>unresolved</em> until its result is received, then
 <em>resolved</em>. Use <code><a href="../reference/unresolved.html">unresolved()</a></code> to check its state.</p>
 <p>Access results via <code>m$data</code> once resolved. This will be
@@ -171,7 +171,7 @@ accepted:</p>
 <span></span>
 <span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span>.expr <span class="op">=</span> <span class="va">expr</span>, .args <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 3.929109 2.791720 4.597985 3.775215 4.145794</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3.802924 2.617349 3.017261 3.980908 3.368530</span></span></code></pre></div>
 <p>Passing <code><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment()</a></code> to ‘.args’ allows you to
 conveniently provides all objects from the calling environment (like
 <code>x</code> and <code>file</code> in the following asynchronous write
@@ -552,7 +552,7 @@ ephemeral daemons).</p>
 <span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">range</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span>, <span class="va">x</span> <span class="op">+</span> <span class="va">range</span><span class="op">)</span></span>
 <span><span class="va">ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai_map.html">mirai_map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span>, c <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">fn</span><span class="op">(</span><span class="va">x</span>, <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span><span class="op">)</span>, fn <span class="op">=</span> <span class="va">fn</span><span class="op">)</span></span>
 <span><span class="va">ml</span></span>
-<span><span class="co">#&gt; &lt; mirai map [2/3] &gt;</span></span>
+<span><span class="co">#&gt; &lt; mirai map [0/3] &gt;</span></span>
 <span><span class="va">ml</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $a</span></span>
 <span><span class="co">#&gt; [1] 2.637793</span></span>
@@ -653,7 +653,7 @@ automatically assigns a free ephemeral port:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.0.116:49295")'</span></span></code></pre></div>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.37.61.174:53495")'</span></span></code></pre></div>
 <p>Dynamically scale the number of daemons up or down as needed.</p>
 <p>Reset all connections:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -789,7 +789,8 @@ directory)</li>
 <div class="section level4">
 <h4 id="http-launcher">HTTP Launcher<a class="anchor" aria-label="anchor" href="#http-launcher"></a>
 </h4>
-<p><code><a href="../reference/http_config.html">http_config()</a></code> launches daemons via HTTP API.</p>
+<p><code><a href="../reference/http_config.html">http_config()</a></code> launches daemons via HTTP API, as may be
+used by Kubernetes or other such platforms.</p>
 <p>It takes the following arguments:</p>
 <ul>
 <li>
@@ -798,19 +799,35 @@ directory)</li>
 <code>method</code>: HTTP method (typically
 <code>"POST"</code>)</li>
 <li>
-<code>cookie</code>: session cookie for authentication</li>
-<li>
-<code>token</code>: bearer token for authentication</li>
+<code>headers</code>: named character vector of HTTP headers,
+supplying any required authentication (session cookie, bearer token, API
+key) as well as other API metadata</li>
 <li>
 <code>data</code>: request body containing a <code>"%s"</code>
 placeholder where the daemon launch command is inserted</li>
+<li>
+<code>cookie</code>, <code>token</code>: conveniences that append
+<code>Cookie: &lt;value&gt;</code> and
+<code>Authorization: Bearer &lt;value&gt;</code> entries to
+<code>headers</code>
+</li>
 </ul>
-<p>Each argument accepts either a character value or a
-<strong>function</strong> returning a value. When a function is
-supplied, it is called at launch time (when <code><a href="../reference/launch_local.html">launch_remote()</a></code>
-runs), not when the configuration is created. This lazy evaluation
-ensures that dynamic values such as session cookies, API tokens, or
-endpoint URLs are always fresh at the moment of use.</p>
+<p>The two pieces that adapt mirai to a new platform are
+<code>data</code> and <code>headers</code>. At launch time, the
+<code>"%s"</code> placeholder in <code>data</code> is replaced by a
+<code><a href="../reference/daemon.html">mirai::daemon()</a></code> call,
+e.g. <code>mirai::daemon("tcp://10.0.0.7:34291")</code> — when using
+TLS, the certificate is also inlined in the call. The receiving platform
+only has to run this expression using <code>Rscript -e</code> to start a
+daemon, which then dials back to the host.</p>
+<p>Each argument other than <code>method</code> accepts either a value
+or a <strong>function</strong> returning a value. A plain value is
+captured when the configuration is created; a function is called at
+launch time (when <code><a href="../reference/launch_local.html">launch_remote()</a></code> runs). This lazy
+evaluation ensures that dynamic values such as session cookies, API
+tokens, or endpoint URLs are always fresh at the moment of use — and the
+same configuration object may be stored and reused, for example to scale
+up later in a session.</p>
 <div class="section level5">
 <h5 id="default-posit-workbench">Default: Posit Workbench<a class="anchor" aria-label="anchor" href="#default-posit-workbench"></a>
 </h5>
@@ -819,16 +836,15 @@ endpoint URLs are always fresh at the moment of use.</p>
 authenticating the launcher using the session cookie.</p>
 </blockquote>
 <p>By default, <code><a href="../reference/http_config.html">http_config()</a></code> auto-configures for Posit
-Workbench. The defaults for <code>url</code>, <code>cookie</code>, and
+Workbench. The defaults for <code>url</code>, <code>headers</code>, and
 <code>data</code> are functions (not function calls) that read Workbench
 environment information:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span></span>
-<span>  url <span class="op">=</span> <span class="va">posit_workbench_url</span>,     <span class="co"># reads server address at launch time</span></span>
+<span>  url <span class="op">=</span> <span class="va">posit_workbench_url</span>,         <span class="co"># reads server address at launch time</span></span>
 <span>  method <span class="op">=</span> <span class="st">"POST"</span>,</span>
-<span>  cookie <span class="op">=</span> <span class="va">posit_workbench_cookie</span>, <span class="co"># reads session cookie at launch time</span></span>
-<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">posit_workbench_data</span>    <span class="co"># queries the compute environment at launch time</span></span>
+<span>  headers <span class="op">=</span> <span class="va">posit_workbench_headers</span>, <span class="co"># reads session cookie at launch time</span></span>
+<span>  data <span class="op">=</span> <span class="va">posit_workbench_data</span>        <span class="co"># queries the compute environment at launch time</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Because these are stored as functions, calling
 <code><a href="../reference/http_config.html">http_config()</a></code> does no work — it simply saves the functions
@@ -840,6 +856,10 @@ expire are always obtained fresh.</p>
 <p>Launch daemons in Posit Workbench:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2</span>, url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span>, remote <span class="op">=</span> <span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Where the launched jobs run depends on the backend Posit Workbench is
+configured with: on a Local backend the daemons share the server hosting
+your session, while on a Kubernetes or Slurm backend each daemon is
+scheduled onto the cluster as its own job.</p>
 <p>The default Workbench launch may be customised by supplying
 additional options to <code><a href="../reference/http_config.html">http_config()</a></code>, which are forwarded to
 the <code>data</code> builder. Select a named cluster and resource
@@ -877,11 +897,14 @@ time:</p>
 <span>  remote <span class="op">=</span> <span class="fu"><a href="../reference/http_config.html">http_config</a></span><span class="op">(</span></span>
 <span>    url <span class="op">=</span> <span class="st">"https://api.example.com/launch"</span>,</span>
 <span>    method <span class="op">=</span> <span class="st">"POST"</span>,</span>
-<span>    token <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_API_KEY"</span><span class="op">)</span>,</span>
+<span>    headers <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      Authorization <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Bearer %s"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MY_API_KEY"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      `X-API-Version` <span class="op">=</span> <span class="st">"2"</span></span>
+<span>    <span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="st">'{"command": "%s"}'</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Here, <code>token</code> is a function so the API key environment
+<p>Here, <code>headers</code> is a function so the API key environment
 variable is read each time daemons are launched. The remaining arguments
 are plain character values used as-is.</p>
 </div>
@@ -928,7 +951,7 @@ commands for manual deployment:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span>url <span class="op">=</span> <span class="fu"><a href="../reference/host_url.html">host_url</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://192.168.0.116:49296")'</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tcp://10.37.61.174:53496")'</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -949,36 +972,36 @@ commands:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/launch_local.html">launch_remote</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]</span></span>
-<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://192.168.0.116:49297",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
-<span><span class="co">#&gt; MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu</span></span>
-<span><span class="co">#&gt; MTY4LjAuMTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw</span></span>
-<span><span class="co">#&gt; MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjAu</span></span>
-<span><span class="co">#&gt; MTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3</span></span>
-<span><span class="co">#&gt; DQEBAQUAA4ICDwAwggIKAoICAQC+c2346/FIbdtrOcQBpwJkif6MQEXsXSz4wAjZ</span></span>
-<span><span class="co">#&gt; Wk1zvYPaEszI4k2PlR8j+9curxvFltwBEnhyFFYeFcL8HTq809eYbUnTbsFbP/7u</span></span>
-<span><span class="co">#&gt; kKZnngNwc2NV3NRAGtMdFhqQm3wN/AAIAEVLbUsiNzU65/TaYiEyhi1AGCkB2iB8</span></span>
-<span><span class="co">#&gt; SQ21Urf733XiP6iwUeNjdZwLJ0+oRySCEOESdL4HTU1Phe8pYZ01g36CaK2N82Cc</span></span>
-<span><span class="co">#&gt; b9/cyOsOYuJs4XsBdjPcVCwHMJoB/AiHZYH24xM9bcOCOVuAOe9NWFMeZzxucZXf</span></span>
-<span><span class="co">#&gt; INDCmyiPyj1IEKqfGnXDFymqnZPTsZHGGhE+mdOAFWq2XX5amDNweAy+kjzrcWgH</span></span>
-<span><span class="co">#&gt; e9zQQzxcCi4kajRGE0C9cg2zKNDSXULwdESn5ee/y4ZbNV92ejRRqiuJIW40SVhi</span></span>
-<span><span class="co">#&gt; g8OOITdsF/wibXKnEQC3EEV43U1GdUcmgUdSV+DhIHFe1gclLbmnOnKkrouY1fem</span></span>
-<span><span class="co">#&gt; 2SofxPXUYKtLIdbATTrtsuyl5bt/HZ88W1kyeGuNo0zkBONboSNUBnSEjRYrv0ol</span></span>
-<span><span class="co">#&gt; rERrEyCA25pVKQxb5sUYtY/WKE/zZEdfqt95QmVfnDoOI8PPvXm3h2vN9+NfCWze</span></span>
-<span><span class="co">#&gt; FvvQWmroPWc7w6HhNZlEwVCEmMwZodoSJAws1MKZ7gbMO1S9MrI8EJIUNPOX13ga</span></span>
-<span><span class="co">#&gt; oc/DJwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS0B1gv</span></span>
-<span><span class="co">#&gt; FfyRC9VpFmP3rltabJBzJTAfBgNVHSMEGDAWgBS0B1gvFfyRC9VpFmP3rltabJBz</span></span>
-<span><span class="co">#&gt; JTANBgkqhkiG9w0BAQsFAAOCAgEASFUf2zqnjGkj8rkQweDeG95ANA1oCJfxlhWW</span></span>
-<span><span class="co">#&gt; 36S55AUgyqqhoup2V/o3Xb5l7lP/qm9YFxUO0rz/MOfMJUmgXf4vBGPcEtNI6qk8</span></span>
-<span><span class="co">#&gt; 82iE9STONTZY/mKHxIgFJ88SPV7V9mJ9ewgJWZ2YXg9CJTNgQecniUIvDcORmT5w</span></span>
-<span><span class="co">#&gt; RtiXzt0g8k9u7LV5yarNPAKxzgQLSY+tJwNxsSSJbmJ4LYqw/zpB3NY4LkOIfIBz</span></span>
-<span><span class="co">#&gt; +R3ZmKSGj6/uTDNBVpqS2sGGYTwQoQcJtZ9rNK06NCF/JUq8j17yg8lADXJw6BLz</span></span>
-<span><span class="co">#&gt; OB0z96g07wMRh78g4Y8T7hQUpnZtUUxMOuCBZKPJuinvbEXpq7SuonVVcculy6ZK</span></span>
-<span><span class="co">#&gt; IlLhoUt+t+qwyz/VaY4eTekYvH0g5O87e2sr9C+GNtJxHzPo2YqIXDulOqE1emKr</span></span>
-<span><span class="co">#&gt; sAoZPJkKvMKleBpm6efqLIHNZ8TbNkNdKOxAh0+GQ4uF9A/JsZDoPq8apkB0ppj6</span></span>
-<span><span class="co">#&gt; FlYl62TnWFrwsak7SCLKcCtblq/wdWmY3eczasb944hRHGjbIOuCrqJHJfcUeJIW</span></span>
-<span><span class="co">#&gt; sevrTsVGHfHWBtGWAYWhhT3mdjbpnubSqk1yd/e0zsZrr+eCiLnQJIcn3mpxVPHw</span></span>
-<span><span class="co">#&gt; MpXS2J8i3W7dgXZDyZ37sqrf4c3zGrDStlcv10gbKrTvM57ffclfumz0nt3CEKYS</span></span>
-<span><span class="co">#&gt; rUVjBDk=</span></span>
+<span><span class="co">#&gt; Rscript -e 'mirai::daemon("tls+tcp://10.37.61.174:53497",tlscert=c("-----BEGIN CERTIFICATE-----</span></span>
+<span><span class="co">#&gt; MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4z</span></span>
+<span><span class="co">#&gt; Ny42MS4xNzQxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx</span></span>
+<span><span class="co">#&gt; MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjM3LjYxLjE3</span></span>
+<span><span class="co">#&gt; NDERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B</span></span>
+<span><span class="co">#&gt; AQEFAAOCAg8AMIICCgKCAgEAxBtcE5KYuZL4gZfhjxDol8kyFqO5VjOujgILe/hE</span></span>
+<span><span class="co">#&gt; t7p3Idxj3lgPtKUpmOC+IRVQb0DPdyM1iHN6EXc9gK/Dd3r6q/oN1b6N8iOzXaNA</span></span>
+<span><span class="co">#&gt; QhMAWCoJb2ypOpseUhqQMLrh5kitX6+vkc0FoWod1DEEmKhSUvO0tRfx5JJuv0vL</span></span>
+<span><span class="co">#&gt; A57rtoksdqb+gD5uaRPW/F4etrSkQSdkJwbvJhzhCHmfDWflwJY6fvnAdoSTryhj</span></span>
+<span><span class="co">#&gt; pUKCnNy6qMeakAvr7wwNPXSBSTMUE30t5xPtdtL44mkluUFdrGtvdXjOpekNsjAb</span></span>
+<span><span class="co">#&gt; cV8jrEai6d1zxBLreEXS5GGskLERxybPkrRLJuyViaP2X4LVaAISO/5JDOeFuTLz</span></span>
+<span><span class="co">#&gt; yEOHH7eLmsiJgpn5ro7AfUmlWneGax993rl9yb1NHkyteyXwZ6V91pu+N6EubS01</span></span>
+<span><span class="co">#&gt; 0gXIIgU0HVBfy3eF7Fu8pWUVa2xBPqmlNHT77IBpuMW3RdG/3R18VF9guEMFdOH7</span></span>
+<span><span class="co">#&gt; a7yA2IrwsUckdRhvKeiY3+EanclFyzImkOretrCzaPjxBhPbw3o9zVzbLxAaL5uX</span></span>
+<span><span class="co">#&gt; LrPUs03VXNjRVuRyNarpkvCrGAw5Nrkot2ArfXPvR2V/RJESbyPgc/gsLAr82WdF</span></span>
+<span><span class="co">#&gt; 1B6hS5njWkMLYPRtiFAgK0MFHdydDP23WJnXTSmaPcpBUCvm6lCHhhef9hC/b9hx</span></span>
+<span><span class="co">#&gt; hFMCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUNtJpF4oC</span></span>
+<span><span class="co">#&gt; 4qrypmQuxMDEnqunL0cwHwYDVR0jBBgwFoAUNtJpF4oC4qrypmQuxMDEnqunL0cw</span></span>
+<span><span class="co">#&gt; DQYJKoZIhvcNAQELBQADggIBAA9QLMSdMDG6vWTwnNfIC4i48XuiqdKwkwxZEfUW</span></span>
+<span><span class="co">#&gt; n6r2LV7z6qBXKLftRmaWaTElFdkEi8A5n3ei7IZBdPHzfj+pR+SEmQQVX26KiP6j</span></span>
+<span><span class="co">#&gt; yk7JOy6j+GdugNm9miwjm1/yVF4SAsb7J283DYXyj/t9fEtv1dcOdi4yteIsrS+F</span></span>
+<span><span class="co">#&gt; s7bQYS7TWMFp8txnNyr/NNusYgkD6c/oiFSpL2dnJLE7qRcTsU4Zf7DpOi76tZMe</span></span>
+<span><span class="co">#&gt; 4Tw/Rvjx32d63h4kCbO5f/QPgQix7oxzwxvkp8SZ6wDzbinLU2k0qvfJXb9T1Ixm</span></span>
+<span><span class="co">#&gt; Op6M/OmYrsWDPaAWAdu6ce6dehJgHDZCmuQfL+wTXBBy1Zyjz76LAinddpT7wY4u</span></span>
+<span><span class="co">#&gt; +Tvlk6ClY2GcuKcp3ifpddZGHD8OIVz7Dlg7Puyxw5vxOKMKMyso6o7Of3Kla6YK</span></span>
+<span><span class="co">#&gt; FIzFhbKbHIRJow/5IpqTonNPTG3bT22KnXUlq3hrrZdsn6z/xGvEmsl1rAY0/GUT</span></span>
+<span><span class="co">#&gt; bxF2juBic0n/TCy8mCiW+KvP0lwrjRFprgFmc/tl5gjDgxDZfblxGzrfbhtyIrpk</span></span>
+<span><span class="co">#&gt; GMhVqce0snQ1nxz/GCLw2YzFpUI/xkfVYqDRPYWD4xrdE7ZBdn9JNOjzSsFuGNOq</span></span>
+<span><span class="co">#&gt; tGwzgtP3ec2Lmja+DaTMRp7S0FLd7VIFhe13Bio2MLY0zTHHYtNrUxi17tJ0OvPk</span></span>
+<span><span class="co">#&gt; HcUs</span></span>
 <span><span class="co">#&gt; -----END CERTIFICATE-----</span></span>
 <span><span class="co">#&gt; ",""))'</span></span></code></pre></div>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
@@ -1096,14 +1119,14 @@ profile name sets the default for all functions within that scope:</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m1</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 10409</span></span>
+<span><span class="co">#&gt; [1] 25298</span></span>
 <span><span class="va">m2</span><span class="op">[</span><span class="op">]</span> <span class="co"># different to m1</span></span>
-<span><span class="co">#&gt; [1] 10425</span></span>
+<span><span class="co">#&gt; [1] 25313</span></span>
 <span></span>
 <span><span class="va">m3</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 10409</span></span>
+<span><span class="co">#&gt; [1] 25298</span></span>
 <span><span class="va">m4</span><span class="op">[</span><span class="op">]</span> <span class="co"># same as m1</span></span>
-<span><span class="co">#&gt; [1] 10409</span></span>
+<span><span class="co">#&gt; [1] 25298</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"cpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/with_daemons.html">with_daemons</a></span><span class="op">(</span><span class="st">"gpu"</span>, <span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -1173,10 +1196,10 @@ Only <code>seed</code> affects behavior with
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 7053</span></span>
+<span><span class="co">#&gt; [1] 23355</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 7053</span></span>
+<span><span class="co">#&gt; [1] 23355</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># Use sync with the 'sync' compute profile:</span></span>
@@ -1187,10 +1210,10 @@ Only <code>seed</code> affects behavior with
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span>, .compute <span class="op">=</span> <span class="st">"sync"</span><span class="op">)</span></span>
 <span><span class="va">mp</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] 7053</span></span>
+<span><span class="co">#&gt; [1] 23355</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] 7053</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 23355</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

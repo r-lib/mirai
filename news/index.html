@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,9 +49,28 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.7.2" id="mirai-272">mirai 2.7.2<a class="anchor" aria-label="anchor" href="#mirai-272"></a></h2><p class="text-muted">CRAN release: 2026-07-20</p>
+<div class="section level5">
+<h5 id="updates-2-7-2">Updates<a class="anchor" aria-label="anchor" href="#updates-2-7-2"></a></h5>
+<ul><li>Fixes uninformative errors from <code><a href="../reference/mirai_map.html">mirai_map()</a></code> collection when a task resolves to a non-mirai ‘errorValue’, e.g. cancelled or timed out (<a href="https://github.com/r-lib/mirai/issues/642" class="external-link">#642</a>).</li>
+<li>Fixes <code><a href="../reference/mirai_map.html">mirai_map()</a></code> collection option <code>.flat</code> ignoring an ‘errorValue’ in the first element (<a href="https://github.com/r-lib/mirai/issues/639" class="external-link">#639</a>).</li>
+<li>Fixes <code><a href="../reference/daemon.html">daemon()</a></code> returning exit code 1 (idletime) instead of 2 (walltime) when <code>walltime</code> elapses while idle (<a href="https://github.com/r-lib/mirai/issues/637" class="external-link">#637</a>).</li>
+<li>Fixes <code><a href="../reference/race_mirai.html">race_mirai()</a></code> not waiting for resolution on compute profiles set with <code>url</code> and <code>dispatcher = FALSE</code> (<a href="https://github.com/r-lib/mirai/issues/635" class="external-link">#635</a>).</li>
+<li>Fixes daemon crash for errors raised before evaluation begins (<a href="https://github.com/r-lib/mirai/issues/633" class="external-link">#633</a>).</li>
+<li>Fixes daemon cleanup not restoring options modified during evaluation (<a href="https://github.com/r-lib/mirai/issues/631" class="external-link">#631</a>).</li>
+<li>Removes an ineffective promise cache from the <code><a href="https://rstudio.github.io/promises/reference/is.promise.html" class="external-link">as.promise()</a></code> method for ‘mirai_map’ objects.</li>
+<li>
+<code><a href="../reference/mirai_map.html">mirai_map()</a></code> dispatches tasks with lower per-element overhead.</li>
+<li>
+<code><a href="../reference/everywhere.html">everywhere()</a></code> dispatches with lower overhead, and errors upfront for a missing expression or invalid <code>...</code> arguments.</li>
+<li>Ephemeral daemons return invisibly so that they do not print unnecessary output when this is being logged (thanks <a href="https://github.com/jan-swissre" class="external-link">@jan-swissre</a>, <a href="https://github.com/r-lib/mirai/issues/619" class="external-link">#619</a>).</li>
+<li>Requires nanonext &gt;= 1.10.1.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.7.1" id="mirai-271">mirai 2.7.1<a class="anchor" aria-label="anchor" href="#mirai-271"></a></h2><p class="text-muted">CRAN release: 2026-06-01</p>
 <div class="section level5">

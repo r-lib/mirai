@@ -52,9 +52,9 @@ unresolved(m)
 # Do work whilst unresolved
 
 m[]
-#> [1] 4.888673 4.063032 4.082977 5.786405 4.694404
+#> [1] 5.008926 5.312573 5.832515 4.781068 4.170053
 m$data
-#> [1] 4.888673 4.063032 4.082977 5.786405 4.694404
+#> [1] 5.008926 5.312573 5.832515 4.781068 4.170053
 ```
 
 A mirai is *unresolved* until its result is received, then *resolved*.
@@ -89,7 +89,7 @@ args <- list(time = 2L, mean = 4)
 
 m1 <- mirai(.expr = expr, .args = args)
 m1[]
-#> [1] 3.929109 2.791720 4.597985 3.775215 4.145794
+#> [1] 3.802924 2.617349 3.017261 3.980908 3.368530
 ```
 
 Passing [`environment()`](https://rdrr.io/r/base/environment.html) to
@@ -562,7 +562,7 @@ daemons(4, seed = 2345L)
 fn <- function(x, range) runif(x, x, x + range)
 ml <- mirai_map(c(a = 1, b = 2, c = 3), \(x) fn(x, x * 2), fn = fn)
 ml
-#> < mirai map [2/3] >
+#> < mirai map [0/3] >
 ml[]
 #> $a
 #> [1] 2.637793
@@ -680,7 +680,7 @@ for the assigned port:
 
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.0.116:49295")'
+#> Rscript -e 'mirai::daemon("tcp://10.37.61.174:53495")'
 ```
 
 Dynamically scale the number of daemons up or down as needed.
@@ -846,24 +846,37 @@ daemons(
 #### HTTP Launcher
 
 [`http_config()`](https://mirai.r-lib.org/reference/http_config.md)
-launches daemons via HTTP API.
+launches daemons via HTTP API, as may be used by Kubernetes or other
+such platforms.
 
 It takes the following arguments:
 
 - `url`: API endpoint URL
 - `method`: HTTP method (typically `"POST"`)
-- `cookie`: session cookie for authentication
-- `token`: bearer token for authentication
+- `headers`: named character vector of HTTP headers, supplying any
+  required authentication (session cookie, bearer token, API key) as
+  well as other API metadata
 - `data`: request body containing a `"%s"` placeholder where the daemon
   launch command is inserted
+- `cookie`, `token`: conveniences that append `Cookie: <value>` and
+  `Authorization: Bearer <value>` entries to `headers`
 
-Each argument accepts either a character value or a **function**
-returning a value. When a function is supplied, it is called at launch
-time (when
+The two pieces that adapt mirai to a new platform are `data` and
+`headers`. At launch time, the `"%s"` placeholder in `data` is replaced
+by a [`mirai::daemon()`](https://mirai.r-lib.org/reference/daemon.md)
+call, e.g. `mirai::daemon("tcp://10.0.0.7:34291")` — when using TLS, the
+certificate is also inlined in the call. The receiving platform only has
+to run this expression using `Rscript -e` to start a daemon, which then
+dials back to the host.
+
+Each argument other than `method` accepts either a value or a
+**function** returning a value. A plain value is captured when the
+configuration is created; a function is called at launch time (when
 [`launch_remote()`](https://mirai.r-lib.org/reference/launch_local.md)
-runs), not when the configuration is created. This lazy evaluation
-ensures that dynamic values such as session cookies, API tokens, or
-endpoint URLs are always fresh at the moment of use.
+runs). This lazy evaluation ensures that dynamic values such as session
+cookies, API tokens, or endpoint URLs are always fresh at the moment of
+use — and the same configuration object may be stored and reused, for
+example to scale up later in a session.
 
 ##### Default: Posit Workbench
 
@@ -872,18 +885,17 @@ endpoint URLs are always fresh at the moment of use.
 
 By default,
 [`http_config()`](https://mirai.r-lib.org/reference/http_config.md)
-auto-configures for Posit Workbench. The defaults for `url`, `cookie`,
+auto-configures for Posit Workbench. The defaults for `url`, `headers`,
 and `data` are functions (not function calls) that read Workbench
 environment information:
 
 ``` r
 
 http_config(
-  url = posit_workbench_url,     # reads server address at launch time
+  url = posit_workbench_url,         # reads server address at launch time
   method = "POST",
-  cookie = posit_workbench_cookie, # reads session cookie at launch time
-  token = NULL,
-  data = posit_workbench_data    # queries the compute environment at launch time
+  headers = posit_workbench_headers, # reads session cookie at launch time
+  data = posit_workbench_data        # queries the compute environment at launch time
 )
 ```
 
@@ -902,6 +914,11 @@ Launch daemons in Posit Workbench:
 
 daemons(n = 2, url = host_url(), remote = http_config())
 ```
+
+Where the launched jobs run depends on the backend Posit Workbench is
+configured with: on a Local backend the daemons share the server hosting
+your session, while on a Kubernetes or Slurm backend each daemon is
+scheduled onto the cluster as its own job.
 
 The default Workbench launch may be customised by supplying additional
 options to
@@ -948,14 +965,17 @@ daemons(
   remote = http_config(
     url = "https://api.example.com/launch",
     method = "POST",
-    token = function() Sys.getenv("MY_API_KEY"),
+    headers = function() c(
+      Authorization = sprintf("Bearer %s", Sys.getenv("MY_API_KEY")),
+      `X-API-Version` = "2"
+    ),
     data = '{"command": "%s"}'
   )
 )
 ```
 
-Here, `token` is a function so the API key environment variable is read
-each time daemons are launched. The remaining arguments are plain
+Here, `headers` is a function so the API key environment variable is
+read each time daemons are launched. The remaining arguments are plain
 character values used as-is.
 
 ##### Troubleshooting
@@ -1013,7 +1033,7 @@ without ‘remote’ to get shell commands for manual deployment:
 daemons(url = host_url())
 launch_remote()
 #> [1]
-#> Rscript -e 'mirai::daemon("tcp://192.168.0.116:49296")'
+#> Rscript -e 'mirai::daemon("tcp://10.37.61.174:53496")'
 daemons(0)
 ```
 
@@ -1041,36 +1061,36 @@ commands:
 
 launch_remote(1)
 #> [1]
-#> Rscript -e 'mirai::daemon("tls+tcp://192.168.0.116:49297",tlscert=c("-----BEGIN CERTIFICATE-----
-#> MIIFQTCCAymgAwIBAgIBATANBgkqhkiG9w0BAQsFADA4MRYwFAYDVQQDDA0xOTIu
-#> MTY4LjAuMTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwHhcNMDEw
-#> MTAxMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjA4MRYwFAYDVQQDDA0xOTIuMTY4LjAu
-#> MTE2MREwDwYDVQQKDAhOYW5vbmV4dDELMAkGA1UEBhMCSlAwggIiMA0GCSqGSIb3
-#> DQEBAQUAA4ICDwAwggIKAoICAQC+c2346/FIbdtrOcQBpwJkif6MQEXsXSz4wAjZ
-#> Wk1zvYPaEszI4k2PlR8j+9curxvFltwBEnhyFFYeFcL8HTq809eYbUnTbsFbP/7u
-#> kKZnngNwc2NV3NRAGtMdFhqQm3wN/AAIAEVLbUsiNzU65/TaYiEyhi1AGCkB2iB8
-#> SQ21Urf733XiP6iwUeNjdZwLJ0+oRySCEOESdL4HTU1Phe8pYZ01g36CaK2N82Cc
-#> b9/cyOsOYuJs4XsBdjPcVCwHMJoB/AiHZYH24xM9bcOCOVuAOe9NWFMeZzxucZXf
-#> INDCmyiPyj1IEKqfGnXDFymqnZPTsZHGGhE+mdOAFWq2XX5amDNweAy+kjzrcWgH
-#> e9zQQzxcCi4kajRGE0C9cg2zKNDSXULwdESn5ee/y4ZbNV92ejRRqiuJIW40SVhi
-#> g8OOITdsF/wibXKnEQC3EEV43U1GdUcmgUdSV+DhIHFe1gclLbmnOnKkrouY1fem
-#> 2SofxPXUYKtLIdbATTrtsuyl5bt/HZ88W1kyeGuNo0zkBONboSNUBnSEjRYrv0ol
-#> rERrEyCA25pVKQxb5sUYtY/WKE/zZEdfqt95QmVfnDoOI8PPvXm3h2vN9+NfCWze
-#> FvvQWmroPWc7w6HhNZlEwVCEmMwZodoSJAws1MKZ7gbMO1S9MrI8EJIUNPOX13ga
-#> oc/DJwIDAQABo1YwVDASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS0B1gv
-#> FfyRC9VpFmP3rltabJBzJTAfBgNVHSMEGDAWgBS0B1gvFfyRC9VpFmP3rltabJBz
-#> JTANBgkqhkiG9w0BAQsFAAOCAgEASFUf2zqnjGkj8rkQweDeG95ANA1oCJfxlhWW
-#> 36S55AUgyqqhoup2V/o3Xb5l7lP/qm9YFxUO0rz/MOfMJUmgXf4vBGPcEtNI6qk8
-#> 82iE9STONTZY/mKHxIgFJ88SPV7V9mJ9ewgJWZ2YXg9CJTNgQecniUIvDcORmT5w
-#> RtiXzt0g8k9u7LV5yarNPAKxzgQLSY+tJwNxsSSJbmJ4LYqw/zpB3NY4LkOIfIBz
-#> +R3ZmKSGj6/uTDNBVpqS2sGGYTwQoQcJtZ9rNK06NCF/JUq8j17yg8lADXJw6BLz
-#> OB0z96g07wMRh78g4Y8T7hQUpnZtUUxMOuCBZKPJuinvbEXpq7SuonVVcculy6ZK
-#> IlLhoUt+t+qwyz/VaY4eTekYvH0g5O87e2sr9C+GNtJxHzPo2YqIXDulOqE1emKr
-#> sAoZPJkKvMKleBpm6efqLIHNZ8TbNkNdKOxAh0+GQ4uF9A/JsZDoPq8apkB0ppj6
-#> FlYl62TnWFrwsak7SCLKcCtblq/wdWmY3eczasb944hRHGjbIOuCrqJHJfcUeJIW
-#> sevrTsVGHfHWBtGWAYWhhT3mdjbpnubSqk1yd/e0zsZrr+eCiLnQJIcn3mpxVPHw
-#> MpXS2J8i3W7dgXZDyZ37sqrf4c3zGrDStlcv10gbKrTvM57ffclfumz0nt3CEKYS
-#> rUVjBDk=
+#> Rscript -e 'mirai::daemon("tls+tcp://10.37.61.174:53497",tlscert=c("-----BEGIN CERTIFICATE-----
+#> MIIFPzCCAyegAwIBAgIBATANBgkqhkiG9w0BAQsFADA3MRUwEwYDVQQDDAwxMC4z
+#> Ny42MS4xNzQxETAPBgNVBAoMCE5hbm9uZXh0MQswCQYDVQQGEwJKUDAeFw0wMTAx
+#> MDEwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMDcxFTATBgNVBAMMDDEwLjM3LjYxLjE3
+#> NDERMA8GA1UECgwITmFub25leHQxCzAJBgNVBAYTAkpQMIICIjANBgkqhkiG9w0B
+#> AQEFAAOCAg8AMIICCgKCAgEAxBtcE5KYuZL4gZfhjxDol8kyFqO5VjOujgILe/hE
+#> t7p3Idxj3lgPtKUpmOC+IRVQb0DPdyM1iHN6EXc9gK/Dd3r6q/oN1b6N8iOzXaNA
+#> QhMAWCoJb2ypOpseUhqQMLrh5kitX6+vkc0FoWod1DEEmKhSUvO0tRfx5JJuv0vL
+#> A57rtoksdqb+gD5uaRPW/F4etrSkQSdkJwbvJhzhCHmfDWflwJY6fvnAdoSTryhj
+#> pUKCnNy6qMeakAvr7wwNPXSBSTMUE30t5xPtdtL44mkluUFdrGtvdXjOpekNsjAb
+#> cV8jrEai6d1zxBLreEXS5GGskLERxybPkrRLJuyViaP2X4LVaAISO/5JDOeFuTLz
+#> yEOHH7eLmsiJgpn5ro7AfUmlWneGax993rl9yb1NHkyteyXwZ6V91pu+N6EubS01
+#> 0gXIIgU0HVBfy3eF7Fu8pWUVa2xBPqmlNHT77IBpuMW3RdG/3R18VF9guEMFdOH7
+#> a7yA2IrwsUckdRhvKeiY3+EanclFyzImkOretrCzaPjxBhPbw3o9zVzbLxAaL5uX
+#> LrPUs03VXNjRVuRyNarpkvCrGAw5Nrkot2ArfXPvR2V/RJESbyPgc/gsLAr82WdF
+#> 1B6hS5njWkMLYPRtiFAgK0MFHdydDP23WJnXTSmaPcpBUCvm6lCHhhef9hC/b9hx
+#> hFMCAwEAAaNWMFQwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUNtJpF4oC
+#> 4qrypmQuxMDEnqunL0cwHwYDVR0jBBgwFoAUNtJpF4oC4qrypmQuxMDEnqunL0cw
+#> DQYJKoZIhvcNAQELBQADggIBAA9QLMSdMDG6vWTwnNfIC4i48XuiqdKwkwxZEfUW
+#> n6r2LV7z6qBXKLftRmaWaTElFdkEi8A5n3ei7IZBdPHzfj+pR+SEmQQVX26KiP6j
+#> yk7JOy6j+GdugNm9miwjm1/yVF4SAsb7J283DYXyj/t9fEtv1dcOdi4yteIsrS+F
+#> s7bQYS7TWMFp8txnNyr/NNusYgkD6c/oiFSpL2dnJLE7qRcTsU4Zf7DpOi76tZMe
+#> 4Tw/Rvjx32d63h4kCbO5f/QPgQix7oxzwxvkp8SZ6wDzbinLU2k0qvfJXb9T1Ixm
+#> Op6M/OmYrsWDPaAWAdu6ce6dehJgHDZCmuQfL+wTXBBy1Zyjz76LAinddpT7wY4u
+#> +Tvlk6ClY2GcuKcp3ifpddZGHD8OIVz7Dlg7Puyxw5vxOKMKMyso6o7Of3Kla6YK
+#> FIzFhbKbHIRJow/5IpqTonNPTG3bT22KnXUlq3hrrZdsn6z/xGvEmsl1rAY0/GUT
+#> bxF2juBic0n/TCy8mCiW+KvP0lwrjRFprgFmc/tl5gjDgxDZfblxGzrfbhtyIrpk
+#> GMhVqce0snQ1nxz/GCLw2YzFpUI/xkfVYqDRPYWD4xrdE7ZBdn9JNOjzSsFuGNOq
+#> tGwzgtP3ec2Lmja+DaTMRp7S0FLd7VIFhe13Bio2MLY0zTHHYtNrUxi17tJ0OvPk
+#> HcUs
 #> -----END CERTIFICATE-----
 #> ",""))'
 ```
@@ -1187,14 +1207,14 @@ with_daemons("gpu", {
 })
 
 m1[]
-#> [1] 10409
+#> [1] 25298
 m2[] # different to m1
-#> [1] 10425
+#> [1] 25313
 
 m3[] # same as m1
-#> [1] 10409
+#> [1] 25298
 m4[] # same as m1
-#> [1] 10409
+#> [1] 25298
 
 with_daemons("cpu", daemons(0))
 with_daemons("gpu", daemons(0))
@@ -1267,10 +1287,10 @@ mp <- mirai_map(1:2, \(x) Sys.getpid())
 daemons(0)
 mp[]
 #> [[1]]
-#> [1] 7053
+#> [1] 23355
 #> 
 #> [[2]]
-#> [1] 7053
+#> [1] 23355
 
 
 # Use sync with the 'sync' compute profile:
@@ -1281,8 +1301,8 @@ with_daemons("sync", {
 daemons(0, .compute = "sync")
 mp[]
 #> [[1]]
-#> [1] 7053
+#> [1] 23355
 #> 
 #> [[2]]
-#> [1] 7053
+#> [1] 23355
 ```

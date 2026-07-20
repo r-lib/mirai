@@ -177,7 +177,7 @@ n <- 10L
 file <- tempfile()
 cat("r <- rnorm(n)", file = file)
 m <- mirai({source(file); r}, file = file, n = n)
-call_mirai(m)$datado
+call_mirai(m)$data
 unlink(file)
 
 # use source(local = TRUE) when passing in local variables via '.args'
