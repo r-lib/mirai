@@ -1,10 +1,12 @@
-# CLAUDE.md
+# AGENTS.md
 
-Guidance for Claude Code working **on** the mirai package. mirai is a minimalist async / parallel / distributed evaluation framework for R, built on nanonext + NNG. R >= 3.6, only runtime dependency is nanonext.
+Guidance for AI coding agents working **on** the mirai package. mirai is a minimalist async / parallel / distributed evaluation framework for R, built on nanonext + NNG. R >= 3.6, only runtime dependency is nanonext.
+
+Claude Code users: add `.claude/CLAUDE.md` containing `@../AGENTS.md` to import this file (`.claude/` is gitignored).
 
 ## Skill vs. this file
 
-`.claude/skills/mirai/SKILL.md` is LLM-targeted guidance for *writing user code that calls mirai*. The same skill ships to end users via the `r-lib` plugin in [posit-dev/skills](https://github.com/posit-dev/skills). When helping a user *use* mirai, defer to the skill. **This file is for working on the package source.**
+`inst/skills/mirai/SKILL.md` is LLM-targeted guidance for *writing user code that calls mirai*. It ships in the package and to end users via the `r-lib` plugin in [posit-dev/skills](https://github.com/posit-dev/skills). When helping a user *use* mirai, defer to the skill. **This file is for working on the package source.**
 
 ## Commands
 
@@ -74,5 +76,5 @@ Both implement `conditionMessage()` / `conditionCall()`.
 
 - roxygen2 with markdown; `NAMESPACE` is generated — never hand-edit.
 - Version is `major.minor.patch.dev` (current dev tag `.9000`).
-- `CLAUDE.md` and `.claude/` are in `.Rbuildignore` and don't ship to CRAN.
+- `AGENTS.md`, `.claude/`, and `.posit/` are in `.Rbuildignore` and don't ship to CRAN.
 - PR-comment commands (`.github/workflows/pr-commands.yaml`) — commenting `/document` runs `roxygen2::roxygenise()`; `/style` runs `styler::style_pkg()`. Both commit back to the PR branch.

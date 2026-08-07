@@ -5,6 +5,7 @@
 /docs/
 /revdep/
 /.claude/
+/.posit/
 /.quarto/
 **/*.quarto_ipynb
 .DS_Store
