@@ -160,7 +160,7 @@ will automatically assign a free ephemeral port. Use \code{\link[=status]{status
 the actual assigned port at any time.
 
 Specify \code{remote} with a call to \code{\link[=ssh_config]{ssh_config()}}, \code{\link[=cluster_config]{cluster_config()}} or
-\code{\link[=remote_config]{remote_config()}} to launch (programatically deploy) daemons on remote
+\code{\link[=remote_config]{remote_config()}} to launch (pragmatically deploy) daemons on remote
 machines, from where they dial back to \code{url}. If not launching daemons,
 \code{\link[=launch_remote]{launch_remote()}} may be used to generate the shell commands for manual
 deployment.

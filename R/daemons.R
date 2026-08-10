@@ -121,7 +121,7 @@
 #' the actual assigned port at any time.
 #'
 #' Specify `remote` with a call to [ssh_config()], [cluster_config()] or
-#' [remote_config()] to launch (programatically deploy) daemons on remote
+#' [remote_config()] to launch (pragmatically deploy) daemons on remote
 #' machines, from where they dial back to `url`. If not launching daemons,
 #' [launch_remote()] may be used to generate the shell commands for manual
 #' deployment.

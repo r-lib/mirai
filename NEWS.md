@@ -34,7 +34,7 @@
 
 #### New Features
 
-* Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581). 
+* Dispatcher reimplemented as a thread for lower overhead, removing the separate dispatcher process (#581).
 * Adds `memory` argument to `daemons()` setting a memory budget (MB, metric) for queued task payloads at dispatcher, providing memory-based backpressure.
   This is opt-in and `NULL` (default) is unbounded (thanks @t-kalinowski, #454).
   Current and peak queued bytes (in MB) are surfaced under the `memory` field of `status()`.
@@ -485,7 +485,7 @@
 # mirai 0.11.2
 
 * `make_cluster()` specifying only 'url' now succeeds with implied 'n' of one.
-* Fixes `mirai()` specifying a language object by name for '.expr' in R versions 4.0 and earlier. 
+* Fixes `mirai()` specifying a language object by name for '.expr' in R versions 4.0 and earlier.
 * Fixes regression in 0.11.1 which prevented the correct random seed being set when using dispatcher.
 * Internal performance enhancements.
 
@@ -493,7 +493,7 @@
 
 * Adds 'mirai' method for 'as.promise()' from the {promises} package (if available). This functionality is merged from the package {mirai.promises}, allowing use of the promise pipe `%...>%` with a 'mirai'.
 * Parallel clusters (the alternative communications backend for R) now work with existing R versions, no longer requiring R >= 4.4.
-* `everywhere()` evaluates an expression 'everywhere' on all connected daemons for a compute profile. Resulting changes to the global environment, loaded pacakges or options are persisted regardless of the 'cleanup' setting (request by @krlmlr #80).
+* `everywhere()` evaluates an expression 'everywhere' on all connected daemons for a compute profile. Resulting changes to the global environment, loaded packages or options are persisted regardless of the 'cleanup' setting (request by @krlmlr #80).
 * `host_url()` implemented as a helper function to automatically construct the host URL using the computer's hostname.
 * `daemon()` adds argument 'autoexit', which replaces 'asyncdial', to govern persistence settings for a daemon. A daemon can now survive a host session and re-connect to another one (request by @krlmlr #81).
 * `daemons(NULL)` implemented as a variant of `daemons(0)` which also sends exit signals to connected persistent daemons.
@@ -578,7 +578,7 @@
 
 # mirai 0.9.0
 
-* mirai 0.9.0 is a major release focusing on stability improvements. 
+* mirai 0.9.0 is a major release focusing on stability improvements.
 * Improvements to dispatcher:
   + Ensures the first URL retains the same format if `saisei(i = 1L)` is called.
   + Optimal scheduling when tasks are submitted prior to any servers coming online.
