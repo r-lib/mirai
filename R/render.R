@@ -33,7 +33,9 @@
 #'
 #' Calling `register_render()` more than once is safe: it does not re-wrap its
 #' own hooks, and each call resets the record of which profiles have been
-#' prepared, so a fresh render re-loads packages on the daemons as needed.
+#' prepared, so a fresh render re-loads packages on the daemons as needed. If
+#' daemons are reset with `daemons(0)` mid-render, call `register_render()`
+#' again so the replacement daemons are re-prepared.
 #'
 #' @section Figures:
 #'
@@ -87,7 +89,7 @@ register_render <- function() {
 route_compute <- function(opt) {
   if (isTRUE(opt)) {
     "default"
-  } else if (is.character(opt) && nzchar(opt)) {
+  } else if (is.character(opt) && length(opt) == 1L && nzchar(opt)) {
     opt
   }
 }
@@ -107,7 +109,6 @@ register_knitr_hook <- function(prepared) {
     if (is.null(profile)) {
       return(orig(code, envir, ...))
     }
-    require_daemons(.compute = profile)
     if (is.null(prepared[[profile]])) {
       # Load knitr's namespace on the daemon(s) so the output handler forwarded
       # with each chunk (a set of knitr closures) resolves there.
@@ -134,7 +135,6 @@ register_litedown_engine <- function() {
     if (inline || is.null(profile)) {
       return(orig(x, inline = inline, ...))
     }
-    require_daemons(.compute = profile)
     # Record the chunk on the daemon via xfun::record(), forwarding the chunk
     # options that affect evaluation and plot recording. Figures are written to
     # an absolute path so a local daemon places them in the document's figure

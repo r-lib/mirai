@@ -115,9 +115,13 @@ daemon_call <- function(.f, ..., .compute = NULL) {
   # Build the call with `.f` and its arguments inlined; `globalenv()` is left
   # unevaluated so it resolves to the daemon's global environment.
   expr <- if (add_envir) {
-    bquote(do.call(.(.f), c(.(args), list(envir = globalenv()))))
+    as.call(list(
+      quote(do.call),
+      .f,
+      as.call(list(quote(c), args, quote(list(envir = globalenv()))))
+    ))
   } else {
-    bquote(do.call(.(.f), .(args)))
+    as.call(list(quote(do.call), .f, args))
   }
   mirai(expr, .compute = .compute)[]
 }

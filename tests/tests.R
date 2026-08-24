@@ -882,6 +882,10 @@ connection && NOT_CRAN &&
   test_true(grepl("FALSE", fuse_chunk("exists('ld_state')"), fixed = TRUE))
   # a honored chunk error is rendered and does not abort the render
   test_true(grepl("boom", fuse_chunk("stop('boom')", c("compute: ld", "error: true")), fixed = TRUE))
+  # figures are written by the daemon to a custom figure directory
+  figpath <- file.path(tempdir(), "fig-")
+  invisible(fuse_chunk("plot(1:10)", c("compute: ld", sprintf("fig.path: '%s'", figpath))))
+  test_true(length(Sys.glob(paste0(figpath, "*.png"))) > 0L)
   test_false(daemons(0L, .compute = "ld"))
 }
 test_false(daemons(0))
