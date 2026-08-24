@@ -45,18 +45,12 @@ own hooks, and each call resets the record of which profiles have been
 prepared, so a fresh render re-loads packages on the daemons as needed. If
 daemons are reset with \code{daemons(0)} mid-render, call \code{register_render()}
 again so the replacement daemons are re-prepared.
+
+Figures produced by routed chunks work with local and remote daemons alike:
+under \pkg{knitr} they are recorded on the daemon and replayed on the host
+device, while under \pkg{litedown} they are recorded to files on the daemon
+and transferred back to the host's figure directory.
 }
-\section{Figures}{
-
-
-Under \pkg{knitr}, graphics produced on a daemon are recorded and replayed on
-the host device, so figures are written as usual regardless of daemon
-location. Under \pkg{litedown}, figures are written to files by the daemon;
-this requires a daemon sharing the host filesystem (i.e. \strong{local} daemons),
-since the files are placed directly in the document's figure directory.
-Chunks that only produce console output are unaffected.
-}
-
 \examples{
 \dontrun{
 # in a setup chunk of a knitr / R Markdown / Quarto / litedown document:

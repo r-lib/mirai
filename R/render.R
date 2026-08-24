@@ -37,14 +37,10 @@
 #' daemons are reset with `daemons(0)` mid-render, call `register_render()`
 #' again so the replacement daemons are re-prepared.
 #'
-#' @section Figures:
-#'
-#' Under \pkg{knitr}, graphics produced on a daemon are recorded and replayed on
-#' the host device, so figures are written as usual regardless of daemon
-#' location. Under \pkg{litedown}, figures are written to files by the daemon;
-#' this requires a daemon sharing the host filesystem (i.e. **local** daemons),
-#' since the files are placed directly in the document's figure directory.
-#' Chunks that only produce console output are unaffected.
+#' Figures produced by routed chunks work with local and remote daemons alike:
+#' under \pkg{knitr} they are recorded on the daemon and replayed on the host
+#' device, while under \pkg{litedown} they are recorded to files on the daemon
+#' and transferred back to the host's figure directory.
 #'
 #' @return Invisible NULL. Called for the side effect of installing the hooks.
 #'
@@ -135,17 +131,20 @@ register_litedown_engine <- function() {
     if (inline || is.null(profile)) {
       return(orig(x, inline = inline, ...))
     }
-    # Record the chunk on the daemon via xfun::record(), forwarding the chunk
-    # options that affect evaluation and plot recording. Figures are written to
-    # an absolute path so a local daemon places them in the document's figure
-    # directory; the returned records are formatted by litedown on the host.
+    # Record the chunk on the daemon via litedown_record() (which wraps
+    # xfun::record()), forwarding the chunk options that affect evaluation and
+    # plot recording. Figures are recorded on the daemon and shipped back as
+    # raw bytes, which the host writes to the document's figure directory, so
+    # remote daemons are supported. The returned records are formatted by
+    # litedown on the host.
     fig <- litedown::reactor("fig.path")
+    dev.path <- if (is.character(fig)) {
+      normalizePath(paste0(fig, litedown::reactor("label")), mustWork = FALSE)
+    }
     args <- drop_null(list(
       code = x$source,
       dev = litedown::reactor("dev"),
-      dev.path = if (is.character(fig)) {
-        normalizePath(paste0(fig, litedown::reactor("label")), mustWork = FALSE)
-      },
+      dev.path = dev.path,
       dev.ext = litedown::reactor("fig.ext"),
       dev.keep = litedown::reactor("fig.keep"),
       dev.args = litedown_dev_args(),
@@ -153,11 +152,57 @@ register_litedown_engine <- function() {
       warning = litedown::reactor("warning"),
       message = litedown::reactor("message")
     ))
-    do.call(daemon_call, c(list(xfun::record), args, list(.compute = profile)))
+    out <- do.call(daemon_call, c(list(litedown_record), args, list(.compute = profile)))
+    write_litedown_plots(out, dev.path)
   }
   attr(engine, "mirai_orig") <- orig
 
   litedown::engines(r = engine)
+}
+
+# Daemon-side wrapper around xfun::record(). Figures are recorded to a
+# daemon-local directory and their raw contents returned alongside the results,
+# so the host can write them to the document's figure directory even when the
+# daemon does not share the host filesystem.
+# `envir` is supplied by daemon_call() as the daemon's global environment, so
+# objects persist across chunks on a `cleanup = FALSE` profile.
+litedown_record <- function(code, dev.path = NULL, ..., envir) {
+  if (!is.character(dev.path)) {
+    return(list(results = xfun::record(code, ..., envir = envir)))
+  }
+  dir <- tempfile("mirai-fig-")
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  res <- xfun::record(code, dev.path = file.path(dir, basename(dev.path)), ..., envir = envir)
+  plots <- unlist(lapply(res, function(x) if (inherits(x, "record_plot")) x))
+  blobs <- lapply(plots, function(p) readBin(p, "raw", n = file.size(p)))
+  list(results = res, plots = blobs, files = if (length(plots)) basename(plots))
+}
+
+# Write figure files recorded on a daemon into the document's figure directory
+# and rewrite the recorded plot paths to their host-side locations.
+write_litedown_plots <- function(out, dev.path) {
+  # Pass through daemon errors (miraiError) for litedown to handle.
+  if (!is.list(out)) {
+    return(out)
+  }
+  res <- out[["results"]]
+  files <- out[["files"]]
+  if (!length(files)) {
+    return(res)
+  }
+  dir <- dirname(dev.path)
+  dir.create(dir, showWarnings = FALSE, recursive = TRUE)
+  for (i in seq_along(files)) {
+    writeBin(out[["plots"]][[i]], file.path(dir, files[[i]]))
+  }
+  res[] <- lapply(res, function(el) {
+    if (inherits(el, "record_plot")) {
+      el[] <- file.path(dir, basename(el))
+    }
+    el
+  })
+  res
 }
 
 # Assemble the `dev.args` for xfun::record() from litedown chunk options,
