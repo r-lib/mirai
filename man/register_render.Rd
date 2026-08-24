@@ -42,7 +42,9 @@ daemons of a profile the first time a chunk is routed there.
 
 Calling \code{register_render()} more than once is safe: it does not re-wrap its
 own hooks, and each call resets the record of which profiles have been
-prepared, so a fresh render re-loads packages on the daemons as needed.
+prepared, so a fresh render re-loads packages on the daemons as needed. If
+daemons are reset with \code{daemons(0)} mid-render, call \code{register_render()}
+again so the replacement daemons are re-prepared.
 }
 \section{Figures}{
 
