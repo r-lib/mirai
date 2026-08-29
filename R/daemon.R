@@ -107,6 +107,7 @@ daemon <- function(
   maxtime <- if (is.finite(walltime)) mclock() + walltime else FALSE
 
   if (dispatcher) {
+    .suspend_interrupts()
     aio <- recv_aio(sock, mode = 1L, cv = cv)
     if (wait(cv)) {
       bundle <- collect_aio(aio)
@@ -206,13 +207,18 @@ daemon <- function(
 # internals --------------------------------------------------------------------
 
 eval_mirai <- function(._mirai_., sock = NULL) {
-  if (length(sock)) {
+  disp <- !is.null(sock)
+  if (disp) {
     cancel <- recv_aio(sock, mode = 8L, cv = substitute())
-    on.exit(stop_aio(cancel))
+    on.exit({
+      .suspend_interrupts()
+      stop_aio(cancel)
+    })
   }
   tryCatch(
     withCallingHandlers(
       {
+        if (disp) .suspend_interrupts(FALSE)
         list2env(._mirai_.[["._globals_."]], envir = globalenv())
         sock <- otel_eval_span(._mirai_.[["._otel_."]])
         eval(._mirai_.[["._expr_."]], envir = ._mirai_., enclos = globalenv())
@@ -222,10 +228,12 @@ eval_mirai <- function(._mirai_., sock = NULL) {
       }
     ),
     error = function(cnd) {
+      if (disp) .suspend_interrupts()
       otel_set_span_error(sock, "miraiError")
       mk_mirai_error(cnd)
     },
     interrupt = function(cnd) {
+      if (disp) .suspend_interrupts()
       otel_set_span_error(sock, "miraiInterrupt")
       mk_mirai_interrupt()
     }

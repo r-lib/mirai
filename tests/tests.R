@@ -596,6 +596,12 @@ connection && NOT_CRAN && {
     tryCatch(m[.stop], error = identity)
   }
   test_equal(info()[["connections"]], 1L)
+  # instantly-erroring tasks further stress the cancellation timing window
+  for (i in 1:50) {
+    m <- mirai_map(1:5, function(x) stop("error"))
+    tryCatch(m[.stop], error = identity)
+  }
+  test_equal(info()[["connections"]], 1L)
   ns <- getNamespace("mirai")
   original_cli <- mock_binding(ns, "cli_enabled", FALSE)
   mp <- mirai_map(30, Sys.sleep)
