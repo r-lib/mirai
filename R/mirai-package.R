@@ -35,8 +35,8 @@
 #'   .dispatcher_start .dispatcher_stop .dispatcher_try_gate .dispatcher_wait
 #'   handler http_server ip_addr is_error_value .keep .mark mclock msleep ncurl
 #'   nng_error opt<- parse_url pipe_notify race_aio random reap recv recv_aio
-#'   request send serial_config socket stat stop_aio stop_request tls_config
-#'   unresolved .unresolved until wait write_cert
+#'   request send serial_config socket stat stop_aio stop_request
+#'   .suspend_interrupts tls_config unresolved .unresolved until wait write_cert
 #'
 "_PACKAGE"
 

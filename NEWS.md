@@ -2,7 +2,7 @@
 
 #### Updates
 
-* Requires nanonext >= 1.10.2.
+* Requires nanonext >= [1.10.2.9000].
 
 # mirai 2.7.2
 
