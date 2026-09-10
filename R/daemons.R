@@ -534,6 +534,14 @@ local_daemons <- function(.compute, frame = parent.frame()) {
 #'
 #' This feature utilises the 'refhook' system of R native serialization.
 #'
+#' An error in `sfunc` (serialization) is raised directly in the calling
+#' process, e.g. the [mirai()] call itself errors and the task is not
+#' dispatched.
+#'
+#' An error in `ufunc` (unserialization) is caught, and the object instead
+#' unserializes as an 'errorValue' 1000 ('Internal error detected'). This
+#' prevents a faulty hook from crashing the daemon.
+#'
 #' @param class (character) class name(s) for custom serialization, e.g.
 #'   `'ArrowTabular'` or `c('torch_tensor', 'ArrowTabular')`.
 #' @param sfunc (function | list) serialization function(s) accepting a

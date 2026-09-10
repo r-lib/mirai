@@ -29,6 +29,14 @@ apply to all mirai requests for that compute profile.
 }
 \details{
 This feature utilises the 'refhook' system of R native serialization.
+
+An error in \code{sfunc} (serialization) is raised directly in the calling
+process, e.g. the \code{\link[=mirai]{mirai()}} call itself errors and the task is not
+dispatched.
+
+An error in \code{ufunc} (unserialization) is caught, and the object instead
+unserializes as an 'errorValue' 1000 ('Internal error detected'). This
+prevents a faulty hook from crashing the daemon.
 }
 \examples{
 cfg <- serial_config("test_cls", function(x) serialize(x, NULL), unserialize)
