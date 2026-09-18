@@ -491,15 +491,15 @@ and the application adapts to load instead of locking up.</p>
 <p>Each <code><a href="../reference/mirai.html">mirai()</a></code> call serialises its arguments to the daemon
 and the result back, even when the daemon is on the same machine. For
 large objects, this copy can dominate evaluation time.</p>
-<p>The <a href="https://github.com/shikokuchuo/mori" class="external-link"><code>mori</code></a> package
+<p>The <a href="https://mori.r-lib.org" class="external-link"><code>mori</code></a> package
 provides shared-memory R objects that local daemons read in place,
 without copying. Wrap an atomic vector, list, or dataframe with
-<code><a href="https://shikokuchuo.net/mori/reference/share.html" class="external-link">mori::share()</a></code>:</p>
+<code><a href="https://rdrr.io/pkg/mori/man/share.html" class="external-link">mori::share()</a></code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lobstr.r-lib.org/" class="external-link">lobstr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">mori</span><span class="fu">::</span><span class="fu"><a href="https://shikokuchuo.net/mori/reference/share.html" class="external-link">share</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1e6</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">mori</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/mori/man/share.html" class="external-link">share</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1e6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mirai.html">mirai</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu">lobstr</span><span class="fu">::</span><span class="fu">obj_size</span><span class="op">(</span><span class="va">y</span><span class="op">)</span>, sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $size</span></span>
