@@ -67,7 +67,7 @@ host_url(tls = TRUE, port = 5555)
 #> "tls+tcp://10.1.0.160:5555" "tls+tcp://172.17.0.1:5555" 
 
 local_url()
-#> [1] "abstract://6fb62216ec0be9da7e143a42"
+#> [1] "abstract://7a526da433ed4846e6a2a129"
 local_url(tcp = TRUE)
 #> [1] "tcp://127.0.0.1:0"
 local_url(tcp = TRUE, port = 5555)
