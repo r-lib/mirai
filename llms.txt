@@ -127,8 +127,8 @@ full deployment guide.
   —
   [`serial_config()`](https://mirai.r-lib.org/reference/serial_config.md)
   for torch, Arrow, polars, ADBC;
-  [`mori::share()`](https://shikokuchuo.net/mori/reference/share.html)
-  for local shared memory
+  [`mori::share()`](https://rdrr.io/pkg/mori/man/share.html) for local
+  shared memory
 - [Reproducibility](https://mirai.r-lib.org/articles/v01-reference.html#random-number-generation)
   — L’Ecuyer-CMRG streams; `daemons(seed = …)` for deterministic
   parallel RNG

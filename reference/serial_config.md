@@ -40,6 +40,15 @@ A list comprising the configuration. This should be passed to the
 
 This feature utilises the 'refhook' system of R native serialization.
 
+An error in `sfunc` (serialization) is raised directly in the calling
+process, e.g. the
+[`mirai()`](https://mirai.r-lib.org/reference/mirai.md) call itself
+errors and the task is not dispatched.
+
+An error in `ufunc` (unserialization) is caught, and the object instead
+unserializes as an 'errorValue' 1000 ('Internal error detected'). This
+prevents a faulty hook from crashing the daemon.
+
 ## Examples
 
 ``` r
@@ -52,7 +61,7 @@ cfg
 #> [[2]][[1]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x559cad818970>
+#> <environment: 0x557f6b228860>
 #> 
 #> 
 #> [[3]]
@@ -64,7 +73,7 @@ cfg
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x559cad820d60>
+#> <bytecode: 0x557f6b1d62c8>
 #> <environment: namespace:base>
 #> 
 #> 
@@ -82,12 +91,12 @@ cfg2
 #> [[2]][[1]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x559cad818970>
+#> <environment: 0x557f6b228860>
 #> 
 #> [[2]][[2]]
 #> function (x) 
 #> serialize(x, NULL)
-#> <environment: 0x559cad818970>
+#> <environment: 0x557f6b228860>
 #> 
 #> 
 #> [[3]]
@@ -99,7 +108,7 @@ cfg2
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x559cad820d60>
+#> <bytecode: 0x557f6b1d62c8>
 #> <environment: namespace:base>
 #> 
 #> [[3]][[2]]
@@ -110,7 +119,7 @@ cfg2
 #>         stop("'connection' must be a connection")
 #>     .Internal(unserialize(connection, refhook))
 #> }
-#> <bytecode: 0x559cad820d60>
+#> <bytecode: 0x557f6b1d62c8>
 #> <environment: namespace:base>
 #> 
 #> 

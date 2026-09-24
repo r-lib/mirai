@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,9 +49,17 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/r-lib/mirai/blob/release/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/r-lib/mirai/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.7.3" id="mirai-273">mirai 2.7.3<a class="anchor" aria-label="anchor" href="#mirai-273"></a></h2>
+<div class="section level5">
+<h5 id="updates-2-7-3">Updates<a class="anchor" aria-label="anchor" href="#updates-2-7-3"></a></h5>
+<ul><li>Fixes a custom unserialization function (<code>ufunc</code>) that errors crashing the daemon; the object now unserializes as an ‘errorValue’ 1000 instead (thanks <a href="https://github.com/eitsupi" class="external-link">@eitsupi</a>, <a href="https://github.com/r-lib/mirai/issues/646" class="external-link">#646</a>).</li>
+<li>Requires nanonext &gt;= 1.10.3.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.7.2" id="mirai-272">mirai 2.7.2<a class="anchor" aria-label="anchor" href="#mirai-272"></a></h2><p class="text-muted">CRAN release: 2026-07-20</p>
 <div class="section level5">

@@ -493,10 +493,10 @@ serialises its arguments to the daemon and the result back, even when
 the daemon is on the same machine. For large objects, this copy can
 dominate evaluation time.
 
-The [`mori`](https://github.com/shikokuchuo/mori) package provides
-shared-memory R objects that local daemons read in place, without
-copying. Wrap an atomic vector, list, or dataframe with
-[`mori::share()`](https://shikokuchuo.net/mori/reference/share.html):
+The [`mori`](https://mori.r-lib.org) package provides shared-memory R
+objects that local daemons read in place, without copying. Wrap an
+atomic vector, list, or dataframe with
+[`mori::share()`](https://rdrr.io/pkg/mori/man/share.html):
 
 ``` r
 
