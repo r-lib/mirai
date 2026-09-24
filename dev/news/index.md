@@ -2,6 +2,10 @@
 
 ## mirai (development version)
 
+## mirai 2.7.3
+
+CRAN release: 2026-09-24
+
 ##### Updates
 
 - Fixes a custom unserialization function (`ufunc`) that errors crashing
