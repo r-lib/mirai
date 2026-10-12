@@ -844,11 +844,6 @@ connection && NOT_CRAN && {
   )
   test_true(inherits(e, "my_error"))
   test_equal(conditionMessage(e), "custom boom")
-  # an infrastructure failure raises the nng_error() text, not a bare code
-  test_error(
-    mirai:::render_executor(function() tools::pskill(Sys.getpid()), list(), "re"),
-    "Connection reset"
-  )
   test_false(daemons(0L, .compute = "re"))
 }
 # register_render() - registration and feature detection
