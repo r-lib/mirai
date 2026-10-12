@@ -4,6 +4,10 @@
 
 * Adds `register_render()`, which registers mirai as the evaluation executor for knitr / litedown chunk routing. R code chunks tagged with a `#| compute:` chunk option then evaluate on a mirai daemon instead of in the host session.
 
+#### Updates
+
+* Fixes errors such as 'No daemons set.' failing with 'there is no package called 'rlang'' when cli is installed without rlang. Plain error messages are now used in that case.
+
 # mirai 2.7.3
 
 #### Updates
