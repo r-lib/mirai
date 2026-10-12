@@ -1,0 +1,117 @@
+---
+title: "mirai - Evaluate Document Chunks on Daemons"
+vignette: >
+  %\VignetteIndexEntry{mirai - Evaluate Document Chunks on Daemons}
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+### 1. Overview
+
+`register_render()` lets selected R code chunks of a knitr, R Markdown, Quarto or litedown document evaluate on a mirai daemon instead of in the host session.
+
+This is useful when a document mixes lightweight narrative code with chunks that need more resources: a GPU machine, a high-memory node, or a separate process that keeps the host session responsive.
+
+Chunk routing is controlled by a single chunk option:
+
+  + `#| compute: gpu` evaluates the chunk on the `"gpu"` compute profile
+  + `#| compute: true` evaluates the chunk on the `"default"` profile
+  + an untagged chunk evaluates in the host session, unchanged
+
+### 2. The Setup Chunk
+
+Everything below goes in the document's setup chunk. Set up one daemon per routing profile with `cleanup = FALSE`. Then call `register_render()` once to register mirai as the evaluation executor for knitr and litedown:
+
+
+``` r
+library(mirai)
+
+daemons(1, cleanup = FALSE)
+daemons(1, .compute = "gpu", cleanup = FALSE)
+
+register_render()
+```
+
+Registration sets `options(compute.executor = ...)`. The renderers consult this option at each tagged chunk. No renderer package is attached or modified. To unregister, set `options(compute.executor = NULL)`.
+
+`cleanup = FALSE` preserves the daemon's global environment between chunks, so objects created in one chunk are visible in later chunks on the same profile — mirroring a normal rendering session. A single daemon keeps those chunks in the same process.
+
+For remote execution, supply `url` and `remote` to `daemons()` in the usual way, for example `daemons(1, url = host_url(), remote = remote_config(), .compute = "gpu", cleanup = FALSE)`. Routed chunks then run on the remote machine, and figures are transferred back to the host automatically.
+
+### 3. Tag Chunks with `compute`
+
+Add `#| compute: <profile>` to any chunk that should run on a daemon. This chunk runs on the `"gpu"` profile, in a separate process from the host:
+
+
+``` r
+#| compute: gpu
+Sys.getpid()
+#> [1] 70344
+```
+
+Untagged chunks evaluate in the host session. The process IDs confirm that the routed chunk ran in a different process:
+
+
+``` r
+Sys.getpid()
+#> [1] 70301
+```
+
+Note the isolation rule: a routed chunk shares state only with other chunks on the same profile. A routed chunk cannot see objects in the host session: there is no closure capture from the host, so each routed chunk is self-contained. Objects it creates are visible neither to the host session nor to chunks on other profiles. Inline R code always evaluates in the host session.
+
+### 4. State Persists Between Chunks on a Profile
+
+Because each routing profile uses a single daemon with `cleanup = FALSE`, objects created by one routed chunk are available to later chunks on the same profile:
+
+
+``` r
+#| compute: gpu
+model <- lm(Sepal.Length ~ Petal.Length, data = iris)
+coef(model)
+#>  (Intercept) Petal.Length 
+#>    4.3066034    0.4089223
+```
+
+``` r
+#| compute: gpu
+summary(model)$r.squared
+#> [1] 0.7599546
+```
+
+The host session and other profiles remain isolated — `model` does not exist in the host session:
+
+
+``` r
+exists("model")
+#> [1] FALSE
+```
+
+### 5. Figures
+
+Figures produced by routed chunks work with local and remote daemons alike. Under knitr they are recorded on the daemon and replayed on the host device. Under litedown they are recorded to files on the daemon and transferred back to the document's figure directory. No extra chunk options are needed:
+
+
+``` r
+#| compute: gpu
+plot(iris$Petal.Length, iris$Sepal.Length, col = iris$Species)
+```
+
+<div class="figure">
+<img src="figures/figure-1.png" alt="plot of chunk figure" width="100%" />
+<p class="caption">plot of chunk figure</p>
+</div>
+
+### 6. Requirements and Notes
+
+  + Each daemon of a routed profile needs the renderer package installed: knitr for knitr documents, or litedown for litedown documents. Use the same version as on the host. The executor checks for the renderer package before it sends the first chunk to a daemon, and fails with an informative error if it is missing. No packages are loaded on the daemon in advance.
+  + For knitr chunks that plot, use the same R version on host and daemon: recorded plots are not portable across R or graphics engine versions.
+  + Relative paths in routed chunks resolve against the daemon's working directory and filesystem, not the host's.
+  + Options evaluated after the chunk in the host session, such as knitr's `eval.after`, do not see daemon state.
+  + Chunk caching works as usual for routed chunks: the chunk evaluates on the daemon, and the renderer caches its output. Under knitr the cache lives on the host, so on a cache hit the chunk is not re-sent to the daemon. With a warm cache and fresh daemons, a routed chunk that depends on an earlier cached routed chunk will not find its state there. Under litedown the cache writes to the daemon's filesystem instead. This is correct for local daemons but ineffective for remote ones.
+  + Routed chunks draw the daemon's random number stream, not the host's. A host-side `set.seed()` does not make routed chunks reproducible. Supply `seed` to `daemons()` instead.
+  + You can call `register_render()` more than once. If daemons are reset with `daemons(0)` mid-render, call `register_render()` again so the replacement daemons are re-checked.
+  + Chunks on a profile evaluate sequentially in one process. This feature routes whole chunks rather than parallelizing within a chunk. For parallel workloads inside a chunk, use `mirai()` or `mirai_map()` as usual.
+
+

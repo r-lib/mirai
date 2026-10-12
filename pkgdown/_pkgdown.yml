@@ -66,6 +66,10 @@ reference:
   - make_cluster
   - stop_cluster
 
+- title: Rendering
+  contents:
+  - register_render
+
 - title: Utilities
   contents:
   - is_mirai

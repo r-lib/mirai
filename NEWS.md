@@ -1,5 +1,9 @@
 # mirai (development version)
 
+#### New Features
+
+* Adds `register_render()`, which registers mirai as the evaluation executor for knitr / litedown chunk routing. R code chunks tagged with a `#| compute:` chunk option then evaluate on a mirai daemon instead of in the host session.
+
 # mirai 2.7.3
 
 #### Updates
