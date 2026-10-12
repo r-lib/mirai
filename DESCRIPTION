@@ -33,6 +33,7 @@ Suggests:
     mori,
     otel,
     otelsdk,
+    rlang,
     secretbase
 Enhances: 
     parallel,
