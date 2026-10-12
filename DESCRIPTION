@@ -37,6 +37,9 @@ Suggests:
 Enhances: 
     parallel,
     promises
+Remotes: 
+    shikokuchuo/knitr@compute,
+    shikokuchuo/litedown@compute
 VignetteBuilder: 
     litedown
 Config/Needs/coverage: rlang
