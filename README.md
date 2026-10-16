@@ -25,10 +25,6 @@ Minimalist Async Evaluation Framework for R <br /><br />
 → Built for production — bounded queues, cancellation, distributed
 tracing
 
-<br /> [![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/r-lib/mirai)
-<br />
-
 ### Installation
 
 ``` r
@@ -56,7 +52,7 @@ mirai_map(1:9, \(x) { Sys.sleep(0.5); x^2 })[.progress, .flat]
 
 # m[] waits for and returns the result
 m[]
-#> [1] 0.001157286
+#> [1] 0.0005714758
 
 # Shut down all daemons
 daemons(0)
@@ -81,7 +77,7 @@ bench::mark(mirai("hello world")[])
 #> # A tibble: 1 × 6
 #>   expression                      min   median `itr/sec` mem_alloc `gc/sec`
 #>   <bch:expr>                 <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#> 1 "mirai(\"hello world\")[]"   73.6µs   91.9µs    10301.    9.68KB     4.02
+#> 1 "mirai(\"hello world\")[]"   64.3µs   94.2µs    10167.    9.68KB     4.04
 daemons(0)
 ```
 
@@ -141,7 +137,7 @@ full deployment guide.
 
 ### Across the R stack
 
-<div align="center">
+<div data-align="center">
 
 <a href="#across-the-r-stack"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700" /></a>
 
