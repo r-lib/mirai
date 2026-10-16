@@ -97,7 +97,6 @@
 <p>→ Event-driven core with microsecond messaging</p>
 <p>→ Scale from laptop to HPC and cloud — add or remove compute on the fly</p>
 <p>→ Built for production — bounded queues, cancellation, distributed tracing</p>
-<p><br><a href="https://deepwiki.com/r-lib/mirai" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a> <br></p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -127,7 +126,7 @@
 <span></span>
 <span><span class="co"># m[] waits for and returns the result</span></span>
 <span><span class="va">m</span><span class="op">[</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 0.001157286</span></span>
+<span><span class="co">#&gt; [1] 0.0005714758</span></span>
 <span></span>
 <span><span class="co"># Shut down all daemons</span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
@@ -144,7 +143,7 @@
 <span><span class="co">#&gt; # A tibble: 1 × 6</span></span>
 <span><span class="co">#&gt;   expression                      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   &lt;bch:expr&gt;                 &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 "mirai(\"hello world\")[]"   73.6µs   91.9µs    10301.    9.68KB     4.02</span></span>
+<span><span class="co">#&gt; 1 "mirai(\"hello world\")[]"   64.3µs   94.2µs    10167.    9.68KB     4.04</span></span>
 <span><span class="fu"><a href="reference/daemons.html">daemons</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -221,7 +220,7 @@
 <div class="section level3">
 <h3 id="across-the-r-stack">Across the R stack<a class="anchor" aria-label="anchor" href="#across-the-r-stack"></a>
 </h3>
-<div align="center">
+<div data-align="center">
 <p><a href="#across-the-r-stack"><img alt="R, Shiny, plumber2, tidyverse, purrr, tidymodels, tune, ragnar, targets, crew, Arrow, torch" src="https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/across-the-r-stack.svg" width="700"></a></p>
 </div>
 <p>mirai has become the shared async layer for the R ecosystem. It’s the <a href="https://rstudio.github.io/promises/articles/promises_04_mirai.html" class="external-link">recommended</a> async backend for Shiny and the only one for plumber2, the engine behind <code><a href="https://purrr.tidyverse.org/reference/in_parallel.html" class="external-link">purrr::in_parallel()</a></code> and <code>targets</code> pipelines through <code>crew</code>, and is the first <a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/html/makeCluster.html" class="external-link">official alternative communications backend</a> for base R’s <code>parallel</code> package.</p>
