@@ -27,14 +27,20 @@ Imports:
     nanonext (>= 1.10.3)
 Suggests: 
     cli,
+    evaluate,
+    knitr,
     litedown,
     mori,
     otel,
     otelsdk,
+    rlang,
     secretbase
 Enhances: 
     parallel,
     promises
+Remotes: 
+    shikokuchuo/knitr@compute,
+    shikokuchuo/litedown@compute
 VignetteBuilder: 
     litedown
 Config/Needs/coverage: rlang

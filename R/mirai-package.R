@@ -45,7 +45,9 @@
 
 .onLoad <- function(libname, pkgname) {
   otel_cache_tracer()
-  cli_enabled <<- requireNamespace("cli", quietly = TRUE)
+  # cli::cli_abort() calls rlang::abort(), and rlang is only a Suggested
+  # dependency of cli, so require both before formatting errors with cli
+  cli_enabled <<- requireNamespace("cli", quietly = TRUE) && requireNamespace("rlang", quietly = TRUE)
   switch(
     Sys.info()[["sysname"]],
     Linux = {

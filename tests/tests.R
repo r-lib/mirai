@@ -826,5 +826,204 @@ requireNamespace("secretbase", quietly = TRUE) && requireNamespace("promises", q
   test_type("character", mirai:::posit_workbench_headers())
   nzchar(mirai:::posit_workbench_headers()[["Cookie"]]) || test_error(mirai:::posit_workbench_data(), "Posit Workbench")
 }
+# render_executor() - evaluate a function call on a daemon
+connection && NOT_CRAN && {
+  daemons(1L, .compute = "re", cleanup = FALSE)
+  test_equal(mirai:::render_executor(sum, list(1:10), "re"), 55L)
+  # state persists when fun assigns into the daemon's global env
+  test_true(mirai:::render_executor(function(x) {assign("re_state", x, envir = globalenv()); TRUE}, list(7L), "re"))
+  test_equal(mirai:::render_executor(function() get0("re_state", envir = globalenv()), list(), "re"), 7L)
+  # the host session is isolated from the daemon's state
+  test_false(exists("re_state"))
+  # an unset compute profile errors informatively
+  test_error(mirai:::render_executor(sum, list(1L), "ghost"), "No daemons set for the 'ghost' compute profile")
+  # the executor raises a daemon-side error with its original condition class
+  e <- tryCatch(
+    mirai:::render_executor(function() stop(errorCondition("custom boom", class = "my_error")), list(), "re"),
+    error = identity
+  )
+  test_true(inherits(e, "my_error"))
+  test_equal(conditionMessage(e), "custom boom")
+  test_false(daemons(0L, .compute = "re"))
+}
+# register_render() - registration and feature detection
+renderer_support <- function() {
+  requireNamespace("knitr", quietly = TRUE) &&
+    is.function(get0("eng_r_remote", envir = asNamespace("knitr"), inherits = FALSE)) ||
+    requireNamespace("litedown", quietly = TRUE) &&
+      is.function(get0("record_remote", envir = asNamespace("litedown"), inherits = FALSE))
+}
+connection && NOT_CRAN && {
+  # mock base::requireNamespace() to simulate no supporting renderer installed
+  bns <- getNamespace("base")
+  orig_rn <- bns[["requireNamespace"]]
+  unlockBinding("requireNamespace", bns)
+  bns[["requireNamespace"]] <- function(package, ..., quietly = FALSE) {
+    if (package %in% c("knitr", "litedown")) FALSE else orig_rn(package, ..., quietly = quietly)
+  }
+  e <- tryCatch(register_render(), error = identity)
+  bns[["requireNamespace"]] <- orig_rn
+  lockBinding("requireNamespace", bns)
+  test_error(e, "supports chunk routing")
+}
+connection && NOT_CRAN &&
+  requireNamespace("litedown", quietly = TRUE) &&
+  is.function(get0("record_remote", envir = asNamespace("litedown"), inherits = FALSE)) && {
+  get_warnings <- function(expr) {
+    w <- NULL
+    withCallingHandlers(expr, warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart("muffleWarning")})
+    w
+  }
+  # mock base::get0() to simulate an installed-but-too-old knitr: warns, no error
+  bns <- getNamespace("base")
+  orig_g0 <- bns[["get0"]]
+  unlockBinding("get0", bns)
+  bns[["get0"]] <- function(x, envir = as.environment(-1L), mode = "any", inherits = TRUE, ifnotfound = NULL) {
+    if (x == "eng_r_remote") return(NULL)
+    orig_g0(x, envir = envir, mode = mode, inherits = inherits, ifnotfound = ifnotfound)
+  }
+  w <- get_warnings(register_render())
+  bns[["get0"]] <- orig_g0
+  lockBinding("get0", bns)
+  test_true(any(grepl("knitr does not support chunk routing", w, fixed = TRUE)))
+  test_identical(getOption("compute.executor"), mirai:::render_executor)
+  # warns when overwriting an existing executor registration
+  options(compute.executor = function(...) NULL)
+  w <- get_warnings(register_render())
+  test_true(any(grepl("overwriting an existing 'compute.executor' registration", w, fixed = TRUE)))
+  test_identical(getOption("compute.executor"), mirai:::render_executor)
+  options(compute.executor = NULL)
+  test_null(getOption("compute.executor"))
+}
+# check_single_daemon() - warn once per profile for multi-daemon setups
+connection && NOT_CRAN && renderer_support() && {
+  get_warning <- function(expr) {
+    w <- NULL
+    withCallingHandlers(expr, warning = function(x) {w <<- conditionMessage(x); invokeRestart("muffleWarning")})
+    w
+  }
+  register_render()
+  # a multi-daemon profile warns once, then stays silent
+  daemons(2L, .compute = "cs", cleanup = FALSE)
+  test_true(grepl("has 2 daemons", get_warning(mirai:::check_single_daemon("cs")), fixed = TRUE))
+  test_null(get_warning(mirai:::check_single_daemon("cs")))
+  # re-registration re-warns
+  register_render()
+  test_true(grepl("has 2 daemons", get_warning(mirai:::check_single_daemon("cs")), fixed = TRUE))
+  test_false(daemons(0L, .compute = "cs"))
+  # a single-daemon profile stays silent
+  daemons(1L, .compute = "cs1", cleanup = FALSE)
+  test_null(get_warning(mirai:::check_single_daemon("cs1")))
+  test_false(daemons(0L, .compute = "cs1"))
+  # a sync profile stays silent
+  daemons(sync = TRUE, .compute = "css")
+  test_null(get_warning(mirai:::check_single_daemon("css")))
+  test_false(daemons(0L, .compute = "css"))
+  # a zero-connection profile stays silent and unchecked
+  daemons(url = local_url(), .compute = "csz")
+  test_null(get_warning(mirai:::check_single_daemon("csz")))
+  test_null(mirai:::checked[["csz"]])
+  test_false(daemons(0L, .compute = "csz"))
+  options(compute.executor = NULL)
+  test_null(getOption("compute.executor"))
+}
+# check_daemon_namespace() - probe for the renderer package on the daemon
+connection && NOT_CRAN && renderer_support() && {
+  daemons(1L, .compute = "cn", cleanup = FALSE)
+  register_render()
+  # an absent namespace errors informatively
+  test_error(
+    mirai:::check_daemon_namespace("nonsensepkg", "cn"),
+    "does not have the 'nonsensepkg' package installed"
+  )
+  # an installed namespace passes and caches the probe
+  test_null(mirai:::probed[["cn\rnanonext"]])
+  mirai:::check_daemon_namespace("nanonext", "cn")
+  test_true(mirai:::probed[["cn\rnanonext"]])
+  # re-registration re-probes
+  register_render()
+  test_null(mirai:::probed[["cn\rnanonext"]])
+  mirai:::check_daemon_namespace("nanonext", "cn")
+  test_true(mirai:::probed[["cn\rnanonext"]])
+  # render_executor() skips the probe for primitives and globalenv functions
+  n0 <- length(ls(mirai:::probed))
+  test_equal(mirai:::render_executor(sum, list(1:10), "cn"), 55L)
+  test_equal(mirai:::render_executor(function() 42L, list(), "cn"), 42L)
+  test_equal(length(ls(mirai:::probed)), n0)
+  test_false(daemons(0L, .compute = "cn"))
+  options(compute.executor = NULL)
+  test_null(getOption("compute.executor"))
+}
+# register_render() - evaluate knitr chunks on daemons
+connection && NOT_CRAN &&
+  requireNamespace("knitr", quietly = TRUE) &&
+  requireNamespace("evaluate", quietly = TRUE) &&
+  is.function(get0("eng_r_remote", envir = asNamespace("knitr"), inherits = FALSE)) && {
+  knit_chunk <- function(code, options = character()) {
+    opts <- if (length(options)) paste0("#| ", options, "\n", collapse = "") else ""
+    knitr::knit(text = sprintf("```{r}\n%s%s\n```\n", opts, code), quiet = TRUE)
+  }
+  hostpid <- Sys.getpid()
+  register_render()
+  # untagged chunk evaluates in the host session
+  test_true(grepl("TRUE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid)), fixed = TRUE))
+  # a chunk tagged with a profile that has no daemons errors informatively
+  test_error(knit_chunk("1L", "compute: ghost"), "No daemons set for the 'ghost' compute profile")
+  daemons(1L, .compute = "kn", cleanup = FALSE)
+  # a routed chunk evaluates in a separate process
+  test_true(grepl("FALSE", knit_chunk(sprintf("Sys.getpid() == %dL", hostpid), "compute: kn"), fixed = TRUE))
+  # chunks on the same profile share state sequentially (cleanup = FALSE)
+  invisible(knit_chunk("kn_state <- 41L", "compute: kn"))
+  test_true(grepl("42", knit_chunk("kn_state + 1L", "compute: kn"), fixed = TRUE))
+  # the host session is isolated from the daemon's state
+  test_true(grepl("FALSE", knit_chunk("exists('kn_state')"), fixed = TRUE))
+  # a routed error: false chunk aborts the render
+  test_error(knit_chunk("stop('boom')", c("compute: kn", "error: false")), "boom")
+  # figures recorded on the daemon are saved by the host plot hook
+  figpath <- file.path(tempdir(), "knfig-")
+  invisible(knit_chunk("plot(1:10)", c("compute: kn", sprintf("fig.path: '%s'", figpath), "label: knplot")))
+  test_true(length(Sys.glob(paste0(figpath, "*.png"))) > 0L)
+  unlink(Sys.glob(paste0(figpath, "*.png")))
+  # a knit_asis object carrying knit_meta round-trips through a routed chunk
+  invisible(knit_chunk(
+    "structure('meta content', class = 'knit_asis', knit_meta = list(structure(list(name = 'fake-dep', version = '1.0', src = list(file = tempdir()), stylesheet = 'x.css'), class = 'html_dependency')))",
+    "compute: kn"
+  ))
+  test_true(any(vapply(knitr::knit_meta(), function(x) identical(x$name, "fake-dep"), logical(1))))
+  test_false(daemons(0L, .compute = "kn"))
+  options(compute.executor = NULL)
+  test_null(getOption("compute.executor"))
+}
+# register_render() - evaluate litedown chunks on daemons
+connection && NOT_CRAN &&
+  requireNamespace("litedown", quietly = TRUE) &&
+  is.function(get0("record_remote", envir = asNamespace("litedown"), inherits = FALSE)) && {
+  fuse_chunk <- function(code, options = character()) {
+    opts <- if (length(options)) paste0("#| ", options, "\n", collapse = "") else ""
+    paste(litedown::fuse(text = sprintf("```{r}\n%s%s\n```\n", opts, code), output = "markdown"), collapse = "\n")
+  }
+  hostpid <- Sys.getpid()
+  register_render()
+  # untagged chunk evaluates in the host session
+  test_true(grepl("TRUE", fuse_chunk(sprintf("Sys.getpid() == %dL", hostpid)), fixed = TRUE))
+  # a chunk tagged with a profile that has no daemons errors informatively
+  test_error(fuse_chunk("1L", "compute: ghost"), "No daemons set for the 'ghost' compute profile")
+  daemons(1L, .compute = "ld", cleanup = FALSE)
+  # a routed chunk evaluates in a separate process
+  test_true(grepl("FALSE", fuse_chunk(sprintf("Sys.getpid() == %dL", hostpid), "compute: ld"), fixed = TRUE))
+  # chunks on the same profile share state sequentially (cleanup = FALSE)
+  invisible(fuse_chunk("ld_state <- 41L", "compute: ld"))
+  test_true(grepl("42", fuse_chunk("ld_state + 1L", "compute: ld"), fixed = TRUE))
+  # the host session is isolated from the daemon's state
+  test_true(grepl("FALSE", fuse_chunk("exists('ld_state')"), fixed = TRUE))
+  # figures recorded on the daemon are written to the host figure directory
+  figpath <- file.path(tempdir(), "fig-")
+  invisible(fuse_chunk("plot(1:10)", c("compute: ld", sprintf("fig.path: '%s'", figpath))))
+  test_true(length(Sys.glob(paste0(figpath, "*.png"))) > 0L)
+  unlink(Sys.glob(paste0(figpath, "*.png")))
+  test_false(daemons(0L, .compute = "ld"))
+  options(compute.executor = NULL)
+  test_null(getOption("compute.executor"))
+}
 test_false(daemons(0))
 Sys.sleep(1L)
