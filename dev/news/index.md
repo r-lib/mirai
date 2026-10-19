@@ -2,6 +2,15 @@
 
 ## mirai (development version)
 
+##### Updates
+
+- Fixes promises never resolving if an mirai completes during the short
+  window of the
+  [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
+  call itself (thanks [@dawiegriesel](https://github.com/dawiegriesel),
+  [\#656](https://github.com/r-lib/mirai/issues/656)).
+- Requires nanonext \>= \[1.10.3.9000\].
+
 ## mirai 2.7.3
 
 CRAN release: 2026-09-24
