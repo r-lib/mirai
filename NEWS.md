@@ -1,5 +1,10 @@
 # mirai (development version)
 
+#### Updates
+
+* Fixes promises never resolving if an mirai completes during the short window of the `as.promise()` call itself (thanks @dawiegriesel, #656).
+* Requires nanonext >= [1.10.3.9000].
+
 # mirai 2.7.3
 
 #### Updates
