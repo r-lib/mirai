@@ -3,6 +3,7 @@
 #### Updates
 
 * The `collect_mirai()` `.progress` option now accepts a named integer (the name being a cli progress bar id) to update an existing progress bar once per collected result, rather than creating a new bar (#663).
+* Fixes the `.progress` collection option leaking an `envir` binding into the global environment, and closing an existing cli progress bar in the calling frame when creating its own bar.
 * Fixes promises never resolving if an mirai completes during the short window of the `as.promise()` call itself (thanks @dawiegriesel, #656).
 * Requires nanonext >= [1.10.3.9000].
 
