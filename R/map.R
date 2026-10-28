@@ -48,6 +48,10 @@
 #' else a simple text progress indicator. Note: if the map operation completes
 #' too quickly then the progress bar may not show at all.
 #'
+#' To update an existing \pkg{cli} progress bar instead of creating one, e.g.
+#' to span a single bar over multiple map operations, supply the bar id via the
+#' `options` argument of [collect_mirai()].
+#'
 #' `x[.stop]` collects map results applying early stopping, which stops at
 #' the first failure and cancels remaining operations.
 #'
@@ -257,25 +261,28 @@ print.mirai_map <- function(x, ...) {
 .progress <- compiler::compile(quote(
   if (cli_enabled) {
     if (i == 0L) {
-      envir <<- new.env(parent = envir)
       options <- .[["progress"]]
-      if (is.list(options)) {
-        do.call(
-          cli::cli_progress_bar,
-          c(list(total = xlen, auto_terminate = TRUE, .envir = envir), options)
-        )
-      } else {
-        cli::cli_progress_bar(
-          name = options,
-          type = NULL,
-          total = xlen,
-          auto_terminate = TRUE,
-          .envir = envir
-        )
-      }
       `[[<-`(., "progress", NULL)
+      if (!is.integer(options)) {
+        envir <<- new.env(parent = envir)
+        id <- if (is.list(options)) {
+          do.call(
+            cli::cli_progress_bar,
+            c(list(total = xlen, auto_terminate = TRUE, .envir = envir), options)
+          )
+        } else {
+          cli::cli_progress_bar(
+            name = options,
+            type = NULL,
+            total = xlen,
+            auto_terminate = TRUE,
+            .envir = envir
+          )
+        }
+        options <- `names<-`(1L, id)
+      }
     } else {
-      cli::cli_progress_update(.envir = envir)
+      cli::cli_progress_update(inc = options, id = names(options))
     }
   } else {
     cat(sprintf("\r[ %d / %d %s", i, xlen, if (i < xlen) ".... ]" else "done ]\n"), file = stderr())
