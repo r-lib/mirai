@@ -418,6 +418,13 @@ race_mirai <- function(x, .compute = NULL) {
 #' `c(.stop = TRUE, .progress = "bar name")` or
 #' `list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
 #'
+#' Supplying an integer for `.progress` instead attaches to an existing cli
+#' progress bar: its name supplies the bar id, and its value the amount to
+#' increment per result collected, e.g. `list(.progress = setNames(1L, id))`
+#' where `id` is the value returned by `cli::cli_progress_bar()`. The bar is
+#' neither created nor closed by mirai: its lifecycle remains entirely with the
+#' caller. This allows a single progress bar to span multiple map operations.
+#'
 #' @inheritSection call_mirai Alternatively
 #' @inheritSection mirai Errors
 #'

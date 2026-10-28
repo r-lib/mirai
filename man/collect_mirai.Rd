@@ -33,6 +33,13 @@ cli progress bar: a character value sets the bar name, and a list is passed
 as named parameters to \code{cli::cli_progress_bar}. Examples:
 \code{c(.stop = TRUE, .progress = "bar name")} or
 \code{list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))}
+
+Supplying an integer for \code{.progress} instead attaches to an existing cli
+progress bar: its name supplies the bar id, and its value the amount to
+increment per result collected, e.g. \code{list(.progress = setNames(1L, id))}
+where \code{id} is the value returned by \code{cli::cli_progress_bar()}. The bar is
+neither created nor closed by mirai: its lifecycle remains entirely with the
+caller. This allows a single progress bar to span multiple map operations.
 }
 
 \section{Alternatively}{
