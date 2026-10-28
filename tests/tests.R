@@ -332,6 +332,8 @@ connection && NOT_CRAN && {
     bar <- cli::cli_progress_bar(total = 6L)
     test_type("list", res <- collect_mirai(mirai_map(c(1,1), rnorm), list(.stop = TRUE, .progress = setNames(2L, bar))))
     test_equal(getFromNamespace("clienv", "cli")[["progress"]][[bar]][["current"]], 4)
+    test_type("list", collect_mirai(mirai_map(c(1,1), rnorm), ".progress"))
+    test_equal(getFromNamespace("clienv", "cli")[["progress"]][[bar]][["current"]], 4)
     cli::cli_progress_done(id = bar)
   }
   test_false(daemons(0L))
