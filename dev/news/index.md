@@ -4,12 +4,6 @@
 
 ##### Updates
 
-- The
-  [`collect_mirai()`](https://mirai.r-lib.org/dev/reference/collect_mirai.md)
-  `.progress` option now accepts a named integer (the name being a cli
-  progress bar id) to update an existing progress bar once per collected
-  result, rather than creating a new bar
-  ([\#663](https://github.com/r-lib/mirai/issues/663)).
 - Fixes promises never resolving if an mirai completes during the short
   window of the
   [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
