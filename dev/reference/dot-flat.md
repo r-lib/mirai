@@ -27,6 +27,11 @@ the cli package, if installed, with completion percentage and ETA, or
 else a simple text progress indicator. Note: if the map operation
 completes too quickly then the progress bar may not show at all.
 
+To update an existing cli progress bar instead of creating one, e.g. to
+span a single bar over multiple map operations, supply the bar id via
+the `options` argument of
+[`collect_mirai()`](https://mirai.r-lib.org/dev/reference/collect_mirai.md).
+
 `x[.stop]` collects map results applying early stopping, which stops at
 the first failure and cancels remaining operations.
 

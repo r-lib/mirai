@@ -101,6 +101,12 @@ cli progress bar: a character value sets the bar name, and a list is passed
 as named parameters to <code><a href="https://cli.r-lib.org/reference/cli_progress_bar.html" class="external-link">cli::cli_progress_bar</a></code>. Examples:
 <code>c(.stop = TRUE, .progress = "bar name")</code> or
 <code>list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))</code></p>
+<p>Supplying an integer for <code>.progress</code> instead attaches to an existing cli
+progress bar: its name supplies the bar id, and its value the amount to
+increment per result collected, e.g. <code>list(.progress = setNames(1L, id))</code>
+where <code>id</code> is the value returned by <code><a href="https://cli.r-lib.org/reference/cli_progress_bar.html" class="external-link">cli::cli_progress_bar()</a></code>. The bar is
+neither created nor closed by mirai: its lifecycle remains entirely with the
+caller. This allows a single progress bar to span multiple map operations.</p>
     </div>
     <div class="section level2">
     <h2 id="alternatively">Alternatively<a class="anchor" aria-label="anchor" href="#alternatively"></a></h2>
