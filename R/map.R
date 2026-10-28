@@ -264,17 +264,17 @@ print.mirai_map <- function(x, ...) {
       options <- .[["progress"]]
       `[[<-`(., "progress", NULL)
       if (!is.integer(options)) {
-        envir <<- new.env(parent = envir)
         id <- if (is.list(options)) {
           do.call(
             cli::cli_progress_bar,
-            c(list(total = xlen, auto_terminate = TRUE, .envir = envir), options)
+            c(list(total = xlen, current = FALSE, auto_terminate = TRUE, .envir = envir), options)
           )
         } else {
           cli::cli_progress_bar(
             name = options,
             type = NULL,
             total = xlen,
+            current = FALSE,
             auto_terminate = TRUE,
             .envir = envir
           )
