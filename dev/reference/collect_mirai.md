@@ -38,7 +38,11 @@ the names are the collection options. The value for `.progress` is
 passed to the cli progress bar: a character value sets the bar name, and
 a list is passed as named parameters to
 [`cli::cli_progress_bar`](https://cli.r-lib.org/reference/cli_progress_bar.html).
-Examples: `c(.stop = TRUE, .progress = "bar name")` or
+List elements not matching the arguments of
+[`cli::cli_progress_bar`](https://cli.r-lib.org/reference/cli_progress_bar.html)
+are ignored, as are `total`, `current`, `auto_terminate` and `.envir`,
+which are set by mirai. Examples:
+`c(.stop = TRUE, .progress = "bar name")` or
 `list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))`
 
 Supplying an integer for `.progress` instead attaches to an existing cli

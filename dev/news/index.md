@@ -10,6 +10,12 @@
   progress bar id) to update an existing progress bar once per collected
   result, rather than creating a new bar
   ([\#663](https://github.com/r-lib/mirai/issues/663)).
+- The `.progress` collection option now ignores elements of a named list
+  that do not match
+  [`cli::cli_progress_bar()`](https://cli.r-lib.org/reference/cli_progress_bar.html)
+  arguments (such as `caller`, injected by purrr’s `.progress`
+  specification) instead of erroring
+  ([\#667](https://github.com/r-lib/mirai/issues/667)).
 - Fixes the `.progress` collection option leaking an `envir` binding
   into the global environment, and closing an existing cli progress bar
   in the calling frame when creating its own bar.
