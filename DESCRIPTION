@@ -42,6 +42,6 @@ Remotes:
 Config/Needs/coverage: rlang
 Config/Needs/website: tidyverse/tidytemplate
 Config/roxygen2/markdown: TRUE
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Config/usethis/last-upkeep: 2026-07-11
 Encoding: UTF-8
