@@ -265,9 +265,16 @@ print.mirai_map <- function(x, ...) {
       `[[<-`(., "progress", NULL)
       if (!is.integer(options)) {
         id <- if (is.list(options)) {
+          fmls <- setdiff(
+            names(formals(cli::cli_progress_bar)),
+            c("total", "current", "auto_terminate", ".envir")
+          )
           do.call(
             cli::cli_progress_bar,
-            c(list(total = xlen, current = FALSE, auto_terminate = TRUE, .envir = envir), options)
+            c(
+              list(total = xlen, current = FALSE, auto_terminate = TRUE, .envir = envir),
+              options[names(options) %in% fmls]
+            )
           )
         } else {
           cli::cli_progress_bar(

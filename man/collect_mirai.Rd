@@ -30,7 +30,9 @@ interruptible) and returns its value directly. Equivalent to
 A named list may also be supplied instead of a character vector, where the
 names are the collection options. The value for \code{.progress} is passed to the
 cli progress bar: a character value sets the bar name, and a list is passed
-as named parameters to \code{cli::cli_progress_bar}. Examples:
+as named parameters to \code{cli::cli_progress_bar}. List elements not matching
+the arguments of \code{cli::cli_progress_bar} are ignored, as are \code{total},
+\code{current}, \code{auto_terminate} and \code{.envir}, which are set by mirai. Examples:
 \code{c(.stop = TRUE, .progress = "bar name")} or
 \code{list(.stop = TRUE, .progress = list(name = "bar", type = "tasks"))}
 
