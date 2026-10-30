@@ -6,7 +6,7 @@
 * The `.progress` collection option now ignores elements of a named list that do not match `cli::cli_progress_bar()` arguments (such as `caller`, injected by purrr's `.progress` specification) instead of erroring (#667).
 * Fixes the `.progress` collection option leaking an `envir` binding into the global environment, and closing an existing cli progress bar in the calling frame when creating its own bar.
 * Fixes promises never resolving if an mirai completes during the short window of the `as.promise()` call itself (thanks @dawiegriesel, #656).
-* Requires nanonext >= [1.10.3.9000].
+* Requires nanonext >= 1.10.4.
 
 # mirai 2.7.3
 
