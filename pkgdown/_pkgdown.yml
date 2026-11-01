@@ -5,7 +5,7 @@ template:
 
   opengraph:
     image:
-      src: https://raw.githubusercontent.com/r-lib/mirai/main/dev/images/mirai.png
+      src: og-image.png
       alt: "mirai"
 
   includes:
