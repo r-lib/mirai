@@ -1,6 +1,34 @@
 # Changelog
 
+## mirai 2.7.4
+
+##### Updates
+
+- The
+  [`collect_mirai()`](https://mirai.r-lib.org/reference/collect_mirai.md)
+  `.progress` option now accepts a named integer (the name being a cli
+  progress bar id) to update an existing progress bar once per collected
+  result, rather than creating a new bar
+  ([\#663](https://github.com/r-lib/mirai/issues/663)).
+- The `.progress` collection option now ignores elements of a named list
+  that do not match
+  [`cli::cli_progress_bar()`](https://cli.r-lib.org/reference/cli_progress_bar.html)
+  arguments (such as `caller`, injected by purrr’s `.progress`
+  specification) instead of erroring
+  ([\#667](https://github.com/r-lib/mirai/issues/667)).
+- Fixes the `.progress` collection option leaking an `envir` binding
+  into the global environment, and closing an existing cli progress bar
+  in the calling frame when creating its own bar.
+- Fixes promises never resolving if an mirai completes during the short
+  window of the
+  [`as.promise()`](https://rstudio.github.io/promises/reference/is.promise.html)
+  call itself (thanks [@dawiegriesel](https://github.com/dawiegriesel),
+  [\#656](https://github.com/r-lib/mirai/issues/656)).
+- Requires nanonext \>= 1.10.4.
+
 ## mirai 2.7.3
+
+CRAN release: 2026-09-24
 
 ##### Updates
 
