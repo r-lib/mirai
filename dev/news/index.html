@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mirai</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.7.3.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.7.4.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,8 +54,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mirai-development-version">mirai (development version)<a class="anchor" aria-label="anchor" href="#mirai-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.7.4" id="mirai-274">mirai 2.7.4<a class="anchor" aria-label="anchor" href="#mirai-274"></a></h2>
 <div class="section level5">
-<h5 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h5>
+<h5 id="updates-2-7-4">Updates<a class="anchor" aria-label="anchor" href="#updates-2-7-4"></a></h5>
 <ul><li>The <code><a href="../reference/collect_mirai.html">collect_mirai()</a></code> <code>.progress</code> option now accepts a named integer (the name being a cli progress bar id) to update an existing progress bar once per collected result, rather than creating a new bar (<a href="https://github.com/r-lib/mirai/issues/663" class="external-link">#663</a>).</li>
 <li>The <code>.progress</code> collection option now ignores elements of a named list that do not match <code><a href="https://cli.r-lib.org/reference/cli_progress_bar.html" class="external-link">cli::cli_progress_bar()</a></code> arguments (such as <code>caller</code>, injected by purrr’s <code>.progress</code> specification) instead of erroring (<a href="https://github.com/r-lib/mirai/issues/667" class="external-link">#667</a>).</li>
 <li>Fixes the <code>.progress</code> collection option leaking an <code>envir</code> binding into the global environment, and closing an existing cli progress bar in the calling frame when creating its own bar.</li>

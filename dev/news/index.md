@@ -2,6 +2,8 @@
 
 ## mirai (development version)
 
+## mirai 2.7.4
+
 ##### Updates
 
 - The
