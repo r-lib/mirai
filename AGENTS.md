@@ -6,7 +6,7 @@ Claude Code users: add `.claude/CLAUDE.md` containing `@../AGENTS.md` to import 
 
 ## Skill vs. this file
 
-`inst/skills/mirai/SKILL.md` is LLM-targeted guidance for *writing user code that calls mirai*. It ships in the package and to end users via the `r-lib` plugin in [posit-dev/skills](https://github.com/posit-dev/skills). When helping a user *use* mirai, defer to the skill. **This file is for working on the package source.**
+`inst/skills/r-mirai/SKILL.md` is LLM-targeted guidance for *writing user code that calls mirai*. It ships in the package and to end users via the `r-lib` plugin in [posit-dev/skills](https://github.com/posit-dev/skills). When helping a user *use* mirai, defer to the skill. **This file is for working on the package source.**
 
 ## Commands
 
