@@ -4,6 +4,8 @@
 
 ## mirai 2.7.4
 
+CRAN release: 2026-11-02
+
 ##### Updates
 
 - The
